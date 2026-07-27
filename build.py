@@ -34,7 +34,7 @@ from html import escape
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
 CONTENT = os.path.join(ROOT, "content")
-SITE = os.path.join(ROOT, "site")
+SITE = os.path.join(ROOT, "docs")  # GitHub Pages serves this folder from main
 ASSETS = os.path.join(ROOT, "assets")
 DATA = os.path.join(ROOT, "curriculum.json")
 

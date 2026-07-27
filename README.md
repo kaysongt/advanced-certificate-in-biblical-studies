@@ -44,7 +44,8 @@ kti-advanced-certificate/
 │   ├── 04-new-testament-survey/   (NT 401–405)
 │   └── 05-spiritual-formation/    (SF 501–510)
 ├── _templates/         Reference copies of each file type.
-└── site/               Generated. Do not edit — it is deleted on every build.
+└── docs/               Generated. Do not edit — it is deleted on every build.
+                        Served by GitHub Pages from main.
 ```
 
 ---
@@ -53,7 +54,7 @@ kti-advanced-certificate/
 
 ```bash
 python3 build.py scaffold    # create missing content files (never overwrites your edits)
-python3 build.py build       # regenerate site/ from content/
+python3 build.py build       # regenerate docs/ from content/
 python3 build.py status      # how many [FROM BOOK] placeholders remain, per course
 python3 build.py all         # scaffold (safe) + build
 ```
@@ -61,7 +62,9 @@ python3 build.py all         # scaffold (safe) + build
 `scaffold` is safe to re-run — it skips files that already exist. Pass `-f` only if you
 want to wipe your writing and start a file over.
 
-Open the site: `site/index.html`
+Open the site locally: `docs/index.html`
+
+Published: <https://kaysongt.github.io/advanced-certificate-in-biblical-studies/>
 
 Optional: `pip install markdown` gives better rendering (tables, nested lists).
 Without it the builder falls back to a built-in renderer and still works.
