@@ -589,6 +589,9 @@ def build(d):
     for f in ("theme.css", "course.js"):
         shutil.copy(os.path.join(ASSETS, f), os.path.join(SITE, "assets", f))
 
+    # Tells GitHub Pages to serve these files as-is, without running Jekyll.
+    open(os.path.join(SITE, ".nojekyll"), "w").close()
+
     p = d["program"]
     coll = Collector()
     pages = 0
