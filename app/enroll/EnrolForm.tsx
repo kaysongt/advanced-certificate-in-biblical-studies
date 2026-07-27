@@ -1,0 +1,122 @@
+"use client";
+
+import Link from "next/link";
+import { useActionState, useState } from "react";
+import { useFormStatus } from "react-dom";
+
+import { registerStudent, type FormState } from "./actions";
+
+const COUNTRIES = [
+  "Nigeria",
+  "United States",
+  "United Kingdom",
+  "Canada",
+  "Ghana",
+  "South Africa",
+  "Kenya",
+  "Other",
+];
+
+function Submit({ label }: { label: string }) {
+  const { pending } = useFormStatus();
+  return (
+    <button type="submit" className="btn primary lg" disabled={pending} style={{ width: "100%" }}>
+      {pending ? "Creating your account…" : label}
+    </button>
+  );
+}
+
+type ModuleOption = { slug: string; title: string; available: boolean };
+
+export default function EnrolForm({
+  initialPlan,
+  modules,
+}: {
+  initialPlan: "certificate" | "advanced";
+  modules: ModuleOption[];
+}) {
+  const [state, action] = useActionState<FormState, FormData>(registerStudent, {});
+  const [plan, setPlan] = useState(initialPlan);
+
+  const err = state.fieldErrors ?? {};
+  const val = state.values ?? {};
+
+  return (
+    <form action={action}>
+      {state.error ? <div className="notice bad">{state.error}</div> : null}
+
+      <div className="field">
+        <label htmlFor="plan">What are you enrolling in?</label>
+        <select
+          id="plan"
+          name="plan"
+          value={plan}
+          onChange={(e) => setPlan(e.target.value as "certificate" | "advanced")}
+        >
+          <option value="advanced">Advanced Certificate — all five programmes ($1,000)</option>
+          <option value="certificate">A single certificate ($250)</option>
+        </select>
+      </div>
+
+      {plan === "certificate" ? (
+        <div className={`field${err.product ? " err" : ""}`}>
+          <label htmlFor="product">Which certificate?</label>
+          <select id="product" name="product" defaultValue={val.product ?? ""}>
+            <option value="">Select a certificate…</option>
+            {modules.map((m) => (
+              <option key={m.slug} value={m.slug} disabled={!m.available}>
+                {m.title}
+                {m.available ? "" : " — in development"}
+              </option>
+            ))}
+          </select>
+          {err.product ? <div className="msg">{err.product}</div> : null}
+        </div>
+      ) : null}
+
+      <div className={`field${err.fullName ? " err" : ""}`}>
+        <label htmlFor="fullName">Full name</label>
+        <input id="fullName" name="fullName" defaultValue={val.fullName ?? ""} autoComplete="name" />
+        {err.fullName ? <div className="msg">{err.fullName}</div> : null}
+      </div>
+
+      <div className={`field${err.email ? " err" : ""}`}>
+        <label htmlFor="email">Email address</label>
+        <input
+          id="email"
+          name="email"
+          type="email"
+          defaultValue={val.email ?? ""}
+          autoComplete="email"
+        />
+        {err.email ? <div className="msg">{err.email}</div> : null}
+      </div>
+
+      <div className={`field${err.country ? " err" : ""}`}>
+        <label htmlFor="country">Country</label>
+        <select id="country" name="country" defaultValue={val.country ?? ""}>
+          <option value="">Select your country…</option>
+          {COUNTRIES.map((c) => (
+            <option key={c} value={c}>
+              {c}
+            </option>
+          ))}
+        </select>
+        {err.country ? <div className="msg">{err.country}</div> : null}
+      </div>
+
+      <div className={`field${err.password ? " err" : ""}`}>
+        <label htmlFor="password">Password</label>
+        <input id="password" name="password" type="password" autoComplete="new-password" />
+        <div className="hint">At least 8 characters.</div>
+        {err.password ? <div className="msg">{err.password}</div> : null}
+      </div>
+
+      <Submit label="Create my account" />
+
+      <p className="formfoot">
+        Already enrolled? <Link href="/login">Sign in</Link>
+      </p>
+    </form>
+  );
+}
