@@ -168,14 +168,6 @@ Your future resurrection body will be genuinely yours, continuous with the body 
 
 Paul draws the whole argument to its conclusion with a taunt aimed at death itself: O Death, where is your sting? O Hades, where is your victory? (1 Corinthians 15:55).
 
-## Discussion Questions
-
-1. Define atonement, reconciliation, justification, the great exchange, and victory, each in one sentence, without looking back. Which one is most often missing in the way the gospel is preached where you are?
-2. The veil was torn from the top down. Explain the theological significance of the direction, and what it would have implied if torn from the bottom.
-3. Reconstruct the historical case for the resurrection using three distinct arguments. Which would you lead with in conversation, and why?
-4. Why does Paul say that without the resurrection our faith is futile and we are still in our sins? Trace the logic rather than restating the verse.
-5. Christ's resurrected body was both continuous with the body that died and gloriously transformed. What does that pattern mean for how a believer should think about their own body, including its present limitations?
-
 ## Reflection
 
 Read Isaiah 53 slowly, then read Matthew 27. Note three specific points where the prophecy and the record correspond. Sit with the fact that seven centuries separate them.

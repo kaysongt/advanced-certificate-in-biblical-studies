@@ -166,15 +166,6 @@ Until that day the church does not wait passively or anxiously. She lives with h
 
 Even so, come, Lord Jesus.
 
-## Discussion Questions
-
-1. State the difference between *all things new* and *all new things*. What changes downstream if a congregation gets this wrong?
-2. Peter's language sounds like annihilation until you reach his conclusion. Why does the difference matter for how believers treat the physical world?
-3. Paul says creation groans like a woman in labour. What does that image supply that a simple statement of hope would not?
-4. Dr. Kay warns against overclaiming about present work carrying into eternity. Where is the line between dignifying labour and promising more than Scripture does?
-5. Work through the seven fruits. Which one is most conspicuously absent in your own life, and what does its absence suggest about which doctrine has not yet landed?
-6. Peter asks what sort of people we ought to be. Answer him in one concrete sentence about the next six months.
-
 ## Reflection
 
 This course began with the unseen realm and ends with a renewed creation. Write a single paragraph you could say at a graveside, drawing on at least three lessons from this course, that is honest about grief and anchored in hope.

@@ -164,14 +164,6 @@ This vision protects against two opposite errors: a passive congregation that ou
 
 The final glimpse Scripture gives stretches far beyond the first century. Through the church, the manifold wisdom of God is made known to the rulers and authorities in the heavenly places. Every local congregation, however small or unremarkable by worldly measures, participates in this larger, Spirit-empowered mission.
 
-## Discussion Questions
-
-1. Explain why Paul's ordering in Galatians 5:16 matters. Describe a specific struggle you have approached backward, and what approaching it forward would look like.
-2. Paul acknowledges genuine internal conflict in believers. How would you counsel someone who takes that conflict as evidence they were never truly converted?
-3. What occupies your mind in the unguarded gaps of the day? What does that reveal, and what single substitution could you make this week?
-4. Distinguish grieving from quenching the Spirit, and give an example of each from ordinary church life.
-5. The Antioch church received rather than invented its missionary strategy. What would have to change in your congregation's decision-making for that pattern to be genuinely possible?
-
 ## Reflection
 
 Pay attention tomorrow to what fills the small gaps of your day: waiting in line, driving, the minutes before sleep. These gaps reveal more about which mindset governs you than your Sunday morning intentions do. Replace one habitual gap-filler this week with a short turn toward Scripture or quiet prayer, not as a rigid rule but as a small, repeated act of setting your mind on the things of the Spirit.

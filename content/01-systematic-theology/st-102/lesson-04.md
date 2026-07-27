@@ -175,14 +175,6 @@ Underneath every sermon, every miracle, and every act of compassion ran a single
 
 His earthly ministry was never a random collection of good deeds and wise sayings. It was a coherent, deliberate unveiling of God's Kingdom, confirmed by fulfilled prophecy, validated by supernatural power, and grounded in perfect obedience, all of it pointing toward what would follow in Jerusalem.
 
-## Discussion Questions
-
-1. Work through the table in section 4 without looking at it. What is missing if Christ is Prophet and King but not Priest? Why is that the most serious of the three gaps?
-2. Dr. Kay warns against a faith that wants Christ's revelation and forgiveness while withholding obedience. Where does that pattern show up in the way churches you know present the gospel?
-3. John calls the miracles *signs*. Choose one miracle and explain both what it did for the person and what it revealed about Jesus.
-4. Jesus reserved His harshest words for religious pride rather than open sin. What does that priority say about the dangers facing people in ministry?
-5. The Sermon on the Mount is described as a picture of Kingdom life for everyone who follows Christ rather than an advanced standard for the especially devoted. Which part of it does your own practice quietly treat as optional?
-
 ## Reflection
 
 Write down one decision you are currently facing. Then write three short lines: what Christ as Prophet says to it, what Christ as Priest secures for you in it, and what Christ as King requires of you in it.

@@ -182,15 +182,6 @@ It should never produce satisfaction or superiority toward those who reject Chri
 
 No one who ends up separated from God forever does so because God failed to warn them or failed to provide a way of escape. The same book that describes outer darkness also describes, on nearly every page, a God who runs to meet returning sons while they are still far off, who leaves the ninety-nine to search for the one, who stands at the door and knocks.
 
-## Discussion Questions
-
-1. Jesus locates the substance of the promise in His own presence rather than in the place. How would a funeral message change if that were its centre?
-2. Which of the Revelation images most directly corrects the picture of heaven you inherited, and what had you been imagining instead?
-3. John saw no temple in the city. Explain the theological significance, and why it is good news rather than a missing feature.
-4. Dr. Kay says the hope of heaven makes it *easier*, not harder, to hold this world with open hands. Test that against something you are currently gripping tightly.
-5. Work through the three-part answer to the objection about proportionality. Which part is strongest, which weakest, and why?
-6. What practical difference is there between teaching hell with sober reluctance and teaching it with any trace of eagerness? What would a listener notice?
-
 ## Reflection
 
 Read Revelation 21:3 to 5 aloud, slowly. Then name the specific tear you most want wiped away, and sit with the fact that the promise is personal.

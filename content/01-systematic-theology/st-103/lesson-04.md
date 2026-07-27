@@ -168,14 +168,6 @@ Scripture avoids both ditches. It expects genuine, sometimes dramatic encounters
 
 Expect the Spirit's power. Do not manufacture it. Let it flow, as it always has, toward bold witness and Christlike character rather than toward spectacle for its own sake.
 
-## Discussion Questions
-
-1. Paul calls the bodies of the Corinthian believers a temple while confronting their sin in the same letters. What does that ordering teach about how holiness should be motivated?
-2. Explain the difference between the guarantee and the seal. What does each one specifically address in a struggling believer's anxiety?
-3. Work through the table in section 7. Which side of it has your own tradition emphasized, and what has been neglected as a result?
-4. Dr. Kay says the Spirit's power in Acts always moved outward toward mission. Test that claim against a teaching on the Spirit you have heard recently. Which direction was it pointing?
-5. Describe the two ditches in your own words. Which one is your instinct, and what would moving toward the road between them cost you?
-
 ## Reflection
 
 Identify one specific area where you currently feel underpowered: a conversation you have been avoiding, a habit you cannot break, a fear that keeps you silent. Bring that specific situation to the Spirit and ask to be filled afresh for it. Do not wait for an emotional signal before believing He has answered. Step forward in obedience and watch for the courage that so often arrives once you are already moving.

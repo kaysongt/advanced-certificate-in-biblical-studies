@@ -162,15 +162,6 @@ Growth also requires honest engagement with correction. A disciple who never exp
 
 Two questions close the chapter. Are you continuing in Jesus' teaching? And are you entrusting what you have learned to someone else?
 
-## Discussion Questions
-
-1. State precisely what baptism does and does not accomplish. How would you correct someone who believes the water itself saves?
-2. Trace the three directions in which baptism testifies. Which is most neglected in the way your congregation practises it?
-3. The Lord's Supper looks backward and forward at once. How does the forward orientation change the tone of a communion service?
-4. Why did Christ give physical, sensory practices rather than teaching alone? What does that say about how people actually learn?
-5. Distinguish a convert from a disciple. Estimate honestly what proportion of your congregation's ministry aims at each.
-6. Who discipled you, and whom are you discipling? If either answer is nobody, what specifically has prevented it?
-
 ## Reflection
 
 Identify one believer newer in the faith than you. Write down one thing you have learned that they have not yet, and one concrete way you could pass it on this month.

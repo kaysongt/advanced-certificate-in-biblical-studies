@@ -170,14 +170,6 @@ John offers both warning and promise. If we say we have no sin, we deceive ourse
 The bad news of sin is only ever preached properly when it makes room for the good news of grace. If you have felt the weight of this lesson, take heart. You are exactly the kind of person the gospel was written for. God's grace is not reserved for people who have cleaned themselves up first.
 :::
 
-## Discussion Questions
-
-1. Analyse the serpent's question. Identify the specific move he makes before any command to sin is issued, and name a modern equivalent you have encountered.
-2. Eve added a restriction God never gave. What does that reveal about how doubt operates, and where have you seen believers add to Scripture in ways that eventually undermine it?
-3. Explain representative headship, then show how the same structure that seems unfair in Adam becomes the ground of hope in Christ.
-4. Identify the threads of mercy in the curses and the expulsion. Why does the text explain the expulsion as protective?
-5. Explain the difference between treating sin as behaviour and treating it as condition. What changes in how you would counsel someone struggling with a besetting habit?
-
 ## Reflection
 
 Read Psalm 51 in full. Note every place David speaks of condition rather than action. Write one sentence naming something in your own life you have been treating as a behaviour problem that is in fact a heart problem.

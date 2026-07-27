@@ -159,14 +159,6 @@ Dr. Kay names honestly that prayer often feels difficult, dry, or unrewarding, e
 
 The discipline of showing up to pray, even without a corresponding emotional experience, is itself an act of faith.
 
-## Discussion Questions
-
-1. Psalm 95 holds shouting and kneeling together. Which posture does your congregation's worship culture favour, and what is lost by the imbalance?
-2. Apply Romans 12:1 to three specific areas of your week that you have never previously considered worship.
-3. Hebrews places praise and generosity in the same sacrificial category. What would change in a church budget conversation if that were taken seriously?
-4. Work through the structure of the Lord's Prayer. Which movement is most often missing from your own praying?
-5. Dr. Kay says prayer often feels dry, and that showing up anyway is itself an act of faith. How does that reframe a season you have interpreted as spiritual failure?
-
 ## Reflection
 
 For one week, begin every prayer with something true about God's character before making any request. Note at the end of the week what changed about the requests themselves.

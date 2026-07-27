@@ -156,17 +156,9 @@ Dr. Kay addresses this directly. Private devotion matters enormously, and it was
 
 Finally, unity within the Body does not mean uniformity. Some congregations pursue a false unity that suppresses diversity of gifting, personality, and calling in favour of a single acceptable mould. Paul's vision is the opposite. Unity is preserved precisely **through** diversity, when every differently gifted member submits to Christ as Head and cooperates with every other member.
 
-## Discussion Questions
-
-1. Work through the three substitutes for the Church in section 3. Which one does your own language most often slip into, and what does that reveal?
-2. The royal priesthood abolishes any mediating class between believers and God. Where does a functional clergy-laity divide still operate in the churches you know?
-3. Paul confronts two opposite temptations with the Body metaphor. Which is yours, self-disqualification or contempt? What does it cost your congregation?
-4. Describe a congregation that has truth without love, and one that has love without truth. What does each produce over ten years?
-5. Dr. Kay says a hand cut off does not become more independent, it becomes lifeless tissue. Where have you seen a believer test that claim, and how did it go?
-
 ## Reflection
 
-Write down the specific contribution you currently make to the Body you belong to. If you cannot name one, write down the reason honestly. Bring either answer to the next session.
+Write down the specific contribution you currently make to the Body you belong to. If you cannot name one, write down the reason honestly. Keep your answer — you will build on it in later topics.
 
 ## Lesson Quiz
 

@@ -173,14 +173,6 @@ Human collections assembled across such a span of time and circumstance do not t
 Scripture exists to reveal Jesus Christ and to draw people into saving, transforming relationship with Him through the power of the Holy Spirit. Every page, rightly read, points somewhere, and that somewhere is a Person.
 :::
 
-## Discussion Questions
-
-1. Romans 1 says creation leaves people without excuse. If that is true, why does Scripture insist so strongly on preaching? Answer using the distinction between what general and special revelation can each accomplish.
-2. A believer tells you a dream has convinced them to leave their marriage. Using this lesson, walk through how you would respond, and name the specific principle that governs your answer.
-3. Explain to a sceptical friend, in your own words and without theological jargon, why the absence of original manuscripts does not undermine confidence in the New Testament.
-4. Why does it matter pastorally that the church recognized rather than created the canon? What would change if the reverse were true?
-5. Dr. Kay argues that the centuries between Eden and Bethlehem were the real story rather than a delay before it. How does that reframe the way you read the Old Testament?
-
 ## Reflection
 
 Take one passage you have often applied to yourself and ask what it can and cannot establish on its own. Write two sentences: one naming what the passage genuinely affirms, and one naming a conclusion you have drawn from it that the passage does not actually support.

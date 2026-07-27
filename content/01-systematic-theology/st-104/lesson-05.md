@@ -168,14 +168,6 @@ Jesus offered His disciples an image of this the night before His crucifixion. H
 Union with Christ takes every other doctrine we have studied so far, grace, faith, justification, regeneration, adoption, and binds them together into a single, coherent reality. You are not simply forgiven by Christ. You are joined to Him, so completely that His story has become your story.
 :::
 
-## Discussion Questions
-
-1. Explain the difference between regeneration and reformation to someone who has resolved to become a better person. What exactly are you offering them that they cannot give themselves?
-2. Why did Jesus choose Nicodemus for the conversation in John 3? What would have been lost if He had said the same words to a known sinner instead?
-3. Work through the table contrasting the spirit of bondage with the Spirit of adoption. Which column describes your default posture in prayer?
-4. What does Roman adoption practice add to Paul's use of the term *joint heirs*? Why does that detail matter to someone who fears they are merely tolerated?
-5. Paul says believers are already seated with Christ in the heavenly places, in the past tense. How would daily life change if you took that tense seriously?
-
 ## Reflection
 
 Write out Galatians 2:20 by hand. Then underline every phrase that describes something already accomplished rather than something you are working toward. Sit with the proportion.

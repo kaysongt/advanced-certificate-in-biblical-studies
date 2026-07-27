@@ -364,10 +364,17 @@ def module_md(m, d):
     for n in range(1, 5):
         a(f"{n}. {TODO} Outcome {n}")
     a("")
+    a("## Module Video\n")
+    a(f"{TODO} One video for this module, shown after the final course. "
+      "Title, speaker, and running time.\n")
+    a("## Module Assignment\n")
+    a(f"{TODO} One assignment for the whole module, submitted after all "
+      f"{len(m['courses'])} courses are complete.\n")
+    pm = d["grading"]["pass_mark"]
     a("## Certificate Requirements\n")
     a(f"- Complete all {len(m['courses'])} courses ({m['hours']} contact hours)")
-    a("- Pass every lesson quiz and course assessment at 70% or above")
-    a("- Submit all required course assignments")
+    a(f"- Pass every topic quiz and course assessment at {pm}% or above")
+    a("- Submit the module assignment")
     return "\n".join(L)
 
 
@@ -387,8 +394,10 @@ def course_md(c, m, d):
     a(f"- **Title:** {c.get('textbook') or TODO}")
     a(f"- **Author:** {d['program']['founder']['name']}")
     a("")
-    a("## Course Assignment\n")
-    a(f"{TODO} One written or practical assignment demonstrating mastery of the course outcomes.")
+    a("## Course Assessment\n")
+    a(f"One assessment covering all {n} topics, taken after the last topic is complete. "
+      f"Pass mark {d['grading']['pass_mark']}%. There is no separate assignment at course "
+      "level — the single assignment sits at the end of the module.")
     return "\n".join(L)
 
 
@@ -408,12 +417,12 @@ def lesson_md(n, c, m):
     a(f"{TODO} | | {TODO}")
     a(":::\n")
     a(f"## {TODO} First main point\n")
-    a(f"{TODO} Teaching content.\n")
-    a("## Discussion Questions\n")
-    for i in range(1, 5):
-        a(f"{i}. {TODO} Question {i}")
-    a("")
-    a("## Lesson Quiz\n")
+    a(f"{TODO} Teaching content. The teaching lives here — this page IS the lesson,")
+    a("not a summary of reading done elsewhere.\n")
+    a("## Reflection\n")
+    a(f"{TODO} One short self-study exercise. No live class — do not reference sessions,")
+    a("groups, or classmates.\n")
+    a("## Topic Quiz\n")
     a(":::quiz")
     a(f"Q {TODO} Question")
     a(f"+ {TODO} Correct option")
@@ -734,7 +743,7 @@ def build(d):
             )
             lrows += ('<a class="row" href="assessment.html"><span class="code">&mdash;</span>'
                       '<span class="body"><span class="t">Course Assessment</span>'
-                      '<span class="s">Covers all lessons. Pass mark 70%.</span></span>'
+                      f'<span class="s">Covers all topics. Pass mark {d["grading"]["pass_mark"]}%.</span></span>'
                       '<span class="meta">100 pts</span></a>')
             coll.at(f'{c["code"]} {c["title"]}', f'courses/{c["slug"]}/index.html')
             html = bar(0) + head + f'<h2>Lessons</h2><div class="stack">{lrows}</div>' \

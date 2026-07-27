@@ -140,17 +140,9 @@ Theology, remember, is not primarily our search for God. It is our response to t
 
 That sentence is the bridge into Lesson 2. If theology is a response to God's initiative, the next question is unavoidable: how has He made Himself known?
 
-## Discussion Questions
-
-1. Dr. Kay says the person who claims doctrine does not matter has simply adopted an unexamined theology. Where did your own working picture of God's character come from before you began formal study, and which parts of it have you never actually tested against a text?
-2. Of the four reasons theology matters, which one is most neglected in the church you serve or attend? What would change if it were taken seriously for a year?
-3. Paul engaged the Athenians' altar to an unknown god rather than dismissing it. What is the equivalent bridge in the culture where you minister, and what would it look like to use it without compromising the message?
-4. The chapter says the test of healthy theology is whether it produces worship. Judged by that test rather than by accuracy alone, how healthy is the theology you currently hold?
-5. Explain the difference between receiving, testing, and passing on doctrine. What goes wrong in a church that does one or two of these but not all three?
-
 ## Reflection
 
-Write one paragraph, no more than 150 words, defining theology in your own words to a new believer who has told you they are not interested in doctrine. Do not use the words *theos*, *logos*, or *systematic*. Bring the paragraph to the next session.
+Write one paragraph, no more than 150 words, defining theology in your own words to a new believer who has told you they are not interested in doctrine. Do not use the words *theos*, *logos*, or *systematic*. Keep the paragraph — you will build on it in later topics.
 
 ## Lesson Quiz
 

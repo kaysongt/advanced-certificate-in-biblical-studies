@@ -153,14 +153,6 @@ It is not the size of your faith that saves you. It is the sufficiency of the On
 
 This is the essential difference between grace and faith. Grace is the gift. Faith is the empty hand that receives it. An empty hand does not earn the gift it receives. It simply opens to accept what is being offered. Faith does not save you because of some inherent power within faith itself. Faith saves you because it connects you to the One who does the saving.
 
-## Discussion Questions
-
-1. Explain grace to someone who believes God helps those who help themselves. Where exactly does their formulation break down?
-2. Titus says grace teaches. How would you answer someone who argues that emphasizing grace will make people careless about holiness?
-3. Explain the function of the law using the images of mirror and guardian. What goes wrong when the law is treated as a ladder instead?
-4. Both mistakes about faith, faith-as-work and faith-as-assent, are common. Which is more prevalent in your context, and what does it produce?
-5. Reconcile Paul and James in a single sentence, then explain the sentence to someone who has been told the Bible contradicts itself here.
-
 ## Reflection
 
 Write down one thing you have quietly been contributing to your own salvation, some effort or quality you half-believe tipped the scales. Then write beside it the specific phrase from Ephesians 2:8 to 9 that rules it out.

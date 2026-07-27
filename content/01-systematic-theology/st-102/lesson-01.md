@@ -117,17 +117,9 @@ The entire structure of the gospel rests on the truth that the One who died for 
 
 This truth should produce worship rather than merely information. Before Abraham was born, before Adam took his first breath, before the earth was formed, He was already there, already glorious, already loving you in the eternal counsel of God. That is where the story of Jesus really begins.
 
-## Discussion Questions
-
-1. Trace the argument from Colossians 1:15 to 17 as though you were answering someone who believes *firstborn* means Christ was created. What does verse 17 settle, and why?
-2. John 17:5 shows Christ asking to be restored to a glory He had set aside. What does the word *restored* imply about the incarnation that we will take up in Lesson 2?
-3. Hebrews says Christ upholds all things right now. Name one area of your life where you have been functioning as though God set the world running and stepped back.
-4. Why does the salvation of sinners depend on the preexistence of the Son? Build the argument in three steps.
-5. Read Daniel 7:13 to 14 alongside a Gospel passage where Jesus calls Himself the Son of Man. What was He claiming, and would His hearers have understood it?
-
 ## Reflection
 
-Write down, in one sentence each, the three strongest passages you would use to establish Christ's eternal existence. Commit their references to memory before the next session. You will need them in Lesson 3.
+Write down, in one sentence each, the three strongest passages you would use to establish Christ's eternal existence. Commit their references to memory before you move on. You will need them in Topic 3.
 
 ## Lesson Quiz
 

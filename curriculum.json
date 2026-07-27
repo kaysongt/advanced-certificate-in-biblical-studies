@@ -56,22 +56,23 @@
     }
   },
   "grading": {
-    "note": "PROPOSED weighting — not specified in the catalog. Confirm with Dr. Kay before publishing.",
+    "note": "Pass mark confirmed at 80%. Component WEIGHTS are still PROPOSED — Dr. Kay to set in stone before publishing.",
     "components": [
       {
-        "name": "Lesson Quizzes",
+        "name": "Topic Quizzes",
         "weight": 30
       },
       {
-        "name": "Course Assignments",
+        "name": "Module Assignment",
         "weight": 30
       },
       {
-        "name": "Final Course Assessment",
+        "name": "Course Assessment",
         "weight": 40
       }
     ],
-    "pass_mark": 70,
+    "pass_mark": 80,
+    "must_pass_to_advance": true,
     "scale": [
       {
         "grade": "A",
@@ -82,12 +83,8 @@
         "range": "80-89"
       },
       {
-        "grade": "C",
-        "range": "70-79"
-      },
-      {
         "grade": "F",
-        "range": "Below 70"
+        "range": "Below 80"
       }
     ]
   },
@@ -165,7 +162,13 @@
           "textbook": "What We Believe, Volume 6: Eternity (Eschatology)",
           "isbn": "978-1-971500-782"
         }
-      ]
+      ],
+      "video": {
+        "title": null,
+        "url": null,
+        "speaker": null,
+        "duration": null
+      }
     },
     {
       "numeral": "II",
@@ -228,7 +231,13 @@
           "series_line": "",
           "description": "Identify and avoid the most common mistakes that lead to misunderstanding and misapplication of Scripture, including proof-texting, allegorizing, and ignoring historical and literary context. This course equips students to recognize subtle interpretive pitfalls that produce doctrinal error and unhealthy teaching, while modeling how to handle God's Word with integrity and care. Through guided practice and case studies, students develop sound, biblically faithful habits of study that protect both their own theology and those they teach."
         }
-      ]
+      ],
+      "video": {
+        "title": null,
+        "url": null,
+        "speaker": null,
+        "duration": null
+      }
     },
     {
       "numeral": "III",
@@ -283,7 +292,13 @@
           "series_line": "",
           "description": "Examine the twelve Minor Prophets and God's consistent call to repentance, covenant faithfulness, and future restoration. Though brief, these books carry powerful messages of justice, mercy, and hope for both Israel and the surrounding nations. Students trace common themes across the twelve, including the Day of the Lord, God's compassion toward the repentant, and the promised restoration that anticipates the coming Messiah and His eternal Kingdom, learning to apply their urgent calls to holiness in a modern context."
         }
-      ]
+      ],
+      "video": {
+        "title": null,
+        "url": null,
+        "speaker": null,
+        "duration": null
+      }
     },
     {
       "numeral": "IV",
@@ -338,7 +353,13 @@
           "series_line": "",
           "description": "Understand Christ's ultimate victory, God's final redemptive plan, the new creation, and the believer's eternal hope through the book of Revelation. This course walks through John's apocalyptic vision, including the letters to the seven churches, the unfolding judgments, the defeat of evil, and the glorious return of Christ to establish His eternal Kingdom. Students are equipped to interpret apocalyptic literature responsibly and to live with confident hope."
         }
-      ]
+      ],
+      "video": {
+        "title": null,
+        "url": null,
+        "speaker": null,
+        "duration": null
+      }
     },
     {
       "numeral": "V",
@@ -433,7 +454,13 @@
           "series_line": "Capstone Course",
           "description": "Learn to live from your heavenly identity through faith, wisdom, spiritual discernment, and the power of the Holy Spirit as a normal way of life. This capstone course integrates the module's core themes, renewed thinking, sonship, authority, and rest, into a consistent, sustainable supernatural lifestyle. Students learn to walk in the miraculous as an overflow of relationship with God rather than performance, finishing the program equipped to live and minister from continual dependence on the Spirit."
         }
-      ]
+      ],
+      "video": {
+        "title": null,
+        "url": null,
+        "speaker": null,
+        "duration": null
+      }
     }
   ]
 }

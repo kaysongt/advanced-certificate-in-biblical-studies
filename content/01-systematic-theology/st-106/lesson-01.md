@@ -175,14 +175,6 @@ Scripture charts a steadier course. It takes demonic activity with complete seri
 
 Paul's line to the Romans holds the balance exactly: the God of peace will soon crush Satan under **your** feet. Notice who does the crushing, and notice whose feet are involved.
 
-## Discussion Questions
-
-1. Elisha's servant was afraid because he could see only one layer of reality. Where in your own life have you been assessing a situation with the servant's eyes rather than Elisha's?
-2. Not one angel in Scripture accepts worship. What does that consistency establish about every impressive created thing, including impressive ministries?
-3. Why does the textbook insist that the dead do not become angels, and what pastoral damage does the popular version do at a funeral?
-4. Job cannot be touched without permission. How should that structure change the way a believer interprets a season of severe difficulty?
-5. Dr. Kay names two opposite errors about the enemy. Which of the two is the greater danger in your own context, and what would correcting it look like practically?
-
 ## Reflection
 
 Write down one difficulty you are currently facing. Under it, write what would change about how you carry it if you took Colossians 2:15 as literally true of that specific situation.

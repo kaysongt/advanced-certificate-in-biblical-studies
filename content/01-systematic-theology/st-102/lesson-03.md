@@ -168,14 +168,6 @@ This is not a claim any created being could honestly make. Every human life is m
 This unchanging nature is not cold or static, the way a stone monument remains unchanged simply because it is lifeless. It is the settled, living constancy of a Person whose perfection leaves no room for improvement and whose faithfulness leaves no room for failure.
 :::
 
-## Discussion Questions
-
-1. Which details of Christ's humanity do you find hardest to take seriously, and why? What does your hesitation reveal about your working picture of Him?
-2. Hebrews 4:15 to 16 moves from Christ's temptation to our confidence. Reconstruct that argument in your own words. Why does the boldness depend on the temptation being real?
-3. Build the case for Christ's deity using one passage from each of the four categories: names, attributes, works, worship. Which category do you find most persuasive with sceptics, and why?
-4. State the doctrine of the two natures in a single sentence. Then explain what goes wrong in each of the two characteristic errors.
-5. Explain to a new believer why a Savior who was only human could not save, and why one who was only divine would be an inadequate mediator.
-
 ## Reflection
 
 Take one temptation you are currently facing. Write it down, then write beside it the specific way Hebrews 4:15 to 16 changes how you bring it to God. Be concrete about what you would otherwise have done instead.

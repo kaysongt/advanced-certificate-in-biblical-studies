@@ -16,6 +16,14 @@ export type Course = {
   isbn?: string;
 };
 
+/** One video per module, shown after the final course. Null until supplied. */
+export type ModuleVideo = {
+  title: string | null;
+  url: string | null;
+  speaker: string | null;
+  duration: string | null;
+};
+
 export type Module = {
   numeral: string;
   number: number;
@@ -27,8 +35,10 @@ export type Module = {
   overview: string;
   catalog_blurb: string;
   hours_per_course: number;
+  /** Topics per course. The hierarchy is Module → Course → Topic. */
   lessons_per_course: number;
   courses: Course[];
+  video?: ModuleVideo;
 };
 
 export type Curriculum = {
@@ -56,6 +66,8 @@ export type Curriculum = {
     note: string;
     components: { name: string; weight: number }[];
     pass_mark: number;
+    /** Students cannot advance past a topic or course until they pass it. */
+    must_pass_to_advance: boolean;
     scale: { grade: string; range: string }[];
   };
   modules: Module[];

@@ -163,14 +163,6 @@ A congregation that focuses exclusively on its own immediate community, however 
 
 Finally, sophistication is not required. The Samaritan woman, moments after her own encounter with Jesus, ran back to her town and told everyone, come, see a man who told me everything I ever did. Her testimony, simple and personal, brought many of her townspeople to faith. A genuine, personal account of what Christ has done carries real evangelistic power even without extensive theological training.
 
-## Discussion Questions
-
-1. Jesus said *not so with you*. Name a specific leadership practice you have observed in a church that would fail this test, and describe what the servant alternative would look like.
-2. Paul's qualifications for elders omit charisma and platform ability entirely. How are leaders actually selected in the contexts you know, and what does the gap reveal?
-3. Peter names three temptations and three countering virtues. Which temptation is most common among leaders you have known?
-4. Trace the logic of Romans 10 backward. Where does the chain most often break in your congregation?
-5. Explain the ambassador framework to someone who feels too unqualified to share their faith. What does it add, and what pressure does it remove?
-
 ## Reflection
 
 Write down the name of one person in your ordinary life who does not yet know Christ. Then write one specific, realistic next step, not a plan to deliver a presentation, but a step toward the kind of relationship in which the conversation becomes natural.

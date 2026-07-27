@@ -173,14 +173,6 @@ The Church is not a building, an institution, or a weekly event. She is a called
 
 The aim of this course is not that you become someone who attends church, but someone who understands, deeply and practically, what it means to *be* the Church until the day her Bridegroom returns.
 
-## Discussion Questions
-
-1. The parables of Matthew 13 correct the assumption that the Kingdom advances by force or visible power. Where does that assumption still operate in Christian conversation you have heard?
-2. Explain the already and not yet tension. What goes wrong in a church that emphasizes only one side?
-3. Apply the embassy image concretely. Name three things your congregation does that genuinely display kingdom life to outside observers, and one that does not.
-4. Romans 14:17 identifies the kingdom's substance as righteousness, peace, and joy. Assess your congregation honestly against those three.
-5. Which error is more likely in your context, withdrawal or assimilation? What would the third way require that you are not currently doing?
-
 ## Reflection
 
 Write one sentence completing this: "If someone outside the faith observed my life closely for a month, the thing about God's kingdom they would most clearly see is..." Then write a second sentence naming what they would not see, and why.

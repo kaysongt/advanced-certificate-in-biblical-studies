@@ -148,14 +148,6 @@ The eternal became temporal without ceasing to be eternal. The infinite took on 
 If you find yourself, even after years of faith, still stunned by the thought of God becoming a baby in Bethlehem, take that as a healthy sign. Some truths are meant to keep humbling us, no matter how familiar they become.
 :::
 
-## Discussion Questions
-
-1. Explain the two truths the virgin birth protects. Then explain what would be lost theologically if either were surrendered.
-2. Dr. Kay says Christ set aside the independent exercise of divine privilege rather than His deity. Why does that distinction matter for how we read the Gospel accounts of Jesus praying, growing tired, or saying He does not know the day or hour?
-3. Paul introduces the *kenosis* passage as a model for Christian humility. Name one specific privilege you hold that Philippians 2:5 to 7 is asking you to hold loosely.
-4. Consider the circumstances of Christ's birth: a feeding trough, an unremarkable town, shepherds as first witnesses. What is this saying about the Kingdom, and where does your ministry contradict it?
-5. Why does it matter that the Son was born *under the law* rather than exempt from it?
-
 ## Reflection
 
 Read Philippians 2:5 to 11 slowly, twice. On the second reading, mark where the descent ends and the exaltation begins. Write one sentence on what that turning point implies about the path to genuine honour.

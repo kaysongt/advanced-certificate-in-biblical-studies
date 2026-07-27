@@ -160,14 +160,6 @@ The contrast is not between grief and no grief. It is between grief without hope
 
 Dr. Kay is careful not to overclaim here. Scripture does not answer every private question about what dying will feel like, or about loved ones who died without a clear profession of faith, and it would be dishonest to pretend otherwise. What it gives is the repeated assurance that God is near in the valley of the shadow. David walked through it without fear precisely because the Shepherd's presence, not the absence of darkness, was what secured him.
 
-## Discussion Questions
-
-1. State the difference between fighting for victory and fighting from it. Then identify one area of your life where you have unknowingly been fighting for it.
-2. Every piece of the armour describes the gospel from a different angle. Which piece are you least conscious of wearing, and what does that reveal?
-3. James puts submission before resistance. What goes wrong practically when a believer reverses the order?
-4. Paul calls death the last enemy, not a natural transition. How does that language differ from what is usually said at funerals, and what is gained by using it?
-5. Dr. Kay says Scripture does not answer every private question about death. How should a pastor speak honestly about that limit while still offering real comfort?
-
 ## Reflection
 
 Read 1 Thessalonians 4:13 slowly. Write one sentence describing a loss you carry, and a second sentence describing what changes about that grief when it is anchored rather than removed.

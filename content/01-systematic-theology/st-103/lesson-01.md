@@ -163,14 +163,6 @@ If you think of Him as a force, you will chase sensations and call them Him. If 
 
 Dr. Kay observes that believers who grow comfortable acknowledging the Spirit's full deity tend to grow far more sensitive to His presence in ordinary life. They stop waiting for dramatic moments and start recognising His voice in the quiet nudge toward kindness, the unexpected conviction over a careless word, the peace that steadies a fearful heart before a hard conversation.
 
-## Discussion Questions
-
-1. Dr. Kay describes two failing postures toward the Spirit: treating Him as a vending machine and treating Him as a stranger. Which is more common in your context, and what does each cost a believer?
-2. Jesus said it was to the disciples' advantage that He go away. Explain why, without diminishing the value of His earthly presence.
-3. Work through the table in section 1. Which of those personal actions had you never previously considered as evidence of personhood?
-4. Romans 8:26 to 27 says the Spirit prays for us when we cannot pray. How would you use this with someone who has stopped praying because they feel they are doing it badly?
-5. The Spirit does not build a following around Himself. Apply that test to teaching about the Spirit you have encountered. What passes, and what does not?
-
 ## Reflection
 
 Stop asking what the Spirit can do for you before you have asked who He is. This week, simply acknowledge His presence, quietly and honestly, the way you might acknowledge a friend who just walked into the room. Then, in one prayer, address Him directly by name and thank Him for interceding for you when your own words fail.

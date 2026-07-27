@@ -163,14 +163,6 @@ Understanding this history protects us from two errors. It keeps us from dismiss
 
 One further continuity is worth naming. The Old Testament pattern of the Spirit equipping ordinary people for real, tangible tasks did not disappear at Pentecost. It expanded, now available continuously rather than selectively. He is present in the skill you bring to your trade, the courage you summon in a difficult leadership moment, the strength you draw on to persevere.
 
-## Discussion Questions
-
-1. Read Psalm 51:11 in light of what happened to Saul. Explain why David's plea was rational rather than dramatic, and then explain why the same plea is not the appropriate prayer for a believer today.
-2. Bezalel was filled with the Spirit for craftsmanship. What does that widen in your expectation of where the Spirit is active in your own week?
-3. Explain the phrase from John 7:39 that the Spirit had not yet been given because Jesus was not yet glorified. Why does that clause rule out treating the Spirit as a second blessing?
-4. Pentecost reverses Babel. Work out what that implies for the church's posture toward cultural and linguistic difference.
-5. Name a specific way you have seen Old Testament patterns of the Spirit's activity imported into New Covenant teaching. What harm did it do?
-
 ## Reflection
 
 Read Psalm 51 slowly, noticing the desperation behind David's request. Then remember that you serve under different terms entirely. Write one sentence naming something you have been anxiously trying to keep that has, in fact, already been permanently secured for you.

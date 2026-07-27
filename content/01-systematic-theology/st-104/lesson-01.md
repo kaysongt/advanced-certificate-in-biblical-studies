@@ -133,14 +133,6 @@ Before you were ever told you were a sinner in need of a Savior, the Bible tells
 
 Salvation does not give you a dignity you never had. It restores a dignity that sin corrupted. The image of God in every human being is like a mirror that has been cracked. It still reflects something of the one who made it, but the reflection is distorted, fragmented, and in need of restoration.
 
-## Discussion Questions
-
-1. Why does it matter theologically that creation was declared good rather than neutral? What would follow if brokenness were simply the nature of things?
-2. Trace the ways provision precedes need in Genesis 1. What does that pattern say about God's character, and where do you fail to trust it?
-3. Explain the image of God to someone who ties their worth to productivity. What specifically does the doctrine dismantle in their reasoning?
-4. Work, dominion, and community all predate the fall. Which of the three does your church culture most often treat as a consequence of sin rather than part of the design?
-5. Rest precedes labour in the creation account. Where in your own spiritual life have you reversed that order?
-
 ## Reflection
 
 Write one sentence describing your worth using only categories present in Genesis 1 and 2. Notice which of your usual categories you were unable to use.

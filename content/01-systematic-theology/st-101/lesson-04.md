@@ -157,14 +157,6 @@ When Paul finished a long section describing God's ways as inscrutable and His j
 
 Read the next lesson not as a student memorizing facts for an exam, but as a worshiper standing, like Isaiah, before the throne.
 
-## Discussion Questions
-
-1. God answered Moses with I AM WHO I AM rather than a description. What would have been lost if He had answered with a list of His deeds instead?
-2. Isaiah 40 was written to people who felt forgotten. How does describing God's greatness comfort rather than crush someone in that condition?
-3. Isaiah's vision of holiness moves from woe to cleansing. What goes wrong in a believer's life when they experience the first without the second? What goes wrong when they expect the second without the first?
-4. Dr. Kay says we were never necessary additions to an incomplete God. Some hear that as cold. Explain why it is actually the ground of assurance rather than a threat to it.
-5. Job received an encounter rather than an explanation. Where in your own life or ministry have you been demanding the wrong one of those two?
-
 ## Reflection
 
 Choose the one truth in this lesson that most needs to reorder something in your thinking. Write a single sentence beginning "Because God is..." and ending with a specific change in how you will pray this week.

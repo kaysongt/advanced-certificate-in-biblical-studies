@@ -174,14 +174,6 @@ This is where Scripture leaves us, not with a doctrine to file away, but with a 
 
 The Bible's final chapter closes with the risen and ascended Christ declaring, surely I am coming quickly, met immediately by the church's answering cry, Amen. Even so, come, Lord Jesus (Revelation 22:20).
 
-## Discussion Questions
-
-1. Why is it significant that Christ ascended bodily and retains His human nature permanently? What would be lost if the incarnation had been temporary?
-2. Dr. Kay calls Christ's present ministry one of the most overlooked truths in popular teaching. Why do you think it gets skipped, and what does its absence cost a congregation?
-3. Explain the difference between Christ's intercession and His advocacy. When would you use each in counselling a believer?
-4. How should the doctrine of Christ's present ministry change the way you pray this week? Be specific about what you will stop doing.
-5. Paul closes his teaching on the return with the instruction to comfort one another with these words. How does that pastoral purpose compare with the way the second coming is usually discussed?
-
 ## Reflection
 
 Write down one accusation you regularly hear in your own thoughts about your standing before God. Then write beside it what Romans 8:34 and 1 John 2:1 establish is happening in heaven at that same moment.

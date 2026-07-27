@@ -193,14 +193,6 @@ If there is one thing I want you to carry forward from this entire book, it is t
 
 The course began by defining theology as the study of God and insisting it belongs to every believer. It ends with the reason that matters. The God who is self-existent, eternal, sovereign, holy, and utterly unique has made Himself knowable, and has done so as a Father who chose you before the foundation of the world.
 
-## Discussion Questions
-
-1. State the doctrine of the Trinity in three sentences without using an illustration. Then explain why every illustration eventually breaks down.
-2. Modalism and tritheism each simplify the doctrine by dropping half of it. Which of the two is more common in the songs, prayers, and casual explanations you hear in your context?
-3. The chapter argues that theological terms not found in Scripture can still serve Scripture faithfully. What is the safeguard that keeps this from becoming a licence to invent doctrine?
-4. Describe the difference between relating to God as an employer and relating to Him as a Father. Where does the employer pattern still show up in your own devotional life?
-5. Hebrews 12 reframes discipline as evidence of love rather than rejection. How would you use this with a believer currently interpreting a hard season as God's disapproval?
-
 ## Reflection
 
 Write a short prayer, no longer than five sentences, that is deliberately Trinitarian: addressed to the Father, through the Son, in the Spirit. Notice what this forces you to be clear about.

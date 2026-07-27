@@ -173,15 +173,6 @@ The believer confined to a wheelchair, the believer whose mind has been robbed b
 
 This doctrine also refuses every philosophy that treats the physical world as unimportant or disposable. God made bodies. Christ rose in a body. The ordinary discipline of caring for the body you have now, honouring it rather than despising it, gains weight when you remember that this body, transformed but continuous, is the very body you will inhabit forever.
 
-## Discussion Questions
-
-1. Acts 1 promises the same Jesus, coming in the same way. What is lost when the return is treated as a metaphor for something else?
-2. Paul wrote 1 Thessalonians 4 to comfort grieving people. How does knowing his purpose change the way the passage should be preached?
-3. Peter says the delay is mercy, not forgetfulness. How does that reframe an unanswered prayer you have carried for years?
-4. Dr. Kay says date-setting undermines the very watchfulness Jesus commands. Explain the mechanism. Why does calculating actually reduce readiness?
-5. The textbook deliberately declines to take a position on the tribulation and millennium sequence. Do you find that restraint satisfying or frustrating, and what does your answer reveal?
-6. Paul ends the resurrection chapter with an exhortation about present labour. Name one hidden, unglamorous work you do that this promise dignifies.
-
 ## Reflection
 
 Identify one task this week that feels too small to matter. Do it as though 1 Corinthians 15:58 were literally true of it, because it is.

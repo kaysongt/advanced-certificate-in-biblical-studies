@@ -14,7 +14,7 @@ export default async function DashboardPage() {
   const student = await currentStudent();
   if (!student) redirect("/login");
 
-  const { program } = getCurriculum();
+  const { program, grading } = getCurriculum();
   const enrolments = await db.getEnrolmentsForStudent(student.id);
   const progress = await db.getProgress(student.id);
   const statuses = getModuleStatuses();
@@ -73,7 +73,46 @@ export default async function DashboardPage() {
         })}
       </div>
 
-      <form action={signOut} style={{ marginTop: 40 }}>
+      <h2 style={{ marginTop: 44 }}>How you are graded</h2>
+      <p className="deck" style={{ maxWidth: "62ch" }}>
+        You need <strong>{grading.pass_mark}%</strong> to pass. You cannot move on to the next
+        topic or course until you have passed the one before it.
+      </p>
+      <div className="tablewrap" style={{ maxWidth: "62ch" }}>
+        <table>
+          <thead>
+            <tr>
+              <th>Component</th>
+              <th>Weight</th>
+            </tr>
+          </thead>
+          <tbody>
+            {grading.components.map((c) => (
+              <tr key={c.name}>
+                <td>{c.name}</td>
+                <td>{c.weight}%</td>
+              </tr>
+            ))}
+            <tr>
+              <td>
+                <strong>Pass mark</strong>
+              </td>
+              <td>
+                <strong>{grading.pass_mark}%</strong>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div className="pillrow" style={{ marginTop: 14 }}>
+        {grading.scale.map((s) => (
+          <span className={`pill ${s.grade === "F" ? "quiet" : "ok"}`} key={s.grade}>
+            {s.grade} &middot; {s.range}
+          </span>
+        ))}
+      </div>
+
+      <form action={signOut} style={{ marginTop: 44 }}>
         <button type="submit" className="btn">
           Sign out
         </button>

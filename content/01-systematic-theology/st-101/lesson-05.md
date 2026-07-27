@@ -187,17 +187,9 @@ Peter reminds us that as He who called us is holy, we also are to be holy in all
 We do not study God's character merely to admire it from a safe distance. We study it because we are being formed, day by day, into its likeness.
 :::
 
-## Discussion Questions
-
-1. Take one distortion from the table in section 8 and describe a real example you have encountered in preaching, worship music, or Christian publishing. What was missing, and what damage did it do?
-2. Explain why a God who never judged sin would be less loving rather than more loving. Make the argument to someone who finds divine judgment offensive.
-3. The chapter says every attribute finds its fullest display in Christ. Choose one attribute and trace it through a single Gospel narrative.
-4. Which communicable attribute are you personally least being formed into at present? What would deliberate cooperation with that formation look like this month?
-5. Joseph said his brothers meant evil but God meant it for good. How would you use this text pastorally with someone whose suffering is still unresolved, without minimizing what they are carrying?
-
 ## Reflection
 
-Write out the table from section 8 from memory, then add a fourth row of your own: name an attribute, isolate it, and describe the distortion it would produce. Bring it to the next session.
+Write out the table from section 8 from memory, then add a fourth row of your own: name an attribute, isolate it, and describe the distortion it would produce. Keep it — you will build on it in later topics.
 
 ## Lesson Quiz
 

@@ -148,15 +148,6 @@ A God who did not judge sin would not be a God worth trusting, because a univers
 The gospel is the announcement that God has provided exactly the path of mercy his justice requires, satisfying the full weight of judgment against sin in the death of his own Son, so that everyone who trusts in Christ can stand before the final judgment not in terror but in confident hope, knowing that the verdict has already been rendered in their favor at the cross, long before that final day ever arrives.
 :::
 
-## Discussion Questions
-
-1. Paul grounds the certainty of judgment in the resurrection. Trace the logic. Why does one guarantee the other?
-2. The Judge is the One who bled for sinners. In what way does that identity function as comfort, and in what way does it raise the stakes?
-3. If the criteria in Matthew 25 are evidence rather than grounds, what would it look like to teach that passage without producing either complacency or works-righteousness?
-4. Explain the *bema* to someone who fears that their salvation will be re-examined at it. What exactly is being evaluated?
-5. A believer arrives with mostly wood, hay, and straw. Scripture says he is saved, but suffers loss. How should that possibility affect how you spend the coming year?
-6. Dr. Kay argues that a God who did not judge would not be worth trusting. Test that claim against a specific injustice you know of.
-
 ## Reflection
 
 List three things you spent significant time on this past month. Beside each, write which building material it most resembles, and why. Be honest rather than harsh.

@@ -152,14 +152,6 @@ Dr. Kay closes the chapter with questions worth asking honestly rather than defe
 
 These are not meant to induce guilt for its own sake. They are meant to help you assess whether you are living as a genuine member of God's household or merely as a visitor who happens to attend regularly.
 
-## Discussion Questions
-
-1. Explain the sequence in Ephesians 5. What goes wrong practically when a believer reverses it?
-2. How do security and faithfulness belong together rather than competing? Use the marriage analogy, then apply it to a specific area of your own obedience.
-3. Revelation says the bride's linen is the righteous acts of God's holy people. What does that say about small, hidden faithfulness?
-4. What does *household* obligate that *congregation* does not? Name one obligation your church currently does not meet.
-5. Answer the four diagnostic questions in section 7 honestly, in writing, before discussing them aloud.
-
 ## Reflection
 
 Identify one person in your congregation whose actual struggles you do not know. Take one concrete step this week toward knowing them. Note what made the step difficult.

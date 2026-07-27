@@ -65,13 +65,6 @@ status: template
 
 [FROM BOOK] How this truth changes the way the student thinks, prays, lives, or ministers.
 
-## Discussion Questions
-
-1. [FROM BOOK] Question 1
-2. [FROM BOOK] Question 2
-3. [FROM BOOK] Question 3
-4. [FROM BOOK] Question 4
-
 ## Memory Verse
 
 > [FROM BOOK] Verse text — Reference

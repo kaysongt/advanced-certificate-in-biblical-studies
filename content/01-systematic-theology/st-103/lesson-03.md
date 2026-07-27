@@ -131,14 +131,6 @@ Some believers doubt whether their conversion was genuine because it lacked the 
 
 Remember Nicodemus. He came quietly, at night, uncertain, and Jesus did not require a particular emotional display before acknowledging the reality of the new birth available to him. What matters is not the intensity of the moment but the reality of the transformation, a transformation the Spirit alone accomplishes.
 
-## Discussion Questions
-
-1. Nicodemus had every religious credential available in his culture. Why could none of them produce what Jesus described? What are the modern equivalents of his credentials?
-2. Jesus compares the new birth to wind. Hold together the two implications the chapter draws: humility about technique and urgency in proclamation. How does a person hold both without drifting into either fatalism or manipulation?
-3. Explain the difference between renovation and new creation as models of conversion. Which model do most sermons you have heard assume?
-4. Work out the relationship between regeneration and faith in your own words. What error results from collapsing either into the other?
-5. Describe what changes practically when a believer moves from working toward acceptance to living from it. Where in your own habits does the older pattern still show?
-
 ## Reflection
 
 Write down one thing you have been doing in the hope that it will secure or improve your standing with God. Then write beside it the specific truth from this lesson that makes that hope unnecessary. Keep the note where you will see it this week.

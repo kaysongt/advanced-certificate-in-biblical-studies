@@ -175,14 +175,6 @@ If you want to grow in the fruit of the Spirit, resist the temptation to attack 
 
 Instead, return again and again to the root. Abide in Christ. Walk closely with the Spirit through honest prayer and attentive obedience. Remove what chokes growth: persistent sin, unresolved bitterness, careless neglect of the things that nourish your soul. And then be patient with the process.
 
-## Discussion Questions
-
-1. Explain the difference between fruit and works to someone who has been trying to become more patient by gritting their teeth. What would you tell them to do instead?
-2. Choose three of the nine qualities and give a concrete situation in which each would be genuinely tested. Notice how many of your examples involve other people.
-3. Work through the table in section 8. What specific harm results in a church that confuses gifts with fruit?
-4. Paul places 1 Corinthians 13 deliberately between two chapters on gifts. What is he arguing by that placement rather than by his words alone?
-5. Dr. Kay says gifts surface through service rather than introspection. What is one area of service slightly outside your comfort zone that you could take on this month?
-
 ## Reflection
 
 Choose the one quality from Paul's list that currently feels furthest from your natural response, and pay attention to it for a week. Notice the moments it is tested. Rather than gritting your teeth and forcing the right behaviour, pause in those moments and consciously turn toward the Spirit, asking Him to grow what you cannot manufacture. You are not aiming for a perfect week. You are practising the posture of dependence from which real fruit eventually grows.

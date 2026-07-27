@@ -175,14 +175,6 @@ It helps to distinguish two related but different grounds on which assurance res
 
 Mature assurance rests its full weight on the objective ground while welcoming the subjective as confirmation. A believer who builds assurance primarily on feelings will rise and fall with them. A believer who builds on the finished work of Christ has something that does not move.
 
-## Discussion Questions
-
-1. Explain the difference between justification and sanctification to a believer who feels further from God after a moral failure. Which doctrine addresses their fear, and how?
-2. What does the *therefore* at the opening of Romans 12 establish about the relationship between doctrine and duty? What happens to a church that reverses it?
-3. Describe the two ditches in section 3. Which is your instinct, and what would moving toward the middle actually require?
-4. Paul writes *glorified* in the past tense. What is he claiming, and what would be lost if he had written it in the future?
-5. Distinguish the objective from the subjective ground of assurance. Which have you been resting most of your weight on, and what has that cost you?
-
 ## Reflection
 
 Read Romans 8:31 to 39 aloud, slowly. Each time Paul names a threat, pause and name the specific fear in your own life that corresponds to it. Then read his conclusion aloud one more time.

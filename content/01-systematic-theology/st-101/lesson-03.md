@@ -162,14 +162,6 @@ Smaller stories echo the larger one. Joseph, sold by his brothers and unjustly i
 
 Without this framework, believers fall into one of two errors: treating the Old Testament as a separate, almost unrelated collection of ancient stories, or dismissing it as obsolete. Both miss what Jesus insisted upon, that all of it was written concerning Him.
 
-## Discussion Questions
-
-1. Work through Jeremiah 29:11 using the method in section 5. State what it meant to its first hearers, then state the legitimate theological principle that carries across, then name an illegitimate application you have heard.
-2. Give an example of a passage that is descriptive rather than prescriptive. How would treating it as a command distort the Christian life?
-3. The chapter warns against both legalism and dismissal of the Old Testament. Which error is more common in your context, and why?
-4. Peter's warning should produce humility and confidence at the same time. Describe a believer who has one without the other, and the damage that imbalance causes.
-5. Choose any Old Testament book you find difficult. Where does it sit in the storyline of redemption, and what does that placement reveal about its purpose?
-
 ## Reflection
 
 Take a single Old Testament narrative you know well. Write three sentences: one stating what happened, one stating what the passage is teaching about God, and one stating how it fits the storyline running toward Christ. Keep the three distinct. Most misreadings come from collapsing them.

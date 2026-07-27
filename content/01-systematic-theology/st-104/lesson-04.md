@@ -153,17 +153,9 @@ Justification means your standing before God does not fluctuate with your perfor
 
 This does not mean daily obedience does not matter. Lesson 6 will explain why it matters enormously. But obedience flows **from** a settled legal status, not **toward** one that remains perpetually uncertain.
 
-## Discussion Questions
-
-1. Explain why repentance and faith are two sides of one turn rather than two separate steps. What goes wrong when they are separated?
-2. Work through the table in section 3. Describe someone you have known whose sorrow was worldly. What was the tell?
-3. Repentance is described in Scripture as a gift God grants. How does that protect it from becoming a work we perform to qualify for grace?
-4. Explain to a sceptic how God can declare a guilty person righteous without becoming a corrupt judge.
-5. Dr. Kay's diagnosis in section 9 describes many believers. Where do you recognize the pattern in yourself, and what specifically would change if the verdict were settled in your practical experience?
-
 ## Reflection
 
-Track your sense of closeness to God for three days. Each time it rises or falls, write down what changed. Then look at the list and ask honestly whether the causes are performance-based. Bring the list to the next session.
+Track your sense of closeness to God for three days. Each time it rises or falls, write down what changed. Then look at the list and ask honestly whether the causes are performance-based. Keep the list — you will build on it in later topics.
 
 ## Lesson Quiz
 
