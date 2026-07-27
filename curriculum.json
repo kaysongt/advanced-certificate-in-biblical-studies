@@ -1,0 +1,439 @@
+{
+  "program": {
+    "institute": "KingsWord Training Institute",
+    "title": "Advanced Certificate in Biblical Studies",
+    "tagline": "172 Hours. Five Certificates. One Foundation.",
+    "summary": "The Advanced Certificate in Biblical Studies is a comprehensive, Bible-centered training program designed to equip believers with a solid understanding of Scripture, sound doctrine, biblical interpretation, and practical Christian living, offering a balanced theological and practical foundation for lifelong discipleship and Kingdom impact.",
+    "about": "KingsWord Training Institute exists to raise a generation of believers who know God's Word, walk in the Spirit, and communicate the Gospel with confidence. The Institute delivers rich, professionally produced theological training that fits into the rhythm of everyday life, whether at home, at work, or on the go, moving students beyond information into lasting transformation and effective ministry.",
+    "motto": "Equipping Believers. Establishing Truth. Raising a people of the Word & Spirit.",
+    "founder": {
+      "name": "Dr. Kay Ijisesan",
+      "role": "Founder & President",
+      "bio": "Dr. Kay Ijisesan is the Founder & President of KingsWord Training Institute. He is an apostolic voice based in Chicago, USA. He provides oversight for multiple church campuses. Dr. Kay has over three decades of ministry experience across four continents and has published more than 100 books."
+    },
+    "total_hours": 172,
+    "total_certificates": 5,
+    "total_courses": 32,
+    "total_textbooks": 32,
+    "audience": [
+      "Pastors",
+      "Ministry Leaders",
+      "Bible Teachers",
+      "Church Workers",
+      "Small Group Leaders",
+      "Bible School Students",
+      "Missionaries",
+      "New Believers"
+    ],
+    "features": [
+      "Seasoned Instructors",
+      "Self Paced",
+      "Customized Textbooks",
+      "Structured Classes",
+      "Course Assessment",
+      "Modular Certificates",
+      "Online Resources",
+      "Comprehensive Assessment",
+      "Student Community Engagement"
+    ],
+    "outcomes": [
+      "Build a strong biblical & theological foundation, and interpret Scripture with sound hermeneutics",
+      "Understand the message and structure of every book of the Bible",
+      "Explain essential Christian doctrine and develop a mature, biblical worldview",
+      "Grow in spiritual formation and minister with biblical accuracy and confidence",
+      "Develop a mature Christian worldview grounded in Scripture",
+      "Minister effectively with biblical accuracy and spiritual confidence",
+      "Apply God's Word faithfully in everyday life and leadership",
+      "Graduate with a recognized Advanced Certificate in Biblical Studies"
+    ],
+    "format": "Schedule: Modular Structure. Self-paced with structured classes.",
+    "tuition": "$250 per Certificate Program, or $1,000 for the Advanced Certificate, covering all five certificates in Systematic Theology, Biblical Foundations, Old Testament Survey, New Testament Survey & Spiritual Formation.",
+    "graduation_requirements": "Students receive the Advanced Certificate in Biblical Studies upon completion of all five certificate programs, required assessments, course requirements and final evaluations.",
+    "contact": {
+      "phone": "+1 773 277 8701",
+      "email": "kti@kingsword.org",
+      "website": "institute.kingsword.org"
+    }
+  },
+  "grading": {
+    "note": "PROPOSED weighting — not specified in the catalog. Confirm with Dr. Kay before publishing.",
+    "components": [
+      {
+        "name": "Lesson Quizzes",
+        "weight": 30
+      },
+      {
+        "name": "Course Assignments",
+        "weight": 30
+      },
+      {
+        "name": "Final Course Assessment",
+        "weight": 40
+      }
+    ],
+    "pass_mark": 70,
+    "scale": [
+      {
+        "grade": "A",
+        "range": "90-100"
+      },
+      {
+        "grade": "B",
+        "range": "80-89"
+      },
+      {
+        "grade": "C",
+        "range": "70-79"
+      },
+      {
+        "grade": "F",
+        "range": "Below 70"
+      }
+    ]
+  },
+  "modules": [
+    {
+      "numeral": "I",
+      "number": 1,
+      "slug": "01-systematic-theology",
+      "title": "Certificate in Systematic Theology",
+      "short_title": "Systematic Theology",
+      "series": "What We Believe Series",
+      "hours": 36,
+      "overview": "Build a solid theological foundation by exploring the essential doctrines of the Christian faith. This module equips students with a biblical understanding of God, salvation, the Church, eternity, and other foundational truths, enabling them to think theologically, live biblically, and defend the faith with confidence.",
+      "catalog_blurb": "Gain a confident, biblically grounded understanding of core Christian doctrine, from the nature of God to the believer's eternal hope, that you can explain, teach, and defend with clarity.",
+      "hours_per_course": 6,
+      "lessons_per_course": 6,
+      "courses": [
+        {
+          "code": "ST 101",
+          "slug": "st-101",
+          "title": "Theology Foundation",
+          "subtitle": "God's Nature, Attributes & Sovereignty",
+          "series_line": "What We Believe: God",
+          "description": "Explore the biblical revelation of God: His nature, attributes, sovereignty, and works. Students examine His holiness, love, omniscience, omnipotence, and omnipresence as revealed throughout Scripture, along with His eternal purposes and unfailing covenant faithfulness toward His people. This course establishes a thoroughly God-centered worldview, teaching believers to approach every area of life, relationship, and ministry from a settled confidence in who God is, equipped to worship rightly, trust deeply, and represent the Creator's character with conviction.",
+          "textbook": "What We Believe, Volume 1: God — The Foundation of the Christian Faith",
+          "isbn": "978-1-971500-737"
+        },
+        {
+          "code": "ST 102",
+          "slug": "st-102",
+          "title": "Christology",
+          "subtitle": "The Center of God's Redemptive Plan",
+          "series_line": "What We Believe: Jesus Christ",
+          "description": "Discover the person and work of Jesus Christ as the eternal Son of God, the promised Messiah, and the only Savior of humanity. This course traces His incarnation, sinless life, substitutionary death, bodily resurrection, and glorious ascension, revealing Him as the fulfillment of every Old Testament promise and shadow. Students gain a deep, worshipful understanding of Christ's divine and human natures and His ongoing reign, equipped to proclaim Jesus as the foundation and center of the Christian faith.",
+          "textbook": "What We Believe, Volume 2: Jesus Christ (Christology)",
+          "isbn": "978-1-971500-744"
+        },
+        {
+          "code": "ST 103",
+          "slug": "st-103",
+          "title": "Pneumatology",
+          "subtitle": "God's Presence and Power in the Believer",
+          "series_line": "What We Believe: Holy Spirit",
+          "description": "Examine the person, deity, ministry, and work of the Holy Spirit in the life of the believer and the Church throughout redemptive history. Students study His role in conviction, regeneration, indwelling, sanctification, and empowerment for ministry, along with the gifts and fruit He produces in a surrendered life. Learn practical, biblical patterns for living under the Spirit's guidance and walking in His power daily, growing in intimacy with God and effectiveness in Kingdom service.",
+          "textbook": "What We Believe, Volume 3: Holy Spirit (Pneumatology)",
+          "isbn": "978-1-971500-751"
+        },
+        {
+          "code": "ST 104",
+          "slug": "st-104",
+          "title": "Soteriology",
+          "subtitle": "Grace, Faith & the New Creation",
+          "series_line": "What We Believe: Salvation",
+          "description": "Understand God's comprehensive plan of salvation accomplished through Christ, including the transforming power of grace, justification by faith alone, and the believer's entirely new identity in Christ. This course explores regeneration, adoption, sanctification, and the assurance of eternal security, grounding students in the finished work of the cross rather than human performance. Students come away with confident clarity on what it means to be saved, how grace shapes daily living, and how to explain salvation simply to others.",
+          "textbook": "What We Believe, Volume 4: Salvation (Soteria)",
+          "isbn": "978-1-971500-768"
+        },
+        {
+          "code": "ST 105",
+          "slug": "st-105",
+          "title": "Ecclesiology",
+          "subtitle": "God's Covenant Community and Mission",
+          "series_line": "What We Believe: The Church",
+          "description": "Explore the biblical identity, purpose, government, ordinances, and mission of the Church as God's covenant community called to proclaim the Gospel and disciple the nations. Students study the Church's origin at Pentecost, its leadership structures, spiritual gifts, corporate worship, and the practice of baptism and communion. This course cultivates a healthy theology of community and belonging, preparing students to serve faithfully within a local church and understand their role in advancing God's Kingdom purposes.",
+          "textbook": "What We Believe, Volume 5: The Church (Ecclesiology)",
+          "isbn": "978-1-971500-775"
+        },
+        {
+          "code": "ST 106",
+          "slug": "st-106",
+          "title": "Eschatology",
+          "subtitle": "Our Blessed Hope",
+          "series_line": "What We Believe: Eternity",
+          "description": "Study God's eternal plan for creation, including the personal return of Christ, the resurrection of the dead, final judgment, and the new heavens and new earth. Students examine the biblical teaching on heaven, hell, and the eternal state, along with the major views on end-time events presented with clarity and balance. This course inspires believers to live each day with hope, urgency, and an eternal perspective, anchored in the certainty of Christ's ultimate victory and return.",
+          "textbook": "What We Believe, Volume 6: Eternity (Eschatology)",
+          "isbn": "978-1-971500-782"
+        }
+      ]
+    },
+    {
+      "numeral": "II",
+      "number": 2,
+      "slug": "02-biblical-foundations",
+      "title": "Certificate in Biblical Foundations",
+      "short_title": "Biblical Foundations",
+      "series": "Unlocked Series",
+      "hours": 36,
+      "overview": "Build a strong foundation for understanding the Bible as one unified revelation of God's redemptive plan. This module equips students with the essential tools to understand Scripture accurately, interpret it faithfully, and recognize Jesus Christ as its central theme from Genesis to Revelation.",
+      "catalog_blurb": "Learn to read, interpret, and study the Bible accurately for yourself, tracing God's redemptive story from Genesis to Revelation and recognizing Christ throughout every book.",
+      "hours_per_course": 6,
+      "lessons_per_course": 6,
+      "courses": [
+        {
+          "code": "BF 201",
+          "slug": "bf-201",
+          "title": "Introduction to the Bible",
+          "subtitle": "A Journey Through the Bible",
+          "series_line": "",
+          "description": "Discover the origin, structure, purpose, and authority of the Bible as the inspired, inerrant Word of God. This course surveys how the sixty-six books were written, compiled, and preserved across centuries, while introducing the major divisions of Scripture and their unique contributions to God's overarching story. Students gain a solid foundation for understanding the Bible as one unified, life-transforming narrative, equipping them with the framework needed to navigate Scripture accurately throughout the rest of their studies."
+        },
+        {
+          "code": "BF 202",
+          "slug": "bf-202",
+          "title": "Bible Study & Exegesis",
+          "subtitle": "How to Effectively Study the Bible",
+          "series_line": "",
+          "description": "Learn practical, time-tested methods for studying the Bible individually, applying observation, interpretation, and application in a simple, repeatable process. This course equips students with tools such as inductive study, topical study, and word study methods, empowering them to dig into Scripture with confidence rather than depending solely on others' teaching. Students develop lifelong habits of personal Bible study that deepen their walk with God and prepare them to guide others in studying Scripture for themselves."
+        },
+        {
+          "code": "BF 203",
+          "slug": "bf-203",
+          "title": "Hermeneutics",
+          "subtitle": "The Principles of Bible Interpretation",
+          "series_line": "",
+          "description": "Learn the essential principles and methods for interpreting Scripture accurately, responsibly, and faithfully across its many genres. This course equips believers to understand the Bible within its historical, literary, cultural, and theological context, distinguishing between descriptive and prescriptive passages and applying sound hermeneutical rules consistently. Students practice interpreting narrative, poetry, prophecy, and epistle, developing skills that guard against error and leave them able to study Scripture independently with confidence, integrity, and reverence for God's Word."
+        },
+        {
+          "code": "BF 204",
+          "slug": "bf-204",
+          "title": "Redemptive Theology",
+          "subtitle": "The Story of Redemption",
+          "series_line": "",
+          "description": "Trace the unfolding story of God's redemptive plan as it progresses from Genesis to Revelation in one unbroken narrative. This course reveals the unity of Scripture by following the development of God's kingdom, covenants, promises, and salvation across every era of biblical history, from creation and the fall to Israel, exile, and the Church. Students learn to read individual passages within this larger redemptive framework, deepening their appreciation for how the whole Bible tells one grand story."
+        },
+        {
+          "code": "BF 205",
+          "slug": "bf-205",
+          "title": "Christ-Centered Interpretation",
+          "subtitle": "Discovering Jesus in Every Book",
+          "series_line": "",
+          "description": "See how every book of the Bible, from Genesis to Revelation, ultimately points to Jesus Christ as its central figure and fulfillment. This course explores the biblical patterns, promises, types, prophecies, and foreshadowings that reveal Christ throughout both testaments, training students to recognize Him even in the Old Testament's law, history, and poetry. This Christ-centered approach to interpretation deepens biblical understanding and cultivates a richer, more worshipful appreciation for the Savior at the heart of Scripture."
+        },
+        {
+          "code": "BF 206",
+          "slug": "bf-206",
+          "title": "Biblical Interpretation Errors",
+          "subtitle": "Common Errors in Bible Interpretation",
+          "series_line": "",
+          "description": "Identify and avoid the most common mistakes that lead to misunderstanding and misapplication of Scripture, including proof-texting, allegorizing, and ignoring historical and literary context. This course equips students to recognize subtle interpretive pitfalls that produce doctrinal error and unhealthy teaching, while modeling how to handle God's Word with integrity and care. Through guided practice and case studies, students develop sound, biblically faithful habits of study that protect both their own theology and those they teach."
+        }
+      ]
+    },
+    {
+      "numeral": "III",
+      "number": 3,
+      "slug": "03-old-testament-survey",
+      "title": "Certificate in Old Testament Survey",
+      "short_title": "Old Testament Survey",
+      "series": "Exploring the Foundations of Redemption",
+      "hours": 30,
+      "overview": "Journey through the Old Testament book by book to understand God's unfolding covenant relationship with humanity. This module reveals the historical, prophetic, poetic, and theological foundations that prepare the way for Christ and the fulfillment of God's redemptive purposes.",
+      "catalog_blurb": "Understand the full sweep of God's covenant story, book by book, from creation through the Law, history, wisdom, and prophets, and how it prepares the way for Christ.",
+      "hours_per_course": 6,
+      "lessons_per_course": 6,
+      "courses": [
+        {
+          "code": "OT 301",
+          "slug": "ot-301",
+          "title": "The Pentateuch",
+          "subtitle": "Genesis – Deuteronomy",
+          "series_line": "",
+          "description": "Study the foundations of creation, covenant, law, and redemption established in the five books of Moses. This course traces humanity's fall, God's covenant with Abraham, Israel's deliverance from Egypt, the giving of the Law at Sinai, and the nation's preparation to enter the Promised Land. Students gain a foundational understanding of God's holiness, covenant faithfulness, and redemptive purposes that shape the theological framework for the rest of Scripture."
+        },
+        {
+          "code": "OT 302",
+          "slug": "ot-302",
+          "title": "The Historical Books",
+          "subtitle": "Joshua – Esther",
+          "series_line": "",
+          "description": "Follow Israel's journey from conquest to kingdom to exile and restoration across the historical narrative books. This course examines the rise and fall of Israel's monarchy, the ministries of key judges and kings, and God's providential faithfulness even amid the nation's repeated failure and idolatry. Students learn how these historical narratives reveal God's patience, justice, and covenant loyalty throughout the unfolding story of His people, and how to apply these lessons to seasons of both national and personal history today."
+        },
+        {
+          "code": "OT 303",
+          "slug": "ot-303",
+          "title": "The Wisdom & Poetic Books",
+          "subtitle": "Job – Song of Solomon",
+          "series_line": "",
+          "description": "Discover timeless principles for worship, wisdom, suffering, relationships, and practical godly living through the Old Testament's wisdom literature. This course explores the emotional depth of the Psalms, the practical wisdom of Proverbs, Job's wrestling with suffering, Ecclesiastes' search for meaning, and Song of Solomon's celebration of love and covenant intimacy. Students develop a rich vocabulary for prayer and worship while gaining wisdom for navigating everyday life, relationships, and hardship from a biblically grounded perspective."
+        },
+        {
+          "code": "OT 304",
+          "slug": "ot-304",
+          "title": "The Major Prophets",
+          "subtitle": "Isaiah – Daniel",
+          "series_line": "",
+          "description": "Understand God's messages of judgment, hope, restoration, and the coming Messiah through the Major Prophets. This course examines each prophet's historical context and central themes, from Isaiah's messianic prophecies to Jeremiah's call to repentance, Ezekiel's visions of restoration, and Daniel's apocalyptic revelations of God's sovereignty over nations and history. Students learn to read prophetic literature accurately, recognizing both its immediate context and its fulfillment in Christ."
+        },
+        {
+          "code": "OT 305",
+          "slug": "ot-305",
+          "title": "The Minor Prophets",
+          "subtitle": "Hosea – Malachi",
+          "series_line": "",
+          "description": "Examine the twelve Minor Prophets and God's consistent call to repentance, covenant faithfulness, and future restoration. Though brief, these books carry powerful messages of justice, mercy, and hope for both Israel and the surrounding nations. Students trace common themes across the twelve, including the Day of the Lord, God's compassion toward the repentant, and the promised restoration that anticipates the coming Messiah and His eternal Kingdom, learning to apply their urgent calls to holiness in a modern context."
+        }
+      ]
+    },
+    {
+      "numeral": "IV",
+      "number": 4,
+      "slug": "04-new-testament-survey",
+      "title": "Certificate in New Testament Survey",
+      "short_title": "New Testament Survey",
+      "series": "The Fulfillment of God's Redemptive Plan",
+      "hours": 30,
+      "overview": "Explore the New Testament from the life and ministry of Jesus to the birth of the Church and the consummation of God's Kingdom. This module provides a comprehensive understanding of each New Testament book, highlighting its historical context, theological message, and practical application for believers today.",
+      "catalog_blurb": "Grasp the life and ministry of Jesus, the birth of the Church, and the doctrine and practice handed down through the apostles, equipping you to teach the New Testament with confidence.",
+      "hours_per_course": 6,
+      "lessons_per_course": 6,
+      "courses": [
+        {
+          "code": "NT 401",
+          "slug": "nt-401",
+          "title": "The Four Gospels",
+          "subtitle": "Matthew – John",
+          "series_line": "",
+          "description": "Explore the life, teachings, miracles, death, resurrection, and mission of Jesus Christ through the four Gospel accounts. This course examines each Gospel's unique audience, purpose, and portrait of Christ, from Matthew's presentation of Jesus as King to John's emphasis on His divine nature. Students gain a comprehensive, harmonized understanding of Christ's earthly ministry, equipping them to teach the Gospels accurately and grow in devotion to the Savior they proclaim."
+        },
+        {
+          "code": "NT 402",
+          "slug": "nt-402",
+          "title": "Acts & the Pauline Epistles",
+          "subtitle": "Acts, Romans, 1 & 2 Corinthians, Galatians, 1 & 2 Thessalonians",
+          "series_line": "",
+          "description": "Discover the growth of the early Church, the spread of the Gospel, and the foundational doctrines of grace through Acts and Paul's early letters. This course traces the apostles' Spirit-empowered mission from Jerusalem to Rome alongside Paul's core teaching on justification, sanctification, church order, and the return of Christ. Students develop a clear grasp of apostolic doctrine and the practical outworking of grace within the early Christian community."
+        },
+        {
+          "code": "NT 403",
+          "slug": "nt-403",
+          "title": "The Prison & Pastoral Epistles",
+          "subtitle": "Ephesians, Philippians, Colossians, Philemon, 1–2 Timothy, Titus",
+          "series_line": "",
+          "description": "Learn biblical principles for Christian maturity, church leadership, discipleship, and healthy ministry through the letters Paul wrote from prison and to pastoral leaders. These letters address the believer's identity in Christ, joyful endurance under hardship, and the qualifications and responsibilities of godly church leadership and sound doctrine. Students gain practical, time-tested wisdom for building healthy churches, developing leaders, and living out the Gospel faithfully in both personal character and public ministry, regardless of circumstance."
+        },
+        {
+          "code": "NT 404",
+          "slug": "nt-404",
+          "title": "The General Epistles",
+          "subtitle": "Hebrews – Jude",
+          "series_line": "",
+          "description": "Study practical instruction on faith, endurance, holiness, and defending biblical truth through the General Epistles. This course explores the superiority of Christ, the necessity of living faith expressed through works, perseverance amid suffering, and warnings against false teaching that threatened the early Church's health and doctrine. Students grow in discernment and spiritual maturity, learning to apply these urgent, practical letters to contemporary challenges of faith, holiness, and Christian community life."
+        },
+        {
+          "code": "NT 405",
+          "slug": "nt-405",
+          "title": "The Book of Revelation",
+          "subtitle": "Christ's Ultimate Victory",
+          "series_line": "",
+          "description": "Understand Christ's ultimate victory, God's final redemptive plan, the new creation, and the believer's eternal hope through the book of Revelation. This course walks through John's apocalyptic vision, including the letters to the seven churches, the unfolding judgments, the defeat of evil, and the glorious return of Christ to establish His eternal Kingdom. Students are equipped to interpret apocalyptic literature responsibly and to live with confident hope."
+        }
+      ]
+    },
+    {
+      "numeral": "V",
+      "number": 5,
+      "slug": "05-spiritual-formation",
+      "title": "Certificate in Spiritual Formation",
+      "short_title": "Spiritual Formation",
+      "series": "Essentials of Spiritual Growth",
+      "hours": 40,
+      "overview": "Move beyond biblical knowledge to personal transformation. This module develops Christlike character, spiritual maturity, Kingdom identity, and a supernatural lifestyle by equipping students to think biblically, walk in the Spirit, live from their new creation identity, and fulfill God's purpose with wisdom, power, and unwavering faith.",
+      "catalog_blurb": "Move beyond information into transformation: a renewed mind, a secure identity, and a Spirit-empowered, supernatural lifestyle you can sustain for the long term.",
+      "hours_per_course": 4,
+      "lessons_per_course": 4,
+      "courses": [
+        {
+          "code": "SF 501",
+          "slug": "sf-501",
+          "title": "Not Conformed",
+          "subtitle": "The Power of a Renewed Mind",
+          "series_line": "",
+          "description": "Learn how renewing your mind through God's Word transforms your thinking, decisions, and daily life, breaking old patterns shaped by the world. This course examines the biblical process of mental and spiritual transformation, teaching students to identify unbiblical thought patterns and replace them with truth. Students discover practical tools for sustained renewal, including Scripture meditation and prayer, and understand why a renewed mind is essential to living a surrendered, Spirit-led life that reflects Christ rather than culture."
+        },
+        {
+          "code": "SF 502",
+          "slug": "sf-502",
+          "title": "Finding Truth",
+          "subtitle": "Living from Reality as God Sees It",
+          "series_line": "",
+          "description": "Develop a thoroughly biblical worldview by learning to see reality through God's truth rather than cultural deception or personal feeling. This course trains students to filter every belief, value, and decision through the lens of Scripture, building discernment for navigating a world full of competing truth claims. Students grow in confidence to stand firm on biblical conviction, recognize deception, and live from a settled, unshakable foundation that shapes every area of thought and daily practice."
+        },
+        {
+          "code": "SF 503",
+          "slug": "sf-503",
+          "title": "Uiothesia",
+          "subtitle": "The Adoption of Sons",
+          "series_line": "",
+          "description": "Discover your identity as a mature son or daughter of God and learn to live confidently from your inheritance in Christ. This course explores the biblical concept of adoption, examining the rights, privileges, and responsibilities that come with being fully welcomed into God's family. Students move beyond an orphan mindset of fear and striving into a secure identity rooted in sonship, learning to walk in the confidence, authority, and intimacy that flow naturally from knowing who they are in Christ."
+        },
+        {
+          "code": "SF 504",
+          "slug": "sf-504",
+          "title": "Powered",
+          "subtitle": "The Dynamics of Dunamis",
+          "series_line": "",
+          "description": "Understand how the Holy Spirit empowers believers for holy living, effective ministry, and supernatural impact through the biblical concept of dunamis, God's miraculous power. This course examines the Spirit's enabling presence for signs, wonders, and everyday faithfulness, teaching students to move beyond information into Spirit-empowered action. Students learn to recognize and steward this power responsibly, growing in boldness and effectiveness as they minister to others and represent Christ's Kingdom with genuine supernatural authority and grace."
+        },
+        {
+          "code": "SF 505",
+          "slug": "sf-505",
+          "title": "Authorized",
+          "subtitle": "The Dynamics of Exousia",
+          "series_line": "",
+          "description": "Learn how to exercise the spiritual authority Christ has given every believer with humility, wisdom, and confidence through the biblical concept of exousia, delegated authority. This course examines the believer's position in Christ and the practical implications of that authority over sin, sickness, and spiritual opposition. Students explore how authority differs from power and why both matter for effective ministry, growing in the confidence to walk out their calling boldly while remaining rooted in humility."
+        },
+        {
+          "code": "SF 506",
+          "slug": "sf-506",
+          "title": "Life On Point",
+          "subtitle": "Purposeful Living",
+          "series_line": "",
+          "description": "Clarify your calling and align your gifts, passions, and purpose with God's divine assignment for your life through intentional, purposeful living. This course helps students identify how their unique design, experiences, and spiritual gifting fit within God's larger Kingdom purposes, moving them from uncertainty into clarity and direction. Students leave with practical tools for discerning calling, setting Kingdom-focused priorities, and pursuing their God-given purpose with confidence, ensuring daily choices align with eternal significance and impact."
+        },
+        {
+          "code": "SF 507",
+          "slug": "sf-507",
+          "title": "Rest Mode",
+          "subtitle": "The End of Spiritual Hustle",
+          "series_line": "",
+          "description": "Experience freedom from striving by learning to live from Christ's finished work and the grace of God rather than constant spiritual effort. This course addresses the exhaustion of performance-based faith, teaching students the biblical difference between resting in grace and working from grace. Students discover practical rhythms of Sabbath, trust, and surrender that replace anxious hustle with peace, learning to minister and serve from a place of restored identity and abundance rather than fear or self-effort."
+        },
+        {
+          "code": "SF 508",
+          "slug": "sf-508",
+          "title": "Prayer, Not Religion",
+          "subtitle": "Prayer Lifestyle",
+          "series_line": "",
+          "description": "Develop a vibrant prayer life rooted in genuine relationship, intimacy, faith, and ongoing fellowship with God rather than religious routine or empty ritual. This course distinguishes authentic, Spirit-led prayer from performative religious activity, teaching students how to approach God with confidence, honesty, and expectancy. Students explore various biblical models and postures of prayer, including intercession, worship, and listening prayer, developing a sustainable, joy-filled communication with God that flows from relationship rather than obligation or fear."
+        },
+        {
+          "code": "SF 509",
+          "slug": "sf-509",
+          "title": "Built Differently",
+          "subtitle": "Faith Lifestyle",
+          "series_line": "",
+          "description": "Understand the basic principles of the God-kind of faith and how it operates differently from natural, human reasoning. This course examines faith as a spiritual force, exploring how believers can develop and exercise faith the way God does to overcome obstacles and walk in victory. Students grow in their identity as a new creation in Christ, learning practical steps to build unwavering faith that produces tangible results in every area of life, family, and ministry."
+        },
+        {
+          "code": "SF 510",
+          "slug": "sf-510",
+          "title": "God Mode",
+          "subtitle": "Supernatural Lifestyle",
+          "series_line": "Capstone Course",
+          "description": "Learn to live from your heavenly identity through faith, wisdom, spiritual discernment, and the power of the Holy Spirit as a normal way of life. This capstone course integrates the module's core themes, renewed thinking, sonship, authority, and rest, into a consistent, sustainable supernatural lifestyle. Students learn to walk in the miraculous as an overflow of relationship with God rather than performance, finishing the program equipped to live and minister from continual dependence on the Spirit."
+        }
+      ]
+    }
+  ]
+}
