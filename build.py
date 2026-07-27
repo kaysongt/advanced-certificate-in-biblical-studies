@@ -494,12 +494,19 @@ SHELL = """<!doctype html>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="description" content="{desc}">
 <title>{title}</title>
+<link rel="icon" type="image/png" href="{root}assets/favicon.png">
+<link rel="apple-touch-icon" href="{root}assets/favicon.png">
+<meta property="og:title" content="{title}">
+<meta property="og:description" content="{desc}">
+<meta property="og:image" content="{root}assets/logo.jpg">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="stylesheet" href="{root}assets/theme.css">
 <script>(function(){{try{{var t=localStorage.getItem('kti.theme');if(t)document.documentElement.setAttribute('data-theme',t);}}catch(e){{}}}})();</script>
 </head>
 <body>
 <header class="masthead"><div class="inner">
-  <a class="wordmark" href="{root}index.html"><span class="kw">KingsWord</span> Training Institute</a>
+  <a class="wordmark" href="{root}index.html" aria-label="KingsWord Training Institute — home"><img class="mark" src="{root}assets/logo-mark.jpg" alt="" width="440" height="268"><span class="wm-txt"><span class="kw">KingsWord</span> Training Institute</span></a>
   <nav class="mastnav">{nav}
     <a href="{root}glossary.html" class="hide-sm{gl}">Glossary</a>
     <a href="{root}scriptures.html" class="hide-sm{sc}">Scriptures</a>
@@ -586,7 +593,7 @@ def build(d):
     if os.path.isdir(SITE):
         shutil.rmtree(SITE)
     os.makedirs(os.path.join(SITE, "assets"), exist_ok=True)
-    for f in ("theme.css", "course.js"):
+    for f in ("theme.css", "course.js", "logo.jpg", "logo-mark.jpg", "favicon.png"):
         shutil.copy(os.path.join(ASSETS, f), os.path.join(SITE, "assets", f))
 
     # Tells GitHub Pages to serve these files as-is, without running Jekyll.
@@ -619,7 +626,11 @@ def build(d):
     # ---------------- program index ----------------
     meta, body = read(os.path.join(CONTENT, "program.md"))
     all_ids = [r["lid"] for m in d["modules"] for c in m["courses"] for r in index[c["slug"]]]
-    head = f"""<div class="pagehead">
+    head = f"""<div class="brandhero">
+  <img src="assets/logo.jpg" alt="{escape(p['institute'])} — Equip, Empower, Transform"
+       width="1200" height="812">
+</div>
+<div class="pagehead">
   <div class="eyebrow">{escape(p['institute'])}</div>
   <h1>{escape(p['title'])}</h1>
   <p class="deck">{escape(p['tagline'])}</p>
