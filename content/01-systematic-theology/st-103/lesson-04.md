@@ -15,7 +15,7 @@ Under the Old Covenant the Spirit's presence with individuals resembled a series
 
 This lesson also takes up the subject that has generated more confusion, and more division, among sincere believers than any other aspect of the Spirit's ministry.
 
-:::objectives By the end of this lesson you will be able to
+:::objectives By the end of this topic you will be able to
 1. Explain the temple image Paul applies to believers and its implications for the body.
 2. Explain the Spirit as guarantee and as seal, and their bearing on assurance.
 3. Explain the Spirit's internal witness confirming adoption.
@@ -172,9 +172,9 @@ Expect the Spirit's power. Do not manufacture it. Let it flow, as it always has,
 
 Identify one specific area where you currently feel underpowered: a conversation you have been avoiding, a habit you cannot break, a fear that keeps you silent. Bring that specific situation to the Spirit and ask to be filled afresh for it. Do not wait for an emotional signal before believing He has answered. Step forward in obedience and watch for the courage that so often arrives once you are already moving.
 
-## Lesson Quiz
+## Topic Quiz
 
-:::quiz Lesson 4 quiz
+:::quiz Topic 4 quiz
 Q Why is Paul's use of the word *temple* for believers significant?
 + A temple was the specific place a deity dwelt, and Paul applies it to ordinary believers including immature ones
 - It indicates that believers should gather in dedicated sacred buildings
@@ -234,4 +234,4 @@ Q What are the two ditches the textbook warns against?
 
 ## Summary
 
-Under the New Covenant the Spirit is a resident rather than a guest. Paul calls even immature believers a temple, and applies that word to the physical body, grounding holiness in identity rather than in rules. The Spirit is given as a guarantee, a genuine down payment on a greater inheritance, and as a seal marking ownership and security until the day of redemption. He bears witness within, so that belonging to God is known rather than merely believed. He is not a beginner's provision to be outgrown. On the much-disputed question of baptism and fullness, the textbook draws a clean line: one baptism, universal to every believer and establishing identity, and many fillings, repeated and connected to ongoing yieldedness. That power was given for witness rather than for private experience, and it is pursued through surrender rather than technique. Avoid both ditches. Expect His power, and do not manufacture it. Lesson 5 turns to what He grows and what He gives.
+Under the New Covenant the Spirit is a resident rather than a guest. Paul calls even immature believers a temple, and applies that word to the physical body, grounding holiness in identity rather than in rules. The Spirit is given as a guarantee, a genuine down payment on a greater inheritance, and as a seal marking ownership and security until the day of redemption. He bears witness within, so that belonging to God is known rather than merely believed. He is not a beginner's provision to be outgrown. On the much-disputed question of baptism and fullness, the textbook draws a clean line: one baptism, universal to every believer and establishing identity, and many fillings, repeated and connected to ongoing yieldedness. That power was given for witness rather than for private experience, and it is pursued through surrender rather than technique. Avoid both ditches. Expect His power, and do not manufacture it. Topic 5 turns to what He grows and what He gives.

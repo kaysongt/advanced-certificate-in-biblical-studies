@@ -13,7 +13,7 @@ If you want to know whether an orchard is healthy, you do not inspect the roots 
 
 This lesson holds fruit and gifts together in one session because the New Testament does, and because confusing them causes real harm.
 
-:::objectives By the end of this lesson you will be able to
+:::objectives By the end of this topic you will be able to
 1. Explain why Paul writes *fruit* rather than *fruits*, and what the singular establishes.
 2. Distinguish fruit from works and explain why moral effort cannot produce it.
 3. Define each of the nine qualities in Galatians 5 with precision.
@@ -179,9 +179,9 @@ Instead, return again and again to the root. Abide in Christ. Walk closely with 
 
 Choose the one quality from Paul's list that currently feels furthest from your natural response, and pay attention to it for a week. Notice the moments it is tested. Rather than gritting your teeth and forcing the right behaviour, pause in those moments and consciously turn toward the Spirit, asking Him to grow what you cannot manufacture. You are not aiming for a perfect week. You are practising the posture of dependence from which real fruit eventually grows.
 
-## Lesson Quiz
+## Topic Quiz
 
-:::quiz Lesson 5 quiz
+:::quiz Topic 5 quiz
 Q Why does Paul write *fruit* rather than *fruits* in Galatians 5?
 + Because it is a single unified harvest growing from one root, not nine separate achievements
 - Because only one of the nine appears in any given believer
@@ -241,4 +241,4 @@ Q How are spiritual gifts typically discovered?
 
 ## Summary
 
-Fruit is singular because it is one harvest from one root, and it is grown rather than manufactured. Apart from abiding in Christ, moral effort can produce a decent imitation but not the thing itself. The nine qualities together describe the character of Christ formed in an ordinary believer, and they need time, conditions, and the friction of real relationships to develop. Gifts are different in every important respect: distributed by the Spirit as He wills, varying between believers, functional rather than characterological, and never a measure of spiritual rank. Paul rebukes any hierarchy among them by insisting that the parts which seem weaker are indispensable. And by placing his meditation on love between two chapters on gifts, he establishes that gifts without love amount to nothing, while love remains the substance without which gifted ministry is hollow. Lesson 6 turns to the daily walk and the Church.
+Fruit is singular because it is one harvest from one root, and it is grown rather than manufactured. Apart from abiding in Christ, moral effort can produce a decent imitation but not the thing itself. The nine qualities together describe the character of Christ formed in an ordinary believer, and they need time, conditions, and the friction of real relationships to develop. Gifts are different in every important respect: distributed by the Spirit as He wills, varying between believers, functional rather than characterological, and never a measure of spiritual rank. Paul rebukes any hierarchy among them by insisting that the parts which seem weaker are indispensable. And by placing his meditation on love between two chapters on gifts, he establishes that gifts without love amount to nothing, while love remains the substance without which gifted ministry is hollow. Topic 6 turns to the daily walk and the Church.

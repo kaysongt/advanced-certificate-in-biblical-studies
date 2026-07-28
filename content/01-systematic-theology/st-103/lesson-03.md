@@ -15,7 +15,7 @@ Jesus did not ease him into it. Unless one is born again, He told Nicodemus, he 
 
 This conversation sits at the foundation of everything Scripture teaches about salvation, and it centres entirely on the work of the Holy Spirit.
 
-:::objectives By the end of this lesson you will be able to
+:::objectives By the end of this topic you will be able to
 1. Explain the new birth from John 3 and why religious credentials cannot produce it.
 2. Explain the significance of Jesus' wind imagery for evangelism and for the sovereignty of the Spirit.
 3. Explain why regeneration is a new creation rather than a renovation, using Paul's and Peter's language.
@@ -135,9 +135,9 @@ Remember Nicodemus. He came quietly, at night, uncertain, and Jesus did not requ
 
 Write down one thing you have been doing in the hope that it will secure or improve your standing with God. Then write beside it the specific truth from this lesson that makes that hope unnecessary. Keep the note where you will see it this week.
 
-## Lesson Quiz
+## Topic Quiz
 
-:::quiz Lesson 3 quiz
+:::quiz Topic 3 quiz
 Q Why could Nicodemus's religious achievements not produce the new birth?
 + Spiritual life is not manufactured through effort; it is given by the Spirit alone
 - His achievements were insincere and outwardly motivated
@@ -190,4 +190,4 @@ Q What direction does regeneration set for the Christian life?
 
 ## Summary
 
-Nicodemus arrived with every credential his culture could confer and was told he must be born again. Religious effort cannot manufacture spiritual life, because life is given rather than produced. Jesus compared the new birth to wind, which humbles our confidence in technique without excusing passivity in proclamation. Paul calls the result a new creation, not a renovation, and Titus attributes it to the washing of regeneration and renewal by the Spirit. Peter grounds its permanence in incorruptible seed, so that the new birth cannot be undone by a bad season any more than a natural birth can be reversed. Ephesians establishes why: we were dead, and dead people need life given to them. Faith is the hand that receives, not the work that earns. And the whole thing sets a direction for the Christian life, which is lived from an acceptance already secured rather than toward one still in doubt. Lesson 4 asks what the Spirit does once He has given that life.
+Nicodemus arrived with every credential his culture could confer and was told he must be born again. Religious effort cannot manufacture spiritual life, because life is given rather than produced. Jesus compared the new birth to wind, which humbles our confidence in technique without excusing passivity in proclamation. Paul calls the result a new creation, not a renovation, and Titus attributes it to the washing of regeneration and renewal by the Spirit. Peter grounds its permanence in incorruptible seed, so that the new birth cannot be undone by a bad season any more than a natural birth can be reversed. Ephesians establishes why: we were dead, and dead people need life given to them. Faith is the hand that receives, not the work that earns. And the whole thing sets a direction for the Christian life, which is lived from an acceptance already secured rather than toward one still in doubt. Topic 4 asks what the Spirit does once He has given that life.

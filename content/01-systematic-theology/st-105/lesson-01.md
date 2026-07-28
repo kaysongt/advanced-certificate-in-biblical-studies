@@ -13,7 +13,7 @@ Before we can talk about how the Church should worship, lead, or serve, we need 
 
 The Greek word behind our English word *church* is *ekklesia*, and it refers to a gathering of people who have been called out from among the general population for a particular purpose. In the ancient Greek world the term described a legislative assembly, citizens summoned out of their homes and daily routines to deliberate on matters of public importance. When the New Testament writers borrowed this word, they were making a bold claim.
 
-:::objectives By the end of this lesson you will be able to
+:::objectives By the end of this topic you will be able to
 1. Define *ekklesia* and explain what the word claims about the Church's identity.
 2. Explain the significance of Christ's possessive language in Matthew 16:18.
 3. Distinguish the Church from the substitutes commonly mistaken for it.
@@ -160,9 +160,9 @@ Finally, unity within the Body does not mean uniformity. Some congregations purs
 
 Write down the specific contribution you currently make to the Body you belong to. If you cannot name one, write down the reason honestly. Keep your answer — you will build on it in later topics.
 
-## Lesson Quiz
+## Topic Quiz
 
-:::quiz Lesson 1 quiz
+:::quiz Topic 1 quiz
 Q What does the Greek word *ekklesia* mean?
 + A gathering of people called out from the general population for a particular purpose
 - A sacred building set apart for worship
@@ -222,4 +222,4 @@ Q What does unity in the Body of Christ require?
 
 ## Summary
 
-*Ekklesia* means a people summoned out, and the calling relocates allegiance rather than merely improving people where they stand. The Church belongs to Christ, who called her His own, and the earliest picture of her in Acts is strikingly ordinary and extraordinary at once. She is not a building, a denomination, or a service, which means belonging is a matter of identity and participation rather than attendance. Every member is a priest with direct access and real responsibility, so no mediating class stands between believers and God. Paul's Body metaphor confronts both self-disqualification and contempt, insisting that the weaker-seeming parts are indispensable and that health is genuinely shared. Gifted leaders exist to equip rather than to perform, aiming at a maturity that can speak the truth in love without collapsing into either coldness or permissiveness. And all of it depends on connection to the Head. Lesson 2 takes up two further images.
+*Ekklesia* means a people summoned out, and the calling relocates allegiance rather than merely improving people where they stand. The Church belongs to Christ, who called her His own, and the earliest picture of her in Acts is strikingly ordinary and extraordinary at once. She is not a building, a denomination, or a service, which means belonging is a matter of identity and participation rather than attendance. Every member is a priest with direct access and real responsibility, so no mediating class stands between believers and God. Paul's Body metaphor confronts both self-disqualification and contempt, insisting that the weaker-seeming parts are indispensable and that health is genuinely shared. Gifted leaders exist to equip rather than to perform, aiming at a maturity that can speak the truth in love without collapsing into either coldness or permissiveness. And all of it depends on connection to the Head. Topic 2 takes up two further images.

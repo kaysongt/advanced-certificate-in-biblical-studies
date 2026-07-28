@@ -13,7 +13,7 @@ Repentance is one of the most misunderstood words in the Christian vocabulary. F
 
 This lesson pairs repentance with justification because they answer two halves of one question: what does a person do, and what does God declare.
 
-:::objectives By the end of this lesson you will be able to
+:::objectives By the end of this topic you will be able to
 1. Define repentance from its Greek root and explain its relationship to faith.
 2. Distinguish godly sorrow from worldly sorrow and identify the fruit each produces.
 3. Explain why repentance is described in Scripture as a gift rather than a precondition we meet.
@@ -104,7 +104,7 @@ Imagine standing in a courtroom, guilty of every charge, with evidence so overwh
 Justification is a legal term borrowed from the courtroom. To be justified means to be **declared** righteous, not gradually **made** righteous through a process.
 
 :::warn The distinction that governs the whole course
-Justification is not about becoming. It is about being declared, once and finally, on the basis of Christ's finished work. Confusing it with sanctification, the lifelong process of growing in Christlikeness, is the root of nearly every pastoral problem addressed in Lesson 6.
+Justification is not about becoming. It is about being declared, once and finally, on the basis of Christ's finished work. Confusing it with sanctification, the lifelong process of growing in Christlikeness, is the root of nearly every pastoral problem addressed in Topic 6.
 :::
 
 Paul builds his case methodically, and by Romans 3:21 the argument reaches its turning point. Now the righteousness of God **apart from the law** is revealed, through faith in Jesus Christ, to all and on all who believe.
@@ -151,15 +151,15 @@ I have met so many sincere believers who intellectually agree with justification
 
 Justification means your standing before God does not fluctuate with your performance, because it was never based on your performance in the first place. That verdict does not need to be re-earned tomorrow morning.
 
-This does not mean daily obedience does not matter. Lesson 6 will explain why it matters enormously. But obedience flows **from** a settled legal status, not **toward** one that remains perpetually uncertain.
+This does not mean daily obedience does not matter. Topic 6 will explain why it matters enormously. But obedience flows **from** a settled legal status, not **toward** one that remains perpetually uncertain.
 
 ## Reflection
 
 Track your sense of closeness to God for three days. Each time it rises or falls, write down what changed. Then look at the list and ask honestly whether the causes are performance-based. Keep the list — you will build on it in later topics.
 
-## Lesson Quiz
+## Topic Quiz
 
-:::quiz Lesson 4 quiz
+:::quiz Topic 4 quiz
 Q What does the Greek word *metanoia* literally mean?
 + A change of mind
 - A sorrow over sin
@@ -219,4 +219,4 @@ Q What is the great exchange described in 2 Corinthians 5:21?
 
 ## Summary
 
-Repentance is a change of mind that produces a change of direction, inseparable from faith and framed by Scripture as a doorway into refreshment rather than merely the subtraction of sin. Paul distinguishes godly sorrow, which grieves the offence against God and produces lasting change, from worldly sorrow, which grieves consequences and fades. Repentance is itself a gift, and it becomes the ongoing posture of a believer's life rather than a single event. Justification is the verdict that meets it: a legal declaration rendered once and completely on the basis of Christ's finished work, never a gradual process. God remains just while justifying because the penalty was paid rather than waived, which makes the verdict costly rather than a loophole. The result is peace as legal reality and access as a child rather than a stranger, grounded in a righteousness credited rather than produced. And the standing this establishes does not need re-earning each morning. Lesson 5 turns to what God then begins to do within us.
+Repentance is a change of mind that produces a change of direction, inseparable from faith and framed by Scripture as a doorway into refreshment rather than merely the subtraction of sin. Paul distinguishes godly sorrow, which grieves the offence against God and produces lasting change, from worldly sorrow, which grieves consequences and fades. Repentance is itself a gift, and it becomes the ongoing posture of a believer's life rather than a single event. Justification is the verdict that meets it: a legal declaration rendered once and completely on the basis of Christ's finished work, never a gradual process. God remains just while justifying because the penalty was paid rather than waived, which makes the verdict costly rather than a loophole. The result is peace as legal reality and access as a child rather than a stranger, grounded in a righteousness credited rather than produced. And the standing this establishes does not need re-earning each morning. Topic 5 turns to what God then begins to do within us.

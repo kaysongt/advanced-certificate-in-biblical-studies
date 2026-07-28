@@ -13,7 +13,7 @@ Paul gives a deceptively simple instruction in Galatians, one that could easily 
 
 Notice the order. He does not say stop gratifying the desires of the flesh, and eventually you will learn to walk by the Spirit. He reverses the order entirely. Walking by the Spirit comes first, and the natural result is a life no longer dominated by the flesh's demands.
 
-:::objectives By the end of this lesson you will be able to
+:::objectives By the end of this topic you will be able to
 1. Explain the ordering of Galatians 5:16 and why so much of the Christian life is approached backward.
 2. Describe the internal conflict Paul acknowledges and explain why feeling it is not evidence of failure.
 3. Explain the renewal of the mind as the Spirit's means of sanctification.
@@ -168,9 +168,9 @@ The final glimpse Scripture gives stretches far beyond the first century. Throug
 
 Pay attention tomorrow to what fills the small gaps of your day: waiting in line, driving, the minutes before sleep. These gaps reveal more about which mindset governs you than your Sunday morning intentions do. Replace one habitual gap-filler this week with a short turn toward Scripture or quiet prayer, not as a rigid rule but as a small, repeated act of setting your mind on the things of the Spirit.
 
-## Lesson Quiz
+## Topic Quiz
 
-:::quiz Lesson 6 quiz
+:::quiz Topic 6 quiz
 Q What is significant about the order of Paul's instruction in Galatians 5:16?
 + Walking by the Spirit comes first, and freedom from the flesh follows, rather than the reverse
 - Suppressing the flesh must be achieved before the Spirit will lead

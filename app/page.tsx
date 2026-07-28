@@ -21,16 +21,18 @@ export default function HomePage() {
             width={1200}
             height={812}
           />
-          <div className="motto">Equip &middot; Empower &middot; Transform</div>
-          <h1>{program.title}</h1>
-          <p className="deck">{program.tagline}</p>
-          <p className="deck">{program.summary}</p>
+          {/* The logo already carries Equip · Empower · Transform — no need to repeat it. */}
+          <h1>Know God&rsquo;s Word for yourself</h1>
+          <p className="deck">
+            {program.tagline} Study at your own pace, wherever you are, and come out able to
+            open the Bible and understand what you are reading.
+          </p>
           <div className="cta-row">
             <Link href="/enroll" className="btn lg gold">
               Enrol now
             </Link>
             <Link href="/curriculum" className="btn lg ghost">
-              Explore the curriculum
+              See what you will study
             </Link>
           </div>
         </div>
@@ -63,8 +65,8 @@ export default function HomePage() {
         <div className="wide">
           <div className="sec-head">
             <div className="eyebrow">What you will gain</div>
-            <h2>Programme outcomes</h2>
-            <p>{program.about}</p>
+            <h2>What you will be able to do</h2>
+            <p>{program.summary}</p>
           </div>
           <div className="outcomes">
             {program.outcomes.map((outcome) => (
@@ -86,11 +88,11 @@ export default function HomePage() {
             <div className="eyebrow">The programme</div>
             <h2>Five certificates, one foundation</h2>
             <p>
-              Each certificate stands on its own and can be taken separately. Complete all
-              five to receive the {program.title}.
+              Take one on its own, or work through all five. Finish everything and you
+              receive the {program.title}.
             </p>
           </div>
-          <div className="cards">
+          <div className="cards five">
             {moduleStatuses.map(({ module, complete, coursesComplete, courses }) => (
               <Link className="card" href={`/curriculum/${module.slug}`} key={module.slug}>
                 <div className="cardtop">
@@ -123,9 +125,7 @@ export default function HomePage() {
             <h2>{program.founder.name}</h2>
             <p>{program.founder.bio}</p>
           </div>
-          <p className="deck" style={{ fontStyle: "italic", maxWidth: "60ch" }}>
-            &ldquo;{program.motto}&rdquo;
-          </p>
+          <p className="pullquote">&ldquo;{program.motto}&rdquo;</p>
         </div>
       </section>
 
@@ -155,7 +155,7 @@ export default function HomePage() {
         <div className="wide">
           <div className="sec-head">
             <div className="eyebrow">Tuition</div>
-            <h2>Enrol by certificate, or take the full programme</h2>
+            <h2>Start with one, or take all five</h2>
             <p>{program.graduation_requirements}</p>
           </div>
           <div className="pricing">
@@ -164,7 +164,7 @@ export default function HomePage() {
               <div className="amount">
                 {PRICING.certificate.label} <span>/ certificate</span>
               </div>
-              <p className="note">
+              <p className="blurb">
                 Any one of the five certificate programmes.
                 {availableCount > 0
                   ? ` ${availableCount} available to start today.`
@@ -172,7 +172,7 @@ export default function HomePage() {
               </p>
               <ul>
                 <li>All courses within that certificate</li>
-                <li>Lesson quizzes and course assessments</li>
+                <li>Topic quizzes and course assessments</li>
                 <li>Customised textbooks</li>
                 <li>Modular certificate on completion</li>
               </ul>
@@ -186,7 +186,7 @@ export default function HomePage() {
               <div className="amount">
                 {PRICING.advanced.label} <span>/ full programme</span>
               </div>
-              <p className="note">
+              <p className="blurb">
                 All five certificates &mdash; {program.total_hours} hours,{" "}
                 {program.total_courses} courses. Each unlocks as it is released.
               </p>

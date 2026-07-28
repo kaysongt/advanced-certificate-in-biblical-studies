@@ -2,13 +2,13 @@
 type: lesson
 course: NT 403
 lesson: 1
-title: [FROM BOOK] Lesson 1 title
+title: [FROM BOOK] Topic 1 title
 duration: 1 hr
 status: template
 ---
 
 
-# NT 403 · Lesson 1
+# NT 403 · Topic 1
 
 ## [FROM BOOK] Lesson Title
 
@@ -73,7 +73,7 @@ status: template
 
 [FROM BOOK] A short exercise the student completes before the next lesson.
 
-## Lesson Quiz
+## Topic Quiz
 
 **1.** [FROM BOOK] Question 1
 

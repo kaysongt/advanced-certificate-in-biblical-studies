@@ -9,13 +9,13 @@ duration: 1 hr
 status: complete
 ---
 
-If Lesson 1 answered who Jesus was before time, this lesson answers what happened when eternity stepped into history.
+If Topic 1 answered who Jesus was before time, this lesson answers what happened when eternity stepped into history.
 
 John summarizes the incarnation in one of the most compressed sentences in Scripture. And the Word became flesh and dwelt among us, and we beheld His glory, the glory as of the only begotten of the Father, full of grace and truth (John 1:14).
 
 Read it slowly. The eternal Word, the One who was with God and was God, became flesh. He did not simply visit flesh or borrow flesh for a season and then discard it. He became flesh, taking on a genuine human nature that He continues to possess even now, in His glorified state, at the right hand of the Father.
 
-:::objectives By the end of this lesson you will be able to
+:::objectives By the end of this topic you will be able to
 1. State what the incarnation is and what it is not, including the permanence of Christ's human nature.
 2. Explain the virgin birth and the two truths it protects.
 3. State the four reasons Scripture gives for why the Son came.
@@ -152,9 +152,9 @@ If you find yourself, even after years of faith, still stunned by the thought of
 
 Read Philippians 2:5 to 11 slowly, twice. On the second reading, mark where the descent ends and the exaltation begins. Write one sentence on what that turning point implies about the path to genuine honour.
 
-## Lesson Quiz
+## Topic Quiz
 
-:::quiz Lesson 2 quiz
+:::quiz Topic 2 quiz
 Q According to John 1:14, what happened at the incarnation?
 + The eternal Word became flesh, taking on a genuine human nature He still possesses
 - The eternal Word temporarily inhabited a human body and later discarded it
@@ -207,4 +207,4 @@ Q What is the significance of the circumstances surrounding Christ's birth?
 
 ## Summary
 
-The Word became flesh, taking a genuine human nature He has never surrendered. Isaiah announced it seven centuries in advance, and Matthew and Luke independently record its fulfillment through the conception of the Holy Spirit. The virgin birth is not a peripheral detail but the hinge protecting both His full humanity and His sinless deity. He came to reveal the Father, accomplish redemption, identify with us, and establish God's Kingdom, and in coming He displayed holiness and love together, since sin could not be overlooked and He did not send a substitute from among us but sent Himself. He arrived at a prepared moment, under the law rather than exempt from it, in circumstances that announced the character of His Kingdom. And His self-emptying set aside divine privilege rather than deity, giving the church its enduring model of humility. Lesson 3 examines both natures directly.
+The Word became flesh, taking a genuine human nature He has never surrendered. Isaiah announced it seven centuries in advance, and Matthew and Luke independently record its fulfillment through the conception of the Holy Spirit. The virgin birth is not a peripheral detail but the hinge protecting both His full humanity and His sinless deity. He came to reveal the Father, accomplish redemption, identify with us, and establish God's Kingdom, and in coming He displayed holiness and love together, since sin could not be overlooked and He did not send a substitute from among us but sent Himself. He arrived at a prepared moment, under the law rather than exempt from it, in circumstances that announced the character of His Kingdom. And His self-emptying set aside divine privilege rather than deity, giving the church its enduring model of humility. Topic 3 examines both natures directly.

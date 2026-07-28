@@ -19,7 +19,7 @@ Three doctrines describe the new life, and they are easily confused because they
 | **Adoption** | Your relationship, from stranger to son or daughter |
 | **Union with Christ** | Your identity, joined to Him so completely that His story becomes yours |
 
-:::objectives By the end of this lesson you will be able to
+:::objectives By the end of this topic you will be able to
 1. Define regeneration and distinguish it from reformation.
 2. Explain why Jesus chose Nicodemus for this conversation and what it rules out.
 3. Explain adoption, including what Roman adoption practice contributes to the picture.
@@ -172,9 +172,9 @@ Union with Christ takes every other doctrine we have studied so far, grace, fait
 
 Write out Galatians 2:20 by hand. Then underline every phrase that describes something already accomplished rather than something you are working toward. Sit with the proportion.
 
-## Lesson Quiz
+## Topic Quiz
 
-:::quiz Lesson 5 quiz
+:::quiz Topic 5 quiz
 Q What is the difference between regeneration and reformation?
 + Reformation asks a person to try harder with the same heart; regeneration gives a new heart inclined toward God
 - Reformation is gradual while regeneration is instantaneous
@@ -234,4 +234,4 @@ Q What tense does Paul use in Ephesians 2 to describe believers being raised and
 
 ## Summary
 
-Three doctrines arrive together at conversion and must be kept distinct. Regeneration changes your nature, imparting a capacity to know and love God that did not previously exist, and it differs from reformation as a new heart differs from a harder-working old one. Because it is wholly the Spirit's work, it removes the footing for both pride and despair. Adoption changes your relationship, replacing the spirit of bondage with the Spirit of adoption, and the Roman practice Paul draws on granted full heir status rather than a diminished share, which dismantles the fear of being merely tolerated. Union with Christ changes your identity, joining you to Him so completely that His death, resurrection, and seated position are genuinely yours, pictured visibly in baptism and described by Paul in the past tense. Union is the truth that binds grace, faith, justification, regeneration, and adoption into one coherent reality. Lesson 6 traces where this new life is going.
+Three doctrines arrive together at conversion and must be kept distinct. Regeneration changes your nature, imparting a capacity to know and love God that did not previously exist, and it differs from reformation as a new heart differs from a harder-working old one. Because it is wholly the Spirit's work, it removes the footing for both pride and despair. Adoption changes your relationship, replacing the spirit of bondage with the Spirit of adoption, and the Roman practice Paul draws on granted full heir status rather than a diminished share, which dismantles the fear of being merely tolerated. Union with Christ changes your identity, joining you to Him so completely that His death, resurrection, and seated position are genuinely yours, pictured visibly in baptism and described by Paul in the past tense. Union is the truth that binds grace, faith, justification, regeneration, and adoption into one coherent reality. Topic 6 traces where this new life is going.

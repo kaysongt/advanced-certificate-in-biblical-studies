@@ -59,6 +59,7 @@ export default async function TopicPage({ params }: Props) {
 
   return (
     <main className="shell">
+      <div className="topicwrap">
       <div className="breadcrumb">
         <Link href={`/curriculum/${module.slug}`}>{module.short_title}</Link>
         <span className="sep">/</span>
@@ -117,6 +118,7 @@ export default async function TopicPage({ params }: Props) {
             : { href: `/courses/${slug}/assessment`, title: "Course assessment" }
         }
       />
+      </div>
     </main>
   );
 }

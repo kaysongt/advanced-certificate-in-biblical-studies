@@ -15,7 +15,7 @@ In the Old Testament, God appointed three distinct offices to lead and shepherd 
 
 No single individual in the Old Testament ever held all three offices at once. The roles were kept deliberately separate, each pointing forward to something greater still to come. In Jesus Christ, all three converge in a single Person, and in Him each office reaches its perfect and final fulfillment.
 
-:::objectives By the end of this lesson you will be able to
+:::objectives By the end of this topic you will be able to
 1. Explain the origin and purpose of the three Old Testament offices and how each is fulfilled in Christ.
 2. Show what would be missing from our salvation if Christ held only one or two of the three.
 3. Explain the meaning of the title *Christ* and what confessing it commits you to.
@@ -80,7 +80,7 @@ Christ's priesthood operates on an entirely different order, the order of Melchi
 
 As our Great High Priest, Jesus did something no Levitical priest could do. He offered Himself as the sacrifice. He was both the priest performing the offering and the offering itself. Unlike high priests who needed to offer sacrifices daily, first for their own sins and then for the people's, Christ did this once for all when He offered up Himself (Hebrews 7:27).
 
-His priestly work did not end at the cross. He continues even now to intercede for His people, since He always lives to make intercession for them (Hebrews 7:25). We return to this in Lesson 6.
+His priestly work did not end at the cross. He continues even now to intercede for His people, since He always lives to make intercession for them (Hebrews 7:25). We return to this in Topic 6.
 
 ## 3. King: The One Who Reigns With All Authority
 
@@ -179,9 +179,9 @@ His earthly ministry was never a random collection of good deeds and wise saying
 
 Write down one decision you are currently facing. Then write three short lines: what Christ as Prophet says to it, what Christ as Priest secures for you in it, and what Christ as King requires of you in it.
 
-## Lesson Quiz
+## Topic Quiz
 
-:::quiz Lesson 4 quiz
+:::quiz Topic 4 quiz
 Q What is distinctive about how Jesus fulfills the office of Prophet?
 + Earlier prophets delivered a message from God; Jesus was in His own Person the message, speaking as God
 - He prophesied more accurately than any prophet before Him
@@ -234,4 +234,4 @@ Q What ran as the undercurrent beneath every sermon, miracle, and act of compass
 
 ## Summary
 
-Israel's three offices of prophet, priest, and king were kept deliberately separate, each held by flawed men who pointed beyond themselves. In Christ all three converge and reach their fulfillment. He is the Prophet who does not merely deliver the message but is the message, the Priest who offered Himself once for all and still intercedes, and the King whose reign is real now and will be undeniable later. Remove any one and something essential to our salvation is missing. The very title *Christ* confesses all three at once. And His earthly ministry was the deliberate unveiling of the Kingdom He announced at Nazareth: teaching that carried its own authority, parables that convicted before they comforted, miracles that functioned as signs pointing to His identity, and a consistent crossing of boundaries that showed whose Kingdom this was. Underneath all of it ran perfect obedience to the Father, carrying Him toward Jerusalem. Lesson 5 goes there.
+Israel's three offices of prophet, priest, and king were kept deliberately separate, each held by flawed men who pointed beyond themselves. In Christ all three converge and reach their fulfillment. He is the Prophet who does not merely deliver the message but is the message, the Priest who offered Himself once for all and still intercedes, and the King whose reign is real now and will be undeniable later. Remove any one and something essential to our salvation is missing. The very title *Christ* confesses all three at once. And His earthly ministry was the deliberate unveiling of the Kingdom He announced at Nazareth: teaching that carried its own authority, parables that convicted before they comforted, miracles that functioned as signs pointing to His identity, and a consistent crossing of boundaries that showed whose Kingdom this was. Underneath all of it ran perfect obedience to the Father, carrying Him toward Jerusalem. Topic 5 goes there.

@@ -13,7 +13,7 @@ There is a mistake many people make without realizing it. They think of Jesus as
 
 The Bible refuses to let us begin the story there. It insists on pulling the curtain back much further, into eternity itself, long before the first grain of dust was shaped into a mountain or the first drop of water filled the sea.
 
-:::objectives By the end of this lesson you will be able to
+:::objectives By the end of this topic you will be able to
 1. Show from John, Colossians, and Hebrews that the Son existed eternally and is the agent of creation.
 2. Explain the meaning of *firstborn over all creation* in Colossians 1:15 and refute the misreading of it.
 3. Explain what John 17:5 reveals about the glory the Son shared with the Father before the world was.
@@ -121,9 +121,9 @@ This truth should produce worship rather than merely information. Before Abraham
 
 Write down, in one sentence each, the three strongest passages you would use to establish Christ's eternal existence. Commit their references to memory before you move on. You will need them in Topic 3.
 
-## Lesson Quiz
+## Topic Quiz
 
-:::quiz Lesson 1 quiz
+:::quiz Topic 1 quiz
 Q What does John 1:1 to 3 establish about the Word?
 + He existed before the beginning, was God, and is the agent through whom all things were made
 - He was the first and greatest of God's creations
@@ -176,4 +176,4 @@ Q Which title does Jesus apply to Himself more than any other in the Gospels, dr
 
 ## Summary
 
-The story of Jesus does not begin at Bethlehem. John identifies the Word as already existing when the beginning began, fully God, and the agent through whom everything was made. Paul calls Him firstborn over all creation in the sense of rank rather than origin, and settles the matter by declaring Him before all things. Hebrews adds that He sustains the universe at this moment by His word. Jesus Himself prayed to be restored to the glory He shared with the Father before the world was, which presupposes an eternity of fellowship rather than a relationship beginning at His birth. Micah and Daniel pointed toward this Person centuries in advance. And all of it matters for one reason above the rest: only God can atone for sin against God, so if the Son began in Bethlehem, He could not save anyone. Lesson 2 asks what happened when this eternal Person took on flesh.
+The story of Jesus does not begin at Bethlehem. John identifies the Word as already existing when the beginning began, fully God, and the agent through whom everything was made. Paul calls Him firstborn over all creation in the sense of rank rather than origin, and settles the matter by declaring Him before all things. Hebrews adds that He sustains the universe at this moment by His word. Jesus Himself prayed to be restored to the glory He shared with the Father before the world was, which presupposes an eternity of fellowship rather than a relationship beginning at His birth. Micah and Daniel pointed toward this Person centuries in advance. And all of it matters for one reason above the rest: only God can atone for sin against God, so if the Son began in Bethlehem, He could not save anyone. Topic 2 asks what happened when this eternal Person took on flesh.

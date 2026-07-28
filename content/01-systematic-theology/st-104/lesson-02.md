@@ -13,7 +13,7 @@ Every great story needs a turning point, the moment when everything changes and 
 
 This lesson covers the fall and the doctrine it produced. Dr. Kay warns that until we understand sin correctly, grace will never feel like the overwhelming gift it actually is.
 
-:::objectives By the end of this lesson you will be able to
+:::objectives By the end of this topic you will be able to
 1. Analyse the strategy embedded in the serpent's opening question.
 2. Trace the immediate aftermath of the fall and explain what the fig leaves establish about human remedies.
 3. Explain the representative headship argument of Romans 5 and its bearing on hope.
@@ -174,9 +174,9 @@ The bad news of sin is only ever preached properly when it makes room for the go
 
 Read Psalm 51 in full. Note every place David speaks of condition rather than action. Write one sentence naming something in your own life you have been treating as a behaviour problem that is in fact a heart problem.
 
-## Lesson Quiz
+## Topic Quiz
 
-:::quiz Lesson 2 quiz
+:::quiz Topic 2 quiz
 Q What was the strategy embedded in the serpent's opening question?
 + It reframed abundant generosity as restrictive stinginess, planting doubt about God's character
 - It directly commanded Eve to disobey God's instruction
@@ -236,4 +236,4 @@ Q Why does the doctrine of sin level every ground of comparison?
 
 ## Summary
 
-The fall began not with an act but with a question that recast God's generosity as stinginess. Doubt distorted the command, the decision followed, and the immediate instinct was to cover and to hide. The fig leaves stand as the first religious act and the first failure. Paul explains the consequences through representative headship, which feels unjust until you notice that the same structure is what allows Christ's obedience to be credited to others. Mercy runs through the curses, through the protective expulsion, and above all through the covering God provided at the cost of the first blood shed in Scripture, immediately after the first promise of a Redeemer. Sin itself is a condition rather than a list, described as missing a mark, as rebellion, and as debt, confessed by David as something present from his beginning. It reaches all people without exception, which levels every comparison and makes the gospel a message for everyone. Lesson 3 turns to the answer.
+The fall began not with an act but with a question that recast God's generosity as stinginess. Doubt distorted the command, the decision followed, and the immediate instinct was to cover and to hide. The fig leaves stand as the first religious act and the first failure. Paul explains the consequences through representative headship, which feels unjust until you notice that the same structure is what allows Christ's obedience to be credited to others. Mercy runs through the curses, through the protective expulsion, and above all through the covering God provided at the cost of the first blood shed in Scripture, immediately after the first promise of a Redeemer. Sin itself is a condition rather than a list, described as missing a mark, as rebellion, and as debt, confessed by David as something present from his beginning. It reaches all people without exception, which levels every comparison and makes the gospel a message for everyone. Topic 3 turns to the answer.

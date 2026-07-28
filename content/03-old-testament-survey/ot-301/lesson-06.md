@@ -2,13 +2,13 @@
 type: lesson
 course: OT 301
 lesson: 6
-title: [FROM BOOK] Lesson 6 title
+title: [FROM BOOK] Topic 6 title
 duration: 1 hr
 status: template
 ---
 
 
-# OT 301 · Lesson 6
+# OT 301 · Topic 6
 
 ## [FROM BOOK] Lesson Title
 
@@ -73,7 +73,7 @@ status: template
 
 [FROM BOOK] A short exercise the student completes before the next lesson.
 
-## Lesson Quiz
+## Topic Quiz
 
 **1.** [FROM BOOK] Question 1
 

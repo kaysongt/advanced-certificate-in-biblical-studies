@@ -13,7 +13,7 @@ Every human being carries a deep and sometimes unspoken conviction that justice 
 
 Scripture teaches that it reflects something true about God's own character. History is not an endless cycle without accountability. It is moving toward a day when every account will be settled with perfect accuracy, and this lesson works carefully through what Scripture says that day will involve.
 
-:::objectives By the end of this lesson you will be able to
+:::objectives By the end of this topic you will be able to
 1. Explain the connection Paul draws in Acts 17 between the resurrection and the certainty of judgment.
 2. Explain why the identity of the Judge is a comfort as much as a warning.
 3. Explain the function of the criteria in Matthew 25 without turning them into a system of earning salvation.
@@ -152,9 +152,9 @@ The gospel is the announcement that God has provided exactly the path of mercy h
 
 List three things you spent significant time on this past month. Beside each, write which building material it most resembles, and why. Be honest rather than harsh.
 
-## Lesson Quiz
+## Topic Quiz
 
-:::quiz Lesson 4 quiz
+:::quiz Topic 4 quiz
 Q What connection does Paul draw in Acts 17 between the resurrection and the judgment?
 + The resurrection is God's public assurance that judgment is coming and that Christ is the appointed Judge
 - The resurrection removes the need for a future judgment
@@ -214,4 +214,4 @@ Q Why does the textbook argue that a God who did not judge sin would not be wort
 
 ## Summary
 
-The instinct that wrongs must be answered reflects something true about God, and Paul grounds the certainty of the coming day in the resurrection itself, which also names the Judge: the One who bled for sinners and understands weakness from the inside. Matthew 25 supplies concrete criteria that function as evidence of a real relationship rather than as a system for earning one. Two scenes must be held apart. At the *bema*, believers whose salvation is already settled have the quality of their work tested by fire, with real reward and real loss at stake but never their security. At the great white throne, the books are opened and the decisive question is whether a name appears in the book of life, since no record of deeds could ever secure a favourable verdict. Works therefore serve as evidence at both, confirming for the believer what faith has secured and exposing for the unbeliever what was never there. The believer's confidence rests entirely in union with the One whose record is perfect, which is why Romans 8:1 can say there is no condemnation at all. The doctrine finally describes God Himself, whose justice makes Him trustworthy and whose mercy makes Him approachable. Lesson 5 turns to the two destinies this judgment assigns.
+The instinct that wrongs must be answered reflects something true about God, and Paul grounds the certainty of the coming day in the resurrection itself, which also names the Judge: the One who bled for sinners and understands weakness from the inside. Matthew 25 supplies concrete criteria that function as evidence of a real relationship rather than as a system for earning one. Two scenes must be held apart. At the *bema*, believers whose salvation is already settled have the quality of their work tested by fire, with real reward and real loss at stake but never their security. At the great white throne, the books are opened and the decisive question is whether a name appears in the book of life, since no record of deeds could ever secure a favourable verdict. Works therefore serve as evidence at both, confirming for the believer what faith has secured and exposing for the unbeliever what was never there. The believer's confidence rests entirely in union with the One whose record is perfect, which is why Romans 8:1 can say there is no condemnation at all. The doctrine finally describes God Himself, whose justice makes Him trustworthy and whose mercy makes Him approachable. Topic 5 turns to the two destinies this judgment assigns.

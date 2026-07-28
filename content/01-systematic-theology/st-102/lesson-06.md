@@ -15,7 +15,7 @@ The ascension is often overshadowed by the crucifixion and resurrection. The pre
 
 Taken together they answer a question the previous lessons leave open. If Christ rose, where is He now, and what is He doing?
 
-:::objectives By the end of this lesson you will be able to
+:::objectives By the end of this topic you will be able to
 1. Describe the ascension and explain why it marks a promotion rather than a departure.
 2. Explain the significance of Christ ascending bodily and retaining His human nature permanently.
 3. Describe Christ's present ministry under the headings of intercession, advocacy, shepherding, sending the Spirit, and exercising authority.
@@ -178,9 +178,9 @@ The Bible's final chapter closes with the risen and ascended Christ declaring, s
 
 Write down one accusation you regularly hear in your own thoughts about your standing before God. Then write beside it what Romans 8:34 and 1 John 2:1 establish is happening in heaven at that same moment.
 
-## Lesson Quiz
+## Topic Quiz
 
-:::quiz Lesson 6 quiz
+:::quiz Topic 6 quiz
 Q What does the ascension mark?
 + The completion of Christ's earthly ministry and His promotion to a position of greater authority on our behalf
 - Christ's withdrawal from active involvement in the world

@@ -13,7 +13,7 @@ Strip away the academic packaging and look at the word itself. Theology comes fr
 
 That is where this course begins, and it is a deliberate starting point. Students often arrive at a systematic theology module assuming they are about to learn a specialist vocabulary. What they are actually about to do is take responsibility for something they have been doing informally their whole Christian life.
 
-:::objectives By the end of this lesson you will be able to
+:::objectives By the end of this topic you will be able to
 1. Define theology from its Greek roots and explain what systematic theology adds to that definition.
 2. Explain why every believer is already engaged in theology, and what is at stake in doing it carelessly.
 3. State the four reasons the textbook gives for why theology matters practically, and give a scriptural basis for each.
@@ -138,15 +138,15 @@ The second is about direction of travel.
 Theology, remember, is not primarily our search for God. It is our response to the God who has already come looking for us.
 :::
 
-That sentence is the bridge into Lesson 2. If theology is a response to God's initiative, the next question is unavoidable: how has He made Himself known?
+That sentence is the bridge into Topic 2. If theology is a response to God's initiative, the next question is unavoidable: how has He made Himself known?
 
 ## Reflection
 
 Write one paragraph, no more than 150 words, defining theology in your own words to a new believer who has told you they are not interested in doctrine. Do not use the words *theos*, *logos*, or *systematic*. Keep the paragraph — you will build on it in later topics.
 
-## Lesson Quiz
+## Topic Quiz
 
-:::quiz Lesson 1 quiz
+:::quiz Topic 1 quiz
 Q Theology comes from two Greek words. What are they, and what do they mean?
 + *Theos*, meaning God, and *logos*, meaning word or study
 - *Theos*, meaning divine, and *logia*, meaning collection
@@ -192,4 +192,4 @@ Q Paul's engagement with the Athenians in Acts 17 is used in this chapter to mak
 
 ## Summary
 
-Theology is the study of God, and by that definition every believer is already a theologian. The question is whether the work is being done carefully. Doctrine is the inheritance of every believer, not the property of specialists, and the remedy for theology done badly is theology done better rather than theology abandoned. It matters because it strengthens faith, shapes living, guards against error, and, above all, produces worship. That last item is the test. Systematic theology serves this work by gathering the whole of Scripture's teaching on a subject into one picture, and the church's historic consensus assists it without ever displacing Scripture's final authority. Above all, theology is a response rather than a search. God spoke first. Lesson 2 asks how.
+Theology is the study of God, and by that definition every believer is already a theologian. The question is whether the work is being done carefully. Doctrine is the inheritance of every believer, not the property of specialists, and the remedy for theology done badly is theology done better rather than theology abandoned. It matters because it strengthens faith, shapes living, guards against error, and, above all, produces worship. That last item is the test. Systematic theology serves this work by gathering the whole of Scripture's teaching on a subject into one picture, and the church's historic consensus assists it without ever displacing Scripture's final authority. Above all, theology is a response rather than a search. God spoke first. Topic 2 asks how.

@@ -19,7 +19,7 @@ There is a particular kind of silence that settles over a person the first time 
 
 Keep that in view. The six truths in this lesson are not a checklist to be recited. Each is meant to reorder something.
 
-:::objectives By the end of this lesson you will be able to
+:::objectives By the end of this topic you will be able to
 1. Define aseity and explain what God's answer at the burning bush establishes about His being.
 2. Explain God's eternality and how it differs from merely existing for a very long time.
 3. Ground God's sovereignty in His self-existence, and use Isaiah 40 to recalibrate a discouraged believer's perspective.
@@ -161,9 +161,9 @@ Read the next lesson not as a student memorizing facts for an exam, but as a wor
 
 Choose the one truth in this lesson that most needs to reorder something in your thinking. Write a single sentence beginning "Because God is..." and ending with a specific change in how you will pray this week.
 
-## Lesson Quiz
+## Topic Quiz
 
-:::quiz Lesson 4 quiz
+:::quiz Topic 4 quiz
 Q What does aseity mean?
 + God's existence is not derived from, dependent on, or explained by anything outside Himself
 - God is present everywhere in creation at once
@@ -216,4 +216,4 @@ Q What did Job receive at the end of his suffering?
 
 ## Summary
 
-God alone is self-existent, answering Moses not with a description but with pure being. From that root flows His eternality, His sovereignty over everything that exists, and His self-sufficiency, which means He created and redeemed out of generosity rather than need. Holiness is the attribute Scripture presses hardest, and a genuine encounter with it exposes our uncleanness and then moves toward cleansing. He is unique, the only true God, so every idol is an attempt to worship something more manageable. And this infinitely exalted God is personally knowable, meeting Elijah in a whisper and offering Job an encounter rather than an explanation. Held together, these truths are not information to be filed. They are meant to produce the doxology Paul reached for when argument ran out. Lesson 5 turns from God's nature to His attributes.
+God alone is self-existent, answering Moses not with a description but with pure being. From that root flows His eternality, His sovereignty over everything that exists, and His self-sufficiency, which means He created and redeemed out of generosity rather than need. Holiness is the attribute Scripture presses hardest, and a genuine encounter with it exposes our uncleanness and then moves toward cleansing. He is unique, the only true God, so every idol is an attempt to worship something more manageable. And this infinitely exalted God is personally knowable, meeting Elijah in a whisper and offering Job an encounter rather than an explanation. Held together, these truths are not information to be filed. They are meant to produce the doxology Paul reached for when argument ran out. Topic 5 turns from God's nature to His attributes.

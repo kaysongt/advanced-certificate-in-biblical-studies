@@ -9,7 +9,7 @@ duration: 1 hr
 status: complete
 ---
 
-Lesson 4 asked who God is at the level of His essential nature. This lesson asks what God is like, meaning the specific characteristics Scripture uses to describe His character. Theologians call these His attributes.
+Topic 4 asked who God is at the level of His essential nature. This lesson asks what God is like, meaning the specific characteristics Scripture uses to describe His character. Theologians call these His attributes.
 
 Dr. Kay is careful about how they should be handled.
 
@@ -19,7 +19,7 @@ I want to walk through several of the most important ones together, not as an is
 
 That framing carries the weight of the whole lesson. Most distortions in Christian teaching come not from denying an attribute but from isolating one and letting it swallow the rest.
 
-:::objectives By the end of this lesson you will be able to
+:::objectives By the end of this topic you will be able to
 1. Distinguish communicable from incommunicable attributes and explain what the distinction is for.
 2. Explain why holiness functions as the lens through which every other attribute is read.
 3. Define God's love, justice, mercy, and grace from Scripture, and show how the cross expresses all four at once.
@@ -191,9 +191,9 @@ We do not study God's character merely to admire it from a safe distance. We stu
 
 Write out the table from section 8 from memory, then add a fourth row of your own: name an attribute, isolate it, and describe the distortion it would produce. Keep it — you will build on it in later topics.
 
-## Lesson Quiz
+## Topic Quiz
 
-:::quiz Lesson 5 quiz
+:::quiz Topic 5 quiz
 Q What is the purpose of distinguishing communicable from incommunicable attributes?
 + It clarifies which attributes we are called to imitate and which remind us we remain creatures
 - It separates the attributes revealed in the Old Testament from those revealed in the New
@@ -246,4 +246,4 @@ Q What does Genesis 50:20 illustrate about how God's attributes operate?
 
 ## Summary
 
-God's attributes are facets of one unified character rather than items on a list. Communicable attributes such as love and faithfulness are ones we are called to reflect. Incommunicable attributes such as omnipotence and omnipresence remind us we remain creatures. Holiness functions as the lens for all the rest, so that love is holy love and justice is holy justice. Love is proven by the sending of the Son, justice is good news because evil will not go unaddressed forever, and mercy and grace meet justice without contradiction at the cross. The decisive insight of the chapter is that no attribute may be read alone: love isolated becomes sentimentality, justice isolated becomes legalism, sovereignty isolated becomes an arbitrary power that cannot be trusted. Every attribute finds its fullest display in Christ, and every one carries a corresponding calling on the believer being formed into that likeness. Lesson 6 completes the volume with the Trinity and the fatherhood of God.
+God's attributes are facets of one unified character rather than items on a list. Communicable attributes such as love and faithfulness are ones we are called to reflect. Incommunicable attributes such as omnipotence and omnipresence remind us we remain creatures. Holiness functions as the lens for all the rest, so that love is holy love and justice is holy justice. Love is proven by the sending of the Son, justice is good news because evil will not go unaddressed forever, and mercy and grace meet justice without contradiction at the cross. The decisive insight of the chapter is that no attribute may be read alone: love isolated becomes sentimentality, justice isolated becomes legalism, sovereignty isolated becomes an arbitrary power that cannot be trusted. Every attribute finds its fullest display in Christ, and every one carries a corresponding calling on the believer being formed into that likeness. Topic 6 completes the volume with the Trinity and the fatherhood of God.

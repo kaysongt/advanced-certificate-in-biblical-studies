@@ -13,7 +13,7 @@ There is a phrase that appears again and again throughout the New Testament, spo
 
 Not as a metaphor for God's ongoing presence in the world, not as a symbol for the spread of the gospel or the death of believers, but as an actual, visible, personal, bodily return of Jesus Christ to the earth He once walked, died on, and rose from. This lesson takes up that promise, and then the resurrection that Christianity stands or falls on.
 
-:::objectives By the end of this lesson you will be able to
+:::objectives By the end of this topic you will be able to
 1. Defend the visible, personal, bodily character of Christ's return from Acts 1 and Matthew 24.
 2. Explain *parousia* and *apokalypsis* and what each contributes.
 3. Explain Paul's pastoral purpose in 1 Thessalonians 4 and what the passage does and does not describe.
@@ -159,7 +159,7 @@ Paul ties the resurrection directly to the return described earlier in this less
 
 This is the same event as 1 Thessalonians 4: the dead in Christ rising to meet the returning Lord, joined by believers still alive, all instantaneously transformed. It is not a gradual process stretched over years but a single decisive event, sudden and complete.
 
-Scripture also describes a resurrection of **all** people, not only believers. Jesus states it plainly: an hour is coming when all who are in the tombs will hear His voice and come out, those who have done good to the resurrection of life, and those who have done evil to the resurrection of judgment. Daniel anticipates the same reality centuries earlier. Resurrection is universal in scope even though its outcomes diverge completely, depending entirely on a person's relationship to Christ. Lesson 4 takes up that divergence.
+Scripture also describes a resurrection of **all** people, not only believers. Jesus states it plainly: an hour is coming when all who are in the tombs will hear His voice and come out, those who have done good to the resurrection of life, and those who have done evil to the resurrection of judgment. Daniel anticipates the same reality centuries earlier. Resurrection is universal in scope even though its outcomes diverge completely, depending entirely on a person's relationship to Christ. Topic 4 takes up that divergence.
 
 ## 10. Why It Changes Tuesday
 
@@ -177,9 +177,9 @@ This doctrine also refuses every philosophy that treats the physical world as un
 
 Identify one task this week that feels too small to matter. Do it as though 1 Corinthians 15:58 were literally true of it, because it is.
 
-## Lesson Quiz
+## Topic Quiz
 
-:::quiz Lesson 3 quiz
+:::quiz Topic 3 quiz
 Q What does Acts 1:11 promise about the manner of Christ's return?
 + The same Jesus will come in the same way He was seen to go, visibly and bodily
 - He will return spiritually, through the growth of the Church
@@ -239,4 +239,4 @@ Q What is the scope of the resurrection according to John 5:28 to 29?
 
 ## Summary
 
-The return of Christ is visible, personal, and bodily, promised by the angels at the ascension in exactly those terms and described by Jesus in cosmic language no one could mistake. *Parousia* names it a royal arrival and *apokalypsis* an unveiling of glory now hidden. Paul's fullest description was written to comfort grieving people, and it is a triumphant reunion rather than a quiet vanishing. Peter reframes the delay as mercy, Jesus forbids calculation, and two parables convert waiting into stewardship. On the disputed sequences the textbook deliberately holds its peace, keeping the centre in view. The resurrection is the claim the faith stands or falls on, and Christ's is the firstfruits guaranteeing the harvest. The body raised is continuous with the body sown but perfected, physical rather than ghostly, patterned on the risen Christ who ate fish and showed His wounds. All the dead will rise, though to opposite outcomes. And the practical conclusion Paul draws is not speculation but steadfastness: in the Lord your labour is not in vain. Lesson 4 turns to the judgment that follows.
+The return of Christ is visible, personal, and bodily, promised by the angels at the ascension in exactly those terms and described by Jesus in cosmic language no one could mistake. *Parousia* names it a royal arrival and *apokalypsis* an unveiling of glory now hidden. Paul's fullest description was written to comfort grieving people, and it is a triumphant reunion rather than a quiet vanishing. Peter reframes the delay as mercy, Jesus forbids calculation, and two parables convert waiting into stewardship. On the disputed sequences the textbook deliberately holds its peace, keeping the centre in view. The resurrection is the claim the faith stands or falls on, and Christ's is the firstfruits guaranteeing the harvest. The body raised is continuous with the body sown but perfected, physical rather than ghostly, patterned on the risen Christ who ate fish and showed His wounds. All the dead will rise, though to opposite outcomes. And the practical conclusion Paul draws is not speculation but steadfastness: in the Lord your labour is not in vain. Topic 4 turns to the judgment that follows.

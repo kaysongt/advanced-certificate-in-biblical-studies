@@ -2,13 +2,13 @@
 type: lesson
 course: BF 203
 lesson: 2
-title: [FROM BOOK] Lesson 2 title
+title: [FROM BOOK] Topic 2 title
 duration: 1 hr
 status: template
 ---
 
 
-# BF 203 · Lesson 2
+# BF 203 · Topic 2
 
 ## [FROM BOOK] Lesson Title
 
@@ -73,7 +73,7 @@ status: template
 
 [FROM BOOK] A short exercise the student completes before the next lesson.
 
-## Lesson Quiz
+## Topic Quiz
 
 **1.** [FROM BOOK] Question 1
 

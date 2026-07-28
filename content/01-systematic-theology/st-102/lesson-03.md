@@ -17,7 +17,7 @@ Dr. Kay names a temptation that runs particularly among believers who rightly ch
 It can feel safer, somehow, to imagine Jesus moving through His earthly life with a kind of divine immunity to the discomforts the rest of us endure. But Scripture does not describe a Savior who merely appeared human while secretly floating above the difficulties of life on earth. It describes a Man who grew, who tired, who wept, who bled, and who was tempted in every way that we are.
 :::
 
-:::objectives By the end of this lesson you will be able to
+:::objectives By the end of this topic you will be able to
 1. Demonstrate the genuine humanity of Christ from the Gospels' record of His growth, weariness, grief, hunger, thirst, and sleep.
 2. Explain Hebrews 4:15 to 16 and why the reality of Christ's temptation is the ground of the believer's confidence.
 3. Explain why Christ's sinlessness was essential to redemption, using Romans 5:19.
@@ -172,9 +172,9 @@ This unchanging nature is not cold or static, the way a stone monument remains u
 
 Take one temptation you are currently facing. Write it down, then write beside it the specific way Hebrews 4:15 to 16 changes how you bring it to God. Be concrete about what you would otherwise have done instead.
 
-## Lesson Quiz
+## Topic Quiz
 
-:::quiz Lesson 3 quiz
+:::quiz Topic 3 quiz
 Q What does Luke 2:52 establish about Jesus?
 + He genuinely grew and developed, increasing in wisdom and stature over time
 - He possessed complete adult knowledge from infancy but concealed it
@@ -234,4 +234,4 @@ Q Why do you need a mediator who is both fully God and fully man?
 
 ## Summary
 
-Jesus grew, tired, wept, hungered, thirsted, and slept, and Scripture records these details deliberately. He was tempted in every point as we are, in the wilderness and in Gethsemane, and He resisted by standing on Scripture rather than by drawing on power unavailable to us. That reality is the ground of our confidence to come boldly to the throne of grace. His sinlessness was essential, since one lapse would have disqualified Him as a substitute. At the same time, four independent lines of evidence establish His full deity: the divine names He carries, the divine attributes He possesses, the divine works He performs, and the worship He receives without correction. The doctrine cannot be softened, because only God possesses the infinite worth to atone for sin against God. Held together, He is one Person in two complete natures, without confusion and without separation, and He is exactly the mediator that weak and weary people need. Lesson 4 turns from who He is to what He came to do.
+Jesus grew, tired, wept, hungered, thirsted, and slept, and Scripture records these details deliberately. He was tempted in every point as we are, in the wilderness and in Gethsemane, and He resisted by standing on Scripture rather than by drawing on power unavailable to us. That reality is the ground of our confidence to come boldly to the throne of grace. His sinlessness was essential, since one lapse would have disqualified Him as a substitute. At the same time, four independent lines of evidence establish His full deity: the divine names He carries, the divine attributes He possesses, the divine works He performs, and the worship He receives without correction. The doctrine cannot be softened, because only God possesses the infinite worth to atone for sin against God. Held together, He is one Person in two complete natures, without confusion and without separation, and He is exactly the mediator that weak and weary people need. Topic 4 turns from who He is to what He came to do.

@@ -1,8 +1,12 @@
 import Link from "next/link";
 
+import { currentStudent } from "@/lib/auth";
+
 import ThemeToggle from "./ThemeToggle";
 
-export default function Masthead() {
+export default async function Masthead() {
+  const student = await currentStudent();
+
   return (
     <header className="masthead">
       <div className="inner">
@@ -17,16 +21,26 @@ export default function Masthead() {
           <Link href="/curriculum" className="hide-sm">
             Curriculum
           </Link>
-          <Link href="/pricing" className="hide-sm">
-            Pricing
-          </Link>
+          {student ? null : (
+            <Link href="/pricing" className="hide-sm">
+              Pricing
+            </Link>
+          )}
           <Link href="/glossary" className="hide-sm">
             Glossary
           </Link>
-          <Link href="/login">Sign in</Link>
-          <Link href="/enroll" className="btn primary" style={{ marginLeft: 6 }}>
-            Enrol
-          </Link>
+          {student ? (
+            <Link href="/dashboard" className="btn primary" style={{ marginLeft: 6 }}>
+              My studies
+            </Link>
+          ) : (
+            <>
+              <Link href="/login">Sign in</Link>
+              <Link href="/enroll" className="btn primary" style={{ marginLeft: 6 }}>
+                Enrol
+              </Link>
+            </>
+          )}
           <ThemeToggle />
         </nav>
       </div>

@@ -13,7 +13,7 @@ If the previous lesson left the impression that the enemy is finished and there 
 
 The second half of the lesson turns to the subject that brings people to Scripture with more urgency than any other. Every person reading this will die unless the Lord returns first, and every person reading this has watched someone they love walk through that door ahead of them.
 
-:::objectives By the end of this lesson you will be able to
+:::objectives By the end of this topic you will be able to
 1. State the single question that separates biblical spiritual warfare from every counterfeit version of it.
 2. Explain why the placement of Ephesians 6 within the letter matters.
 3. Explain each piece of the armour as something already possessed rather than manufactured.
@@ -139,14 +139,14 @@ Revelation shows John seeing under the heavenly altar the souls of those slain f
 The Transfiguration adds a second window. Moses and Elijah appear, speaking with Jesus about His coming departure at Jerusalem. Moses had died centuries earlier, and both appear as recognisable, conscious, communicative beings.
 
 :::note What about those who die outside of Christ?
-Scripture is more sobering here, and Lesson 5 returns to it. But the account of the rich man and Lazarus presents the man in torment immediately after death, fully conscious, able to see, to feel, to remember, to plead, and to be refused. Death does not end conscious existence for anyone. It transitions a person, immediately and without an unconscious gap, into either the presence of Christ or separation from Him.
+Scripture is more sobering here, and Topic 5 returns to it. But the account of the rich man and Lazarus presents the man in torment immediately after death, fully conscious, able to see, to feel, to remember, to plead, and to be refused. Death does not end conscious existence for anyone. It transitions a person, immediately and without an unconscious gap, into either the presence of Christ or separation from Him.
 :::
 
 ## 8. A Waystation, Not the Destination
 
 One clarification prevents a common distortion. The Christian hope has never been merely about a disembodied soul floating in some ethereal paradise forever.
 
-Being with Christ immediately upon death is wonderful and real, but Scripture presents it as a waystation rather than a final destination. Paul describes believers groaning inwardly, waiting eagerly for adoption as sons, the redemption of our bodies. The full hope includes a resurrected, glorified body reunited with the soul in a renewed creation. Lesson 3 takes that up.
+Being with Christ immediately upon death is wonderful and real, but Scripture presents it as a waystation rather than a final destination. Paul describes believers groaning inwardly, waiting eagerly for adoption as sons, the redemption of our bodies. The full hope includes a resurrected, glorified body reunited with the soul in a renewed creation. Topic 3 takes that up.
 
 ## 9. How Christians Grieve
 
@@ -164,9 +164,9 @@ Dr. Kay is careful not to overclaim here. Scripture does not answer every privat
 
 Read 1 Thessalonians 4:13 slowly. Write one sentence describing a loss you carry, and a second sentence describing what changes about that grief when it is anchored rather than removed.
 
-## Lesson Quiz
+## Topic Quiz
 
-:::quiz Lesson 2 quiz
+:::quiz Topic 2 quiz
 Q What single question separates biblical spiritual warfare from its counterfeits?
 + Whether you are fighting for victory or from victory
 - Whether the conflict is spiritual or merely circumstantial
@@ -226,4 +226,4 @@ Q What evidence does the textbook give against soul sleep?
 
 ## Summary
 
-Biblical warfare is fought from victory rather than for it, which is why Ephesians establishes what believers already possess before it ever mentions the enemy, and why Paul's repeated command is to stand. Each piece of the armour is the gospel seen from a different angle, already given rather than manufactured, with Scripture as the single offensive weapon. James fixes the order as submission first, then resistance; Peter adds sobriety without preoccupation and the reminder that the whole brotherhood faces the same opposition; John settles the anxiety in one sentence. Death, meanwhile, is treated honestly as an enemy that entered through sin rather than as a natural transition, and just as honestly as an enemy already stripped of its sting. The believer who dies is immediately with Christ, as Jesus promised the thief and Paul expected for himself, and the awake souls of Revelation 6 together with the Transfiguration tell against any notion of unconscious sleep. That presence is a waystation rather than the destination, since the full hope includes the body. And grief remains, transformed rather than forbidden. Lesson 3 turns to the return and the resurrection that complete the hope.
+Biblical warfare is fought from victory rather than for it, which is why Ephesians establishes what believers already possess before it ever mentions the enemy, and why Paul's repeated command is to stand. Each piece of the armour is the gospel seen from a different angle, already given rather than manufactured, with Scripture as the single offensive weapon. James fixes the order as submission first, then resistance; Peter adds sobriety without preoccupation and the reminder that the whole brotherhood faces the same opposition; John settles the anxiety in one sentence. Death, meanwhile, is treated honestly as an enemy that entered through sin rather than as a natural transition, and just as honestly as an enemy already stripped of its sting. The believer who dies is immediately with Christ, as Jesus promised the thief and Paul expected for himself, and the awake souls of Revelation 6 together with the Transfiguration tell against any notion of unconscious sleep. That presence is a waystation rather than the destination, since the full hope includes the body. And grief remains, transformed rather than forbidden. Topic 3 turns to the return and the resurrection that complete the hope.

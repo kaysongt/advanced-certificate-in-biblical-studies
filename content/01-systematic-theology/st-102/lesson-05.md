@@ -17,7 +17,7 @@ And yet the cross alone would leave the story unfinished. A crucified Messiah wh
 
 These two chapters belong in one lesson because neither event means what it means without the other.
 
-:::objectives By the end of this lesson you will be able to
+:::objectives By the end of this topic you will be able to
 1. Explain the meaning of Christ's final word from the cross and what it declares about His work.
 2. Define and distinguish atonement, reconciliation, justification, the great exchange, and victory.
 3. Explain the cry of dereliction and the significance of the torn veil.
@@ -172,9 +172,9 @@ Paul draws the whole argument to its conclusion with a taunt aimed at death itse
 
 Read Isaiah 53 slowly, then read Matthew 27. Note three specific points where the prophecy and the record correspond. Sit with the fact that seven centuries separate them.
 
-## Lesson Quiz
+## Topic Quiz
 
-:::quiz Lesson 5 quiz
+:::quiz Topic 5 quiz
 Q What did Jesus mean by "It is finished"?
 + A debt paid in full and a task completed to its final requirement
 - A statement of resignation as His strength gave out
@@ -234,4 +234,4 @@ Q What was the nature of Christ's resurrected body?
 
 ## Summary
 
-The cross was foretold in Isaiah 53 with a precision no ordinary foresight explains, and Christ's final word declared a debt paid in full. It accomplished atonement, reconciliation, justification, the great exchange, and victory, five angles on one finished work. The cry of dereliction is the sound of that exchange taking place, and the veil torn from the top announces that God removed the barrier from His own side. At the table the night before, Christ inaugurated the covenant Jeremiah had promised. Yet the cross alone would leave the story unfinished. The tomb was found empty, the appearances were public and verifiable, cowardly disciples became witnesses who died for their testimony, and the accounts preserve details no fabricator would have invented. The resurrection confirms His deity, secures our justification, guarantees our own resurrection, and grounds a living hope. Lesson 6 follows Him upward.
+The cross was foretold in Isaiah 53 with a precision no ordinary foresight explains, and Christ's final word declared a debt paid in full. It accomplished atonement, reconciliation, justification, the great exchange, and victory, five angles on one finished work. The cry of dereliction is the sound of that exchange taking place, and the veil torn from the top announces that God removed the barrier from His own side. At the table the night before, Christ inaugurated the covenant Jeremiah had promised. Yet the cross alone would leave the story unfinished. The tomb was found empty, the appearances were public and verifiable, cowardly disciples became witnesses who died for their testimony, and the accounts preserve details no fabricator would have invented. The resurrection confirms His deity, secures our justification, guarantees our own resurrection, and grounds a living hope. Topic 6 follows Him upward.

@@ -13,7 +13,7 @@ If sin is humanity reaching for something it had no right to take, grace is God 
 
 Every other religious system in human history operates on a transaction. Perform well enough, sacrifice enough, meditate enough, and perhaps the divine will notice and reward you. Christianity begins somewhere entirely different. It begins with a Giver who moves first, before we have done anything to deserve His attention.
 
-:::objectives By the end of this lesson you will be able to
+:::objectives By the end of this topic you will be able to
 1. Define grace precisely and explain why the word *freely* in Romans 3:24 excludes partial earning.
 2. Explain Ephesians 2:8 to 9 and why every component of salvation originates outside the believer.
 3. Explain how Titus 2:11 to 14 corrects the misuse of grace as licence.
@@ -157,9 +157,9 @@ This is the essential difference between grace and faith. Grace is the gift. Fai
 
 Write down one thing you have quietly been contributing to your own salvation, some effort or quality you half-believe tipped the scales. Then write beside it the specific phrase from Ephesians 2:8 to 9 that rules it out.
 
-## Lesson Quiz
+## Topic Quiz
 
-:::quiz Lesson 3 quiz
+:::quiz Topic 3 quiz
 Q How does the textbook define grace?
 + God helping those who cannot help themselves at all, the bill paid in full by Someone else
 - God assisting those who make a sincere effort toward Him
@@ -219,4 +219,4 @@ Q What determines the effectiveness of saving faith?
 
 ## Summary
 
-Grace means God helps those who cannot help themselves, a bill paid in full rather than a discount on one still owed. Romans and Ephesians close off every route to boasting, since every component of rescue originated outside us and our only contribution was the sin that made it necessary. Grace is nevertheless a teacher rather than a licence, training those it saves. It does not lower God's standard but meets it in Christ and credits the result to those who believe. Faith is neither a work nor bare intellectual assent but confident trust that acts on God's word, and Romans 4 shows righteousness credited to Abraham's account before his obedience caught up. Paul and James agree: justification is by faith alone, and the faith that justifies is never alone. And what matters is not the intensity of your grip but the strength of what holds you. Lesson 4 turns to the response faith produces and the verdict it receives.
+Grace means God helps those who cannot help themselves, a bill paid in full rather than a discount on one still owed. Romans and Ephesians close off every route to boasting, since every component of rescue originated outside us and our only contribution was the sin that made it necessary. Grace is nevertheless a teacher rather than a licence, training those it saves. It does not lower God's standard but meets it in Christ and credits the result to those who believe. Faith is neither a work nor bare intellectual assent but confident trust that acts on God's word, and Romans 4 shows righteousness credited to Abraham's account before his obedience caught up. Paul and James agree: justification is by faith alone, and the faith that justifies is never alone. And what matters is not the intensity of your grip but the strength of what holds you. Topic 4 turns to the response faith produces and the verdict it receives.

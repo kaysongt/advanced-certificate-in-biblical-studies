@@ -13,7 +13,7 @@ The relationship between the Church and the Kingdom of God is one of the most fr
 
 The Church is not identical to the Kingdom, nor is the Kingdom simply a future reality with no bearing on the present. This lesson untangles those categories and then asks the practical question that closes the whole course: how should the Church actually live within the world she has been sent to reach?
 
-:::objectives By the end of this lesson you will be able to
+:::objectives By the end of this topic you will be able to
 1. Describe the shape of the Kingdom Jesus announced and how it surprised His original audience.
 2. Explain what the parables of Matthew 13 establish about how the Kingdom advances.
 3. Explain the already and not yet tension.
@@ -177,9 +177,9 @@ The aim of this course is not that you become someone who attends church, but so
 
 Write one sentence completing this: "If someone outside the faith observed my life closely for a month, the thing about God's kingdom they would most clearly see is..." Then write a second sentence naming what they would not see, and why.
 
-## Lesson Quiz
+## Topic Quiz
 
-:::quiz Lesson 6 quiz
+:::quiz Topic 6 quiz
 Q What do the parables of Matthew 13 establish about how the Kingdom advances?
 + Quietly and often invisibly, from small beginnings, transforming from within rather than by external force
 - Through the gradual acquisition of political and cultural influence

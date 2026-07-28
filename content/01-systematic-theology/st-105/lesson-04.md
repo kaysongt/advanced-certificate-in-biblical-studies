@@ -13,7 +13,7 @@ Jesus left His Church very few explicit instructions about ritual practice, but 
 
 The same Great Commission that commands baptism also contains a word often overlooked despite carrying enormous weight. Jesus does not command His followers to make converts. He commands them to make **disciples**.
 
-:::objectives By the end of this lesson you will be able to
+:::objectives By the end of this topic you will be able to
 1. Explain why baptism is a normal expected step rather than an optional add-on.
 2. State precisely what baptism does and does not accomplish.
 3. Explain the theological meaning of baptism from Romans 6 and the three dimensions of its testimony.
@@ -166,9 +166,9 @@ Two questions close the chapter. Are you continuing in Jesus' teaching? And are 
 
 Identify one believer newer in the faith than you. Write down one thing you have learned that they have not yet, and one concrete way you could pass it on this month.
 
-## Lesson Quiz
+## Topic Quiz
 
-:::quiz Lesson 4 quiz
+:::quiz Topic 4 quiz
 Q What does baptism accomplish?
 + It is the divinely appointed sign and public declaration of a salvation received through faith
 - It produces the forgiveness of sins through the water itself
@@ -228,4 +228,4 @@ Q What does 2 Timothy 2:2 establish about discipleship?
 
 ## Summary
 
-Christ gave His Church two ordinances, and both are commanded rather than optional. Baptism is woven into the making of disciples as a normal expected step, and while it saves no one, it is the appointed sign of a salvation received by faith. Romans 6 shows it re-enacting death, burial, and resurrection, and it testifies at once to the believer, to the watching community, and to the spiritual realm. The Lord's Supper is remembrance that is participatory rather than merely intellectual, and it proclaims the Lord's death until He comes, holding past, present, and future together. Paul's warning aims at self-examination rather than fear. Both ordinances take ordinary elements and invest them with meaning, because people remember through shared physical action in ways teaching alone cannot achieve. And the commission behind them commands disciples rather than converts, a process rooted and built up over time, reproducing through ordinary believers across at least four generations. Lesson 5 turns to leadership and mission.
+Christ gave His Church two ordinances, and both are commanded rather than optional. Baptism is woven into the making of disciples as a normal expected step, and while it saves no one, it is the appointed sign of a salvation received by faith. Romans 6 shows it re-enacting death, burial, and resurrection, and it testifies at once to the believer, to the watching community, and to the spiritual realm. The Lord's Supper is remembrance that is participatory rather than merely intellectual, and it proclaims the Lord's death until He comes, holding past, present, and future together. Paul's warning aims at self-examination rather than fear. Both ordinances take ordinary elements and invest them with meaning, because people remember through shared physical action in ways teaching alone cannot achieve. And the commission behind them commands disciples rather than converts, a process rooted and built up over time, reproducing through ordinary believers across at least four generations. Topic 5 turns to leadership and mission.

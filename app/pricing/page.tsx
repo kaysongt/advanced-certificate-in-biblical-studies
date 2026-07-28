@@ -24,12 +24,12 @@ export default function PricingPage() {
           <div className="amount">
             {PRICING.certificate.label} <span>/ certificate</span>
           </div>
-          <p className="note">
+          <p className="blurb">
             Any one of the five programmes. {available} available to start today.
           </p>
           <ul>
             <li>All courses within that certificate</li>
-            <li>Lesson quizzes and course assessments</li>
+            <li>Topic quizzes and course assessments</li>
             <li>Customised textbooks</li>
             <li>Modular certificate on completion</li>
           </ul>
@@ -43,7 +43,7 @@ export default function PricingPage() {
           <div className="amount">
             {PRICING.advanced.label} <span>/ full programme</span>
           </div>
-          <p className="note">
+          <p className="blurb">
             All five certificates &mdash; {program.total_hours} hours across{" "}
             {program.total_courses} courses.
           </p>
@@ -61,8 +61,13 @@ export default function PricingPage() {
 
       <div className="prose" style={{ marginTop: 44 }}>
         <h2>Assessment and grading</h2>
+        {/*
+          grading.note is an internal sign-off reminder for Dr. Kay, not customer
+          copy. It stays in curriculum.json for the team; it is not rendered here.
+        */}
         <p>
-          <em>{grading.note}</em>
+          You need {grading.pass_mark}% to pass, and you cannot move on to the next topic or
+          course until you have passed the one before it.
         </p>
         <div className="tablewrap">
           <table>

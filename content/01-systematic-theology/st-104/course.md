@@ -78,6 +78,6 @@ You are graded on doctrinal precision, breadth of scriptural support, the honest
 
 ## Instructor Notes
 
-The single most important teaching decision in this course is refusing to let students collapse justification into sanctification. Every pastoral problem in Lesson 6 traces back to that collapse. Teach the distinction in Lesson 4, and then keep returning to it.
+The single most important teaching decision in this course is refusing to let students collapse justification into sanctification. Every pastoral problem in Topic 6 traces back to that collapse. Teach the distinction in Topic 4, and then keep returning to it.
 
 Chapter 6 on faith contains the textbook's treatment of Paul and James. Students often arrive expecting a contradiction. Dr. Kay's resolution is clean: Paul defends that we are justified by faith alone, and James defends that the faith which justifies is never alone. Teach it that way.

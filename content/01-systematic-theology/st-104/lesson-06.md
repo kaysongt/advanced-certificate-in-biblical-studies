@@ -9,11 +9,11 @@ duration: 1 hr
 status: complete
 ---
 
-Every doctrine in Lesson 5 describes something God accomplishes instantly and completely at the moment of salvation. Regeneration happens in a moment. Adoption is settled immediately and permanently. Union with Christ is an established reality the instant a person believes.
+Every doctrine in Topic 5 describes something God accomplishes instantly and completely at the moment of salvation. Regeneration happens in a moment. Adoption is settled immediately and permanently. Union with Christ is an established reality the instant a person believes.
 
 Sanctification is different, and understanding that difference will protect you from a great deal of confusion and discouragement.
 
-:::objectives By the end of this lesson you will be able to
+:::objectives By the end of this topic you will be able to
 1. Define sanctification and distinguish it clearly from justification.
 2. Explain the significance of the word *therefore* opening Romans 12.
 3. Explain the renewal of the mind and the principle of beholding in 2 Corinthians 3:18.
@@ -179,9 +179,9 @@ Mature assurance rests its full weight on the objective ground while welcoming t
 
 Read Romans 8:31 to 39 aloud, slowly. Each time Paul names a threat, pause and name the specific fear in your own life that corresponds to it. Then read his conclusion aloud one more time.
 
-## Lesson Quiz
+## Topic Quiz
 
-:::quiz Lesson 6 quiz
+:::quiz Topic 6 quiz
 Q How does sanctification differ from justification?
 + Justification is a legal declaration made once; sanctification is a lifelong process unfolding gradually and unevenly
 - Justification concerns behaviour while sanctification concerns status

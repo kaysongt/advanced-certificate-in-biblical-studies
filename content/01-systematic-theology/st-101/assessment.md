@@ -163,7 +163,7 @@ Five questions, 6 points each, 30 points total. Answer each in 100 to 150 words.
 
 **B2.** Define plenary verbal inspiration. Then explain what the doctrine does *not* claim, using the differences between Luke's, John's, and Isaiah's writing styles.
 
-**B3.** A believer applies Jeremiah 29:11 to a job application, treating it as a personal guarantee of success. Walk through the interpretive method taught in Lesson 3: what the passage meant originally, what principle legitimately carries across, and where the popular application goes wrong.
+**B3.** A believer applies Jeremiah 29:11 to a job application, treating it as a personal guarantee of success. Walk through the interpretive method taught in Topic 3: what the passage meant originally, what principle legitimately carries across, and where the popular application goes wrong.
 
 **B4.** Explain why the textbook insists that holiness is the lens through which every other attribute must be read. Illustrate with two attributes, showing how each changes when holiness is removed.
 
@@ -177,7 +177,7 @@ Full marks require: an accurate definition, at least one correctly cited passage
 
 One question, 30 points. Write 600 to 800 words.
 
-> The textbook argues that theology which stops at accurate description without moving into adoration has fallen short of its purpose. Take one truth about God covered in this course, either from His nature in Lesson 4 or His attributes in Lesson 5. Show from at least three passages how Scripture reveals it, explain how it connects to at least one other truth covered in the course, and describe honestly how a settled confidence in it would change a specific area of your life or ministry.
+> The textbook argues that theology which stops at accurate description without moving into adoration has fallen short of its purpose. Take one truth about God covered in this course, either from His nature in Topic 4 or His attributes in Topic 5. Show from at least three passages how Scripture reveals it, explain how it connects to at least one other truth covered in the course, and describe honestly how a settled confidence in it would change a specific area of your life or ministry.
 
 You may not choose a truth you have already used in the course assignment.
 

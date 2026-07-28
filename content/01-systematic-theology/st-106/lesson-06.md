@@ -13,7 +13,7 @@ The story the Bible tells does not end with souls escaping a ruined world into s
 
 That distinction matters more than it first appears, because it shapes how believers understand their relationship to the physical world, to their own bodies, to their work, and to the destiny of everything God originally called very good. The lesson then closes the course by asking the question every previous lesson has been building toward. Now that we know where history is headed, how then should we live today.
 
-:::objectives By the end of this lesson you will be able to
+:::objectives By the end of this topic you will be able to
 1. State what Isaiah anticipates about the new creation, including its extension to the animal kingdom.
 2. Explain why Peter's language of dissolution does not amount to annihilation.
 3. Explain Romans 8 on creation's groaning, and the significance of the childbirth image.
@@ -170,9 +170,9 @@ Even so, come, Lord Jesus.
 
 This course began with the unseen realm and ends with a renewed creation. Write a single paragraph you could say at a graveside, drawing on at least three lessons from this course, that is honest about grief and anchored in hope.
 
-## Lesson Quiz
+## Topic Quiz
 
-:::quiz Lesson 6 quiz
+:::quiz Topic 6 quiz
 Q What does Isaiah's vision of the new creation include beyond human society?
 + The animal kingdom restored to peace, with the wolf and the lamb grazing together
 - The abolition of the physical order entirely

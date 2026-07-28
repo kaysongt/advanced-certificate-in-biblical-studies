@@ -15,7 +15,7 @@ Dr. Kay is blunt about why this matters. He has watched well-meaning Christians 
 
 The discipline is called hermeneutics. Paul urges Timothy to be diligent to present himself approved to God, a worker who does not need to be ashamed, rightly dividing the word of truth (2 Timothy 2:15). Notice that phrase, *rightly dividing*. It implies Scripture can be handled wrongly, cut against its own grain.
 
-:::objectives By the end of this lesson you will be able to
+:::objectives By the end of this topic you will be able to
 1. State and apply the principle that context governs meaning, including historical, literary, and cultural context.
 2. Identify the major biblical genres and explain why genre determines how a passage is read.
 3. Apply the analogy of Scripture, using clearer passages to interpret less clear ones.
@@ -166,9 +166,9 @@ Without this framework, believers fall into one of two errors: treating the Old 
 
 Take a single Old Testament narrative you know well. Write three sentences: one stating what happened, one stating what the passage is teaching about God, and one stating how it fits the storyline running toward Christ. Keep the three distinct. Most misreadings come from collapsing them.
 
-## Lesson Quiz
+## Topic Quiz
 
-:::quiz Lesson 3 quiz
+:::quiz Topic 3 quiz
 Q What is the correct order of interpretive questions?
 + First ask what the passage meant to its original audience, then ask how that meaning applies today
 - First ask what the passage means to me, then check it against the original context
@@ -221,4 +221,4 @@ Q On the road to Emmaus, what did Jesus do with the Hebrew Scriptures?
 
 ## Summary
 
-Scripture can be handled wrongly, so interpretation requires real effort and real skill. Context governs meaning, and the original audience must be heard before present application is attempted. Genre determines how a passage communicates, and ignoring it produces either wooden literalism or careless spiritualizing. Because one divine author stands behind the whole, clearer passages interpret less clear ones. Covenantal setting keeps us from both legalism and dismissal of the Old Testament. Method must be joined to the Spirit's illumination and to the accountability of the church rather than practiced in isolation. And every passage, rightly read in its own context, finally belongs to one story that runs from the promise in Genesis 3:15 through covenant, failure, exile, and anticipation to fulfillment in Christ and consummation in the new creation. Lesson 4 turns from how God has spoken to who He is.
+Scripture can be handled wrongly, so interpretation requires real effort and real skill. Context governs meaning, and the original audience must be heard before present application is attempted. Genre determines how a passage communicates, and ignoring it produces either wooden literalism or careless spiritualizing. Because one divine author stands behind the whole, clearer passages interpret less clear ones. Covenantal setting keeps us from both legalism and dismissal of the Old Testament. Method must be joined to the Spirit's illumination and to the accountability of the church rather than practiced in isolation. And every passage, rightly read in its own context, finally belongs to one story that runs from the promise in Genesis 3:15 through covenant, failure, exile, and anticipation to fulfillment in Christ and consummation in the new creation. Topic 4 turns from how God has spoken to who He is.

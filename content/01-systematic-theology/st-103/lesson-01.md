@@ -13,7 +13,7 @@ Ask most Christians to describe God the Father, and they will reach for words fa
 
 That hesitation is understandable. It is not accurate, and it is not what Scripture gives us.
 
-:::objectives By the end of this lesson you will be able to
+:::objectives By the end of this topic you will be able to
 1. State the identity of the Holy Spirit as the third Person of the Trinity, fully God and distinct in Person.
 2. Demonstrate His personhood from the range of personal actions Scripture attributes to Him.
 3. Explain the meaning of *Helper* and the three strokes of His ministry that Jesus described.
@@ -167,9 +167,9 @@ Dr. Kay observes that believers who grow comfortable acknowledging the Spirit's 
 
 Stop asking what the Spirit can do for you before you have asked who He is. This week, simply acknowledge His presence, quietly and honestly, the way you might acknowledge a friend who just walked into the room. Then, in one prayer, address Him directly by name and thank Him for interceding for you when your own words fail.
 
-## Lesson Quiz
+## Topic Quiz
 
-:::quiz Lesson 1 quiz
+:::quiz Topic 1 quiz
 Q Which of the following best describes the Holy Spirit?
 + The third Person of the Trinity, fully God, distinct in Person yet undivided in essence
 - A divine force or power radiating from God the Father
@@ -222,4 +222,4 @@ Q What test does the textbook offer for evaluating teaching about the Holy Spiri
 
 ## Summary
 
-The Holy Spirit is not a force, an atmosphere, or a lesser being. He is the third Person of the Trinity, fully God, distinct in Person and undivided in essence. Scripture refuses to reduce Him to a thing: He can be grieved, lied to, resisted, and heard speaking, and He intercedes for believers who cannot form the words themselves. Jesus called Him the Helper, one called alongside to assist, defend, and strengthen, promised not only for dramatic seasons but for the long, ordinary road of discipleship. His deity is established directly, when Peter equates lying to the Spirit with lying to God, and through the attributes only God possesses. He possesses mind, will, and emotion, and He holds full access to the thoughts of God, which He gives us in order to bring us inside divine truth rather than keep us at a distance. And He never draws attention to Himself. Lesson 2 traces His work through Scripture's history.
+The Holy Spirit is not a force, an atmosphere, or a lesser being. He is the third Person of the Trinity, fully God, distinct in Person and undivided in essence. Scripture refuses to reduce Him to a thing: He can be grieved, lied to, resisted, and heard speaking, and He intercedes for believers who cannot form the words themselves. Jesus called Him the Helper, one called alongside to assist, defend, and strengthen, promised not only for dramatic seasons but for the long, ordinary road of discipleship. His deity is established directly, when Peter equates lying to the Spirit with lying to God, and through the attributes only God possesses. He possesses mind, will, and emotion, and He holds full access to the thoughts of God, which He gives us in order to bring us inside divine truth rather than keep us at a distance. And He never draws attention to Himself. Topic 2 traces His work through Scripture's history.

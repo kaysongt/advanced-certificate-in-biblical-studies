@@ -15,7 +15,7 @@ That instinct misses something important. The Spirit of God was never absent fro
 
 This lesson is the hinge of the whole course.
 
-:::objectives By the end of this lesson you will be able to
+:::objectives By the end of this topic you will be able to
 1. Describe the Spirit's activity in creation and in the empowerment of individuals for specific tasks.
 2. Explain the pattern of the Spirit coming *upon* people, and the significance of the Spirit departing from Saul.
 3. Explain the Spirit's role in prophetic speech.
@@ -167,9 +167,9 @@ One further continuity is worth naming. The Old Testament pattern of the Spirit 
 
 Read Psalm 51 slowly, noticing the desperation behind David's request. Then remember that you serve under different terms entirely. Write one sentence naming something you have been anxiously trying to keep that has, in fact, already been permanently secured for you.
 
-## Lesson Quiz
+## Topic Quiz
 
-:::quiz Lesson 2 quiz
+:::quiz Topic 2 quiz
 Q What does the Hebrew word for *hovering* in Genesis 1:2 picture?
 + A bird suspended over its nest, wings outstretched, protective and attentive
 - A cloud descending upon a mountain
@@ -229,4 +229,4 @@ Q Why does the textbook reject the idea of the Spirit as a second blessing?
 
 ## Summary
 
-The Spirit was never absent from Israel's story. He hovered over the waters at creation, filled Bezalel with practical skill, clothed Gideon with courage, gave Samson strength, and carried the prophets along as they spoke. Yet the pattern was selective, tied to task and moment, and it could be withdrawn, as Saul discovered and David feared. Even within the Old Testament, Moses longed for more, and Ezekiel, Jeremiah, and Joel promised it: a new heart, a law written inside, and an outpouring on all flesh. Jesus tied the fulfillment directly to His own glorification, which means the indwelling Spirit is secured by the cross rather than earned afterward. At Pentecost the promise arrived, on ordinary people, reversing Babel and inaugurating an age in which every believer receives the Spirit permanently. What changed was not the Spirit's character but the terms of His dwelling. Lesson 3 examines the first thing He does in a person.
+The Spirit was never absent from Israel's story. He hovered over the waters at creation, filled Bezalel with practical skill, clothed Gideon with courage, gave Samson strength, and carried the prophets along as they spoke. Yet the pattern was selective, tied to task and moment, and it could be withdrawn, as Saul discovered and David feared. Even within the Old Testament, Moses longed for more, and Ezekiel, Jeremiah, and Joel promised it: a new heart, a law written inside, and an outpouring on all flesh. Jesus tied the fulfillment directly to His own glorification, which means the indwelling Spirit is secured by the cross rather than earned afterward. At Pentecost the promise arrived, on ordinary people, reversing Babel and inaugurating an age in which every believer receives the Spirit permanently. What changed was not the Spirit's character but the terms of His dwelling. Topic 3 examines the first thing He does in a person.

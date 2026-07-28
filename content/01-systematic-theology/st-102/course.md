@@ -79,4 +79,4 @@ You are graded on accuracy, breadth of scriptural support, the strength of the a
 
 Two chapters generate the most discussion. Chapter 3 unsettles students who have quietly assumed Jesus moved through His earthly life with divine immunity to ordinary difficulty. Let that discomfort sit before resolving it, because the comfort of Hebrews 4:15 only lands if the temptation was real.
 
-Chapter 10 is the one most students have never been taught at all. Dr. Kay notes that Christ's present ministry is among the most overlooked truths in popular Christian teaching. Give it full weight in Lesson 6 rather than treating it as a bridge between the ascension and the return.
+Chapter 10 is the one most students have never been taught at all. Dr. Kay notes that Christ's present ministry is among the most overlooked truths in popular Christian teaching. Give it full weight in Topic 6 rather than treating it as a bridge between the ascension and the return.

@@ -2,13 +2,13 @@
 type: lesson
 course: BF 205
 lesson: 6
-title: [FROM BOOK] Lesson 6 title
+title: [FROM BOOK] Topic 6 title
 duration: 1 hr
 status: template
 ---
 
 
-# BF 205 · Lesson 6
+# BF 205 · Topic 6
 
 ## [FROM BOOK] Lesson Title
 
@@ -73,7 +73,7 @@ status: template
 
 [FROM BOOK] A short exercise the student completes before the next lesson.
 
-## Lesson Quiz
+## Topic Quiz
 
 **1.** [FROM BOOK] Question 1
 

@@ -13,7 +13,7 @@ There is more happening around you right now than you can see. That is not a fig
 
 This lesson covers both halves of that realm. It begins with the angels God created to serve Him and, remarkably, to serve us. It then turns to the adversary who rebelled, to the powers that followed him, and to the reason the New Testament speaks of all of it in a tone of confidence rather than alarm.
 
-:::objectives By the end of this lesson you will be able to
+:::objectives By the end of this topic you will be able to
 1. Define what angels are, including what Scripture says about their nature, number, and orders.
 2. List the functions Scripture assigns to angels and support each from a passage.
 3. Explain why no true angel accepts worship, and what that refusal establishes.
@@ -179,9 +179,9 @@ Paul's line to the Romans holds the balance exactly: the God of peace will soon 
 
 Write down one difficulty you are currently facing. Under it, write what would change about how you carry it if you took Colossians 2:15 as literally true of that specific situation.
 
-## Lesson Quiz
+## Topic Quiz
 
-:::quiz Lesson 1 quiz
+:::quiz Topic 1 quiz
 Q What does the word *angel* mean, and what does it establish?
 + Messenger, establishing that angels are sent by God rather than acting on an agenda of their own
 - Guardian, establishing that each believer has one assigned
@@ -241,4 +241,4 @@ Q What does Colossians 2:15 say the cross accomplished regarding the powers?
 
 ## Summary
 
-Angels are created spirits, present at creation, innumerable, appearing in distinct orders, and sent out to serve those who will inherit salvation. They are messengers, protectors, and agents of both judgment and deliverance, and the fact that not one of them ever accepts worship establishes that no created glory, however impressive, may receive what belongs to the Creator. They are not the spirits of the dead. The adversary is a created being who fell through pride, and each of his titles names a method: accusation, temptation, deception, and blinding. He is not God's equal, as the permission structure of Job 1 makes plain, and the demons who follow him hold accurate theology without any saving faith, which is its own warning. The New Testament's settled tone on all of this is confidence rather than fear, because the cross disarmed the powers publicly and the Son of God appeared to destroy the devil's works entirely. The two errors to avoid are preoccupation and dismissal. Lesson 2 takes up the warfare that remains, and then the question of what happens when we die.
+Angels are created spirits, present at creation, innumerable, appearing in distinct orders, and sent out to serve those who will inherit salvation. They are messengers, protectors, and agents of both judgment and deliverance, and the fact that not one of them ever accepts worship establishes that no created glory, however impressive, may receive what belongs to the Creator. They are not the spirits of the dead. The adversary is a created being who fell through pride, and each of his titles names a method: accusation, temptation, deception, and blinding. He is not God's equal, as the permission structure of Job 1 makes plain, and the demons who follow him hold accurate theology without any saving faith, which is its own warning. The New Testament's settled tone on all of this is confidence rather than fear, because the cross disarmed the powers publicly and the Son of God appeared to destroy the devil's works entirely. The two errors to avoid are preoccupation and dismissal. Topic 2 takes up the warfare that remains, and then the question of what happens when we die.

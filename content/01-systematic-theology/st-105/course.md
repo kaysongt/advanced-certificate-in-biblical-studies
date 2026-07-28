@@ -79,4 +79,4 @@ You are graded on scriptural grounding, the honesty and specificity of the asses
 
 The recurring theme of this book is that the Church is a people rather than a place or an event, and almost every practical failure Dr. Kay names traces back to forgetting it. Keep returning to that claim.
 
-Lesson 5 on leadership tends to generate the strongest reactions, particularly the observation that Paul's qualifications for elders are strikingly ordinary and say nothing about charisma or platform ability. Let students sit with the implications for how leaders are actually selected in their contexts.
+Topic 5 on leadership tends to generate the strongest reactions, particularly the observation that Paul's qualifications for elders are strikingly ordinary and say nothing about charisma or platform ability. Let students sit with the implications for how leaders are actually selected in their contexts.

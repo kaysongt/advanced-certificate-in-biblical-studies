@@ -2,13 +2,13 @@
 type: lesson
 course: OT 305
 lesson: 5
-title: [FROM BOOK] Lesson 5 title
+title: [FROM BOOK] Topic 5 title
 duration: 1 hr
 status: template
 ---
 
 
-# OT 305 · Lesson 5
+# OT 305 · Topic 5
 
 ## [FROM BOOK] Lesson Title
 
@@ -73,7 +73,7 @@ status: template
 
 [FROM BOOK] A short exercise the student completes before the next lesson.
 
-## Lesson Quiz
+## Topic Quiz
 
 **1.** [FROM BOOK] Question 1
 

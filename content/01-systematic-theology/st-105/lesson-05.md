@@ -13,7 +13,7 @@ Leadership within the Church looks nothing like leadership as the world typicall
 
 In Mark 10, James and John had just asked for positions of honour in Christ's coming kingdom, a request that provoked indignation among the other ten. Jesus used the moment to correct a misunderstanding that has plagued religious leadership throughout history.
 
-:::objectives By the end of this lesson you will be able to
+:::objectives By the end of this topic you will be able to
 1. Contrast worldly leadership with the servant model Jesus established in Mark 10.
 2. Explain the shepherd image in Acts 20 and what the phrase *bought with His own blood* implies.
 3. Explain the equipping purpose of leadership in Ephesians 4 and what it rules out.
@@ -167,9 +167,9 @@ Finally, sophistication is not required. The Samaritan woman, moments after her 
 
 Write down the name of one person in your ordinary life who does not yet know Christ. Then write one specific, realistic next step, not a plan to deliver a presentation, but a step toward the kind of relationship in which the conversation becomes natural.
 
-## Lesson Quiz
+## Topic Quiz
 
-:::quiz Lesson 5 quiz
+:::quiz Topic 5 quiz
 Q How does Christ's model of leadership differ from the world's?
 + It operates through service, sacrifice, and laying down personal advantage rather than hierarchy, control, and status
 - It operates through the same structures but with better motives
@@ -229,4 +229,4 @@ Q What does the ambassador framework establish about evangelism?
 
 ## Summary
 
-Jesus drew a hard line between worldly leadership and the leadership He requires: not hierarchy and status but service and sacrifice. Paul reinforces it with the shepherd image and the reminder that the flock was bought with Christ's own blood, which makes every leader a steward rather than an owner. Ephesians establishes that leaders exist to equip rather than to perform, which rules out any model where a congregation watches while a professional ministers. Paul's qualifications are conspicuously ordinary, requiring tested character rather than charisma, and requiring time to assess. Peter names three temptations and their countering virtues, and grounds a leader's reward in the Chief Shepherd rather than human applause. Turning to mission, the commission's scope is total, its power is the Spirit's, and Romans 10 shows why proclamation cannot be replaced by exemplary living alone. Every believer is an ambassador; not every believer is sent cross-culturally, though every congregation must send. Lesson 6 closes the course.
+Jesus drew a hard line between worldly leadership and the leadership He requires: not hierarchy and status but service and sacrifice. Paul reinforces it with the shepherd image and the reminder that the flock was bought with Christ's own blood, which makes every leader a steward rather than an owner. Ephesians establishes that leaders exist to equip rather than to perform, which rules out any model where a congregation watches while a professional ministers. Paul's qualifications are conspicuously ordinary, requiring tested character rather than charisma, and requiring time to assess. Peter names three temptations and their countering virtues, and grounds a leader's reward in the Chief Shepherd rather than human applause. Turning to mission, the commission's scope is total, its power is the Spirit's, and Romans 10 shows why proclamation cannot be replaced by exemplary living alone. Every believer is an ambassador; not every believer is sent cross-culturally, though every congregation must send. Topic 6 closes the course.

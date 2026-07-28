@@ -31,7 +31,7 @@ export default async function DashboardPage() {
         <div className="eyebrow">{program.institute}</div>
         <h1>Welcome, {student.fullName.split(" ")[0]}</h1>
         <p className="deck">
-          {progress.length} {progress.length === 1 ? "lesson" : "lessons"} completed.
+          {progress.length} {progress.length === 1 ? "topic" : "topics"} completed.
         </p>
       </div>
 
@@ -44,7 +44,7 @@ export default async function DashboardPage() {
       ) : null}
 
       <h2>Your programme</h2>
-      <div className="cards">
+      <div className="cards five">
         {statuses.map(({ module, complete }) => {
           const unlocked = entitled.has(module.slug);
           return (

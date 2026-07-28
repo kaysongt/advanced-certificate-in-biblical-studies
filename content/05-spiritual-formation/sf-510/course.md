@@ -48,10 +48,10 @@ None. Courses may be taken in sequence or independently within the module.
 
 | Lesson | Title | Duration | Textbook Chapter |
 |---|---|---|---|
-| 1 | [FROM BOOK] Lesson 1 title | 1 hr | [FROM BOOK] |
-| 2 | [FROM BOOK] Lesson 2 title | 1 hr | [FROM BOOK] |
-| 3 | [FROM BOOK] Lesson 3 title | 1 hr | [FROM BOOK] |
-| 4 | [FROM BOOK] Lesson 4 title | 1 hr | [FROM BOOK] |
+| 1 | [FROM BOOK] Topic 1 title | 1 hr | [FROM BOOK] |
+| 2 | [FROM BOOK] Topic 2 title | 1 hr | [FROM BOOK] |
+| 3 | [FROM BOOK] Topic 3 title | 1 hr | [FROM BOOK] |
+| 4 | [FROM BOOK] Topic 4 title | 1 hr | [FROM BOOK] |
 | — | **Course Assessment** | — | — |
 
 ## Key Themes

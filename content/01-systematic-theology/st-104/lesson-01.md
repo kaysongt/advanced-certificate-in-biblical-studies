@@ -13,7 +13,7 @@ Before we can understand what it means to be saved, we have to understand what w
 
 Genesis opens with six words that quietly rearrange everything we think we know about the universe. In the beginning, God created.
 
-:::objectives By the end of this lesson you will be able to
+:::objectives By the end of this topic you will be able to
 1. Explain what the repeated declaration that creation was *good* rules out about the origin of brokenness.
 2. Show from the order and manner of creation that God's purpose was relational.
 3. Explain the significance of the shift in language when God creates humanity.
@@ -137,9 +137,9 @@ Salvation does not give you a dignity you never had. It restores a dignity that 
 
 Write one sentence describing your worth using only categories present in Genesis 1 and 2. Notice which of your usual categories you were unable to use.
 
-## Lesson Quiz
+## Topic Quiz
 
-:::quiz Lesson 1 quiz
+:::quiz Topic 1 quiz
 Q Why does the repeated declaration that creation was *good* matter theologically?
 + It rules out the idea that brokenness is simply the nature of things, establishing that what went wrong was not the plan
 - It establishes that creation was morally neutral before humanity arrived
@@ -192,4 +192,4 @@ Q What does the seventh day anticipate about grace?
 
 ## Summary
 
-Salvation cannot be understood without the garden. Genesis declares creation good repeatedly, which rules out treating brokenness as simply the nature of things. God prepared every provision before the need existed, built a home rather than a machine, and shifted from command to deliberation when He made humanity in His own image. That image grounds a dignity given rather than earned and belonging to every person without qualification. Work, dominion exercised as stewardship, and human community all belong to the original design rather than arriving as consequences of sin. And the seventh day sets the pattern the rest of Scripture will follow: rest comes before labour, grace before response. Redemption is not a second plan. It is the restoration of this one. Lesson 2 examines how the mirror cracked.
+Salvation cannot be understood without the garden. Genesis declares creation good repeatedly, which rules out treating brokenness as simply the nature of things. God prepared every provision before the need existed, built a home rather than a machine, and shifted from command to deliberation when He made humanity in His own image. That image grounds a dignity given rather than earned and belonging to every person without qualification. Work, dominion exercised as stewardship, and human community all belong to the original design rather than arriving as consequences of sin. And the seventh day sets the pattern the rest of Scripture will follow: rest comes before labour, grace before response. Redemption is not a second plan. It is the restoration of this one. Topic 2 examines how the mirror cracked.

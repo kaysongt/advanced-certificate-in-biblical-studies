@@ -15,7 +15,7 @@ The prophet Isaiah records the Lord declaring that His thoughts are not our thou
 
 This lesson covers two chapters because they answer one question in two stages. Chapter 2 asks how God has spoken. Chapter 3 asks whether the record of that speech, the Bible we hold, can be trusted.
 
-:::objectives By the end of this lesson you will be able to
+:::objectives By the end of this topic you will be able to
 1. Define revelation, and explain why it must originate from God's side rather than ours.
 2. Distinguish general revelation from special revelation, state what each can and cannot accomplish, and support both from Scripture.
 3. Distinguish revelation, inspiration, and illumination, and explain why all three are necessary.
@@ -177,9 +177,9 @@ Scripture exists to reveal Jesus Christ and to draw people into saving, transfor
 
 Take one passage you have often applied to yourself and ask what it can and cannot establish on its own. Write two sentences: one naming what the passage genuinely affirms, and one naming a conclusion you have drawn from it that the passage does not actually support.
 
-## Lesson Quiz
+## Topic Quiz
 
-:::quiz Lesson 2 quiz
+:::quiz Topic 2 quiz
 Q What does general revelation accomplish, according to Romans 1:19 to 20?
 + It makes God's eternal power and divine nature clearly known, leaving humanity without excuse
 - It communicates the specific historical facts of Christ's death and resurrection
@@ -232,4 +232,4 @@ Q According to the chapter, what is the most reasonable explanation for the unit
 
 ## Summary
 
-The gap between us and God can only be closed from His side, and revelation is His gracious act of closing it. General revelation, through creation and conscience, reaches every person and leaves everyone without excuse, but it cannot preach the gospel. Special revelation does, unfolding progressively through prophets and covenant history and arriving fully in the Son. The truth God revealed was recorded reliably through inspiration and is received through the Spirit's illumination. Because Scripture is God-breathed it carries God's authority, and the church recognized rather than invented the canon that preserves it. Scripture is sufficient for salvation and obedience, truthful in all it affirms when read on its own terms, and remarkably unified across forty authors and fifteen centuries. All of it exists to reveal one Person. Lesson 3 turns to reading it rightly.
+The gap between us and God can only be closed from His side, and revelation is His gracious act of closing it. General revelation, through creation and conscience, reaches every person and leaves everyone without excuse, but it cannot preach the gospel. Special revelation does, unfolding progressively through prophets and covenant history and arriving fully in the Son. The truth God revealed was recorded reliably through inspiration and is received through the Spirit's illumination. Because Scripture is God-breathed it carries God's authority, and the church recognized rather than invented the canon that preserves it. Scripture is sufficient for salvation and obedience, truthful in all it affirms when read on its own terms, and remarkably unified across forty authors and fifteen centuries. All of it exists to reveal one Person. Topic 3 turns to reading it rightly.

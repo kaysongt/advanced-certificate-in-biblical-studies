@@ -19,7 +19,7 @@ We are approaching a mystery here, not in the sense of something contradictory o
 
 That distinction matters. A contradiction is a claim that cannot be true. A mystery is a truth too large to be contained. The Trinity is the second, not the first.
 
-:::objectives By the end of this lesson you will be able to
+:::objectives By the end of this topic you will be able to
 1. State the doctrine of the Trinity accurately and concisely.
 2. Trace the doctrine through its principal biblical evidence, from Genesis to the apostolic benedictions.
 3. Identify modalism and tritheism, explain what each fails to account for, and show why both were rejected.
@@ -197,9 +197,9 @@ The course began by defining theology as the study of God and insisting it belon
 
 Write a short prayer, no longer than five sentences, that is deliberately Trinitarian: addressed to the Father, through the Son, in the Spirit. Notice what this forces you to be clear about.
 
-## Lesson Quiz
+## Topic Quiz
 
-:::quiz Lesson 6 quiz
+:::quiz Topic 6 quiz
 Q Which statement accurately expresses the doctrine of the Trinity?
 + One God eternally exists as three distinct Persons, each fully God, sharing one undivided essence
 - One God reveals Himself in three successive modes across redemptive history

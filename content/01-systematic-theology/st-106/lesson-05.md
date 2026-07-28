@@ -13,7 +13,7 @@ Ask most people what they imagine heaven to be like and you will hear a strange 
 
 The second half of this lesson is the most difficult material in the course, and it should be. No honest teacher approaches the subject of hell with anything other than sober reluctance, and any presentation that seems eager or comfortable has almost certainly misunderstood something essential about it.
 
-:::objectives By the end of this lesson you will be able to
+:::objectives By the end of this topic you will be able to
 1. State what heaven is fundamentally defined by, and support it from John 14.
 2. Correct the popular picture of heaven from the specific images of Revelation 21 and 22.
 3. Explain the theological significance of the tree of life and of the absence of a temple.
@@ -186,9 +186,9 @@ No one who ends up separated from God forever does so because God failed to warn
 
 Read Revelation 21:3 to 5 aloud, slowly. Then name the specific tear you most want wiped away, and sit with the fact that the promise is personal.
 
-## Lesson Quiz
+## Topic Quiz
 
-:::quiz Lesson 5 quiz
+:::quiz Topic 5 quiz
 Q What fundamentally defines heaven according to the textbook?
 + Unbroken, unmediated fellowship with God Himself, a place defined by a Person
 - The absence of suffering and death
@@ -248,4 +248,4 @@ Q What posture should the doctrine of hell produce in a believer?
 
 ## Summary
 
-Heaven is defined by a Person before it is defined by a place, which is why Jesus grounds the promise in *where I am you may be also* and why Paul could call departure far better than fruitful ministry. Revelation corrects the folklore version at every point: a dwelling of God with man rather than an escape from earth, a bustling city rather than an empty sky, tears named and wiped away, a tree of life restored and multiplied beyond Eden, and no temple at all because the mediation it provided is no longer needed. Eternity is active, communal, and free not only of forgiven sin but of sin's very possibility, and this hope is meant to reorder present treasure rather than provide an escape from present difficulty. Hell exists because a holy God cannot overlook sin without ceasing to be holy, and Jesus, who spoke of it more than anyone, used images of exclusion, unquenched fire, and Gehenna to convey what separation means. Its theological heart is the withdrawal of the presence from which every good thing has always come. The objection about proportionality gets an honest three-part answer rather than a dismissal, and the God who reveals the doctrine is the same God who takes no pleasure in the death of the wicked and wept over the city that rejected Him. Held rightly, this doctrine makes the gospel louder, not the believer harsher. Lesson 6 turns to the new creation, and to the life this hope requires today.
+Heaven is defined by a Person before it is defined by a place, which is why Jesus grounds the promise in *where I am you may be also* and why Paul could call departure far better than fruitful ministry. Revelation corrects the folklore version at every point: a dwelling of God with man rather than an escape from earth, a bustling city rather than an empty sky, tears named and wiped away, a tree of life restored and multiplied beyond Eden, and no temple at all because the mediation it provided is no longer needed. Eternity is active, communal, and free not only of forgiven sin but of sin's very possibility, and this hope is meant to reorder present treasure rather than provide an escape from present difficulty. Hell exists because a holy God cannot overlook sin without ceasing to be holy, and Jesus, who spoke of it more than anyone, used images of exclusion, unquenched fire, and Gehenna to convey what separation means. Its theological heart is the withdrawal of the presence from which every good thing has always come. The objection about proportionality gets an honest three-part answer rather than a dismissal, and the God who reveals the doctrine is the same God who takes no pleasure in the death of the wicked and wept over the city that rejected Him. Held rightly, this doctrine makes the gospel louder, not the believer harsher. Topic 6 turns to the new creation, and to the life this hope requires today.

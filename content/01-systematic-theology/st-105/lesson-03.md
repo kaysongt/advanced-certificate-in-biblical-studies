@@ -13,7 +13,7 @@ Ask most believers to define worship and they will describe singing. This is not
 
 Scripture describes worship as something far broader and far more demanding than the songs a congregation sings on a Sunday morning. This lesson recovers that fuller understanding, and then turns to the prayer that sustains it.
 
-:::objectives By the end of this lesson you will be able to
+:::objectives By the end of this topic you will be able to
 1. Describe the range of postures Psalm 95 includes within worship.
 2. Explain what Jesus meant by worship in spirit and truth, and what it relocates.
 3. Explain Paul's definition of worship in Romans 12:1 and its scope.
@@ -163,9 +163,9 @@ The discipline of showing up to pray, even without a corresponding emotional exp
 
 For one week, begin every prayer with something true about God's character before making any request. Note at the end of the week what changed about the requests themselves.
 
-## Lesson Quiz
+## Topic Quiz
 
-:::quiz Lesson 3 quiz
+:::quiz Topic 3 quiz
 Q What range of postures does Psalm 95 include within worship?
 + Both exuberant shouting and singing, and humble kneeling and bowing
 - Primarily silent reflection and meditation
@@ -225,4 +225,4 @@ Q Why does Paul specify that requests be made *with thanksgiving* in Philippians
 
 ## Summary
 
-Psalm 95 holds shouting and kneeling together and grounds both in truths about God's character, which means worship detached from theological substance eventually goes hollow. Jesus relocated worship from place and ritual to spirit and truth, without dismissing physical expression. Paul then redefines it entirely: worship is the offering of a whole life as a living sacrifice, which places work, family, finances, and speech within its scope. Hebrews puts praise and practical generosity in the same sacrificial category, joining worship to fellowship. Prayer sustains all of it. The model prayer begins with worship before petition and reorders priorities around God's purposes; Acts shows corporate prayer as a unified body rather than parallel private prayers; Philippians ties petition to thanksgiving and promises peace rather than guaranteed outcomes. And formation happens through sustained communion, which means faithfulness in dry seasons is itself an act of faith. Lesson 4 turns to the ordinances.
+Psalm 95 holds shouting and kneeling together and grounds both in truths about God's character, which means worship detached from theological substance eventually goes hollow. Jesus relocated worship from place and ritual to spirit and truth, without dismissing physical expression. Paul then redefines it entirely: worship is the offering of a whole life as a living sacrifice, which places work, family, finances, and speech within its scope. Hebrews puts praise and practical generosity in the same sacrificial category, joining worship to fellowship. Prayer sustains all of it. The model prayer begins with worship before petition and reorders priorities around God's purposes; Acts shows corporate prayer as a unified body rather than parallel private prayers; Philippians ties petition to thanksgiving and promises peace rather than guaranteed outcomes. And formation happens through sustained communion, which means faithfulness in dry seasons is itself an act of faith. Topic 4 turns to the ordinances.

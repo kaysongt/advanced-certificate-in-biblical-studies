@@ -17,7 +17,7 @@ The second image in this lesson is more immediately practical. Dr. Kay opens cha
 There is a particular kind of loneliness that afflicts even people who attend church regularly. They show up on Sunday, sing the songs, listen to the sermon, and leave without a single meaningful conversation. They are present in a room full of believers and still profoundly alone.
 :::
 
-:::objectives By the end of this lesson you will be able to
+:::objectives By the end of this topic you will be able to
 1. Explain the sequence in Ephesians 5 and what it establishes about holiness and love.
 2. Explain how the Bride image holds security and faithfulness together without contradiction.
 3. Describe what faithfulness to Christ looks like for the Church today.
@@ -156,9 +156,9 @@ These are not meant to induce guilt for its own sake. They are meant to help you
 
 Identify one person in your congregation whose actual struggles you do not know. Take one concrete step this week toward knowing them. Note what made the step difficult.
 
-## Lesson Quiz
+## Topic Quiz
 
-:::quiz Lesson 2 quiz
+:::quiz Topic 2 quiz
 Q What sequence does Ephesians 5 establish about Christ and the Church?
 + Christ loved her first, and His love is what makes her holy, rather than her holiness earning His love
 - The Church purified herself and was then received by Christ
@@ -218,4 +218,4 @@ Q What test does the textbook apply to a healthy household of God?
 
 ## Summary
 
-The Bride image begins with sequence: Christ loved the Church first, and His love is what makes her holy rather than her holiness earning His love. That establishes security, and Paul's godly jealousy establishes the corresponding call to faithfulness, which is response rather than condition. Devotion is lost gradually rather than dramatically, so anticipation of the coming wedding functions as present motivation. Revelation adds that acts of faithfulness are woven into the garments the bride wears, so nothing hidden is wasted. The household image turns practical. *Oikos* meant shared meals, shared resources, and shared responsibility, which obligates burden-bearing, mutual encouragement, regular gathering, and particular care for the vulnerable. Genuine family life brings friction, and that friction is the instrument of formation rather than a defect to be avoided by retreating into shallow involvement. Lesson 3 turns to the life the Church shares.
+The Bride image begins with sequence: Christ loved the Church first, and His love is what makes her holy rather than her holiness earning His love. That establishes security, and Paul's godly jealousy establishes the corresponding call to faithfulness, which is response rather than condition. Devotion is lost gradually rather than dramatically, so anticipation of the coming wedding functions as present motivation. Revelation adds that acts of faithfulness are woven into the garments the bride wears, so nothing hidden is wasted. The household image turns practical. *Oikos* meant shared meals, shared resources, and shared responsibility, which obligates burden-bearing, mutual encouragement, regular gathering, and particular care for the vulnerable. Genuine family life brings friction, and that friction is the instrument of formation rather than a defect to be avoided by retreating into shallow involvement. Topic 3 turns to the life the Church shares.

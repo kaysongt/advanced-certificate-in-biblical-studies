@@ -2,13 +2,13 @@
 type: lesson
 course: SF 507
 lesson: 3
-title: [FROM BOOK] Lesson 3 title
+title: [FROM BOOK] Topic 3 title
 duration: 1 hr
 status: template
 ---
 
 
-# SF 507 · Lesson 3
+# SF 507 · Topic 3
 
 ## [FROM BOOK] Lesson Title
 
@@ -73,7 +73,7 @@ status: template
 
 [FROM BOOK] A short exercise the student completes before the next lesson.
 
-## Lesson Quiz
+## Topic Quiz
 
 **1.** [FROM BOOK] Question 1
 
