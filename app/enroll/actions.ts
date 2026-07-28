@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 
 import { hashPassword, startSession } from "@/lib/auth";
 import { db } from "@/lib/db";
-import type { Plan } from "@/lib/db/types";
+import { StorageUnavailableError, type Plan } from "@/lib/db/types";
 import { PRICING, getCurriculum } from "@/lib/curriculum";
 
 export type FormState = {
@@ -41,34 +41,48 @@ export async function registerStudent(
 
   if (Object.keys(fieldErrors).length) return { fieldErrors, values };
 
-  if (await db.getStudentByEmail(email)) {
-    return {
-      fieldErrors: { email: "An account with this email already exists." },
-      values,
-    };
+  let studentId: string;
+  try {
+    if (await db.getStudentByEmail(email)) {
+      return {
+        fieldErrors: { email: "An account with this email already exists." },
+        values,
+      };
+    }
+
+    const student = await db.createStudent({
+      fullName,
+      email,
+      country,
+      passwordHash: await hashPassword(password),
+    });
+    studentId = student.id;
+
+    const price = plan === "advanced" ? PRICING.advanced : PRICING.certificate;
+    await db.createEnrolment({
+      studentId: student.id,
+      product: plan === "advanced" ? "advanced" : product,
+      plan,
+      // Payment is not connected yet — see HANDOVER.md §4.3. Enrolments stay
+      // pending until a payment webhook activates them.
+      status: "pending",
+      amount: price.amount,
+      currency: price.currency,
+      provider: null,
+      providerRef: null,
+    });
+  } catch (err) {
+    if (err instanceof StorageUnavailableError) {
+      return {
+        error:
+          "Enrolment is not open yet — we cannot save your details on this server " +
+          "right now. Please email kti@kingsword.org and we will enrol you directly.",
+        values,
+      };
+    }
+    throw err;
   }
 
-  const student = await db.createStudent({
-    fullName,
-    email,
-    country,
-    passwordHash: await hashPassword(password),
-  });
-
-  const price = plan === "advanced" ? PRICING.advanced : PRICING.certificate;
-  await db.createEnrolment({
-    studentId: student.id,
-    product: plan === "advanced" ? "advanced" : product,
-    plan,
-    // Payment is not connected yet — see HANDOVER.md §4.3. Enrolments stay
-    // pending until a payment webhook activates them.
-    status: "pending",
-    amount: price.amount,
-    currency: price.currency,
-    provider: null,
-    providerRef: null,
-  });
-
-  await startSession(student.id);
+  await startSession(studentId);
   redirect("/dashboard");
 }

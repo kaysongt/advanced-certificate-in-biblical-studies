@@ -2,6 +2,7 @@ import { randomUUID } from "node:crypto";
 import fs from "node:fs/promises";
 import path from "node:path";
 
+import { StorageUnavailableError } from "./types";
 import type {
   DataStore,
   Enrolment,
@@ -38,8 +39,14 @@ async function read(): Promise<Shape> {
 }
 
 async function write(data: Shape): Promise<void> {
-  await fs.mkdir(path.dirname(FILE), { recursive: true });
-  await fs.writeFile(FILE, JSON.stringify(data, null, 2), "utf8");
+  try {
+    await fs.mkdir(path.dirname(FILE), { recursive: true });
+    await fs.writeFile(FILE, JSON.stringify(data, null, 2), "utf8");
+  } catch (err) {
+    // Serverless hosts mount a read-only filesystem, so every write fails here.
+    // Surface it as a known condition rather than an unhandled 500.
+    throw new StorageUnavailableError(err);
+  }
 }
 
 const normalise = (email: string) => email.trim().toLowerCase();

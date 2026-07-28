@@ -134,7 +134,34 @@ async function main() {
   check("progress is idempotent", () => assert.equal(progress.length, 1));
 
   await fs.rm(live, { force: true });
-  if (hadExisting) await fs.rename(backup, live);
+
+  // Serverless hosts have a read-only filesystem. Simulate that by putting a
+  // FILE where the .data directory must be, so mkdir fails, and confirm the
+  // store reports it as a known condition rather than an opaque crash.
+  console.log("\nread-only filesystem handling");
+  await fs.rm(dataDir, { recursive: true, force: true });
+  await fs.writeFile(dataDir, "blocked", "utf8");
+  const { StorageUnavailableError } = await import("../lib/db/types");
+  let caught: unknown = null;
+  try {
+    await db.createStudent({
+      fullName: "Blocked",
+      email: "blocked@example.com",
+      country: "Nigeria",
+      passwordHash: hash,
+    });
+  } catch (err) {
+    caught = err;
+  }
+  await fs.rm(dataDir, { force: true });
+  check("write failure raises StorageUnavailableError", () =>
+    assert.ok(caught instanceof StorageUnavailableError, `got ${caught}`)
+  );
+
+  if (hadExisting) {
+    await fs.mkdir(dataDir, { recursive: true });
+    await fs.rename(backup, live);
+  }
 
   console.log(`\n${passed} checks passed\n`);
 }

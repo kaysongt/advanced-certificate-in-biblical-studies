@@ -47,6 +47,25 @@ export type ProgressRecord = {
 export type NewStudent = Omit<Student, "id" | "createdAt">;
 export type NewEnrolment = Omit<Enrolment, "id" | "createdAt">;
 
+/**
+ * Thrown when the store cannot persist — most often the dev file adapter
+ * running on a host with a read-only filesystem (Vercel, Netlify, Lambda).
+ *
+ * Callers should catch this and tell the student enrolment is not open yet,
+ * rather than surfacing a 500. It disappears once a real database is attached
+ * in lib/db/index.ts.
+ */
+export class StorageUnavailableError extends Error {
+  constructor(cause?: unknown) {
+    super(
+      "Persistent storage is unavailable. The file-backed dev adapter cannot " +
+        "write on this host. Attach a real database in lib/db/index.ts."
+    );
+    this.name = "StorageUnavailableError";
+    this.cause = cause;
+  }
+}
+
 export interface DataStore {
   // students
   createStudent(input: NewStudent): Promise<Student>;
