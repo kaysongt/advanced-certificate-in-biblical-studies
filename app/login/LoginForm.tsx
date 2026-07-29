@@ -15,11 +15,12 @@ function Submit() {
   );
 }
 
-export default function LoginForm() {
+export default function LoginForm({ next }: { next: string }) {
   const [state, action] = useActionState<LoginState, FormData>(signIn, {});
 
   return (
     <form action={action}>
+      <input type="hidden" name="next" value={next} />
       {state.error ? <div className="notice bad">{state.error}</div> : null}
 
       <div className="field">

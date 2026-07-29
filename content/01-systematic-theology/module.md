@@ -32,12 +32,12 @@ By the end of this certificate, students will be able to:
 
 | Code | Course | Focus | Hrs | Lessons |
 |---|---|---|---|---|
-| ST 101 | [Theology Foundation](st-101/course.md) | God's Nature, Attributes & Sovereignty | 6 | 6 |
-| ST 102 | [Christology](st-102/course.md) | The Center of God's Redemptive Plan | 6 | 6 |
-| ST 103 | [Pneumatology](st-103/course.md) | God's Presence and Power in the Believer | 6 | 6 |
-| ST 104 | [Soteriology](st-104/course.md) | Grace, Faith & the New Creation | 6 | 6 |
-| ST 105 | [Ecclesiology](st-105/course.md) | God's Covenant Community and Mission | 6 | 6 |
-| ST 106 | [Eschatology](st-106/course.md) | Our Blessed Hope | 6 | 6 |
+| ST 101 | [Theology Foundation](/courses/st-101) | God's Nature, Attributes & Sovereignty | 6 | 6 |
+| ST 102 | [Christology](/courses/st-102) | The Center of God's Redemptive Plan | 6 | 6 |
+| ST 103 | [Pneumatology](/courses/st-103) | God's Presence and Power in the Believer | 6 | 6 |
+| ST 104 | [Soteriology](/courses/st-104) | Grace, Faith & the New Creation | 6 | 6 |
+| ST 105 | [Ecclesiology](/courses/st-105) | God's Covenant Community and Mission | 6 | 6 |
+| ST 106 | [Eschatology](/courses/st-106) | Our Blessed Hope | 6 | 6 |
 
 ## Required Textbooks
 
@@ -53,7 +53,7 @@ All six volumes are by **Dr. Kay Ijisesan**, published by KingsWord, Chicago, Il
 ## Certificate Requirements
 
 - Complete all 6 courses (36 contact hours)
-- Pass every lesson quiz and course assessment at 70% or above
+- Pass every lesson quiz and course assessment at 80% or above
 - Submit all required course assignments
 
 ## Instructor Notes
@@ -64,4 +64,4 @@ All six volumes are by **Dr. Kay Ijisesan**, published by KingsWord, Chicago, Il
 
 **Cohort considerations.** ST 106 carries the most emotional weight in the module. Students arrive at it with recent grief, with fears about loved ones who died without a clear profession, and with inherited end-times charts they may hold more firmly than they realise. Dr. Kay's own restraint is the model to follow: name the views where faithful interpreters differ, decline to adjudicate, and return to the centre they share. The same restraint applies to the demonic in ST 106 Topic 1 and to the ordinances in ST 105 — take the questions seriously without letting curiosity set the syllabus.
 
-**Assessment.** Quizzes are formative and may be retaken. Course assessments and assignments are summative. A student must clear 70% on every course before the certificate is issued.
+**Assessment.** Quizzes are formative and may be retaken. Course assessments and assignments are summative. A student must clear 80% on every course before the certificate is issued.

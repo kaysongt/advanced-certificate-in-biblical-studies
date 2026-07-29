@@ -5,7 +5,7 @@ title: ST 102 Course Assessment
 status: complete
 ---
 
-This assessment covers all six lessons of ST 102 and the whole of *What We Believe, Volume 2: Jesus Christ*. It is worth 100 points. Pass mark: **70%**.
+This assessment covers all six lessons of ST 102 and the whole of *What We Believe, Volume 2: Jesus Christ*. It is worth 100 points. Pass mark: **80%**.
 
 Section A is auto-marked below and is worth 40 points. Sections B and C are submitted in writing and marked by the instructor.
 

@@ -5,7 +5,7 @@ title: ST 104 Course Assessment
 status: complete
 ---
 
-This assessment covers all six lessons of ST 104 and the whole of *What We Believe, Volume 4: Salvation*. It is worth 100 points. Pass mark: **70%**.
+This assessment covers all six lessons of ST 104 and the whole of *What We Believe, Volume 4: Salvation*. It is worth 100 points. Pass mark: **80%**.
 
 ## Section A — Multiple Choice
 

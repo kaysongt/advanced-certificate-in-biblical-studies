@@ -2,7 +2,14 @@ import fs from "node:fs";
 import path from "node:path";
 
 import { CONTENT_DIR, TODO, getCurriculum, lessonId, type Course, type Module } from "./curriculum";
-import { Collector, mdToHtml, parseFrontMatter, type FrontMatter } from "./markdown";
+import {
+  Collector,
+  extractQuizQuestions,
+  mdToHtml,
+  parseFrontMatter,
+  type FrontMatter,
+  type QuizQuestion,
+} from "./markdown";
 
 export type Doc = { meta: FrontMatter; body: string };
 
@@ -87,6 +94,105 @@ export function getCourseDoc(module: Module, course: Course) {
 export function getAssessmentDoc(module: Module, course: Course) {
   const doc = readDoc(module.slug, course.slug, "assessment.md");
   return { ...doc, html: mdToHtml(doc.body) };
+}
+
+type ExternalQuestionBank = {
+  questions?: {
+    id?: string;
+    stem?: string;
+    options?: string[];
+    correct?: number;
+    explanation?: string;
+  }[];
+};
+
+/** All authored quiz questions available for fresh, randomized course attempts. */
+export function getAssessmentBank(module: Module, course: Course): QuizQuestion[] {
+  const authored: QuizQuestion[] = [];
+  const assessment = readDoc(module.slug, course.slug, "assessment.md");
+  authored.push(...extractQuizQuestions(assessment.body, `${course.slug}-assessment`));
+
+  for (let n = 1; n <= module.lessons_per_course; n++) {
+    const lesson = readDoc(module.slug, course.slug, lessonFile(n));
+    authored.push(...extractQuizQuestions(lesson.body, `${course.slug}-topic-${n}`));
+  }
+
+  const rawExternal = readRaw(module.slug, course.slug, "question-bank.json");
+  if (rawExternal) {
+    try {
+      const external = JSON.parse(rawExternal) as ExternalQuestionBank;
+      for (const [index, question] of (external.questions ?? []).entries()) {
+        if (
+          !question.stem ||
+          !Array.isArray(question.options) ||
+          question.options.length < 2 ||
+          !Number.isInteger(question.correct) ||
+          question.correct! < 0 ||
+          question.correct! >= question.options.length
+        ) {
+          continue;
+        }
+        authored.push({
+          id: question.id ?? `${course.slug}-external-${index + 1}`,
+          stem: question.stem,
+          options: question.options.map((text, optionIndex) => ({
+            correct: optionIndex === question.correct,
+            text,
+          })),
+          explanation: question.explanation ?? "",
+        });
+      }
+    } catch {
+      // A malformed optional bank must not take the authored course offline.
+    }
+  }
+
+  const seen = new Set<string>();
+  return authored.filter((question) => {
+    const key = question.stem.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+}
+
+/** Instructor-marked sections that follow the randomized multiple-choice section. */
+export function getAssessmentWrittenHtml(module: Module, course: Course): string {
+  const { body } = readDoc(module.slug, course.slug, "assessment.md");
+  const start = body.search(/^## Section B\b/m);
+  return start < 0 ? "" : mdToHtml(body.slice(start));
+}
+
+export type AudioTrack = { title: string; url: string };
+export type CourseAudio = { title: string; folderUrl: string; tracks: AudioTrack[] };
+
+/** Chapter-by-chapter audiobook supplied for each Module I textbook. */
+export function getCourseAudio(courseSlug: string): CourseAudio | null {
+  const raw = readRaw("01-systematic-theology", "audio-library.json");
+  if (!raw) return null;
+  try {
+    const library = JSON.parse(raw) as Record<string, CourseAudio>;
+    const course = library[courseSlug];
+    if (!course) return null;
+    const rank = (title: string) => {
+      if (/preface/i.test(title)) return 0;
+      if (/epilogue/i.test(title)) return 1000;
+      return Number(title.match(/chapter\s+(\d+)/i)?.[1]) || 900;
+    };
+    const displayTitle = (title: string) =>
+      title
+        .replace(/\.mp3$/i, "")
+        .toLowerCase()
+        .replace(/\b\w/g, (letter) => letter.toUpperCase());
+    return {
+      ...course,
+      tracks: course.tracks
+        .map((track) => ({ ...track, title: displayTitle(track.title) }))
+        .sort((a, b) => rank(a.title) - rank(b.title)),
+    };
+  } catch {
+    return null;
+  }
 }
 
 export function getModuleDoc(module: Module) {

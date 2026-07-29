@@ -89,7 +89,7 @@ Students receive the Advanced Certificate in Biblical Studies upon completion of
 | Course Assignments | 30% |
 | Final Course Assessment | 40% |
 
-Pass mark: **70%**
+Pass mark: **80%**
 
 | Grade | Range |
 |---|---|

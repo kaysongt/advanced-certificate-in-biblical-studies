@@ -11,6 +11,7 @@ type NavTarget = { href: string; title: string } | null;
 
 type Props = {
   html: string;
+  courseSlug: string;
   lessonId: string;
   passMark: number;
   mustPass: boolean;
@@ -23,6 +24,7 @@ type Props = {
 
 export default function TopicReader({
   html,
+  courseSlug,
   lessonId,
   passMark,
   mustPass,
@@ -45,7 +47,7 @@ export default function TopicReader({
     const nextValue = !complete;
     setComplete(nextValue);
     startTransition(() => {
-      setTopicComplete(lessonId, nextValue, path);
+      setTopicComplete(courseSlug, lessonId, nextValue, path);
     });
   }
 

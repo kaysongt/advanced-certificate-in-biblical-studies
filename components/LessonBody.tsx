@@ -13,13 +13,14 @@ import { useCallback, useEffect, useRef, useState } from "react";
 type Props = {
   html: string;
   passMark: number;
+  assessment?: boolean;
   /** Called when the quiz is fully answered, with the score as a percentage. */
   onScored?: (pct: number, correct: number, total: number) => void;
 };
 
 export type QuizResult = { correct: number; total: number; pct: number } | null;
 
-export default function LessonBody({ html, passMark, onScored }: Props) {
+export default function LessonBody({ html, passMark, assessment = false, onScored }: Props) {
   const ref = useRef<HTMLDivElement>(null);
   const [result, setResult] = useState<QuizResult>(null);
 
@@ -52,10 +53,11 @@ export default function LessonBody({ html, passMark, onScored }: Props) {
         if (answered === total && verdictEl) {
           const pct = Math.round((correct / total) * 100);
           const passed = pct >= passMark;
-          verdictEl.textContent =
-            `${correct} of ${total} correct (${pct}%). ` +
-            (passed ? "Pass." : `You need ${passMark}% to continue. Review and try again.`);
-          verdictEl.className = `verdict ${passed ? "pass" : "fail"}`;
+          verdictEl.textContent = assessment
+            ? `${correct} of ${total} correct (${pct}%). Section A complete; Sections B and C are instructor-marked.`
+            : `${correct} of ${total} correct (${pct}%). ` +
+              (passed ? "Pass." : `You need ${passMark}% to continue. Review and try again.`);
+          verdictEl.className = assessment ? "verdict" : `verdict ${passed ? "pass" : "fail"}`;
           report(correct, total);
         }
       };
@@ -110,20 +112,22 @@ export default function LessonBody({ html, passMark, onScored }: Props) {
     });
 
     return () => cleanups.forEach((fn) => fn());
-  }, [html, passMark, report]);
+  }, [assessment, html, passMark, report]);
 
   return (
     <>
       <div className="prose lesson-prose" ref={ref} dangerouslySetInnerHTML={{ __html: html }} />
       {result ? (
-        <div className={`scorecard ${result.pct >= passMark ? "pass" : "fail"}`}>
+        <div className={`scorecard${assessment ? "" : result.pct >= passMark ? " pass" : " fail"}`}>
           <div className="pct">{result.pct}%</div>
           <div className="detail">
             <strong>
               {result.correct} of {result.total} correct
             </strong>
             <span>
-              {result.pct >= passMark
+              {assessment
+                ? "Section A is complete. Your instructor will combine it with Sections B and C for your final result."
+                : result.pct >= passMark
                 ? "You have passed this topic. You can move on."
                 : `Pass mark is ${passMark}%. Retake the quiz before moving on.`}
             </span>

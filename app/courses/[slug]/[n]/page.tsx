@@ -3,8 +3,9 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 
 import TopicReader from "@/components/TopicReader";
+import { hasActiveAccess } from "@/lib/access";
 import { currentStudent } from "@/lib/auth";
-import { getLesson, getLessonRows } from "@/lib/content";
+import { getCourseStatuses, getLesson, getLessonRows } from "@/lib/content";
 import { findCourse, getCurriculum, lessonId } from "@/lib/curriculum";
 import { db } from "@/lib/db";
 
@@ -27,6 +28,11 @@ export default async function TopicPage({ params }: Props) {
   if (!found || !Number.isInteger(index)) notFound();
   const { module, course } = found;
 
+  const available = getCourseStatuses().some(
+    (status) => status.course.slug === course.slug && status.complete
+  );
+  if (!available) redirect(`/curriculum/${module.slug}`);
+
   const rows = getLessonRows(module, course);
   const row = rows.find((r) => r.n === index);
   if (!row) notFound();
@@ -36,9 +42,7 @@ export default async function TopicPage({ params }: Props) {
   if (!student) redirect(`/login?next=/courses/${slug}/${index}`);
 
   const enrollments = await db.getEnrollmentsForStudent(student.id);
-  const entitled = enrollments.some(
-    (e) => e.product === "advanced" || e.product === module.slug
-  );
+  const entitled = hasActiveAccess(enrollments, module.slug);
   if (!entitled) redirect("/enroll");
 
   const { grading } = getCurriculum();
@@ -105,6 +109,7 @@ export default async function TopicPage({ params }: Props) {
 
       <TopicReader
         html={lesson.html}
+        courseSlug={course.slug}
         lessonId={lessonId(course.slug, index)}
         passMark={grading.pass_mark}
         mustPass={grading.must_pass_to_advance}

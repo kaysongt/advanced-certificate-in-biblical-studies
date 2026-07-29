@@ -5,7 +5,7 @@ title: ST 106 Course Assessment
 status: complete
 ---
 
-This assessment covers all six lessons of ST 106 and the whole of *What We Believe, Volume 6: Eternity*. It is worth 100 points. Pass mark: **70%**.
+This assessment covers all six lessons of ST 106 and the whole of *What We Believe, Volume 6: Eternity*. It is worth 100 points. Pass mark: **80%**.
 
 ## Section A — Multiple Choice
 

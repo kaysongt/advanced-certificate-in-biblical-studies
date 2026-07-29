@@ -5,10 +5,19 @@
 
 import assert from "node:assert/strict";
 import fs from "node:fs/promises";
+import os from "node:os";
 import path from "node:path";
 
 import { hashPassword, verifyPassword } from "../lib/auth-core";
-import { getCourseStatuses, getIndexes, getLesson, getLessonRows } from "../lib/content";
+import { hasActiveAccess } from "../lib/access";
+import {
+  getAssessmentBank,
+  getCourseAudio,
+  getCourseStatuses,
+  getIndexes,
+  getLesson,
+  getLessonRows,
+} from "../lib/content";
 import { getCurriculum, findCourse } from "../lib/curriculum";
 
 let passed = 0;
@@ -77,6 +86,57 @@ async function main() {
   check("a module II course reports incomplete", () =>
     assert.equal(statuses.find((s) => s.course.slug === "bf-201")!.complete, false)
   );
+  const assessmentBank = getAssessmentBank(module, course);
+  check("st-101 has a deep randomized assessment bank", () =>
+    assert.ok(assessmentBank.length >= 100, `${assessmentBank.length} questions`)
+  );
+  check("assessment questions have one correct option", () =>
+    assert.ok(assessmentBank.every((question) => question.options.filter((option) => option.correct).length === 1))
+  );
+  const audio = getCourseAudio(course.slug);
+  check("st-101 audiobook is mapped chapter by chapter", () =>
+    assert.ok(audio && audio.tracks.length >= 10, `${audio?.tracks.length ?? 0} recordings`)
+  );
+  check("every Module I course can draw a different 20-question retake", () =>
+    assert.ok(
+      module.courses.every((item) => getAssessmentBank(module, item).length > 40),
+      "a Module I assessment bank is too small"
+    )
+  );
+  check("every Module I course has its supplied audiobook", () =>
+    assert.ok(
+      module.courses.every((item) => (getCourseAudio(item.slug)?.tracks.length ?? 0) >= 10),
+      "a Module I audiobook is missing"
+    )
+  );
+
+  console.log("\naccess control");
+  const enrollmentBase = {
+    id: "enrollment",
+    studentId: "student",
+    product: "advanced",
+    plan: "advanced" as const,
+    amount: 1000,
+    currency: "USD",
+    provider: null,
+    providerRef: null,
+    createdAt: new Date(0).toISOString(),
+  };
+  check("pending enrollment does not grant access", () =>
+    assert.equal(hasActiveAccess([{ ...enrollmentBase, status: "pending" }], module.slug), false)
+  );
+  check("active advanced enrollment grants access", () =>
+    assert.equal(hasActiveAccess([{ ...enrollmentBase, status: "active" }], module.slug), true)
+  );
+  check("active single-certificate enrollment is scoped", () =>
+    assert.equal(
+      hasActiveAccess(
+        [{ ...enrollmentBase, product: module.slug, plan: "certificate", status: "active" }],
+        module.slug
+      ),
+      true
+    )
+  );
 
   console.log("\npasswords");
   const hash = await hashPassword("correct horse battery staple");
@@ -91,7 +151,8 @@ async function main() {
   console.log("\nstorage");
   // Exercise the dev adapter against a scratch file, then clean up.
   const dataDir = path.join(process.cwd(), ".data");
-  const backup = path.join(dataDir, "store.json.bak");
+  const scratchDir = await fs.mkdtemp(path.join(os.tmpdir(), "kti-check-"));
+  const backup = path.join(scratchDir, "store.json.bak");
   const live = path.join(dataDir, "store.json");
   let hadExisting = false;
   try {
@@ -162,6 +223,7 @@ async function main() {
     await fs.mkdir(dataDir, { recursive: true });
     await fs.rename(backup, live);
   }
+  await fs.rm(scratchDir, { recursive: true, force: true });
 
   console.log(`\n${passed} checks passed\n`);
 }

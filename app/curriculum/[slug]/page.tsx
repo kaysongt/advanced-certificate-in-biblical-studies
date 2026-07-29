@@ -52,8 +52,9 @@ export default async function ModulePage({ params }: Props) {
 
       <h2>Courses</h2>
       <div className="stack">
-        {statuses.map(({ course, complete }) => (
-          <div className="row" key={course.slug}>
+        {statuses.map(({ course, complete }) => {
+          const contents = (
+            <>
             <span className="code">{course.code}</span>
             <span className="body">
               <span className="t">{course.title}</span>
@@ -64,8 +65,19 @@ export default async function ModulePage({ params }: Props) {
                 {complete ? "Ready" : "Writing"}
               </span>
             </span>
-          </div>
-        ))}
+            </>
+          );
+
+          return complete ? (
+            <Link className="row" href={`/courses/${course.slug}`} key={course.slug}>
+              {contents}
+            </Link>
+          ) : (
+            <div className="row is-locked" key={course.slug}>
+              {contents}
+            </div>
+          );
+        })}
       </div>
 
       <h2>Module video</h2>

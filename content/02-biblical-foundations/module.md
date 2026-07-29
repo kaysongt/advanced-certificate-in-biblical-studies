@@ -51,7 +51,7 @@ Learn to read, interpret, and study the Bible accurately for yourself, tracing G
 ## Certificate Requirements
 
 - Complete all 6 courses (36 contact hours)
-- Pass every lesson quiz and course assessment at 70% or above
+- Pass every lesson quiz and course assessment at 80% or above
 - Submit all required course assignments
 
 ## Instructor Notes

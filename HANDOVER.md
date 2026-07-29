@@ -141,7 +141,7 @@ short answers and essay need a human.
 
 That means an **instructor dashboard** — a queue of submitted assessments, the rubric
 alongside each, a score field, and a comment box. Without it there is no way to issue a
-certificate, because the pass mark of 70% cannot be computed. Budget for this; it is a
+certificate, because the pass mark of 80% cannot be computed. Budget for this; it is a
 real slice of Track B, not an afterthought.
 
 ### 4.7 Certificates
@@ -195,7 +195,7 @@ Carried over from `README.md`, plus new commercial ones:
 1. **Which entity receives tuition** — US or Nigerian. Determines the processor. Blocking.
 2. **NGN pricing** — separate local price, or USD only?
 3. **Payment plans** — instalments on the $1,000 bundle?
-4. **Grading weights** — currently 30/30/40 with a 70% pass mark, flagged *PROPOSED* in
+4. **Grading weights** — currently 30/30/40 with an 80% pass mark; the component weights are flagged *PROPOSED* in
    `curriculum.json`. Must be confirmed before any certificate is issued.
 5. **Who grades** the short answers and essays, and what turnaround do students get?
 6. **Textbook supply** — when do the remaining 26 books reach the writer? This gates

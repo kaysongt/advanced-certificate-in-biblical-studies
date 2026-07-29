@@ -66,7 +66,7 @@ Before we can understand what it means to be saved, we have to understand what w
 | Course assignment | 30% |
 | Final course assessment | 40% |
 
-Pass mark: **70%**.
+Pass mark: **80%**.
 
 ## Course Assignment
 

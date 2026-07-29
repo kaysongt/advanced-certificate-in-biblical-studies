@@ -10,6 +10,8 @@ export type LoginState = { error?: string; email?: string };
 export async function signIn(_prev: LoginState, formData: FormData): Promise<LoginState> {
   const email = String(formData.get("email") ?? "").trim();
   const password = String(formData.get("password") ?? "");
+  const requested = String(formData.get("next") ?? "");
+  const next = requested.startsWith("/") && !requested.startsWith("//") ? requested : "/dashboard";
 
   if (!email || !password) {
     return { error: "Enter your email and password.", email };
@@ -23,7 +25,7 @@ export async function signIn(_prev: LoginState, formData: FormData): Promise<Log
   }
 
   await startSession(student.id);
-  redirect("/dashboard");
+  redirect(next);
 }
 
 export async function signOut(): Promise<void> {

@@ -5,7 +5,7 @@ title: ST 101 Course Assessment
 status: complete
 ---
 
-This assessment covers all six lessons of ST 101 and the whole of *What We Believe, Volume 1: God*. It is worth 100 points. Pass mark: **70%**.
+This assessment covers all six lessons of ST 101 and the whole of *What We Believe, Volume 1: God*. It is worth 100 points. Pass mark: **80%**.
 
 Section A is auto-marked below and is worth 40 points. Sections B and C are submitted in writing and marked by the instructor against the rubrics given.
 

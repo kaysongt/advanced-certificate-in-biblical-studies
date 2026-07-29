@@ -65,7 +65,7 @@ Throughout church history the doctrine of Christ has been refined through long s
 | Course assignment | 30% |
 | Final course assessment | 40% |
 
-Pass mark: **70%**.
+Pass mark: **80%**.
 
 ## Course Assignment
 

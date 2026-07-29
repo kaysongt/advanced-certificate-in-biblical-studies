@@ -65,7 +65,7 @@ Each chapter opens with a short list of key Scriptures. Students should read tho
 | Course assignment | 30% |
 | Final course assessment | 40% |
 
-Pass mark: **70%**.
+Pass mark: **80%**.
 
 ## Course Assignment
 

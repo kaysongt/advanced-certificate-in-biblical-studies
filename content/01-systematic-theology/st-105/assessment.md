@@ -5,7 +5,7 @@ title: ST 105 Course Assessment
 status: complete
 ---
 
-This assessment covers all six lessons of ST 105 and the whole of *What We Believe, Volume 5: The Church*. It is worth 100 points. Pass mark: **70%**.
+This assessment covers all six lessons of ST 105 and the whole of *What We Believe, Volume 5: The Church*. It is worth 100 points. Pass mark: **80%**.
 
 ## Section A — Multiple Choice
 

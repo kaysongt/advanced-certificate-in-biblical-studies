@@ -49,7 +49,7 @@ Understand the full sweep of God's covenant story, book by book, from creation t
 ## Certificate Requirements
 
 - Complete all 5 courses (30 contact hours)
-- Pass every lesson quiz and course assessment at 70% or above
+- Pass every lesson quiz and course assessment at 80% or above
 - Submit all required course assignments
 
 ## Instructor Notes

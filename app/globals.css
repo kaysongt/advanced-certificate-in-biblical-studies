@@ -237,6 +237,7 @@ a.row:hover { background: var(--rule-soft); text-decoration: none; }
 .row .body { flex: 1; min-width: 0; }
 .row .t { font-weight: 600; color: var(--ink); font-size: 1.02rem; }
 .row .s { font-size: 14px; color: var(--muted); margin-top: 1px; }
+.row .t, .row .s { display: block; }
 .row .meta {
   font-family: var(--sans); font-size: 11.5px; color: var(--faint);
   flex-shrink: 0; text-align: right; white-space: nowrap;
@@ -365,6 +366,7 @@ a.card:hover { border-color: var(--deep); text-decoration: none; }
   display: flex; gap: 11px; align-items: flex-start; transition: border-color .12s, background .12s;
 }
 .opt:hover:not(:disabled) { border-color: var(--deep); background: var(--card); }
+.opt.selected { border-color: var(--deep); background: var(--wash); color: var(--ink); }
 .opt .mk {
   font-weight: 650; font-size: 11.5px; color: var(--faint); min-width: 14px;
   padding-top: 1px; flex-shrink: 0;
@@ -387,6 +389,36 @@ a.card:hover { border-color: var(--deep); text-decoration: none; }
 .quiz .verdict { font-family: var(--sans); font-size: 13.5px; color: var(--muted); }
 .quiz .verdict.pass { color: var(--ok); font-weight: 600; }
 .quiz .verdict.fail { color: var(--no); font-weight: 600; }
+
+.bank-intro {
+  padding: 14px 20px; border-bottom: 1px solid var(--rule-soft);
+  font-family: var(--sans); font-size: 13.5px; color: var(--muted); background: var(--card);
+}
+.written-assessment { margin-top: 42px; }
+
+.audio-library {
+  display: grid; grid-template-columns: minmax(0, 1fr) minmax(280px, 1.2fr); gap: 28px;
+  align-items: start; margin: 30px 0 42px; padding: 24px;
+  border: 1px solid var(--gold-line); border-radius: 8px; background: var(--gold-wash);
+}
+.audio-library h2 { margin: 6px 0 8px; padding: 0; border: 0; }
+.audio-library p { margin: 0; color: var(--muted); font-family: var(--sans); font-size: 14px; }
+.audio-library details {
+  background: var(--card); border: 1px solid var(--rule); border-radius: var(--r); padding: 0 16px 16px;
+}
+.audio-library summary {
+  cursor: pointer; padding: 13px 0; font-weight: 600; display: flex; gap: 12px;
+  justify-content: space-between; align-items: baseline;
+}
+.audio-library summary span { font: 12px var(--sans); color: var(--muted); white-space: nowrap; }
+.audio-library ol { columns: 2; column-gap: 28px; margin: 4px 0 12px; font: 13.5px/1.5 var(--sans); }
+.audio-library li { break-inside: avoid; margin-bottom: 7px; }
+.audio-library .folder-link { font: 600 12.5px var(--sans); }
+
+@media (max-width: 760px) {
+  .audio-library { grid-template-columns: 1fr; }
+  .audio-library ol { columns: 1; }
+}
 
 .btn {
   font-family: var(--sans); font-size: 13px; font-weight: 600;

@@ -71,7 +71,7 @@ Each chapter closes with a section called *Sitting With the Truth*, a practical 
 | Course assignment | 30% |
 | Final course assessment | 40% |
 
-Pass mark: **70%**.
+Pass mark: **80%**.
 
 ## Course Assignment
 

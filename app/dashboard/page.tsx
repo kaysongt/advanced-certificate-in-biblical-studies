@@ -3,6 +3,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { signOut } from "@/app/login/actions";
+import { hasActiveAccess } from "@/lib/access";
 import { currentStudent } from "@/lib/auth";
 import { getModuleStatuses } from "@/lib/content";
 import { db } from "@/lib/db";
@@ -19,10 +20,6 @@ export default async function DashboardPage() {
   const progress = await db.getProgress(student.id);
   const statuses = getModuleStatuses();
 
-  const hasAdvanced = enrollments.some((e) => e.product === "advanced");
-  const entitled = new Set(
-    hasAdvanced ? statuses.map((s) => s.module.slug) : enrollments.map((e) => e.product)
-  );
   const pending = enrollments.filter((e) => e.status === "pending");
 
   return (
@@ -46,7 +43,7 @@ export default async function DashboardPage() {
       <h2>Your program</h2>
       <div className="cards five">
         {statuses.map(({ module, complete }) => {
-          const unlocked = entitled.has(module.slug);
+          const unlocked = hasActiveAccess(enrollments, module.slug);
           return (
             <div className="card" key={module.slug}>
               <div className="cardtop">

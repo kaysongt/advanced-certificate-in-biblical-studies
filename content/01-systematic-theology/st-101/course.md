@@ -62,7 +62,7 @@ Students read the assigned chapters before each lesson. The lesson notes assume 
 | Course assignment | 30% |
 | Final course assessment | 40% |
 
-Pass mark: **70%**.
+Pass mark: **80%**.
 
 ## Course Assignment
 

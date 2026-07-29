@@ -194,10 +194,18 @@ export class Collector {
 
 // --------------------------------------------------------------- directives
 
-function renderQuiz(arg: string, body: string, counter: { n: number }): string {
-  type Q = { stem: string; opts: [boolean, string][]; why: string };
-  const questions: Q[] = [];
-  let cur: Q | null = null;
+export type QuizQuestion = {
+  id: string;
+  stem: string;
+  options: { correct: boolean; text: string }[];
+  explanation: string;
+};
+
+type ParsedQuizQuestion = { stem: string; opts: [boolean, string][]; why: string };
+
+function parseQuizBody(body: string): ParsedQuizQuestion[] {
+  const questions: ParsedQuizQuestion[] = [];
+  let cur: ParsedQuizQuestion | null = null;
 
   for (const raw of body.split("\n")) {
     const line = raw.trim();
@@ -217,6 +225,12 @@ function renderQuiz(arg: string, body: string, counter: { n: number }): string {
     }
   }
   if (cur) questions.push(cur);
+
+  return questions;
+}
+
+function renderQuiz(arg: string, body: string, counter: { n: number }): string {
+  const questions = parseQuizBody(body);
 
   counter.n += 1;
   const qid = `q${counter.n}`;
@@ -345,6 +359,28 @@ function renderDirective(
 // ------------------------------------------------------------------ render
 
 const DIRECTIVE = /^:::(\w+)[ \t]*(.*?)[ \t]*$\n([\s\S]*?)^:::[ \t]*$/gm;
+
+/** Extract structured quiz questions for randomized course assessments. */
+export function extractQuizQuestions(text: string, idPrefix: string): QuizQuestion[] {
+  const questions: QuizQuestion[] = [];
+  let quizNumber = 0;
+
+  for (const match of text.matchAll(DIRECTIVE)) {
+    const [, kind, , body] = match;
+    if (kind.toLowerCase() !== "quiz") continue;
+    quizNumber += 1;
+    parseQuizBody(body).forEach((question, questionIndex) => {
+      questions.push({
+        id: `${idPrefix}-${quizNumber}-${questionIndex + 1}`,
+        stem: question.stem,
+        options: question.opts.map(([correct, optionText]) => ({ correct, text: optionText })),
+        explanation: question.why,
+      });
+    });
+  }
+
+  return questions;
+}
 
 /** Render markdown with ::: directives into HTML. Mirrors build.py `md_to_html`. */
 export function mdToHtml(text: string, coll?: Collector): string {

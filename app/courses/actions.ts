@@ -2,17 +2,33 @@
 
 import { revalidatePath } from "next/cache";
 
+import { hasActiveAccess } from "@/lib/access";
 import { currentStudent } from "@/lib/auth";
+import { findCourse, lessonId as makeLessonId } from "@/lib/curriculum";
 import { db } from "@/lib/db";
 import { StorageUnavailableError } from "@/lib/db/types";
 
 export async function setTopicComplete(
+  courseSlug: string,
   lessonId: string,
   complete: boolean,
   path: string
 ): Promise<void> {
   const student = await currentStudent();
   if (!student) return;
+
+  const found = findCourse(courseSlug);
+  const topicNumber = Number(lessonId.slice(courseSlug.length + 1));
+  if (
+    !found ||
+    !Number.isInteger(topicNumber) ||
+    makeLessonId(courseSlug, topicNumber) !== lessonId
+  ) {
+    return;
+  }
+
+  const enrollments = await db.getEnrollmentsForStudent(student.id);
+  if (!hasActiveAccess(enrollments, found.module.slug)) return;
 
   try {
     if (complete) await db.markLessonComplete(student.id, lessonId);
@@ -24,5 +40,6 @@ export async function setTopicComplete(
     throw err;
   }
 
-  revalidatePath(path);
+  const expectedPath = `/courses/${courseSlug}/${topicNumber}`;
+  revalidatePath(path === expectedPath ? path : expectedPath);
 }

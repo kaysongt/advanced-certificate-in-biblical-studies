@@ -94,8 +94,8 @@ These are not in the catalog. Reasonable defaults are in place; change them in
 `curriculum.json` (grading) or the templates in `build.py`.
 
 - **Lesson length.** Set to 1 hour, which makes the hours add up to 172 exactly.
-- **Grading weights.** Currently Lesson Quizzes 30% / Assignments 30% / Final Assessment 40%,
-  pass mark 70%. Flagged as *PROPOSED* in `curriculum.json` and on the program page.
+- **Grading weights.** Currently Lesson Quizzes 30% / Assignments 30% / Final Assessment 40%.
+  The component weights remain *PROPOSED*; the pass mark is confirmed at 80%.
 - **Assessment format.** 100-point structure described above.
 - **Course learning outcomes.** Five per course — placeholder count only.
 - **Textbook mapping.** One textbook per course is inferred from "32 textbooks / 32 courses";

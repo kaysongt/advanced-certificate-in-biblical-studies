@@ -70,7 +70,7 @@ This is the concluding volume of the six-volume *What We Believe* series, and it
 | Course assignment | 30% |
 | Final course assessment | 40% |
 
-Pass mark: **70%**.
+Pass mark: **80%**.
 
 ## Course Assignment
 

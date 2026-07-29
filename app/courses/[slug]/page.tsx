@@ -3,7 +3,8 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 
 import { currentStudent } from "@/lib/auth";
-import { getCourseDoc, getLessonRows } from "@/lib/content";
+import { hasActiveAccess } from "@/lib/access";
+import { getCourseAudio, getCourseDoc, getCourseStatuses, getLessonRows } from "@/lib/content";
 import { findCourse, getCurriculum } from "@/lib/curriculum";
 import { db } from "@/lib/db";
 
@@ -21,18 +22,22 @@ export default async function CoursePage({ params }: Props) {
   if (!found) notFound();
   const { module, course } = found;
 
+  const available = getCourseStatuses().some(
+    (status) => status.course.slug === course.slug && status.complete
+  );
+  if (!available) redirect(`/curriculum/${module.slug}`);
+
   const student = await currentStudent();
   if (!student) redirect(`/login?next=/courses/${slug}`);
 
   const enrollments = await db.getEnrollmentsForStudent(student.id);
-  const entitled = enrollments.some(
-    (e) => e.product === "advanced" || e.product === module.slug
-  );
+  const entitled = hasActiveAccess(enrollments, module.slug);
   if (!entitled) redirect("/enroll");
 
   const { grading } = getCurriculum();
   const rows = getLessonRows(module, course);
   const doc = getCourseDoc(module, course);
+  const audio = getCourseAudio(course.slug);
   const progress = await db.getProgress(student.id);
   const done = new Set(progress.map((p) => p.lessonId));
   const completed = rows.filter((r) => done.has(r.id)).length;
@@ -63,6 +68,36 @@ export default async function CoursePage({ params }: Props) {
         <div className="notice">
           <strong>Course material:</strong> {course.textbook}
         </div>
+      ) : null}
+
+      {audio ? (
+        <section className="audio-library" aria-labelledby="audio-library-title">
+          <div>
+            <div className="eyebrow">Included audiobook</div>
+            <h2 id="audio-library-title">Listen chapter by chapter</h2>
+            <p>
+              Use these recordings alongside the written topics. They open from the supplied
+              course library in Google Drive.
+            </p>
+          </div>
+          <details>
+            <summary>
+              {audio.title} <span>{audio.tracks.length} recordings</span>
+            </summary>
+            <ol>
+              {audio.tracks.map((track) => (
+                <li key={track.url}>
+                  <a href={track.url} target="_blank" rel="noreferrer">
+                    {track.title}
+                  </a>
+                </li>
+              ))}
+            </ol>
+            <a className="folder-link" href={audio.folderUrl} target="_blank" rel="noreferrer">
+              Open the complete audio folder
+            </a>
+          </details>
+        </section>
       ) : null}
 
       <h2>Topics</h2>
