@@ -97,7 +97,7 @@ export default async function ModulePage({ params }: Props) {
 
       <div style={{ marginTop: 36 }}>
         <Link href="/enroll?plan=certificate" className="btn primary lg">
-          Enrol in this certificate
+          Enroll in this certificate
         </Link>
       </div>
     </main>

@@ -1,7 +1,7 @@
 # Deploying the site
 
 The site is a Next.js app. It needs a host that runs a server — sessions, gated
-lessons, and enrolment all happen server-side. **GitHub Pages cannot host it**;
+lessons, and enrollment all happen server-side. **GitHub Pages cannot host it**;
 Pages only serves static files.
 
 ---
@@ -63,13 +63,13 @@ Vercel's filesystem is read-only, so every write fails there.
 
 This is handled, not ignored. Writes raise `StorageUnavailableError`, and:
 
-- the enrolment form shows *"Enrolment is not open yet — please email
+- the enrollment form shows *"Enrollment is not open yet — please email
   kti@kingsword.org"* instead of a 500
 - marking a topic complete degrades quietly; it holds for the session but does
   not survive a reload
 
 So the site is safe to put in front of people as a **brochure and preview**
-immediately. Do not advertise enrolment until step 4 is done.
+immediately. Do not advertise enrollment until step 4 is done.
 
 ## 4. Attach the database
 
@@ -103,5 +103,5 @@ Once Vercel is live, pick one:
 - **Regenerate it** — run `python3 build.py build` and commit `docs/`. Needs a
   machine with Python; there is none on the current development box.
 
-Leaving both live means two versions of the programme are publicly visible and
+Leaving both live means two versions of the program are publicly visible and
 they disagree with each other.

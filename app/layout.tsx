@@ -31,8 +31,13 @@ export const metadata: Metadata = {
 const THEME_BOOT = `(function(){try{var t=localStorage.getItem('kti.theme');if(t)document.documentElement.setAttribute('data-theme',t);}catch(e){}})();`;
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
+  // THEME_BOOT below sets data-theme on <html> before React hydrates, so the
+  // stored theme applies with no flash of the wrong palette. That means the
+  // attribute React sees on mount never matches what it rendered on the
+  // server — an expected, deliberate mismatch, not a bug. suppressHydration-
+  // Warning tells React to trust the DOM here instead of overwriting it.
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: THEME_BOOT }} />
       </head>

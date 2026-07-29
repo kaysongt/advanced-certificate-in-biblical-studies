@@ -59,11 +59,11 @@ export async function registerStudent(
     studentId = student.id;
 
     const price = plan === "advanced" ? PRICING.advanced : PRICING.certificate;
-    await db.createEnrolment({
+    await db.createEnrollment({
       studentId: student.id,
       product: plan === "advanced" ? "advanced" : product,
       plan,
-      // Payment is not connected yet — see HANDOVER.md §4.3. Enrolments stay
+      // Payment is not connected yet — see HANDOVER.md §4.3. Enrollments stay
       // pending until a payment webhook activates them.
       status: "pending",
       amount: price.amount,
@@ -75,8 +75,8 @@ export async function registerStudent(
     if (err instanceof StorageUnavailableError) {
       return {
         error:
-          "Enrolment is not open yet — we cannot save your details on this server " +
-          "right now. Please email kti@kingsword.org and we will enrol you directly.",
+          "Enrollment is not open yet — we cannot save your details on this server " +
+          "right now. Please email kti@kingsword.org and we will enroll you directly.",
         values,
       };
     }

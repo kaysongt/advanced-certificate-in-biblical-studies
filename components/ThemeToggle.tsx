@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 
 const KEY = "kti.theme";
 
-/** Light/dark switch. Matches the behaviour of the original assets/course.js. */
+/** Light/dark switch. Matches the behavior of the original assets/course.js. */
 export default function ThemeToggle() {
   const [theme, setTheme] = useState<"light" | "dark" | null>(null);
 

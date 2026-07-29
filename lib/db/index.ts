@@ -12,7 +12,7 @@ import type { DataStore } from "./types";
  *    interface in ./types.ts, not on the adapter.
  *
  * Suggested tables are documented in HANDOVER.md §4.4. Index at minimum:
- *   students(email) unique, enrolments(student_id), progress(student_id, lesson_id) unique
+ *   students(email) unique, enrollments(student_id), progress(student_id, lesson_id) unique
  */
 
 const store: DataStore = fileStore;

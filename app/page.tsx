@@ -29,7 +29,7 @@ export default function HomePage() {
           </p>
           <div className="cta-row">
             <Link href="/enroll" className="btn lg gold">
-              Enrol now
+              Enroll now
             </Link>
             <Link href="/curriculum" className="btn lg ghost">
               See what you will study
@@ -85,7 +85,7 @@ export default function HomePage() {
       <section className="section tint">
         <div className="wide">
           <div className="sec-head">
-            <div className="eyebrow">The programme</div>
+            <div className="eyebrow">The program</div>
             <h2>Five certificates, one foundation</h2>
             <p>
               Take one on its own, or work through all five. Finish everything and you
@@ -165,7 +165,7 @@ export default function HomePage() {
                 {PRICING.certificate.label} <span>/ certificate</span>
               </div>
               <p className="blurb">
-                Any one of the five certificate programmes.
+                Any one of the five certificate programs.
                 {availableCount > 0
                   ? ` ${availableCount} available to start today.`
                   : ""}
@@ -173,7 +173,7 @@ export default function HomePage() {
               <ul>
                 <li>All courses within that certificate</li>
                 <li>Topic quizzes and course assessments</li>
-                <li>Customised textbooks</li>
+                <li>Customized textbooks</li>
                 <li>Modular certificate on completion</li>
               </ul>
               <Link href="/enroll?plan=certificate" className="btn primary lg">
@@ -184,7 +184,7 @@ export default function HomePage() {
             <div className="price feature">
               <div className="plan">Advanced Certificate</div>
               <div className="amount">
-                {PRICING.advanced.label} <span>/ full programme</span>
+                {PRICING.advanced.label} <span>/ full program</span>
               </div>
               <p className="blurb">
                 All five certificates &mdash; {program.total_hours} hours,{" "}
@@ -192,12 +192,12 @@ export default function HomePage() {
               </p>
               <ul>
                 <li>Everything in all five certificates</li>
-                <li>{program.total_textbooks} customised textbooks</li>
+                <li>{program.total_textbooks} customized textbooks</li>
                 <li>Student community engagement</li>
                 <li>Advanced Certificate in Biblical Studies</li>
               </ul>
               <Link href="/enroll?plan=advanced" className="btn primary lg">
-                Enrol in the full programme
+                Enroll in the full program
               </Link>
             </div>
           </div>
@@ -209,17 +209,17 @@ export default function HomePage() {
         <div className="wide">
           <div className="sec-head">
             <div className="eyebrow">Questions</div>
-            <h2>Before you enrol</h2>
+            <h2>Before you enroll</h2>
           </div>
           <div className="faq">
             <details>
-              <summary>Who is this programme for?</summary>
+              <summary>Who is this program for?</summary>
               <div className="ans">{program.audience.join(", ")}.</div>
             </details>
             <details>
               <summary>How long does it take?</summary>
               <div className="ans">
-                The full programme is {program.total_hours} contact hours across{" "}
+                The full program is {program.total_hours} contact hours across{" "}
                 {program.total_courses} courses. It is self-paced, so you set the schedule.
                 Each certificate can be taken on its own.
               </div>
@@ -239,7 +239,7 @@ export default function HomePage() {
             <details>
               <summary>Are textbooks included?</summary>
               <div className="ans">
-                Yes. The programme includes {program.total_textbooks} customised textbooks,
+                Yes. The program includes {program.total_textbooks} customized textbooks,
                 one per course, written to accompany the lessons.
               </div>
             </details>
@@ -257,7 +257,7 @@ export default function HomePage() {
             {program.motto}
           </p>
           <Link href="/enroll" className="btn lg gold">
-            Enrol now
+            Enroll now
           </Link>
         </div>
       </section>

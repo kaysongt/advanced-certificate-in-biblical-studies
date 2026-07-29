@@ -5,8 +5,8 @@ import path from "node:path";
 import { StorageUnavailableError } from "./types";
 import type {
   DataStore,
-  Enrolment,
-  NewEnrolment,
+  Enrollment,
+  NewEnrollment,
   NewStudent,
   ProgressRecord,
   Student,
@@ -23,12 +23,12 @@ import type {
 
 type Shape = {
   students: Student[];
-  enrolments: Enrolment[];
+  enrollments: Enrollment[];
   progress: ProgressRecord[];
 };
 
 const FILE = path.join(process.cwd(), ".data", "store.json");
-const EMPTY: Shape = { students: [], enrolments: [], progress: [] };
+const EMPTY: Shape = { students: [], enrollments: [], progress: [] };
 
 async function read(): Promise<Shape> {
   try {
@@ -49,14 +49,14 @@ async function write(data: Shape): Promise<void> {
   }
 }
 
-const normalise = (email: string) => email.trim().toLowerCase();
+const normalize = (email: string) => email.trim().toLowerCase();
 
 export const fileStore: DataStore = {
   async createStudent(input: NewStudent): Promise<Student> {
     const data = await read();
     const student: Student = {
       ...input,
-      email: normalise(input.email),
+      email: normalize(input.email),
       id: randomUUID(),
       createdAt: new Date().toISOString(),
     };
@@ -67,7 +67,7 @@ export const fileStore: DataStore = {
 
   async getStudentByEmail(email: string): Promise<Student | null> {
     const data = await read();
-    return data.students.find((s) => s.email === normalise(email)) ?? null;
+    return data.students.find((s) => s.email === normalize(email)) ?? null;
   },
 
   async getStudentById(id: string): Promise<Student | null> {
@@ -75,26 +75,26 @@ export const fileStore: DataStore = {
     return data.students.find((s) => s.id === id) ?? null;
   },
 
-  async createEnrolment(input: NewEnrolment): Promise<Enrolment> {
+  async createEnrollment(input: NewEnrollment): Promise<Enrollment> {
     const data = await read();
-    const enrolment: Enrolment = {
+    const enrollment: Enrollment = {
       ...input,
       id: randomUUID(),
       createdAt: new Date().toISOString(),
     };
-    data.enrolments.push(enrolment);
+    data.enrollments.push(enrollment);
     await write(data);
-    return enrolment;
+    return enrollment;
   },
 
-  async getEnrolmentsForStudent(studentId: string): Promise<Enrolment[]> {
+  async getEnrollmentsForStudent(studentId: string): Promise<Enrollment[]> {
     const data = await read();
-    return data.enrolments.filter((e) => e.studentId === studentId);
+    return data.enrollments.filter((e) => e.studentId === studentId);
   },
 
-  async activateEnrolment(id: string, providerRef: string): Promise<Enrolment | null> {
+  async activateEnrollment(id: string, providerRef: string): Promise<Enrollment | null> {
     const data = await read();
-    const found = data.enrolments.find((e) => e.id === id);
+    const found = data.enrollments.find((e) => e.id === id);
     if (!found) return null;
     found.status = "active";
     found.providerRef = providerRef;

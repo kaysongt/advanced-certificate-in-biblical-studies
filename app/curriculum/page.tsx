@@ -13,7 +13,7 @@ export default function CurriculumPage() {
   return (
     <main className="shell">
       <div className="pagehead">
-        <div className="eyebrow">The programme</div>
+        <div className="eyebrow">The program</div>
         <h1>Curriculum</h1>
         <p className="deck">
           {program.total_certificates} certificates &middot; {program.total_courses} courses

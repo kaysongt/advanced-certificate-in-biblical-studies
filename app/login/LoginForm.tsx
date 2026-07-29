@@ -41,7 +41,7 @@ export default function LoginForm() {
       <Submit />
 
       <p className="formfoot">
-        Not enrolled yet? <Link href="/enroll">Enrol in the programme</Link>
+        Not enrolled yet? <Link href="/enroll">Enroll in the program</Link>
       </p>
     </form>
   );

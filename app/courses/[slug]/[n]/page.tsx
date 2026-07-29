@@ -35,8 +35,8 @@ export default async function TopicPage({ params }: Props) {
   const student = await currentStudent();
   if (!student) redirect(`/login?next=/courses/${slug}/${index}`);
 
-  const enrolments = await db.getEnrolmentsForStudent(student.id);
-  const entitled = enrolments.some(
+  const enrollments = await db.getEnrollmentsForStudent(student.id);
+  const entitled = enrollments.some(
     (e) => e.product === "advanced" || e.product === module.slug
   );
   if (!entitled) redirect("/enroll");

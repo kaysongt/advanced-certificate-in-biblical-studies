@@ -17,6 +17,11 @@ export default async function LoginPage() {
           <h1>Sign in</h1>
           <p className="sub">Continue your studies where you left off.</p>
           <LoginForm />
+          {process.env.NODE_ENV !== "production" ? (
+            <p className="formfoot">
+              <a href="/dev-preview">Dev preview — skip sign-in</a>
+            </p>
+          ) : null}
         </div>
       </div>
     </main>

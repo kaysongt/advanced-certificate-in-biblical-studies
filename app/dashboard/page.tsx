@@ -15,15 +15,15 @@ export default async function DashboardPage() {
   if (!student) redirect("/login");
 
   const { program, grading } = getCurriculum();
-  const enrolments = await db.getEnrolmentsForStudent(student.id);
+  const enrollments = await db.getEnrollmentsForStudent(student.id);
   const progress = await db.getProgress(student.id);
   const statuses = getModuleStatuses();
 
-  const hasAdvanced = enrolments.some((e) => e.product === "advanced");
+  const hasAdvanced = enrollments.some((e) => e.product === "advanced");
   const entitled = new Set(
-    hasAdvanced ? statuses.map((s) => s.module.slug) : enrolments.map((e) => e.product)
+    hasAdvanced ? statuses.map((s) => s.module.slug) : enrollments.map((e) => e.product)
   );
-  const pending = enrolments.filter((e) => e.status === "pending");
+  const pending = enrollments.filter((e) => e.status === "pending");
 
   return (
     <main className="shell">
@@ -37,13 +37,13 @@ export default async function DashboardPage() {
 
       {pending.length ? (
         <div className="notice warn" style={{ maxWidth: "68ch" }}>
-          <strong>Enrolment pending payment.</strong> Your place is held. Contact{" "}
+          <strong>Enrollment pending payment.</strong> Your place is held. Contact{" "}
           <a href={`mailto:${program.contact.email}`}>{program.contact.email}</a> to complete
           payment and unlock your courses.
         </div>
       ) : null}
 
-      <h2>Your programme</h2>
+      <h2>Your program</h2>
       <div className="cards five">
         {statuses.map(({ module, complete }) => {
           const unlocked = entitled.has(module.slug);

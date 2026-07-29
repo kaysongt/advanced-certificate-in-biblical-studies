@@ -7,7 +7,7 @@ import { Collector, mdToHtml, parseFrontMatter, type FrontMatter } from "./markd
 export type Doc = { meta: FrontMatter; body: string };
 
 /**
- * Read a content file with line endings normalised to LF.
+ * Read a content file with line endings normalized to LF.
  *
  * This repo is checked out with core.autocrlf=true on Windows, so content/ files
  * arrive as CRLF. The ::: directive regex anchors on `$\n` and silently matches
@@ -61,7 +61,7 @@ export function getLessonRows(module: Module, course: Course): LessonRow[] {
     const todos = countTodos(module.slug, course.slug, lessonFile(n));
     rows.push({
       n,
-      title: cleanTitle(meta, `Lesson ${n}`),
+      title: cleanTitle(meta, `Topic ${n}`),
       reading: (meta.reading ?? "").split(TODO).join("").trim(),
       duration: meta.duration ?? "1 hr",
       id: lessonId(course.slug, n),
@@ -75,7 +75,7 @@ export function getLessonRows(module: Module, course: Course): LessonRow[] {
 export function getLesson(module: Module, course: Course, n: number) {
   const doc = readDoc(module.slug, course.slug, lessonFile(n));
   const collector = new Collector();
-  collector.at(`${course.code} L${n}`, `/courses/${course.slug}/${n}`);
+  collector.at(`${course.code} Topic ${n}`, `/courses/${course.slug}/${n}`);
   return { ...doc, html: mdToHtml(doc.body, collector) };
 }
 
@@ -180,7 +180,7 @@ export function getIndexes() {
     for (const course of module.courses) {
       for (let n = 1; n <= module.lessons_per_course; n++) {
         const { meta, body } = readDoc(module.slug, course.slug, lessonFile(n));
-        const title = `${course.code} L${n}: ${cleanTitle(meta, `Lesson ${n}`)}`;
+        const title = `${course.code} Topic ${n}: ${cleanTitle(meta, `Topic ${n}`)}`;
         collector.at(title, `/courses/${course.slug}/${n}`);
         mdToHtml(body, collector);
       }

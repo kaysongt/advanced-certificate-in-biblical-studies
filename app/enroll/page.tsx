@@ -5,11 +5,11 @@ import { currentStudent } from "@/lib/auth";
 import { getModuleStatuses } from "@/lib/content";
 import { getCurriculum } from "@/lib/curriculum";
 
-import EnrolForm from "./EnrolForm";
+import EnrollForm from "./EnrollForm";
 
-export const metadata: Metadata = { title: "Enrol" };
+export const metadata: Metadata = { title: "Enroll" };
 
-export default async function EnrolPage({
+export default async function EnrollPage({
   searchParams,
 }: {
   searchParams: Promise<{ plan?: string }>;
@@ -31,14 +31,14 @@ export default async function EnrolPage({
     <main className="shell">
       <div className="authwrap">
         <div className="authcard">
-          <h1>Enrol</h1>
+          <h1>Enroll</h1>
           <p className="sub">
             Create your account for the {program.title}. {program.total_hours} hours across{" "}
             {program.total_certificates} certificates, self-paced.
           </p>
 
           <div className="notice warn">
-            <strong>Payment is not connected yet.</strong> Your account and enrolment will be
+            <strong>Payment is not connected yet.</strong> Your account and enrollment will be
             created and held as pending. You will be invoiced directly at{" "}
             <a href={`mailto:${program.contact.email}`}>{program.contact.email}</a> until
             checkout goes live.
@@ -47,11 +47,11 @@ export default async function EnrolPage({
           {availableCount < program.total_certificates ? (
             <div className="notice">
               {availableCount} of {program.total_certificates} certificates are ready to study
-              today. The rest unlock as they are released — enrol now and keep your place.
+              today. The rest unlock as they are released — enroll now and keep your place.
             </div>
           ) : null}
 
-          <EnrolForm initialPlan={initialPlan} modules={modules} />
+          <EnrollForm initialPlan={initialPlan} modules={modules} />
         </div>
       </div>
     </main>

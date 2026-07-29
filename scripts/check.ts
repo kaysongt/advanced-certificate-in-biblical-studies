@@ -110,11 +110,11 @@ async function main() {
     passwordHash: hash,
   });
   check("student is created", () => assert.ok(student.id));
-  check("email is normalised", () => assert.equal(student.email, "test@example.com"));
+  check("email is normalized", () => assert.equal(student.email, "test@example.com"));
   const byEmail = await db.getStudentByEmail("TEST@EXAMPLE.COM");
   check("lookup is case-insensitive", () => assert.equal(byEmail?.id, student.id));
 
-  const enrolment = await db.createEnrolment({
+  const enrollment = await db.createEnrollment({
     studentId: student.id,
     product: "advanced",
     plan: "advanced",
@@ -124,9 +124,9 @@ async function main() {
     provider: null,
     providerRef: null,
   });
-  check("enrolment starts pending", () => assert.equal(enrolment.status, "pending"));
-  const activated = await db.activateEnrolment(enrolment.id, "test_ref_123");
-  check("enrolment activates", () => assert.equal(activated?.status, "active"));
+  check("enrollment starts pending", () => assert.equal(enrollment.status, "pending"));
+  const activated = await db.activateEnrollment(enrollment.id, "test_ref_123");
+  check("enrollment activates", () => assert.equal(activated?.status, "active"));
 
   await db.markLessonComplete(student.id, "st-101-1");
   await db.markLessonComplete(student.id, "st-101-1");

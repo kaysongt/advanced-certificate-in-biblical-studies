@@ -4,7 +4,7 @@ import { getIndexes } from "@/lib/content";
 
 export const metadata: Metadata = {
   title: "Glossary",
-  description: "Theological terms defined across the programme.",
+  description: "Theological terms defined across the program.",
 };
 
 export default function GlossaryPage() {
@@ -46,8 +46,8 @@ export default function GlossaryPage() {
         <div className="eyebrow">Reference</div>
         <h1>Glossary</h1>
         <p className="deck">
-          Theological terms defined across the programme, {seen.size} in total, each linked to
-          the lesson that introduces it.
+          Theological terms defined across the program, {seen.size} in total, each linked to
+          the topic that introduces it.
         </p>
       </div>
 

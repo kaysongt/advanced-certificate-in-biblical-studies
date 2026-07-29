@@ -10,7 +10,7 @@
 
 export type Plan = "certificate" | "advanced";
 
-export type EnrolmentStatus = "pending" | "active" | "cancelled" | "refunded";
+export type EnrollmentStatus = "pending" | "active" | "canceled" | "refunded";
 
 export type Student = {
   id: string;
@@ -22,13 +22,13 @@ export type Student = {
   createdAt: string;
 };
 
-export type Enrolment = {
+export type Enrollment = {
   id: string;
   studentId: string;
-  /** "advanced" for the full programme, or a module slug for a single certificate. */
+  /** "advanced" for the full program, or a module slug for a single certificate. */
   product: string;
   plan: Plan;
-  status: EnrolmentStatus;
+  status: EnrollmentStatus;
   amount: number;
   currency: string;
   /** "stripe" | "paystack" | "manual" — set when payment is wired up. */
@@ -45,13 +45,13 @@ export type ProgressRecord = {
 };
 
 export type NewStudent = Omit<Student, "id" | "createdAt">;
-export type NewEnrolment = Omit<Enrolment, "id" | "createdAt">;
+export type NewEnrollment = Omit<Enrollment, "id" | "createdAt">;
 
 /**
  * Thrown when the store cannot persist — most often the dev file adapter
  * running on a host with a read-only filesystem (Vercel, Netlify, Lambda).
  *
- * Callers should catch this and tell the student enrolment is not open yet,
+ * Callers should catch this and tell the student enrollment is not open yet,
  * rather than surfacing a 500. It disappears once a real database is attached
  * in lib/db/index.ts.
  */
@@ -72,10 +72,10 @@ export interface DataStore {
   getStudentByEmail(email: string): Promise<Student | null>;
   getStudentById(id: string): Promise<Student | null>;
 
-  // enrolments
-  createEnrolment(input: NewEnrolment): Promise<Enrolment>;
-  getEnrolmentsForStudent(studentId: string): Promise<Enrolment[]>;
-  activateEnrolment(id: string, providerRef: string): Promise<Enrolment | null>;
+  // enrollments
+  createEnrollment(input: NewEnrollment): Promise<Enrollment>;
+  getEnrollmentsForStudent(studentId: string): Promise<Enrollment[]>;
+  activateEnrollment(id: string, providerRef: string): Promise<Enrollment | null>;
 
   // progress
   markLessonComplete(studentId: string, lessonId: string): Promise<void>;

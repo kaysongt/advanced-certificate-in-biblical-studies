@@ -273,7 +273,7 @@ function renderDirective(
       .filter((l) => l.trim())
       .map((l) => l.replace(/^\s*(\d+\.|[-*])\s*/, "").trim());
     const lis = items.map((x) => `<li>${mdSpan(x)}</li>`).join("");
-    const head = arg || "By the end of this lesson you will be able to";
+    const head = arg || "By the end of this topic you will be able to";
     return `<div class="objectives"><h4>${escapeHtml(head)}</h4><ol>${lis}</ol></div>`;
   }
 

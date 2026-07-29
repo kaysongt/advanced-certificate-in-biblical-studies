@@ -1,5 +1,5 @@
 /**
- * Creates a dev student with an active enrolment and prints a session cookie,
+ * Creates a dev student with an active enrollment and prints a session cookie,
  * so gated routes can be exercised locally. Dev only.
  *
  * Usage: SESSION_SECRET=... npx tsx scripts/seed-dev.ts
@@ -19,7 +19,7 @@ async function main() {
       country: "Nigeria",
       passwordHash: await hashPassword("devpassword123"),
     });
-    await db.createEnrolment({
+    await db.createEnrollment({
       studentId: student.id,
       product: "advanced",
       plan: "advanced",

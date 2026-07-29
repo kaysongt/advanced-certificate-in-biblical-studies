@@ -28,7 +28,7 @@ function Submit({ label }: { label: string }) {
 
 type ModuleOption = { slug: string; title: string; available: boolean };
 
-export default function EnrolForm({
+export default function EnrollForm({
   initialPlan,
   modules,
 }: {
@@ -53,7 +53,7 @@ export default function EnrolForm({
           value={plan}
           onChange={(e) => setPlan(e.target.value as "certificate" | "advanced")}
         >
-          <option value="advanced">Advanced Certificate — all five programmes ($1,000)</option>
+          <option value="advanced">Advanced Certificate — all five programs ($1,000)</option>
           <option value="certificate">A single certificate ($250)</option>
         </select>
       </div>

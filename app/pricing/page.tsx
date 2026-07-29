@@ -14,7 +14,7 @@ export default function PricingPage() {
     <main className="shell">
       <div className="pagehead">
         <div className="eyebrow">Tuition</div>
-        <h1>Enrolment options</h1>
+        <h1>Enrollment options</h1>
         <p className="deck">{program.tuition}</p>
       </div>
 
@@ -25,12 +25,12 @@ export default function PricingPage() {
             {PRICING.certificate.label} <span>/ certificate</span>
           </div>
           <p className="blurb">
-            Any one of the five programmes. {available} available to start today.
+            Any one of the five programs. {available} available to start today.
           </p>
           <ul>
             <li>All courses within that certificate</li>
             <li>Topic quizzes and course assessments</li>
-            <li>Customised textbooks</li>
+            <li>Customized textbooks</li>
             <li>Modular certificate on completion</li>
           </ul>
           <Link href="/enroll?plan=certificate" className="btn primary lg">
@@ -41,7 +41,7 @@ export default function PricingPage() {
         <div className="price feature">
           <div className="plan">Advanced Certificate</div>
           <div className="amount">
-            {PRICING.advanced.label} <span>/ full programme</span>
+            {PRICING.advanced.label} <span>/ full program</span>
           </div>
           <p className="blurb">
             All five certificates &mdash; {program.total_hours} hours across{" "}
@@ -49,12 +49,12 @@ export default function PricingPage() {
           </p>
           <ul>
             <li>Everything in all five certificates</li>
-            <li>{program.total_textbooks} customised textbooks</li>
+            <li>{program.total_textbooks} customized textbooks</li>
             <li>Student community engagement</li>
             <li>Advanced Certificate in Biblical Studies</li>
           </ul>
           <Link href="/enroll?plan=advanced" className="btn primary lg">
-            Enrol in the full programme
+            Enroll in the full program
           </Link>
         </div>
       </div>

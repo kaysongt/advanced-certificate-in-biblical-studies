@@ -1,6 +1,6 @@
 # Build Brief — from static syllabus to enrolling students
 
-This document scopes the work of turning the current static site into a live programme
+This document scopes the work of turning the current static site into a live program
 that students can find, pay for, and study inside. Read `README.md` first for how the
 content pipeline works; this brief covers everything that sits on top of it.
 
@@ -33,11 +33,11 @@ is lost when a student switches device or clears data.
 which puts the outstanding work at roughly **408,000 words**, plus 26 course overviews and
 26 assessments. That is the equivalent of about five books.
 
-**Track B — Platform.** Enrolment, payment, accounts, gated lessons, grading, and
+**Track B — Platform.** Enrollment, payment, accounts, gated lessons, grading, and
 certificates. Meaningful, but on the order of 4–6 weeks of focused development.
 
 Track A is the critical path by a wide margin, and it has a hard dependency: **Module I was
-written from a real textbook** — its lessons quote "Chapter One" throughout. The programme
+written from a real textbook** — its lessons quote "Chapter One" throughout. The program
 is specified as 32 courses / 32 textbooks. The remaining 26 textbooks must be in the
 writer's hands before those lessons can be written. Sourcing them is the first blocker to
 clear, ahead of any code.
@@ -101,7 +101,7 @@ is the most common silent failure in this kind of build.
   landing-page copy. This is a pricing decision for Dr. Kay, not a technical one.
 
 Flow: Checkout session → webhook (`checkout.session.completed` / `charge.success`) →
-create enrolment row → unlock access. **Grant access on the webhook, never on the browser
+create enrollment row → unlock access. **Grant access on the webhook, never on the browser
 redirect** — the redirect is trivially forged.
 
 Also decide: payment plans. At $1,000 a bundle, instalments will likely lift conversion
@@ -115,7 +115,7 @@ key for progress — no new identifier scheme needed.
 
 ```
 students      id, email, full_name, country, created_at
-enrolments    id, student_id, product, status, amount, currency,
+enrollments    id, student_id, product, status, amount, currency,
               provider, provider_ref, created_at
 progress      student_id, lesson_id, completed_at          -- lesson_id = "st-101-1"
 quiz_attempts student_id, quiz_id, score, attempted_at
@@ -147,13 +147,13 @@ real slice of Track B, not an afterthought.
 ### 4.7 Certificates
 
 Five modular certificates plus the Advanced Certificate. Each needs PDF generation
-(student name, programme, serial number, date, signature) and a public verification URL
+(student name, program, serial number, date, signature) and a public verification URL
 — `/verify/{serial}` — so an employer or church can confirm it. For a credential being
 sold at $1,000, verification is what makes it credible.
 
 ### 4.8 Landing page
 
-The current `index.html` is a programme index for people already inside. A sales page is a
+The current `index.html` is a program index for people already inside. A sales page is a
 different job. Everything it needs is already in `curriculum.json`:
 
 - Hero — title, tagline, the logo
@@ -161,9 +161,9 @@ different job. Everything it needs is already in `curriculum.json`:
 - Curriculum — five modules, 32 courses, 172 hours
 - Instructor — Dr. Kay's bio; three decades, four continents, 100+ books is the strongest
   trust signal on the page and is currently buried
-- Format — self-paced, modular certificates, customised textbooks
+- Format — self-paced, modular certificates, customized textbooks
 - Pricing — $250 / $1,000, plus instalments if offered
-- FAQ, and an enrol CTA repeated down the page
+- FAQ, and an enroll CTA repeated down the page
 
 Missing and worth gathering before launch: **student testimonials** and any accreditation
 or affiliation claim. At this price point, social proof does more work than design.
@@ -210,7 +210,7 @@ Carried over from `README.md`, plus new commercial ones:
 |---|---|---|
 | 1 | Landing page, public, no payment | — |
 | 2 | Accounts + magic-link login | — |
-| 3 | Checkout + webhook → enrolment | decision 1 |
+| 3 | Checkout + webhook → enrollment | decision 1 |
 | 4 | Gated `/courses/**`, Module I only | 2, 3 |
 | 5 | Server-side progress + quiz scores | 2 |
 | 6 | Instructor grading dashboard | 5, decision 5 |

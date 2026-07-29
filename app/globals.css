@@ -29,7 +29,7 @@
   --r: 4px;
 }
 
-/* Dark theme keeps the logo's navy ground rather than a neutral grey. */
+/* Dark theme keeps the logo's navy ground rather than a neutral gray. */
 @media (prefers-color-scheme: dark) {
   :root {
     --ink: #eceae5; --ink-2: #c6cad3; --muted: #98a1b3; --faint: #6e778a;
@@ -500,7 +500,7 @@ tbody tr:last-child td { border-bottom: 1px solid var(--rule); }
 }
 
 /* ==========================================================================
-   Marketing site — landing page, pricing, enrolment
+   Marketing site — landing page, pricing, enrollment
    ========================================================================== */
 
 .wide { max-width: 1180px; margin: 0 auto; padding: 0 24px; }
@@ -586,18 +586,24 @@ tbody tr:last-child td { border-bottom: 1px solid var(--rule); }
 .avail.now { background: var(--ok-wash); color: var(--ok); border: 1px solid var(--ok); }
 .avail.soon { background: var(--rule-soft); color: var(--faint); border: 1px solid var(--rule); }
 
-/* Badge on its own line so the "Module I · 36 hrs" eyebrow never wraps. */
-.card .cardtop { display: flex; align-items: center; gap: 10px; justify-content: space-between; margin-bottom: 4px; }
+/*
+ * The eyebrow ("Module I · 36 HRS") and the availability badge must never
+ * be forced onto one line — at narrow card widths that pushed the badge
+ * past the card's edge instead of wrapping. flex-wrap lets them share a
+ * row when there's room and stack cleanly the moment there isn't.
+ */
+.card .cardtop {
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
+  gap: 6px 10px; margin-bottom: 4px;
+}
 .card .cardtop .eyebrow { white-space: nowrap; }
+.avail { flex: none; }
 
 /* Five certificates, five columns — no orphan card on a second row. */
 .cards.five { grid-template-columns: repeat(auto-fit, minmax(196px, 1fr)); }
 .cards.five .card { padding: 16px 17px; }
 .cards.five .card .t { font-size: 1rem; margin-top: 2px; }
 .cards.five .card p { font-size: 13.5px; }
-/* At this width the eyebrow and badge cannot sit side by side — stack them. */
-.cards.five .cardtop { flex-direction: column; align-items: flex-start; gap: 7px; margin-bottom: 6px; }
-.avail { flex: none; align-self: flex-start; }
 
 /* ---------- pricing ---------- */
 
@@ -652,7 +658,7 @@ tbody tr:last-child td { border-bottom: 1px solid var(--rule); }
 .faq details[open] summary::after { content: "−"; }
 .faq .ans { font-family: var(--sans); font-size: 14.5px; color: var(--muted); line-height: 1.7; padding: 0 0 16px; }
 
-/* ---------- forms / enrolment ---------- */
+/* ---------- forms / enrollment ---------- */
 
 .authwrap { max-width: 452px; margin: 60px auto 80px; }
 .authcard {
@@ -697,7 +703,7 @@ tbody tr:last-child td { border-bottom: 1px solid var(--rule); }
    Topic reader — the teaching lives on the page
    ========================================================================== */
 
-/* The reading column is centred rather than pinned left against dead space. */
+/* The reading column is centered rather than pinned left against dead space. */
 .topicwrap { max-width: 760px; margin: 0 auto; }
 
 .topichead { padding: 10px 0 0; margin-bottom: 38px; }
