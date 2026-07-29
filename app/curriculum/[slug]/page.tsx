@@ -80,24 +80,21 @@ export default async function ModulePage({ params }: Props) {
         })}
       </div>
 
-      <h2>Module video</h2>
       {module.video?.url ? (
-        <div className="videoslot">
-          <div className="frame">
-            <iframe
-              src={module.video.url}
-              title={module.video.title ?? `${module.short_title} module video`}
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; picture-in-picture"
-              allowFullScreen
-            />
+        <>
+          <h2>Module video</h2>
+          <div className="videoslot">
+            <div className="frame">
+              <iframe
+                src={module.video.url}
+                title={module.video.title ?? `${module.short_title} module video`}
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; picture-in-picture"
+                allowFullScreen
+              />
+            </div>
           </div>
-        </div>
-      ) : (
-        <div className="videoslot">
-          <span className="vt">One video, shown after the final course</span>
-          To be supplied. Add the URL to <code>modules[].video</code> in curriculum.json.
-        </div>
-      )}
+        </>
+      ) : null}
 
       <h2>Module assignment</h2>
       <p className="deck" style={{ maxWidth: "62ch" }}>
