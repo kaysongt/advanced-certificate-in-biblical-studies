@@ -34,6 +34,7 @@ export type Module = {
   hours: number;
   overview: string;
   catalog_blurb: string;
+  availability?: string;
   hours_per_course: number;
   /** Topics per course. The hierarchy is Module → Course → Topic. */
   lessons_per_course: number;

@@ -33,8 +33,8 @@ export default async function EnrollPage({
         <div className="authcard">
           <h1>Enroll</h1>
           <p className="sub">
-            Create your account for the {program.title}. {program.total_hours} hours across{" "}
-            {program.total_certificates} certificates, self-paced.
+            Create your account for the {program.title}. Choose a single certificate or reserve
+            your place in the full program.
           </p>
 
           <div className="notice warn">
@@ -47,7 +47,7 @@ export default async function EnrollPage({
           {availableCount < program.total_certificates ? (
             <div className="notice">
               {availableCount} of {program.total_certificates} certificates are ready to study
-              today. The rest unlock as they are released — enroll now and keep your place.
+              today. The rest unlock according to the published release schedule.
             </div>
           ) : null}
 

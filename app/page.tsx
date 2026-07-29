@@ -100,7 +100,7 @@ export default function HomePage() {
                     Module {module.numeral} &middot; {module.hours} hrs
                   </span>
                   <span className={`avail ${complete ? "now" : "soon"}`}>
-                    {complete ? "Available now" : "In development"}
+                    {complete ? "Available now" : module.availability ?? "Coming soon"}
                   </span>
                 </div>
                 <span className="t">{module.short_title}</span>
@@ -193,7 +193,7 @@ export default function HomePage() {
               <ul>
                 <li>Everything in all five certificates</li>
                 <li>{program.total_textbooks} customized textbooks</li>
-                <li>Student community engagement</li>
+                <li>Course assessments and final evaluations</li>
                 <li>Advanced Certificate in Biblical Studies</li>
               </ul>
               <Link href="/enroll?plan=advanced" className="btn primary lg">
@@ -253,9 +253,6 @@ export default function HomePage() {
           <h2 style={{ fontSize: "clamp(1.5rem, 3vw, 2.2rem)", marginBottom: 10 }}>
             Begin your training
           </h2>
-          <p className="deck" style={{ margin: "0 auto 26px", maxWidth: "52ch" }}>
-            {program.motto}
-          </p>
           <Link href="/enroll" className="btn lg gold">
             Enroll now
           </Link>

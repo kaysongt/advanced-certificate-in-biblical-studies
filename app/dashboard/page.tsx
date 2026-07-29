@@ -51,7 +51,11 @@ export default async function DashboardPage() {
                   Module {module.numeral} &middot; {module.hours} hrs
                 </span>
                 <span className={`avail ${complete && unlocked ? "now" : "soon"}`}>
-                  {!unlocked ? "Not enrolled" : complete ? "Ready" : "In development"}
+                  {!unlocked
+                    ? "Not enrolled"
+                    : complete
+                      ? "Ready"
+                      : module.availability ?? "Coming soon"}
                 </span>
               </div>
               <span className="t">{module.short_title}</span>

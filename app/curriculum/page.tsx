@@ -29,7 +29,9 @@ export default function CurriculumPage() {
                 Module {module.numeral} &middot; {module.hours} hrs
               </span>
               <span className={`avail ${complete ? "now" : "soon"}`}>
-                {complete ? "Available now" : `${coursesComplete}/${courses} written`}
+                {complete
+                  ? "Available now"
+                  : module.availability ?? `${coursesComplete}/${courses} written`}
               </span>
             </div>
             <span className="t">{module.short_title}</span>

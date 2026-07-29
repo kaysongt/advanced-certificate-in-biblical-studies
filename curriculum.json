@@ -27,14 +27,11 @@
     ],
     "features": [
       "Seasoned Instructors",
-      "Self Paced",
       "Customized Textbooks",
-      "Structured Classes",
-      "Course Assessment",
+      "Structured Lessons",
+      "Course Assessments",
       "Modular Certificates",
-      "Online Resources",
-      "Comprehensive Assessment",
-      "Student Community Engagement"
+      "Online Resources"
     ],
     "outcomes": [
       "Build a strong biblical & theological foundation, and interpret Scripture with sound hermeneutics",
@@ -46,7 +43,7 @@
       "Apply God's Word faithfully in everyday life and leadership",
       "Graduate with a recognized Advanced Certificate in Biblical Studies"
     ],
-    "format": "Schedule: Modular Structure. Self-paced with structured classes.",
+    "format": "Study each released certificate at your own pace, with structured lessons and clear assessment milestones.",
     "tuition": "$250 per Certificate Program, or $1,000 for the Advanced Certificate, covering all five certificates in Systematic Theology, Biblical Foundations, Old Testament Survey, New Testament Survey & Spiritual Formation.",
     "graduation_requirements": "Students receive the Advanced Certificate in Biblical Studies upon completion of all five certificate programs, required assessments, course requirements and final evaluations.",
     "contact": {
@@ -180,6 +177,7 @@
       "hours": 36,
       "overview": "Build a strong foundation for understanding the Bible as one unified revelation of God's redemptive plan. This module equips students with the essential tools to understand Scripture accurately, interpret it faithfully, and recognize Jesus Christ as its central theme from Genesis to Revelation.",
       "catalog_blurb": "Learn to read, interpret, and study the Bible accurately for yourself, tracing God's redemptive story from Genesis to Revelation and recognizing Christ throughout every book.",
+      "availability": "Expected August 2026",
       "hours_per_course": 6,
       "lessons_per_course": 6,
       "courses": [
@@ -249,6 +247,7 @@
       "hours": 30,
       "overview": "Journey through the Old Testament book by book to understand God's unfolding covenant relationship with humanity. This module reveals the historical, prophetic, poetic, and theological foundations that prepare the way for Christ and the fulfillment of God's redemptive purposes.",
       "catalog_blurb": "Understand the full sweep of God's covenant story, book by book, from creation through the Law, history, wisdom, and prophets, and how it prepares the way for Christ.",
+      "availability": "Expected September 2026",
       "hours_per_course": 6,
       "lessons_per_course": 6,
       "courses": [
@@ -310,6 +309,7 @@
       "hours": 30,
       "overview": "Explore the New Testament from the life and ministry of Jesus to the birth of the Church and the consummation of God's Kingdom. This module provides a comprehensive understanding of each New Testament book, highlighting its historical context, theological message, and practical application for believers today.",
       "catalog_blurb": "Grasp the life and ministry of Jesus, the birth of the Church, and the doctrine and practice handed down through the apostles, equipping you to teach the New Testament with confidence.",
+      "availability": "Expected October 2026",
       "hours_per_course": 6,
       "lessons_per_course": 6,
       "courses": [
@@ -371,6 +371,7 @@
       "hours": 40,
       "overview": "Move beyond biblical knowledge to personal transformation. This module develops Christlike character, spiritual maturity, Kingdom identity, and a supernatural lifestyle by equipping students to think biblically, walk in the Spirit, live from their new creation identity, and fulfill God's purpose with wisdom, power, and unwavering faith.",
       "catalog_blurb": "Move beyond information into transformation: a renewed mind, a secure identity, and a Spirit-empowered, supernatural lifestyle you can sustain for the long term.",
+      "availability": "Expected November 2026",
       "hours_per_course": 4,
       "lessons_per_course": 4,
       "courses": [

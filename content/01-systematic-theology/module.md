@@ -23,10 +23,10 @@ Gain a confident, biblically grounded understanding of core Christian doctrine, 
 
 By the end of this certificate, students will be able to:
 
-1. State the central doctrines of the Christian faith in their own words — the nature and attributes of God, the person and work of Christ, the ministry of the Holy Spirit, salvation by grace through faith, the identity and mission of the Church, and the hope of eternity — and show how each depends on the others.
+1. State the central doctrines of the Christian faith in their own words, including the nature and attributes of God, the person and work of Christ, the ministry of the Holy Spirit, salvation by grace through faith, the identity and mission of the Church, and the hope of eternity; and show how each depends on the others.
 2. Ground each doctrine in Scripture, citing the passages the *What We Believe* volumes treat as load-bearing and explaining what each passage actually establishes.
 3. Identify the common distortions of each doctrine, name why each fails, and correct it without overstating what Scripture does not say.
-4. Apply doctrine pastorally — to worship, to suffering, to grief, to the ordering of daily life — so that what is believed is visible in how it is lived and taught.
+4. Apply doctrine pastorally to worship, suffering, grief, and daily life so that what is believed is visible in how it is lived and taught.
 
 ## Courses in This Certificate
 
@@ -38,6 +38,12 @@ By the end of this certificate, students will be able to:
 | ST 104 | [Soteriology](/courses/st-104) | Grace, Faith & the New Creation | 6 | 6 |
 | ST 105 | [Ecclesiology](/courses/st-105) | God's Covenant Community and Mission | 6 | 6 |
 | ST 106 | [Eschatology](/courses/st-106) | Our Blessed Hope | 6 | 6 |
+
+## Course Assessment Folder
+
+Assessments for all six Module I courses are collected in this folder:
+
+[Module I Course Assessment Folder](https://drive.google.com/drive/folders/16VFOvO7dE74DeyqtvMCCtfwkZsiSxIWQ)
 
 ## Required Textbooks
 

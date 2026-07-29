@@ -50,7 +50,7 @@ export default function PricingPage() {
           <ul>
             <li>Everything in all five certificates</li>
             <li>{program.total_textbooks} customized textbooks</li>
-            <li>Student community engagement</li>
+            <li>Course assessments and final evaluations</li>
             <li>Advanced Certificate in Biblical Studies</li>
           </ul>
           <Link href="/enroll?plan=advanced" className="btn primary lg">

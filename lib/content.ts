@@ -197,12 +197,32 @@ export function getCourseAudio(courseSlug: string): CourseAudio | null {
 
 export function getModuleDoc(module: Module) {
   const doc = readDoc(module.slug, "module.md");
-  return { ...doc, html: mdToHtml(doc.body) };
+  return {
+    ...doc,
+    html: mdToHtml(stripSections(doc.body, ["What Students Gain", "Instructor Notes"])),
+  };
 }
 
 export function getProgramDoc() {
   const doc = readDoc("program.md");
   return { ...doc, html: mdToHtml(doc.body) };
+}
+
+function stripSections(body: string, headings: string[]): string {
+  const excluded = new Set(headings);
+  const kept: string[] = [];
+  let skipping = false;
+
+  for (const line of body.split("\n")) {
+    const heading = line.match(/^##\s+(.+)$/)?.[1]?.trim();
+    if (heading) {
+      skipping = excluded.has(heading);
+      if (skipping) continue;
+    }
+    if (!skipping) kept.push(line);
+  }
+
+  return kept.join("\n").replace(/\n{3,}/g, "\n\n").trimStart();
 }
 
 // ---------------------------------------------------------------- progress
