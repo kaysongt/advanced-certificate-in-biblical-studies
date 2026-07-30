@@ -44,8 +44,25 @@ export type ProgressRecord = {
   completedAt: string;
 };
 
+/** A contribution to an enrolled module's asynchronous discussion group. */
+export type CommunityPost = {
+  id: string;
+  moduleSlug: string;
+  studentId: string;
+  body: string;
+  /** Tracked separately from assessment marks for instructor extra-credit review. */
+  engagementCredits: number;
+  createdAt: string;
+};
+
+export type CommunityEngagement = {
+  posts: number;
+  credits: number;
+};
+
 export type NewStudent = Omit<Student, "id" | "createdAt">;
 export type NewEnrollment = Omit<Enrollment, "id" | "createdAt">;
+export type NewCommunityPost = Omit<CommunityPost, "id" | "createdAt" | "engagementCredits">;
 
 /**
  * Thrown when the store cannot persist — most often the dev file adapter
@@ -81,4 +98,9 @@ export interface DataStore {
   markLessonComplete(studentId: string, lessonId: string): Promise<void>;
   clearLessonComplete(studentId: string, lessonId: string): Promise<void>;
   getProgress(studentId: string): Promise<ProgressRecord[]>;
+
+  // community engagement
+  createCommunityPost(input: NewCommunityPost): Promise<CommunityPost>;
+  getCommunityPosts(moduleSlug: string): Promise<CommunityPost[]>;
+  getCommunityEngagement(studentId: string): Promise<CommunityEngagement>;
 }

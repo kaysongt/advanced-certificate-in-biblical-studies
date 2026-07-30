@@ -14,7 +14,7 @@ status: template
 
 ## Instructions
 
-This assessment covers all 4 lessons of SF 507. Pass mark: **70%**.
+This assessment covers all 4 lessons of SF 507. Pass mark: **80%**.
 
 ## Section A — Multiple Choice (10 questions, 2 points each)
 

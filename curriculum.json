@@ -31,19 +31,23 @@
       "Structured Lessons",
       "Course Assessments",
       "Modular Certificates",
-      "Online Resources"
+      "Online Resources",
+      "Enrolled Community Groups",
+      "Opening & Closing Video Briefings"
     ],
     "outcomes": [
       "Build a strong biblical & theological foundation, and interpret Scripture with sound hermeneutics",
       "Understand the message and structure of every book of the Bible",
       "Explain essential Christian doctrine and develop a mature, biblical worldview",
-      "Grow in spiritual formation and minister with biblical accuracy and confidence",
-      "Develop a mature Christian worldview grounded in Scripture",
+      "Grow in spiritual formation and apply God's Word faithfully in everyday life and leadership",
       "Minister effectively with biblical accuracy and spiritual confidence",
-      "Apply God's Word faithfully in everyday life and leadership",
       "Graduate with a recognized Advanced Certificate in Biblical Studies"
     ],
-    "format": "Study each released certificate at your own pace, with structured lessons and clear assessment milestones.",
+    "format": "Each released certificate is self-paced within a defined time limit, with structured lessons and clear assessment milestones.",
+    "community": {
+      "access": "Community groups are accessible upon enrollment and are attached to each certificate module for student questions, feedback, and reflections.",
+      "engagement": "Thoughtful community participation is tracked for instructor review and extra-credit opportunities. It encourages deeper learning but does not replace the required 80% assessment pass mark."
+    },
     "tuition": "$250 per Certificate Program, or $1,000 for the Advanced Certificate, covering all five certificates in Systematic Theology, Biblical Foundations, Old Testament Survey, New Testament Survey & Spiritual Formation.",
     "graduation_requirements": "Students receive the Advanced Certificate in Biblical Studies upon completion of all five certificate programs, required assessments, course requirements and final evaluations.",
     "contact": {
@@ -53,7 +57,7 @@
     }
   },
   "grading": {
-    "note": "Pass mark confirmed at 80%. Component WEIGHTS are still PROPOSED — Dr. Kay to set in stone before publishing.",
+    "note": "Pass mark confirmed at 80%. Component weights are still proposed and require final approval before publishing.",
     "components": [
       {
         "name": "Topic Quizzes",

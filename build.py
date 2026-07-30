@@ -511,7 +511,7 @@ SHELL = """<!doctype html>
 <meta property="og:type" content="website">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="stylesheet" href="{root}assets/theme.css">
-<script>(function(){{try{{var t=localStorage.getItem('kti.theme');if(t)document.documentElement.setAttribute('data-theme',t);}}catch(e){{}}}})();</script>
+<script>(function(){{try{{var t=localStorage.getItem('kti.theme');document.documentElement.setAttribute('data-theme',t==='dark'?'dark':'light');}}catch(e){{document.documentElement.setAttribute('data-theme','light');}}window.KTI_CONFIG={{passMark:{pass_mark}}};}})();</script>
 </head>
 <body>
 <header class="masthead"><div class="inner">
@@ -519,7 +519,7 @@ SHELL = """<!doctype html>
   <nav class="mastnav">{nav}
     <a href="{root}glossary.html" class="hide-sm{gl}">Glossary</a>
     <a href="{root}scriptures.html" class="hide-sm{sc}">Scriptures</a>
-    <button class="themetoggle" type="button">Dark</button>
+    <button class="themetoggle theme-switch" type="button" role="switch" aria-checked="false" aria-label="Switch to dark theme"><span class="theme-switch-track" aria-hidden="true"><span class="theme-switch-knob"></span></span><span class="theme-switch-label">Light</span></button>
   </nav>
 </div></header>
 <main class="shell">
@@ -549,6 +549,7 @@ def shell(title, body, crumbs, depth, d, desc="", active=None):
         crumbs=crumbs, body=body, institute=escape(p["institute"]),
         phone=p["contact"]["phone"], phoneraw=p["contact"]["phone"].replace(" ", ""),
         email=p["contact"]["email"], website=p["contact"]["website"],
+        pass_mark=d["grading"]["pass_mark"],
         gl=" on" if active == "glossary" else "", sc=" on" if active == "scriptures" else "",
     )
 
@@ -569,6 +570,22 @@ def read(path):
             return parse_front_matter(f.read())
     except FileNotFoundError:
         return {}, ""
+
+
+def strip_sections(body, headings):
+    """Keep source-only headings out of student-facing generated pages."""
+    excluded = set(headings)
+    kept = []
+    skipping = False
+    for line in body.split("\n"):
+        match = re.match(r"^##\s+(.+?)\s*$", line)
+        if match:
+            skipping = match.group(1).strip() in excluded
+            if skipping:
+                continue
+        if not skipping:
+            kept.append(line)
+    return "\n".join(kept).strip()
 
 
 def count_todos(path):
@@ -634,33 +651,36 @@ def build(d):
 
     # ---------------- program index ----------------
     meta, body = read(os.path.join(CONTENT, "program.md"))
+    body = strip_sections(body, ["The Five Certificate Programs"])
     all_ids = [r["lid"] for m in d["modules"] for c in m["courses"] for r in index[c["slug"]]]
-    head = f"""<div class="brandhero">
-  <img src="assets/logo.jpg" alt="{escape(p['institute'])} — Equip, Empower, Transform"
-       width="1200" height="812">
-</div>
-<div class="pagehead">
-  <div class="eyebrow">{escape(p['institute'])}</div>
-  <h1>{escape(p['title'])}</h1>
-  <p class="deck">{escape(p['tagline'])}</p>
-</div>
-<div class="figures">
-  <div class="figure"><div class="n">{p['total_hours']}</div><div class="l">Hours</div></div>
-  <div class="figure"><div class="n">{p['total_certificates']}</div><div class="l">Certificates</div></div>
-  <div class="figure"><div class="n">{p['total_courses']}</div><div class="l">Courses</div></div>
-  <div class="figure"><div class="n">{p['total_textbooks']}</div><div class="l">Textbooks</div></div>
-</div>
-<div style="margin:26px 0">{ring(all_ids)}</div>"""
+    head = f"""<section class="static-hero">
+  <div class="static-hero-copy">
+    <div class="eyebrow">{escape(p['institute'])}</div>
+    <h1>Know God's Word <em>for yourself.</em></h1>
+    <p>{escape(p['summary'])}</p>
+    <div class="static-hero-stats">
+      <span><strong>{p['total_hours']}</strong> contact hours</span>
+      <span><strong>{p['total_certificates']}</strong> certificates</span>
+      <span><strong>{d['grading']['pass_mark']}%</strong> pass mark</span>
+    </div>
+  </div>
+  <div class="static-hero-brand">
+    <img src="assets/logo.jpg" alt="{escape(p['institute'])} — Equip, Empower, Transform" width="1200" height="812">
+    <span>{escape(p['tagline'])}</span>
+  </div>
+</section>
+<div class="static-progress">{ring(all_ids)}</div>"""
     cards = "".join(
-        f'<a class="card" href="modules/{m["slug"]}.html">'
-        f'<span class="eyebrow">Module {m["numeral"]} &middot; {m["hours"]} hrs</span>'
+        f'<a class="card static-module-card" href="modules/{m["slug"]}.html">'
+        f'<span class="cardtop"><span class="eyebrow">Module {m["numeral"]} &middot; {m["hours"]} hrs</span>'
+        f'<span class="avail {"now" if not m.get("availability") else "soon"}">{escape(m.get("availability") or "Available now")}</span></span>'
         f'<span class="t">{escape(m["short_title"])}</span>'
         f'<p>{escape(m["catalog_blurb"])}</p>'
         f'<span class="foot">{len(m["courses"])} courses &middot; {m["series"]}</span></a>'
         for m in d["modules"]
     )
     coll.at(p["title"], "index.html")
-    html = head + f'<h2>The Five Certificate Programs</h2><div class="cards">{cards}</div>' \
+    html = head + f'<section class="static-module-section"><div class="static-section-head"><div class="eyebrow">The learning journey</div><h2>Five certificates, one coherent path.</h2></div><div class="cards">{cards}</div></section>' \
         + f'<div class="prose">{md_to_html(body, coll)}</div>'
     with open(os.path.join(SITE, "index.html"), "w", encoding="utf-8") as f:
         f.write(shell(f"{p['title']} — {p['institute']}", html, "", 0, d, p["summary"]))
@@ -670,6 +690,7 @@ def build(d):
     os.makedirs(os.path.join(SITE, "modules"), exist_ok=True)
     for m in d["modules"]:
         meta, body = read(os.path.join(CONTENT, m["slug"], "module.md"))
+        body = strip_sections(body, ["What Students Gain", "Instructor Notes"])
         ids = [r["lid"] for c in m["courses"] for r in index[c["slug"]]]
         head = f"""<div class="pagehead">
   <div class="eyebrow">Module {m['numeral']} &middot; {escape(m['series'])}</div>
@@ -724,6 +745,7 @@ def build(d):
 
             # --- course overview
             meta, body = read(os.path.join(cdir, "course.md"))
+            body = strip_sections(body, ["Instructor Notes"])
             head = f"""<div class="pagehead">
   <div class="eyebrow">{escape(c['code'])} &middot; Module {m['numeral']}</div>
   <h1>{escape(c['title'])}</h1>

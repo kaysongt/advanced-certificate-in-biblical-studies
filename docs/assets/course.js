@@ -4,6 +4,7 @@
 
   var KEY = 'kti.progress.v1';
   var TKEY = 'kti.theme';
+  var PASS_MARK = (window.KTI_CONFIG && Number(window.KTI_CONFIG.passMark)) || 80;
 
   function load() {
     try { return JSON.parse(localStorage.getItem(KEY)) || {}; }
@@ -18,22 +19,19 @@
   function initTheme() {
     var btn = document.querySelector('.themetoggle');
     if (!btn) return;
+    var labelEl = btn.querySelector('.theme-switch-label');
     var stored = null;
     try { stored = localStorage.getItem(TKEY); } catch (e) {}
-    if (stored) document.documentElement.setAttribute('data-theme', stored);
+    document.documentElement.setAttribute('data-theme', stored === 'dark' ? 'dark' : 'light');
     function label() {
       var cur = document.documentElement.getAttribute('data-theme');
-      if (!cur) {
-        cur = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-      }
-      btn.textContent = cur === 'dark' ? 'Light' : 'Dark';
+      btn.setAttribute('aria-checked', cur === 'dark' ? 'true' : 'false');
+      btn.setAttribute('aria-label', cur === 'dark' ? 'Switch to light theme' : 'Switch to dark theme');
+      if (labelEl) labelEl.textContent = cur === 'dark' ? 'Dark' : 'Light';
     }
     label();
     btn.addEventListener('click', function () {
       var cur = document.documentElement.getAttribute('data-theme');
-      if (!cur) {
-        cur = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-      }
       var next = cur === 'dark' ? 'light' : 'dark';
       document.documentElement.setAttribute('data-theme', next);
       try { localStorage.setItem(TKEY, next); } catch (e) {}
@@ -57,8 +55,8 @@
       if (answered === total && verdictEl) {
         var pct = Math.round((correct / total) * 100);
         verdictEl.textContent = correct + ' of ' + total + ' correct (' + pct + '%). ' +
-          (pct >= 70 ? 'Pass.' : 'Review the lesson and try again.');
-        verdictEl.className = 'verdict ' + (pct >= 70 ? 'pass' : 'fail');
+          (pct >= PASS_MARK ? 'Pass.' : 'Review the lesson and try again.');
+        verdictEl.className = 'verdict ' + (pct >= PASS_MARK ? 'pass' : 'fail');
         if (id) {
           var d = load();
           d.quiz = d.quiz || {};

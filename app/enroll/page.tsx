@@ -24,6 +24,7 @@ export default async function EnrollPage({
     slug: s.module.slug,
     title: s.module.title,
     available: s.complete,
+    availability: s.module.availability,
   }));
   const availableCount = modules.filter((m) => m.available).length;
 

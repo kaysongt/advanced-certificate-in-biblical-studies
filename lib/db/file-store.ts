@@ -4,8 +4,11 @@ import path from "node:path";
 
 import { StorageUnavailableError } from "./types";
 import type {
+  CommunityEngagement,
+  CommunityPost,
   DataStore,
   Enrollment,
+  NewCommunityPost,
   NewEnrollment,
   NewStudent,
   ProgressRecord,
@@ -25,10 +28,11 @@ type Shape = {
   students: Student[];
   enrollments: Enrollment[];
   progress: ProgressRecord[];
+  communityPosts: CommunityPost[];
 };
 
 const FILE = path.join(process.cwd(), ".data", "store.json");
-const EMPTY: Shape = { students: [], enrollments: [], progress: [] };
+const EMPTY: Shape = { students: [], enrollments: [], progress: [], communityPosts: [] };
 
 async function read(): Promise<Shape> {
   try {
@@ -127,5 +131,34 @@ export const fileStore: DataStore = {
   async getProgress(studentId: string): Promise<ProgressRecord[]> {
     const data = await read();
     return data.progress.filter((p) => p.studentId === studentId);
+  },
+
+  async createCommunityPost(input: NewCommunityPost): Promise<CommunityPost> {
+    const data = await read();
+    const post: CommunityPost = {
+      ...input,
+      id: randomUUID(),
+      engagementCredits: 1,
+      createdAt: new Date().toISOString(),
+    };
+    data.communityPosts.push(post);
+    await write(data);
+    return post;
+  },
+
+  async getCommunityPosts(moduleSlug: string): Promise<CommunityPost[]> {
+    const data = await read();
+    return data.communityPosts
+      .filter((post) => post.moduleSlug === moduleSlug)
+      .sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+  },
+
+  async getCommunityEngagement(studentId: string): Promise<CommunityEngagement> {
+    const data = await read();
+    const posts = data.communityPosts.filter((post) => post.studentId === studentId);
+    return {
+      posts: posts.length,
+      credits: posts.reduce((total, post) => total + post.engagementCredits, 0),
+    };
   },
 };

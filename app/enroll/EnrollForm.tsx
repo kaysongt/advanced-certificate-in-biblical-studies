@@ -26,7 +26,7 @@ function Submit({ label }: { label: string }) {
   );
 }
 
-type ModuleOption = { slug: string; title: string; available: boolean };
+type ModuleOption = { slug: string; title: string; available: boolean; availability?: string };
 
 export default function EnrollForm({
   initialPlan,
@@ -64,10 +64,10 @@ export default function EnrollForm({
           <select id="product" name="product" defaultValue={val.product ?? ""}>
             <option value="">Select a certificate…</option>
             {modules.map((m) => (
-              <option key={m.slug} value={m.slug} disabled={!m.available}>
+                <option key={m.slug} value={m.slug} disabled={!m.available}>
                 {m.title}
-                {m.available ? "" : " — in development"}
-              </option>
+                {m.available ? "" : ` (${m.availability ?? "Coming soon"})`}
+                </option>
             ))}
           </select>
           {err.product ? <div className="msg">{err.product}</div> : null}

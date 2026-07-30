@@ -26,6 +26,20 @@ export default async function ModulePage({ params }: Props) {
   const doc = getModuleDoc(module);
   const statuses = getCourseStatuses().filter((s) => s.module.slug === module.slug);
   const lessons = module.courses.length * module.lessons_per_course;
+  const videoBriefings = [
+    {
+      label: "Opening video",
+      title: module.opening_video?.title ?? `Welcome to ${module.short_title}`,
+      description: "An orientation from the Institute to frame your study before the first course.",
+      video: module.opening_video,
+    },
+    {
+      label: "Closing video",
+      title: module.closing_video?.title ?? module.video?.title ?? `Completing ${module.short_title}`,
+      description: "A closing reflection and next-step charge after you have completed the module.",
+      video: module.closing_video ?? module.video,
+    },
+  ];
 
   return (
     <main className="shell">
@@ -60,11 +74,11 @@ export default async function ModulePage({ params }: Props) {
               <span className="t">{course.title}</span>
               <span className="s">{course.subtitle}</span>
             </span>
-            <span className="meta">
-              <span className={`avail ${complete ? "now" : "soon"}`}>
-                {complete ? "Ready" : "Writing"}
+              <span className="meta">
+                <span className={`avail ${complete ? "now" : "soon"}`}>
+                {complete ? "Ready" : module.availability ?? "Coming soon"}
+                </span>
               </span>
-            </span>
             </>
           );
 
@@ -80,21 +94,53 @@ export default async function ModulePage({ params }: Props) {
         })}
       </div>
 
-      {module.video?.url ? (
-        <>
-          <h2>Module video</h2>
-          <div className="videoslot">
-            <div className="frame">
-              <iframe
-                src={module.video.url}
-                title={module.video.title ?? `${module.short_title} module video`}
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; picture-in-picture"
-                allowFullScreen
-              />
-            </div>
+      <section className="module-community">
+        <div>
+          <div className="eyebrow">Enrolled student space</div>
+          <h2>Continue the conversation in the module community.</h2>
+          <p>
+            Share questions, feedback, and reflections with fellow students and the KingsWord team.
+            Participation is asynchronous, attached to this module, and available after enrollment.
+          </p>
+        </div>
+        <Link href={`/community/${module.slug}`} className="btn quiet lg">
+          Open the community group
+        </Link>
+      </section>
+
+      <section className="module-briefings">
+        <div className="module-briefings-head">
+          <div>
+            <div className="eyebrow">Video briefings</div>
+            <h2>Start and finish with a clear word.</h2>
           </div>
-        </>
-      ) : null}
+          <p>
+            These short videos replace live chat sessions and are posted by the Institute for
+            enrolled students at the beginning and conclusion of each module.
+          </p>
+        </div>
+        <div className="video-briefing-grid">
+          {videoBriefings.map((briefing) => (
+            <article className="video-briefing" key={briefing.label}>
+              <span>{briefing.label}</span>
+              <h3>{briefing.title}</h3>
+              <p>{briefing.description}</p>
+              {briefing.video?.url ? (
+                <div className="frame">
+                  <iframe
+                    src={briefing.video.url}
+                    title={briefing.video.title ?? briefing.title}
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; picture-in-picture"
+                    allowFullScreen
+                  />
+                </div>
+              ) : (
+                <small>Video briefing posts here when it is released by the Institute.</small>
+              )}
+            </article>
+          ))}
+        </div>
+      </section>
 
       <h2>Module assignment</h2>
       <p className="deck" style={{ maxWidth: "62ch" }}>

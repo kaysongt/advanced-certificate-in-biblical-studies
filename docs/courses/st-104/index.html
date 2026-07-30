@@ -13,7 +13,7 @@
 <meta property="og:type" content="website">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="stylesheet" href="../../assets/theme.css">
-<script>(function(){try{var t=localStorage.getItem('kti.theme');if(t)document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+<script>(function(){try{var t=localStorage.getItem('kti.theme');document.documentElement.setAttribute('data-theme',t==='dark'?'dark':'light');}catch(e){document.documentElement.setAttribute('data-theme','light');}window.KTI_CONFIG={passMark:80};})();</script>
 </head>
 <body>
 <header class="masthead"><div class="inner">
@@ -21,7 +21,7 @@
   <nav class="mastnav"><a href="../../modules/01-systematic-theology.html" class="on" title="Systematic Theology">I</a><a href="../../modules/02-biblical-foundations.html" class="" title="Biblical Foundations">II</a><a href="../../modules/03-old-testament-survey.html" class="" title="Old Testament Survey">III</a><a href="../../modules/04-new-testament-survey.html" class="" title="New Testament Survey">IV</a><a href="../../modules/05-spiritual-formation.html" class="" title="Spiritual Formation">V</a>
     <a href="../../glossary.html" class="hide-sm">Glossary</a>
     <a href="../../scriptures.html" class="hide-sm">Scriptures</a>
-    <button class="themetoggle" type="button">Dark</button>
+    <button class="themetoggle theme-switch" type="button" role="switch" aria-checked="false" aria-label="Switch to dark theme"><span class="theme-switch-track" aria-hidden="true"><span class="theme-switch-knob"></span></span><span class="theme-switch-label">Light</span></button>
   </nav>
 </div></header>
 <main class="shell">
@@ -34,95 +34,24 @@
     <span class="tag">6 Lessons</span>
     <span class="tag gold">What We Believe: Salvation</span></div>
   <div style="margin:22px 0 0"><div data-progress="st-104-1,st-104-2,st-104-3,st-104-4,st-104-5,st-104-6" style="display:flex;align-items:center;gap:12px"><div class="ring"><svg width="40" height="40"><circle class="bg" cx="20" cy="20" r="16" fill="none" stroke-width="3"/><circle class="fg" cx="20" cy="20" r="16" fill="none" stroke-width="3"/></svg><span class="lbl">0%</span></div><span class="facts" style="margin:0"><span data-count>0 of 6 complete</span></span></div></div>
-</div><h2>Lessons</h2><div class="stack"><a class="row" href="lesson-01.html"><span class="code">01</span><span class="body"><span class="t">Creation and Humanity</span><span class="s">Chapters 1 and 2</span></span><span class="meta">1 hr</span></a><a class="row" href="lesson-02.html"><span class="code">02</span><span class="body"><span class="t">The Fall and the Doctrine of Sin</span><span class="s">Chapters 3 and 4</span></span><span class="meta">1 hr</span></a><a class="row" href="lesson-03.html"><span class="code">03</span><span class="body"><span class="t">Grace and Faith</span><span class="s">Chapters 5 and 6</span></span><span class="meta">1 hr</span></a><a class="row" href="lesson-04.html"><span class="code">04</span><span class="body"><span class="t">Repentance and Justification</span><span class="s">Chapters 7 and 8</span></span><span class="meta">1 hr</span></a><a class="row" href="lesson-05.html"><span class="code">05</span><span class="body"><span class="t">Regeneration, Adoption, and Union with Christ</span><span class="s">Chapters 9, 10, and 11</span></span><span class="meta">1 hr</span></a><a class="row" href="lesson-06.html"><span class="code">06</span><span class="body"><span class="t">Sanctification, Glorification, and Assurance</span><span class="s">Chapters 12, 13, and 14</span></span><span class="meta">1 hr</span></a><a class="row" href="assessment.html"><span class="code">&mdash;</span><span class="body"><span class="t">Course Assessment</span><span class="s">Covers all lessons. Pass mark 70%.</span></span><span class="meta">100 pts</span></a></div><div class="prose"><p>Understand God's comprehensive plan of salvation accomplished through Christ, including the transforming power of grace, justification by faith alone, and the believer's entirely new identity in Christ. This course explores regeneration, adoption, sanctification, and the assurance of eternal security, grounding students in the finished work of the cross rather than human performance. Students come away with confident clarity on what it means to be saved, how grace shapes daily living, and how to explain salvation simply to others.</p>
+</div><h2>Lessons</h2><div class="stack"><a class="row" href="lesson-01.html"><span class="code">01</span><span class="body"><span class="t">Creation and Humanity</span><span class="s">Chapters 1 and 2</span></span><span class="meta">1 hr</span></a><a class="row" href="lesson-02.html"><span class="code">02</span><span class="body"><span class="t">The Fall and the Doctrine of Sin</span><span class="s">Chapters 3 and 4</span></span><span class="meta">1 hr</span></a><a class="row" href="lesson-03.html"><span class="code">03</span><span class="body"><span class="t">Grace and Faith</span><span class="s">Chapters 5 and 6</span></span><span class="meta">1 hr</span></a><a class="row" href="lesson-04.html"><span class="code">04</span><span class="body"><span class="t">Repentance and Justification</span><span class="s">Chapters 7 and 8</span></span><span class="meta">1 hr</span></a><a class="row" href="lesson-05.html"><span class="code">05</span><span class="body"><span class="t">Regeneration, Adoption, and Union with Christ</span><span class="s">Chapters 9, 10, and 11</span></span><span class="meta">1 hr</span></a><a class="row" href="lesson-06.html"><span class="code">06</span><span class="body"><span class="t">Sanctification, Glorification, and Assurance</span><span class="s">Chapters 12, 13, and 14</span></span><span class="meta">1 hr</span></a><a class="row" href="assessment.html"><span class="code">&mdash;</span><span class="body"><span class="t">Course Assessment</span><span class="s">Covers all topics. Pass mark 80%.</span></span><span class="meta">100 pts</span></a></div><div class="prose"><p>Understand God's comprehensive plan of salvation accomplished through Christ, including the transforming power of grace, justification by faith alone, and the believer's entirely new identity in Christ. This course explores regeneration, adoption, sanctification, and the assurance of eternal security, grounding students in the finished work of the cross rather than human performance. Students come away with confident clarity on what it means to be saved, how grace shapes daily living, and how to explain salvation simply to others.</p>
 <div class="pull"><div class="txt">My prayer as you read is simple. I want you to stop striving and start resting. I want you to see that the gospel is not a burden placed on your shoulders but a gift placed in your hands.</div><span class="src">Dr. Kay Ijisesan, *What We Believe: Salvation*, Preface</span></div>
 <h2>How This Course Is Built</h2>
 <p>The textbook moves in three parts, and the order carries an argument.</p>
 <p><strong>Part One</strong> asks why we need salvation, beginning not with sin but with the goodness that sin damaged. <strong>Part Two</strong> sets out God's plan of redemption through grace, faith, repentance, and justification. <strong>Part Three</strong> describes the new life that plan produces.</p>
-<div class="tablewrap"><table>
-<thead>
-<tr>
-<th>Lesson</th>
-<th>Focus</th>
-<th>Textbook</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>1</td>
-<td>Creation and Humanity</td>
-<td>Chapters 1 and 2</td>
-</tr>
-<tr>
-<td>2</td>
-<td>The Fall and the Doctrine of Sin</td>
-<td>Chapters 3 and 4</td>
-</tr>
-<tr>
-<td>3</td>
-<td>Grace and Faith</td>
-<td>Chapters 5 and 6</td>
-</tr>
-<tr>
-<td>4</td>
-<td>Repentance and Justification</td>
-<td>Chapters 7 and 8</td>
-</tr>
-<tr>
-<td>5</td>
-<td>Regeneration, Adoption, and Union with Christ</td>
-<td>Chapters 9, 10, and 11</td>
-</tr>
-<tr>
-<td>6</td>
-<td>Sanctification, Glorification, and Assurance</td>
-<td>Chapters 12, 13, and 14</td>
-</tr>
-</tbody>
-</table></div>
+<div class="tablewrap"><table><thead><tr><th>Lesson</th><th>Focus</th><th>Textbook</th></tr></thead><tbody><tr><td>1</td><td>Creation and Humanity</td><td>Chapters 1 and 2</td></tr><tr><td>2</td><td>The Fall and the Doctrine of Sin</td><td>Chapters 3 and 4</td></tr><tr><td>3</td><td>Grace and Faith</td><td>Chapters 5 and 6</td></tr><tr><td>4</td><td>Repentance and Justification</td><td>Chapters 7 and 8</td></tr><tr><td>5</td><td>Regeneration, Adoption, and Union with Christ</td><td>Chapters 9, 10, and 11</td></tr><tr><td>6</td><td>Sanctification, Glorification, and Assurance</td><td>Chapters 12, 13, and 14</td></tr></tbody></table></div>
 <div class="note"><div class="hd">Why the course does not begin with sin</div><p>Before we can understand what it means to be saved, we have to understand what we were saved from and, more importantly, what we were saved for. Redemption is not God inventing a plan B after His original design failed. Redemption is God restoring what He always intended. You cannot understand the cross without first understanding the garden.</p></div>
 <h2>Course Learning Outcomes</h2>
 <div class="objectives"><h4>By the end of this course the student will be able to</h4><ol><li>Explain God's original design in creation and what it establishes about human dignity and purpose.</li><li>Explain the image of God and its bearing on the worth of every human being.</li><li>Trace the fall, the strategy of the temptation, and the consequences Romans 5 draws from it.</li><li>Define sin as a condition rather than merely a catalogue of behaviours, and support this from Scripture.</li><li>Define grace precisely and explain why it excludes every ground for boasting.</li><li>Define faith, distinguish it from two common misunderstandings, and reconcile Paul with James.</li><li>Define repentance, and distinguish godly sorrow from worldly sorrow.</li><li>Explain justification as a legal declaration and show how God remains just while justifying the ungodly.</li><li>Distinguish regeneration, adoption, and union with Christ, and explain what each contributes.</li><li>Distinguish justification from sanctification and hold together divine work and human effort in Philippians 2:12 to 13.</li><li>Explain glorification and the certainty on which it rests.</li><li>Explain the objective and subjective grounds of assurance.</li></ol></div>
 <h2>Required Textbook</h2>
-<ul>
-<li><strong>Title:</strong> <em>What We Believe, Volume 4: Salvation (Soteria)</em></li>
-<li><strong>Author:</strong> Dr. Kay Ijisesan</li>
-<li><strong>Publisher:</strong> KingsWord, Chicago, Illinois, USA</li>
-<li><strong>Scripture text:</strong> New King James Version (NKJV)</li>
-</ul>
+<ul><li><strong>Title:</strong> <em>What We Believe, Volume 4: Salvation (Soteria)</em></li><li><strong>Author:</strong> Dr. Kay Ijisesan</li><li><strong>Publisher:</strong> KingsWord, Chicago, Illinois, USA</li><li><strong>Scripture text:</strong> New King James Version (NKJV)</li></ul>
 <h2>Assessment</h2>
-<div class="tablewrap"><table>
-<thead>
-<tr>
-<th>Component</th>
-<th>Weight</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Lesson quizzes (6)</td>
-<td>30%</td>
-</tr>
-<tr>
-<td>Course assignment</td>
-<td>30%</td>
-</tr>
-<tr>
-<td>Final course assessment</td>
-<td>40%</td>
-</tr>
-</tbody>
-</table></div>
-<p>Pass mark: <strong>70%</strong>.</p>
+<div class="tablewrap"><table><thead><tr><th>Component</th><th>Weight</th></tr></thead><tbody><tr><td>Lesson quizzes (6)</td><td>30%</td></tr><tr><td>Course assignment</td><td>30%</td></tr><tr><td>Final course assessment</td><td>40%</td></tr></tbody></table></div>
+<p>Pass mark: <strong>80%</strong>.</p>
 <h2>Course Assignment</h2>
 <p>Write 900 to 1,200 words on the following.</p>
-<blockquote>
-<p>Dr. Kay observes that many sincere believers intellectually agree with justification by faith while continuing to live as though their standing with God rises and falls with their daily performance. Explain the doctrine of justification precisely, using at least four passages. Then diagnose why the performance pattern persists even among people who affirm the doctrine, and describe how you would preach or counsel someone out of it.</p>
-</blockquote>
-<p>You are graded on doctrinal precision, breadth of scriptural support, the honesty of the diagnosis, and the practicality of the remedy.</p>
-<h2>Instructor Notes</h2>
-<p>The single most important teaching decision in this course is refusing to let students collapse justification into sanctification. Every pastoral problem in Lesson 6 traces back to that collapse. Teach the distinction in Lesson 4, and then keep returning to it.</p>
-<p>Chapter 6 on faith contains the textbook's treatment of Paul and James. Students often arrive expecting a contradiction. Dr. Kay's resolution is clean: Paul defends that we are justified by faith alone, and James defends that the faith which justifies is never alone. Teach it that way.</p></div>
+<blockquote><p>Dr. Kay observes that many sincere believers intellectually agree with justification by faith while continuing to live as though their standing with God rises and falls with their daily performance. Explain the doctrine of justification precisely, using at least four passages. Then diagnose why the performance pattern persists even among people who affirm the doctrine, and describe how you would preach or counsel someone out of it.</p></blockquote>
+<p>You are graded on doctrinal precision, breadth of scriptural support, the honesty of the diagnosis, and the practicality of the remedy.</p></div>
 </main>
 <footer class="sitefoot"><div class="inner">
   <span>KingsWord Training Institute</span>

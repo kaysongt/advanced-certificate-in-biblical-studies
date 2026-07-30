@@ -28,6 +28,9 @@ export default function Masthead() {
           <Link href="/pricing" className="hide-sm">
             Pricing
           </Link>
+          <Link href="/community" className="hide-sm">
+            Community
+          </Link>
           <Link href="/glossary" className="hide-sm">
             Glossary
           </Link>

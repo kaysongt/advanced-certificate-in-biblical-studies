@@ -3,159 +3,204 @@ import Link from "next/link";
 import { getModuleStatuses } from "@/lib/content";
 import { PRICING, getCurriculum } from "@/lib/curriculum";
 
+const STUDY_STEPS = [
+  {
+    number: "01",
+    title: "Choose your path",
+    copy: "Begin with the certificate ready for study today, or reserve your place across the full program.",
+  },
+  {
+    number: "02",
+    title: "Study with a rhythm",
+    copy: "Move through structured topics, customized textbooks, and online resources at the pace that fits your life.",
+  },
+  {
+    number: "03",
+    title: "Demonstrate your learning",
+    copy: "Pass each topic quiz and course assessment at 80% before moving forward with confidence.",
+  },
+];
+
 export default function HomePage() {
   const { program, grading } = getCurriculum();
   const moduleStatuses = getModuleStatuses();
-  const availableCount = moduleStatuses.filter((s) => s.complete).length;
+  const availableCount = moduleStatuses.filter((status) => status.complete).length;
 
   return (
-    <main>
-      {/* ---------------------------------------------------------- hero */}
-      <section className="hero">
-        <div className="wide">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            className="logo"
-            src="/assets/logo.jpg"
-            alt={`${program.institute} — Equip, Empower, Transform`}
-            width={1200}
-            height={812}
-          />
-          {/* The logo already carries Equip · Empower · Transform — no need to repeat it. */}
-          <h1>Know God&rsquo;s Word for yourself</h1>
-          <p className="deck">
-            {program.tagline} Study at your own pace, wherever you are, and come out able to
-            open the Bible and understand what you are reading.
-          </p>
-          <div className="cta-row">
-            <Link href="/enroll" className="btn lg gold">
-              Enroll now
-            </Link>
-            <Link href="/curriculum" className="btn lg ghost">
-              See what you will study
-            </Link>
+    <main className="marketing-home">
+      <section className="hero home-hero">
+        <div className="hero-glow" aria-hidden="true" />
+        <div className="wide hero-grid">
+          <div className="hero-copy">
+            <p className="hero-kicker">
+              <span aria-hidden="true" />
+              {program.institute}
+            </p>
+            <h1>
+              Know God&rsquo;s Word <em>for yourself.</em>
+            </h1>
+            <p className="hero-lede">
+              A Bible-centered program for believers who want a sure foundation in Scripture,
+              sound doctrine, and practical Christian living.
+            </p>
+            <div className="hero-actions">
+              <Link href="/enroll" className="btn lg gold">
+                Begin your training
+              </Link>
+              <Link href="/curriculum" className="text-action">
+                Explore the curriculum <span aria-hidden="true">&rarr;</span>
+              </Link>
+            </div>
+
+            <dl className="hero-stats">
+              <div>
+                <dt>{program.total_hours}</dt>
+                <dd>contact hours</dd>
+              </div>
+              <div>
+                <dt>{program.total_certificates}</dt>
+                <dd>certificates</dd>
+              </div>
+              <div>
+                <dt>{grading.pass_mark}%</dt>
+                <dd>pass mark</dd>
+              </div>
+            </dl>
           </div>
+
+          <aside className="hero-panel" aria-label="Program overview">
+            <div className="hero-panel-top">
+              <span>Advanced Certificate</span>
+              <span>{program.total_courses} courses</span>
+            </div>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img className="hero-mark" src="/assets/logo-mark.jpg" alt="" width={440} height={268} />
+            <div className="hero-panel-intro">
+              <span className="hero-panel-label">Your starting point</span>
+              <div>
+                <strong>Module I</strong>
+                <span>Systematic Theology</span>
+              </div>
+              <span className="hero-open">Available now</span>
+            </div>
+            <ol className="hero-route">
+              {moduleStatuses.slice(0, 3).map(({ module, complete }, index) => (
+                <li key={module.slug} className={complete ? "ready" : "upcoming"}>
+                  <span>{String(index + 1).padStart(2, "0")}</span>
+                  <strong>{module.short_title}</strong>
+                  <em>{complete ? "Open" : module.availability ?? "Coming soon"}</em>
+                </li>
+              ))}
+            </ol>
+          </aside>
         </div>
       </section>
 
-      {/* ------------------------------------------------------- figures */}
-      <div className="wide">
-        <div className="figures">
-          <div className="figure">
-            <div className="n">{program.total_hours}</div>
-            <div className="l">Hours</div>
-          </div>
-          <div className="figure">
-            <div className="n">{program.total_certificates}</div>
-            <div className="l">Certificates</div>
-          </div>
-          <div className="figure">
-            <div className="n">{program.total_courses}</div>
-            <div className="l">Courses</div>
-          </div>
-          <div className="figure">
-            <div className="n">{program.total_textbooks}</div>
-            <div className="l">Textbooks</div>
-          </div>
-        </div>
-      </div>
-
-      {/* ------------------------------------------------------ outcomes */}
-      <section className="section">
+      <section className="section home-section gain-section">
         <div className="wide">
-          <div className="sec-head">
-            <div className="eyebrow">What you will gain</div>
-            <h2>What you will be able to do</h2>
+          <div className="section-lead split-lead">
+            <div>
+              <div className="eyebrow">Rooted for real life</div>
+              <h2>Not just more information. A stronger foundation.</h2>
+            </div>
             <p>{program.summary}</p>
           </div>
-          <div className="outcomes">
-            {program.outcomes.map((outcome) => (
-              <div className="outcome" key={outcome}>
-                <span className="tick" aria-hidden="true">
-                  ✓
-                </span>
-                <span>{outcome}</span>
+          <div className="capability-grid">
+            {program.outcomes.map((outcome, index) => (
+              <div className="capability" key={outcome}>
+                <span className="capability-number">{String(index + 1).padStart(2, "0")}</span>
+                <p>{outcome}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ----------------------------------------------------- curriculum */}
-      <section className="section tint">
+      <section className="section home-section path-section">
         <div className="wide">
-          <div className="sec-head">
-            <div className="eyebrow">The program</div>
-            <h2>Five certificates, one foundation</h2>
+          <div className="section-lead split-lead">
+            <div>
+              <div className="eyebrow">The learning journey</div>
+              <h2>Five certificates, one coherent path.</h2>
+            </div>
             <p>
-              Take one on its own, or work through all five. Finish everything and you
-              receive the {program.title}.
+              Start where you are. Each certificate stands on its own, and together they form the
+              {" "}{program.title}.
             </p>
           </div>
-          <div className="cards five">
-            {moduleStatuses.map(({ module, complete, coursesComplete, courses }) => (
-              <Link className="card" href={`/curriculum/${module.slug}`} key={module.slug}>
-                <div className="cardtop">
-                  <span className="eyebrow">
-                    Module {module.numeral} &middot; {module.hours} hrs
-                  </span>
-                  <span className={`avail ${complete ? "now" : "soon"}`}>
-                    {complete ? "Available now" : module.availability ?? "Coming soon"}
+          <div className="module-path-grid">
+            {moduleStatuses.map(({ module, complete }) => (
+              <Link className="path-card" href={`/curriculum/${module.slug}`} key={module.slug}>
+                <div className="path-card-top">
+                  <span>0{module.number}</span>
+                  <span className={complete ? "path-status is-ready" : "path-status"}>
+                    {complete ? "Available" : module.availability ?? "Coming soon"}
                   </span>
                 </div>
-                <span className="t">{module.short_title}</span>
+                <h3>{module.short_title}</h3>
                 <p>{module.catalog_blurb}</p>
-                <span className="foot">
-                  {module.courses.length} courses &middot; {module.series}
-                  {!complete && coursesComplete > 0
-                    ? ` · ${coursesComplete}/${courses} written`
-                    : ""}
+                <span className="path-card-meta">
+                  {module.hours} hours <span aria-hidden="true">&middot;</span> {module.courses.length} courses
                 </span>
               </Link>
             ))}
           </div>
+          <Link href="/curriculum" className="text-action path-link">
+            See the full curriculum <span aria-hidden="true">&rarr;</span>
+          </Link>
         </div>
       </section>
 
-      {/* ----------------------------------------------------- instructor */}
-      <section className="section">
-        <div className="wide">
-          <div className="sec-head">
-            <div className="eyebrow">{program.founder.role}</div>
-            <h2>{program.founder.name}</h2>
-            <p>{program.founder.bio}</p>
-          </div>
-          <p className="pullquote">&ldquo;{program.motto}&rdquo;</p>
-        </div>
-      </section>
-
-      {/* -------------------------------------------------------- format */}
-      <section className="section tint">
-        <div className="wide">
-          <div className="sec-head">
-            <div className="eyebrow">How it works</div>
-            <h2>Study at your own pace</h2>
+      <section className="section home-section process-section">
+        <div className="wide process-layout">
+          <div className="process-intro">
+            <div className="eyebrow">A clear way forward</div>
+            <h2>Built around real study, not a rushed finish line.</h2>
             <p>{program.format}</p>
+            <div className="assessment-callout">
+              <strong>{grading.pass_mark}%</strong>
+              <span>
+                is the clear pass mark for every topic quiz and course assessment.
+              </span>
+            </div>
           </div>
-          <div className="outcomes">
+          <div className="process-steps">
+            {STUDY_STEPS.map((step) => (
+              <article className="process-step" key={step.number}>
+                <span>{step.number}</span>
+                <h3>{step.title}</h3>
+                <p>{step.copy}</p>
+              </article>
+            ))}
+          </div>
+          <div className="features-bar" aria-label="Included in every certificate">
             {program.features.map((feature) => (
-              <div className="outcome" key={feature}>
-                <span className="tick" aria-hidden="true">
-                  ✓
-                </span>
-                <span>{feature}</span>
-              </div>
+              <span key={feature}>{feature}</span>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ------------------------------------------------------- pricing */}
-      <section className="section" id="pricing">
+      <section className="section home-section founder-section">
+        <div className="wide founder-grid">
+          <div className="founder-quote-card">
+            <span className="founder-quote-mark" aria-hidden="true">&ldquo;</span>
+            <p>{program.motto}</p>
+            <span>King&apos;sWord Training Institute</span>
+          </div>
+          <div className="founder-copy">
+            <div className="eyebrow">{program.founder.role}</div>
+            <h2>{program.founder.name}</h2>
+            <p>{program.founder.bio}</p>
+          </div>
+        </div>
+      </section>
+
+      <section className="section home-section tuition-section" id="pricing">
         <div className="wide">
-          <div className="sec-head">
+          <div className="section-lead centered-lead">
             <div className="eyebrow">Tuition</div>
-            <h2>Start with one, or take all five</h2>
+            <h2>Begin with one certificate, or commit to the full journey.</h2>
             <p>{program.graduation_requirements}</p>
           </div>
           <div className="pricing">
@@ -165,10 +210,8 @@ export default function HomePage() {
                 {PRICING.certificate.label} <span>/ certificate</span>
               </div>
               <p className="blurb">
-                Any one of the five certificate programs.
-                {availableCount > 0
-                  ? ` ${availableCount} available to start today.`
-                  : ""}
+                Any one of the five certificate programs. {availableCount} available to begin
+                today.
               </p>
               <ul>
                 <li>All courses within that certificate</li>
@@ -176,7 +219,7 @@ export default function HomePage() {
                 <li>Customized textbooks</li>
                 <li>Modular certificate on completion</li>
               </ul>
-              <Link href="/enroll?plan=certificate" className="btn primary lg">
+              <Link href="/enroll?plan=certificate" className="btn quiet lg">
                 Choose a certificate
               </Link>
             </div>
@@ -187,8 +230,8 @@ export default function HomePage() {
                 {PRICING.advanced.label} <span>/ full program</span>
               </div>
               <p className="blurb">
-                All five certificates &mdash; {program.total_hours} hours,{" "}
-                {program.total_courses} courses. Each unlocks as it is released.
+                All five certificates, {program.total_hours} hours, and {program.total_courses}
+                {" "}courses. Each certificate unlocks according to its release schedule.
               </p>
               <ul>
                 <li>Everything in all five certificates</li>
@@ -204,12 +247,14 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ----------------------------------------------------------- faq */}
-      <section className="section tint">
-        <div className="wide">
-          <div className="sec-head">
-            <div className="eyebrow">Questions</div>
-            <h2>Before you enroll</h2>
+      <section className="section home-section faq-section">
+        <div className="wide faq-layout">
+          <div className="faq-heading">
+            <div className="eyebrow">Questions, answered</div>
+            <h2>Everything you need to begin with clarity.</h2>
+            <Link href="/pricing" className="text-action">
+              View tuition details <span aria-hidden="true">&rarr;</span>
+            </Link>
           </div>
           <div className="faq">
             <details>
@@ -219,16 +264,17 @@ export default function HomePage() {
             <details>
               <summary>How long does it take?</summary>
               <div className="ans">
-                The full program is {program.total_hours} contact hours across{" "}
-                {program.total_courses} courses. It is self-paced, so you set the schedule.
-                Each certificate can be taken on its own.
+                The full program is {program.total_hours} contact hours across {program.total_courses}
+                {" "}courses. It is self-paced within a defined time limit, so you can set
+                a steady schedule while working toward a clear finish. Each certificate can be
+                taken on its own.
               </div>
             </details>
             <details>
               <summary>How am I assessed?</summary>
               <div className="ans">
-                {grading.components.map((c) => `${c.name} ${c.weight}%`).join(", ")}. The pass
-                mark is {grading.pass_mark}%. Every course ends with an assessment covering
+                {grading.components.map((component) => `${component.name} ${component.weight}%`).join(", ")}. The
+                {" "}pass mark is {grading.pass_mark}%. Every course ends with an assessment covering
                 its lessons.
               </div>
             </details>
@@ -239,23 +285,25 @@ export default function HomePage() {
             <details>
               <summary>Are textbooks included?</summary>
               <div className="ans">
-                Yes. The program includes {program.total_textbooks} customized textbooks,
-                one per course, written to accompany the lessons.
+                Yes. The program includes {program.total_textbooks} customized textbooks, one per
+                course, written to accompany the lessons.
               </div>
             </details>
           </div>
         </div>
       </section>
 
-      {/* ------------------------------------------------------ final cta */}
-      <section className="section">
-        <div className="wide" style={{ textAlign: "center" }}>
-          <h2 style={{ fontSize: "clamp(1.5rem, 3vw, 2.2rem)", marginBottom: 10 }}>
-            Begin your training
-          </h2>
-          <Link href="/enroll" className="btn lg gold">
-            Enroll now
-          </Link>
+      <section className="final-section">
+        <div className="wide">
+          <div className="final-invite">
+            <div>
+              <div className="eyebrow">Your next chapter</div>
+              <h2>Begin your training in the Word.</h2>
+            </div>
+            <Link href="/enroll" className="btn lg gold">
+              Enroll now
+            </Link>
+          </div>
         </div>
       </section>
     </main>

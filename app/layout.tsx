@@ -28,7 +28,7 @@ export const metadata: Metadata = {
 };
 
 /** Applies the stored theme before first paint, so there is no flash. */
-const THEME_BOOT = `(function(){try{var t=localStorage.getItem('kti.theme');if(t)document.documentElement.setAttribute('data-theme',t);}catch(e){}})();`;
+const THEME_BOOT = `(function(){try{var t=localStorage.getItem('kti.theme');document.documentElement.setAttribute('data-theme',t==='dark'?'dark':'light');}catch(e){document.documentElement.setAttribute('data-theme','light');}})();`;
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   // THEME_BOOT below sets data-theme on <html> before React hydrates, so the

@@ -39,6 +39,10 @@ export type Module = {
   /** Topics per course. The hierarchy is Module → Course → Topic. */
   lessons_per_course: number;
   courses: Course[];
+  /** Briefing videos are posted by the Institute at the start and close of a module. */
+  opening_video?: ModuleVideo;
+  closing_video?: ModuleVideo;
+  /** Legacy single module video, retained as a closing-video fallback. */
   video?: ModuleVideo;
 };
 
@@ -59,6 +63,10 @@ export type Curriculum = {
     features: string[];
     outcomes: string[];
     format: string;
+    community: {
+      access: string;
+      engagement: string;
+    };
     tuition: string;
     graduation_requirements: string;
     contact: { phone: string; email: string; website: string };

@@ -70,7 +70,7 @@ None. Courses may be taken in sequence or independently within the module.
 | Course Assignments | 30% |
 | Final Course Assessment | 40% |
 
-Pass mark: **70%**. See `assessment.md` for the full assessment.
+Pass mark: **80%**. See `assessment.md` for the full assessment.
 
 ## Course Assignment
 

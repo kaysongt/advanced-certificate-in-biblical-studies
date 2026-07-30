@@ -88,7 +88,7 @@ export function getLesson(module: Module, course: Course, n: number) {
 
 export function getCourseDoc(module: Module, course: Course) {
   const doc = readDoc(module.slug, course.slug, "course.md");
-  return { ...doc, html: mdToHtml(doc.body) };
+  return { ...doc, html: mdToHtml(stripSections(doc.body, ["Instructor Notes"])) };
 }
 
 export function getAssessmentDoc(module: Module, course: Course) {

@@ -18,6 +18,7 @@ export default async function DashboardPage() {
   const { program, grading } = getCurriculum();
   const enrollments = await db.getEnrollmentsForStudent(student.id);
   const progress = await db.getProgress(student.id);
+  const engagement = await db.getCommunityEngagement(student.id);
   const statuses = getModuleStatuses();
 
   const pending = enrollments.filter((e) => e.status === "pending");
@@ -112,6 +113,21 @@ export default async function DashboardPage() {
           </span>
         ))}
       </div>
+
+      <section className="dashboard-community">
+        <div>
+          <div className="eyebrow">Learning in community</div>
+          <h2>Keep the conversation going.</h2>
+          <p>
+            You have recorded {engagement.posts} community {engagement.posts === 1 ? "contribution" : "contributions"}
+            {" "}and {engagement.credits} engagement {engagement.credits === 1 ? "credit" : "credits"}.
+            Thoughtful participation is encouraged and can be reviewed for extra-credit opportunities.
+          </p>
+        </div>
+        <Link href="/community" className="btn quiet lg">
+          Open community groups
+        </Link>
+      </section>
 
       <form action={signOut} style={{ marginTop: 44 }}>
         <button type="submit" className="btn">

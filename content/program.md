@@ -6,7 +6,7 @@ title: Advanced Certificate in Biblical Studies
 
 # Advanced Certificate in Biblical Studies
 
-**KingsWord Training Institute** — *172 Hours. Five Certificates. One Foundation.*
+**KingsWord Training Institute:** *172 Hours. Five Certificates. One Foundation.*
 
 ## About the Institute
 
@@ -20,7 +20,7 @@ The Advanced Certificate in Biblical Studies is a comprehensive, Bible-centered 
 
 ## Founder & President
 
-**Dr. Kay Ijisesan** — Dr. Kay Ijisesan is the Founder & President of KingsWord Training Institute. He is an apostolic voice based in Chicago, USA. He provides oversight for multiple church campuses. Dr. Kay has over three decades of ministry experience across four continents and has published more than 100 books.
+**Dr. Kay Ijisesan:** Dr. Kay Ijisesan is the Founder & President of KingsWord Training Institute. He is an apostolic voice based in Chicago, USA. He provides oversight for multiple church campuses. Dr. Kay has over three decades of ministry experience across four continents and has published more than 100 books.
 
 ## Who Should Enroll
 
@@ -49,27 +49,34 @@ The Advanced Certificate in Biblical Studies is a comprehensive, Bible-centered 
 - Build a strong biblical & theological foundation, and interpret Scripture with sound hermeneutics
 - Understand the message and structure of every book of the Bible
 - Explain essential Christian doctrine and develop a mature, biblical worldview
-- Grow in spiritual formation and minister with biblical accuracy and confidence
-- Develop a mature Christian worldview grounded in Scripture
+- Grow in spiritual formation and apply God's Word faithfully in everyday life and leadership
 - Minister effectively with biblical accuracy and spiritual confidence
-- Apply God's Word faithfully in everyday life and leadership
 - Graduate with a recognized Advanced Certificate in Biblical Studies
 
 ## Program Features
 
 - Seasoned Instructors
-- Self Paced
 - Customized Textbooks
-- Structured Classes
-- Course Assessment
+- Structured Lessons
+- Course Assessments
 - Modular Certificates
 - Online Resources
-- Comprehensive Assessment
-- Student Community Engagement
+- Enrolled Community Groups
+- Opening & Closing Video Briefings
 
 ## Format
 
-Schedule: Modular Structure. Self-paced with structured classes.
+Each released certificate is self-paced within a defined time limit, with structured lessons and clear assessment milestones.
+
+## Community Groups
+
+Community groups are accessible upon enrollment and attached to each certificate module for student questions, feedback, and reflections. The groups are asynchronous rather than live chats, so students and the KingsWord team can contribute thoughtfully in the same space.
+
+Participation is encouraged and tracked for instructor review. Thoughtful contributions are eligible for extra-credit opportunities, but they do not replace the required course assessment pass mark.
+
+## Video Briefings
+
+Each module has an opening and closing video briefing from the Institute. These replace live chat sessions by providing clear orientation before study begins and a closing reflection when the module is complete.
 
 ## Tuition
 
@@ -81,7 +88,7 @@ Students receive the Advanced Certificate in Biblical Studies upon completion of
 
 ## Assessment & Grading
 
-*PROPOSED weighting — not specified in the catalog. Confirm with Dr. Kay before publishing.*
+The assessment weights below remain subject to final academic approval. Every topic quiz and course assessment uses the same 80% pass mark.
 
 | Component | Weight |
 |---|---|
@@ -95,8 +102,7 @@ Pass mark: **80%**
 |---|---|
 | A | 90-100 |
 | B | 80-89 |
-| C | 70-79 |
-| F | Below 70 |
+| F | Below 80 |
 
 ## Enroll Today
 

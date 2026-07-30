@@ -14,7 +14,7 @@ status: template
 
 ## Instructions
 
-This assessment covers all 6 lessons of BF 203. Pass mark: **70%**.
+This assessment covers all 6 lessons of BF 203. Pass mark: **80%**.
 
 ## Section A — Multiple Choice (10 questions, 2 points each)
 

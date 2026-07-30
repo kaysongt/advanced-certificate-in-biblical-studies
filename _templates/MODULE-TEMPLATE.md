@@ -51,7 +51,7 @@ Gain a confident, biblically grounded understanding of core Christian doctrine, 
 ## Certificate Requirements
 
 - Complete all 6 courses (36 contact hours)
-- Pass every lesson quiz and course assessment at 70% or above
+- Pass every lesson quiz and course assessment at 80% or above
 - Submit all required course assignments
 
 ## Instructor Notes

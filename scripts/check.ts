@@ -13,10 +13,12 @@ import { hasActiveAccess } from "../lib/access";
 import {
   getAssessmentBank,
   getCourseAudio,
+  getCourseDoc,
   getCourseStatuses,
   getIndexes,
   getLesson,
   getLessonRows,
+  getModuleDoc,
 } from "../lib/content";
 import { getCurriculum, findCourse } from "../lib/curriculum";
 
@@ -36,6 +38,9 @@ async function main() {
       curriculum.modules.reduce((n, m) => n + m.courses.length, 0),
       curriculum.program.total_courses
     )
+  );
+  check("all assessments use the confirmed 80% pass mark", () =>
+    assert.equal(curriculum.grading.pass_mark, 80)
   );
 
   console.log("\ncontent rendering");
@@ -68,6 +73,15 @@ async function main() {
   );
   check("no block placeholders leak through", () =>
     assert.ok(!lesson.html.includes("KTIBLOCK"), "found an unreplaced KTIBLOCK")
+  );
+  const moduleDoc = getModuleDoc(module);
+  check("student module page omits duplicate gain and instructor sections", () => {
+    assert.ok(!moduleDoc.html.includes("What Students Gain"));
+    assert.ok(!moduleDoc.html.includes("Instructor Notes"));
+  });
+  const courseDoc = getCourseDoc(module, course);
+  check("student course page omits instructor notes", () =>
+    assert.ok(!courseDoc.html.includes("Instructor Notes"))
   );
 
   console.log("\nindexes");
@@ -193,6 +207,23 @@ async function main() {
   await db.markLessonComplete(student.id, "st-101-1");
   const progress = await db.getProgress(student.id);
   check("progress is idempotent", () => assert.equal(progress.length, 1));
+
+  const communityPost = await db.createCommunityPost({
+    moduleSlug: module.slug,
+    studentId: student.id,
+    body: "This is a thoughtful reflection on the first module lesson.",
+  });
+  check("community post is created with an engagement credit", () =>
+    assert.equal(communityPost.engagementCredits, 1)
+  );
+  const communityPosts = await db.getCommunityPosts(module.slug);
+  check("community posts are scoped to the module", () =>
+    assert.equal(communityPosts.length, 1)
+  );
+  const engagement = await db.getCommunityEngagement(student.id);
+  check("community engagement totals posts and credits", () =>
+    assert.deepEqual(engagement, { posts: 1, credits: 1 })
+  );
 
   await fs.rm(live, { force: true });
 
