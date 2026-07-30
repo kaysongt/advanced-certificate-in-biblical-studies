@@ -186,7 +186,7 @@ export default function HomePage() {
           <div className="founder-quote-card">
             <span className="founder-quote-mark" aria-hidden="true">&ldquo;</span>
             <p>{program.motto}</p>
-            <span>King&apos;sWord Training Institute</span>
+            <span>KingsWord Training Institute</span>
           </div>
           <div className="founder-copy">
             <div className="eyebrow">{program.founder.role}</div>

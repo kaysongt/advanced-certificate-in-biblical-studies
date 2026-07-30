@@ -1204,7 +1204,19 @@ a.card:hover::after { opacity: .9; }
   font: 400 16px/1.75 var(--sans);
 }
 .capability-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-top: 1px solid var(--rule); border-left: 1px solid var(--rule); }
-.capability { min-height: 155px; padding: 24px 25px; border-right: 1px solid var(--rule); border-bottom: 1px solid var(--rule); background: rgba(255, 253, 248, .45); transition: background .2s ease; }
+/*
+ * Was a hardcoded near-white rgba(255,253,248,.45) — a soft frosted tint that
+ * only made sense against the light theme's cream page background. In dark
+ * theme the same fixed white-at-45%-opacity landed as flat mid-grey, clashing
+ * with every navy panel around it. color-mix keeps the "faint card" effect
+ * but blends toward each theme's own --card color instead of always-white.
+ */
+.capability {
+  min-height: 155px; padding: 24px 25px;
+  border-right: 1px solid var(--rule); border-bottom: 1px solid var(--rule);
+  background: color-mix(in srgb, var(--card) 45%, transparent);
+  transition: background .2s ease;
+}
 .capability:hover { background: var(--card); }
 .capability-number { color: var(--gold); font: 700 10px/1 var(--sans); letter-spacing: .14em; }
 .capability p { margin: 22px 0 0; color: var(--ink-2); font: 500 14.5px/1.6 var(--sans); }
