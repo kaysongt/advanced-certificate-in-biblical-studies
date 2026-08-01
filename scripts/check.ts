@@ -22,6 +22,7 @@ import {
   getModuleDoc,
 } from "../lib/content";
 import { getCurriculum, findCourse } from "../lib/curriculum";
+import { isPrimaryRouteActive, PRIMARY_NAV_ITEMS } from "../lib/navigation";
 
 let passed = 0;
 function check(name: string, fn: () => void) {
@@ -42,6 +43,25 @@ async function main() {
   );
   check("all assessments use the confirmed 80% pass mark", () =>
     assert.equal(curriculum.grading.pass_mark, 80)
+  );
+
+  console.log("\nnavigation");
+  check("primary tabs point to distinct routes", () =>
+    assert.deepEqual(
+      PRIMARY_NAV_ITEMS.map((item) => [item.label, item.href]),
+      [
+        ["Curriculum", "/curriculum"],
+        ["Pricing", "/pricing"],
+        ["Community", "/community"],
+        ["Glossary", "/glossary"],
+      ]
+    )
+  );
+  check("community tab stays active on community groups", () =>
+    assert.equal(isPrimaryRouteActive("/community/01-systematic-theology", "/community"), true)
+  );
+  check("community never activates the curriculum tab", () =>
+    assert.equal(isPrimaryRouteActive("/community", "/curriculum"), false)
   );
 
   console.log("\ncontent rendering");

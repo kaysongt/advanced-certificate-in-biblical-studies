@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import AuthNav from "./AuthNav";
+import PrimaryNav from "./PrimaryNav";
 import ThemeToggle from "./ThemeToggle";
 
 /**
@@ -22,18 +23,7 @@ export default function Masthead() {
           </span>
         </Link>
         <nav className="mastnav">
-          <Link href="/curriculum" className="hide-sm">
-            Curriculum
-          </Link>
-          <Link href="/pricing" className="hide-sm">
-            Pricing
-          </Link>
-          <Link href="/community" className="hide-sm">
-            Community
-          </Link>
-          <Link href="/glossary" className="hide-sm">
-            Glossary
-          </Link>
+          <PrimaryNav />
           <AuthNav />
           <ThemeToggle />
         </nav>
