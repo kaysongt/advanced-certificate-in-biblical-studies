@@ -1,107 +1,105 @@
-# Deploying the site
+# Production launch runbook
 
-The site is a Next.js app. It needs a host that runs a server — sessions, gated
-lessons, and enrollment all happen server-side. **GitHub Pages cannot host it**;
-Pages only serves static files.
+The launch product is **Module I: Systematic Theology** with direct invoicing. The public
+site, accounts, gated lessons, progress, server-verified quizzes, written assessment
+submission, staff grading, community moderation, and staff-awarded engagement credits are
+implemented in the Next.js application.
 
----
+## 1. Create the production database
 
-## 1. Import the repo into Vercel
+Provision PostgreSQL with Vercel Postgres, Neon, Supabase, or another managed provider.
+Copy its pooled production connection string into `DATABASE_URL`.
 
-Do this in a browser, signed in as the account that should own the project.
+Apply the committed schema once before accepting registrations:
 
-1. Go to <https://vercel.com/new>
-2. Import `kaysongt/advanced-certificate-in-biblical-studies`
-3. Framework preset: **Next.js** (it will detect this from `vercel.json`)
-4. Leave build and output settings at their defaults
-5. Before clicking Deploy, add the environment variable in step 2 below
+```bash
+DATABASE_URL="postgresql://..." npm run db:deploy
+```
 
-Vercel then redeploys automatically on every push to `main`.
+The app uses the JSON file adapter only when `DATABASE_URL` is absent. That adapter is for
+local development and must never be used for production enrollment.
 
-## 2. Set `SESSION_SECRET`
+## 2. Configure production environment variables
 
-**Required.** The app throws on boot in production without it — deliberately, so
-it can never fall back to the insecure development secret.
+Set these in Vercel for Production and Preview:
 
-In Vercel: **Project → Settings → Environment Variables**
+| Variable | Required | Purpose |
+|---|---:|---|
+| `DATABASE_URL` | Yes | Durable PostgreSQL connection |
+| `SESSION_SECRET` | Yes | Signs 30-day secure session cookies |
+| `NEXT_PUBLIC_SITE_URL` | Yes | Canonical metadata and social links |
 
-| Name | Value | Environments |
-|---|---|---|
-| `SESSION_SECRET` | a 48-byte random string | Production, Preview, Development |
-
-Generate one with:
+Generate the session secret with:
 
 ```bash
 node -e "console.log(require('crypto').randomBytes(48).toString('base64url'))"
 ```
 
-A secret has already been generated into `.env.local` for local use. That file is
-gitignored — do not commit it, and use a *different* value in production.
+Use a different secret in production from any local value. Rotating it signs everyone out.
 
-Rotating this value signs every student out. That is the correct response if it
-ever leaks.
+## 3. Create the first administrator
 
-## 3. Point the domain
+Put the production database URL and temporary admin values in `.env.local`, then run:
 
-Add `institute.kingsword.org` under **Project → Settings → Domains**, then create
-the DNS record Vercel shows you (a `CNAME` to `cname.vercel-dns.com`).
+```bash
+npm run admin:create
+```
 
----
+Required temporary values are `ADMIN_EMAIL` and `ADMIN_PASSWORD`. Optional display values
+are documented in `.env.example`. Remove the admin password from the environment after the
+account is created. Staff access is role-based; matching the public contact email alone does
+not grant staff privileges.
 
-## What works, and what does not, on first deploy
+## 4. Deploy on Vercel
 
-| | Status |
-|---|---|
-| Home, curriculum, pricing, glossary | Fully working |
-| Sign in, gated topics, quizzes, progress within a session | Working |
-| **Registration and saved progress** | **Not yet — needs a database** |
+1. Import `kaysongt/advanced-certificate-in-biblical-studies` at <https://vercel.com/new>.
+2. Use the repository root and the detected Next.js framework settings.
+3. Add the environment variables before the first production deploy.
+4. Deploy. Every later push to `main` creates a production deployment.
 
-### Why
+`vercel.json` uses `npm ci` and `next build`. Prisma Client is generated during install.
 
-`lib/db/index.ts` currently uses `fileStore`, which writes to `.data/store.json`.
-Vercel's filesystem is read-only, so every write fails there.
+## 5. Attach the domain
 
-This is handled, not ignored. Writes raise `StorageUnavailableError`, and:
+The application currently uses `https://institute.kingsword.org` as its canonical fallback.
+Add the final domain under **Vercel → Project → Settings → Domains**, then add the DNS record
+shown by Vercel. If the final domain is `thekti.org`, set
+`NEXT_PUBLIC_SITE_URL=https://thekti.org` instead.
 
-- the enrollment form shows *"Enrollment is not open yet — please email
-  kti@kingsword.org"* instead of a 500
-- marking a topic complete degrades quietly; it holds for the session but does
-  not survive a reload
+## 6. Test the real enrollment path
 
-So the site is safe to put in front of people as a **brochure and preview**
-immediately. Do not advertise enrollment until step 4 is done.
+Before announcing:
 
-## 4. Attach the database
+1. Register a non-staff test student.
+2. Confirm the dashboard shows a pending enrollment and no course access.
+3. Send and mark a test invoice as paid.
+4. Sign in as staff, open `/admin`, and activate the enrollment with the invoice reference.
+5. Confirm Module I access, topic sequencing, the 80% pass requirement, saved progress,
+   assessment submission, staff grading, community posting, moderation, and extra credits.
+6. Test on a phone, desktop, and a slow connection.
 
-1. Provision Postgres (Vercel Postgres, Supabase, Neon — any is fine)
-2. Add its connection string as `DATABASE_URL` in Vercel
-3. Create the tables — the schema is in `HANDOVER.md` §4.4
-4. Write `lib/db/<name>-store.ts` implementing the `DataStore` interface from
-   `lib/db/types.ts`
-5. Change the one line in `lib/db/index.ts`:
+## Launch boundaries
 
-   ```ts
-   const store: DataStore = yourStore;
-   ```
+- Sell Module I as available now. Modules II through V still contain authoring placeholders.
+- The $1,000 full-program option is a scheduled-release reservation, not immediate access to
+  all five certificates.
+- Direct invoicing is operational. Stripe or Paystack automation can be added after the
+  receiving merchant entity is confirmed.
+- Certificate issuance remains staff-controlled until the final grading weights, module
+  assignment rule, certificate wording, and signer are approved.
+- Opening and closing video slots are ready, but the actual video URLs must be supplied.
 
-Nothing else in the codebase changes — every caller depends on the interface,
-not the adapter.
+## Release checks
 
----
+```bash
+npm ci
+npm run check
+npm run lint
+npm run typecheck
+npm run build
+npm audit --omit=dev
+```
 
-## The old GitHub Pages site
-
-`.github/workflows/static.yml` still publishes `docs/` to
-<https://kaysongt.github.io/advanced-certificate-in-biblical-studies/>. That
-folder is the **old** static build and is now out of date: it predates the 80%
-pass mark, the topic renaming, and the removal of discussion questions.
-
-Once Vercel is live, pick one:
-
-- **Retire it** — delete `.github/workflows/static.yml` and turn Pages off in
-  the repo settings
-- **Regenerate it** — run `python3 build.py build` and commit `docs/`. Needs a
-  machine with Python; there is none on the current development box.
-
-Leaving both live means two versions of the program are publicly visible and
-they disagree with each other.
+The former GitHub Pages workflow has been removed. GitHub Pages only serves static files and
+cannot run the production account, enrollment, grading, or community features. Disable Pages
+in the repository settings after the Vercel domain is working.

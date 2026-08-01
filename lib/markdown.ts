@@ -203,6 +203,18 @@ export type QuizQuestion = {
 
 type ParsedQuizQuestion = { stem: string; opts: [boolean, string][]; why: string };
 
+function orderQuizOptions<T>(stem: string, options: readonly T[]): T[] {
+  if (options.length < 2) return [...options];
+
+  // Keep authored quizzes stable while avoiding an always-A answer pattern.
+  // Both the renderer and server-side grader must use this exact ordering.
+  const digest = createHash("md5").update(stem, "utf8").digest("hex");
+  const rotation = Number(BigInt(`0x${digest}`) % BigInt(options.length));
+  return rotation
+    ? [...options.slice(-rotation), ...options.slice(0, -rotation)]
+    : [...options];
+}
+
 function parseQuizBody(body: string): ParsedQuizQuestion[] {
   const questions: ParsedQuizQuestion[] = [];
   let cur: ParsedQuizQuestion | null = null;
@@ -237,14 +249,7 @@ function renderQuiz(arg: string, body: string, counter: { n: number }): string {
   const out: string[] = [];
 
   questions.forEach((q, idx) => {
-    let choices = q.opts;
-    // Authors write the correct option first. Rotate deterministically so the
-    // answer is not always A, while staying stable across rebuilds.
-    if (choices.length > 1) {
-      const digest = createHash("md5").update(q.stem, "utf8").digest("hex");
-      const k = Number(BigInt("0x" + digest) % BigInt(choices.length));
-      if (k) choices = [...choices.slice(-k), ...choices.slice(0, -k)];
-    }
+    const choices = orderQuizOptions(q.stem, q.opts);
     const opts = choices
       .map(([ok, text], i) => {
         const mark = String.fromCharCode(65 + i);
@@ -373,7 +378,10 @@ export function extractQuizQuestions(text: string, idPrefix: string): QuizQuesti
       questions.push({
         id: `${idPrefix}-${quizNumber}-${questionIndex + 1}`,
         stem: question.stem,
-        options: question.opts.map(([correct, optionText]) => ({ correct, text: optionText })),
+        options: orderQuizOptions(question.stem, question.opts).map(([correct, optionText]) => ({
+          correct,
+          text: optionText,
+        })),
         explanation: question.why,
       });
     });

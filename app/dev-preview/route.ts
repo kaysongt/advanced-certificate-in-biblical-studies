@@ -24,11 +24,17 @@ export async function GET(request: Request) {
     return new NextResponse("Not found", { status: 404 });
   }
 
-  const requested = new URL(request.url).searchParams.get("to");
+  const search = new URL(request.url).searchParams;
+  const requested = search.get("to");
+  const staffPreview = search.get("as") === "staff";
   // Only allow relative in-app paths — never redirect off-site from this route.
-  const destination = requested && requested.startsWith("/") ? requested : "/dashboard";
+  const destination = requested && requested.startsWith("/")
+    ? requested
+    : staffPreview
+      ? "/admin"
+      : "/dashboard";
 
-  const email = "preview@kingsword.test";
+  const email = staffPreview ? "staff-preview@kingsword.test" : "preview@kingsword.test";
 
   try {
     let student = await db.getStudentByEmail(email);
@@ -38,6 +44,7 @@ export async function GET(request: Request) {
         email,
         country: "Nigeria",
         passwordHash: await hashPassword(randomUUID()),
+        role: staffPreview ? "admin" : "student",
       });
       await db.createEnrollment({
         studentId: student.id,

@@ -22,6 +22,13 @@ export default async function DashboardPage() {
   const statuses = getModuleStatuses();
 
   const pending = enrollments.filter((e) => e.status === "pending");
+  const paymentDetails = {
+    accountName: process.env.PAYMENT_BANK_ACCOUNT_NAME?.trim(),
+    bankName: process.env.PAYMENT_BANK_NAME?.trim(),
+    accountNumber: process.env.PAYMENT_BANK_ACCOUNT_NUMBER?.trim(),
+    routingNumber: process.env.PAYMENT_BANK_ROUTING_NUMBER?.trim(),
+  };
+  const canShowPaymentDetails = Object.values(paymentDetails).every(Boolean);
 
   return (
     <main className="shell">
@@ -34,11 +41,45 @@ export default async function DashboardPage() {
       </div>
 
       {pending.length ? (
-        <div className="notice warn" style={{ maxWidth: "68ch" }}>
-          <strong>Enrollment pending payment.</strong> Your place is held. Contact{" "}
-          <a href={`mailto:${program.contact.email}`}>{program.contact.email}</a> to complete
-          payment and unlock your courses.
-        </div>
+        <section className="pending-payment" aria-labelledby="pending-payment-title">
+          <div className="eyebrow">Enrollment reserved</div>
+          <h2 id="pending-payment-title">Complete your payment</h2>
+          <p>
+            Your place is held and access will be activated after the KingsWord team confirms
+            your payment.
+          </p>
+          {canShowPaymentDetails ? (
+            <>
+              <dl className="payment-details">
+                <div>
+                  <dt>Account name</dt>
+                  <dd>{paymentDetails.accountName}</dd>
+                </div>
+                <div>
+                  <dt>Bank</dt>
+                  <dd>{paymentDetails.bankName}</dd>
+                </div>
+                <div>
+                  <dt>Account number</dt>
+                  <dd>{paymentDetails.accountNumber}</dd>
+                </div>
+                <div>
+                  <dt>Routing number</dt>
+                  <dd>{paymentDetails.routingNumber}</dd>
+                </div>
+              </dl>
+              <p className="payment-note">
+                Use <strong>{student.email}</strong> as the transfer reference, then email your
+                receipt to <a href={`mailto:${program.contact.email}`}>{program.contact.email}</a>.
+              </p>
+            </>
+          ) : (
+            <p>
+              Contact <a href={`mailto:${program.contact.email}`}>{program.contact.email}</a> for
+              payment instructions.
+            </p>
+          )}
+        </section>
       ) : null}
 
       <h2>Your program</h2>

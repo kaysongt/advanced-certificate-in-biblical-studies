@@ -86,6 +86,11 @@ export function getLesson(module: Module, course: Course, n: number) {
   return { ...doc, html: mdToHtml(doc.body, collector) };
 }
 
+export function getLessonQuizQuestions(module: Module, course: Course, n: number): QuizQuestion[] {
+  const lesson = readDoc(module.slug, course.slug, lessonFile(n));
+  return extractQuizQuestions(lesson.body, `${course.slug}-topic-${n}`);
+}
+
 export function getCourseDoc(module: Module, course: Course) {
   const doc = readDoc(module.slug, course.slug, "course.md");
   return { ...doc, html: mdToHtml(stripSections(doc.body, ["Instructor Notes"])) };

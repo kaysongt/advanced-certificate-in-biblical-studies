@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 
-import { currentStudent } from "@/lib/auth";
+import { currentStudent, isStaff } from "@/lib/auth";
 
 /**
  * Minimal session probe for the client-side nav. Returns only whether
@@ -12,7 +12,7 @@ import { currentStudent } from "@/lib/auth";
 export async function GET() {
   const student = await currentStudent();
   return NextResponse.json(
-    { signedIn: !!student },
+    { signedIn: Boolean(student), staff: student ? isStaff(student) : false },
     { headers: { "Cache-Control": "no-store" } }
   );
 }

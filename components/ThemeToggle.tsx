@@ -1,34 +1,37 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useSyncExternalStore } from "react";
 
 const KEY = "kti.theme";
+const EVENT = "kti-theme-change";
+type Theme = "light" | "dark";
 
-/** Light/dark switch. Light is the intentional default presentation. */
+function subscribe(onChange: () => void) {
+  window.addEventListener(EVENT, onChange);
+  window.addEventListener("storage", onChange);
+  return () => {
+    window.removeEventListener(EVENT, onChange);
+    window.removeEventListener("storage", onChange);
+  };
+}
+
+function currentTheme(): Theme {
+  return document.documentElement.getAttribute("data-theme") === "dark" ? "dark" : "light";
+}
+
+/** Light/dark switch. The pre-hydration script applies the stored theme. */
 export default function ThemeToggle() {
-  const [theme, setTheme] = useState<"light" | "dark" | null>(null);
-
-  useEffect(() => {
-    let stored: string | null = null;
-    try {
-      stored = localStorage.getItem(KEY);
-    } catch {
-      /* storage unavailable */
-    }
-    const next = stored === "dark" ? "dark" : "light";
-    document.documentElement.setAttribute("data-theme", next);
-    setTheme(next);
-  }, []);
+  const theme = useSyncExternalStore(subscribe, currentTheme, () => "light");
 
   function toggle() {
-    const next = theme === "dark" ? "light" : "dark";
-    setTheme(next);
+    const next: Theme = theme === "dark" ? "light" : "dark";
     document.documentElement.setAttribute("data-theme", next);
     try {
       localStorage.setItem(KEY, next);
     } catch {
       /* storage unavailable */
     }
+    window.dispatchEvent(new Event(EVENT));
   }
 
   return (

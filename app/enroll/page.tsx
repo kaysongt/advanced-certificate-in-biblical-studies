@@ -39,10 +39,10 @@ export default async function EnrollPage({
           </p>
 
           <div className="notice warn">
-            <strong>Payment is not connected yet.</strong> Your account and enrollment will be
-            created and held as pending. You will be invoiced directly at{" "}
-            <a href={`mailto:${program.contact.email}`}>{program.contact.email}</a> until
-            checkout goes live.
+            <strong>Launch enrollment uses direct invoicing.</strong> Your account and enrollment
+            are held as pending until the KingsWord team confirms payment and activates access.
+            Questions can be sent to{" "}
+            <a href={`mailto:${program.contact.email}`}>{program.contact.email}</a>.
           </div>
 
           {availableCount < program.total_certificates ? (

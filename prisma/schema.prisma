@@ -1,0 +1,165 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum StudentRole {
+  STUDENT
+  STAFF
+  ADMIN
+}
+
+enum EnrollmentPlan {
+  CERTIFICATE
+  ADVANCED
+}
+
+enum EnrollmentStatus {
+  PENDING
+  ACTIVE
+  CANCELED
+  REFUNDED
+}
+
+enum QuizKind {
+  TOPIC
+  COURSE_ASSESSMENT
+}
+
+enum AssessmentStatus {
+  IN_PROGRESS
+  PENDING_REVIEW
+  GRADED
+}
+
+model Student {
+  id                    String                 @id @default(uuid())
+  email                 String                 @unique
+  fullName              String
+  country               String
+  passwordHash          String
+  role                  StudentRole            @default(STUDENT)
+  createdAt             DateTime               @default(now())
+  enrollments           Enrollment[]
+  progress              Progress[]
+  quizAttempts          QuizAttempt[]
+  assessmentSubmissions AssessmentSubmission[] @relation("AssessmentStudent")
+  assessmentsGraded     AssessmentSubmission[] @relation("AssessmentGrader")
+  communityPosts        CommunityPost[]        @relation("CommunityAuthor")
+  communityModeration   CommunityPost[]        @relation("CommunityModerator")
+  certificates          Certificate[]          @relation("CertificateStudent")
+  certificatesIssued    Certificate[]          @relation("CertificateIssuer")
+}
+
+model Enrollment {
+  id          String           @id @default(uuid())
+  studentId   String
+  product     String
+  plan        EnrollmentPlan
+  status      EnrollmentStatus @default(PENDING)
+  amount      Int
+  currency    String           @default("USD")
+  provider    String?
+  providerRef String?
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+  student     Student          @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerRef])
+  @@index([studentId])
+  @@index([status, createdAt])
+}
+
+model Progress {
+  studentId   String
+  lessonId    String
+  completedAt DateTime @default(now())
+  student     Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@id([studentId, lessonId])
+}
+
+model QuizAttempt {
+  id         String   @id @default(uuid())
+  studentId  String
+  courseSlug String
+  lessonId   String?
+  kind       QuizKind
+  correct    Int
+  total      Int
+  scorePct   Int
+  passed     Boolean
+  answers    Json
+  createdAt  DateTime @default(now())
+  student    Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@index([studentId, courseSlug, kind, createdAt])
+  @@index([studentId, lessonId, passed])
+}
+
+model AssessmentSubmission {
+  id              String           @id @default(uuid())
+  studentId       String
+  courseSlug      String
+  sectionACorrect Int
+  sectionATotal   Int
+  sectionAPoints  Int
+  writtenResponse String?
+  writtenPoints   Int?
+  totalScore      Int?
+  status          AssessmentStatus @default(IN_PROGRESS)
+  feedback        String?
+  gradedById      String?
+  gradedAt        DateTime?
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  student         Student          @relation("AssessmentStudent", fields: [studentId], references: [id], onDelete: Cascade)
+  gradedBy        Student?         @relation("AssessmentGrader", fields: [gradedById], references: [id], onDelete: SetNull)
+
+  @@index([studentId, courseSlug, createdAt])
+  @@index([status, createdAt])
+}
+
+model CommunityPost {
+  id                String    @id @default(uuid())
+  moduleSlug        String
+  studentId         String
+  body              String
+  engagementCredits Int       @default(0)
+  hiddenAt          DateTime?
+  moderatedById     String?
+  createdAt         DateTime  @default(now())
+  student           Student   @relation("CommunityAuthor", fields: [studentId], references: [id], onDelete: Cascade)
+  moderatedBy       Student?  @relation("CommunityModerator", fields: [moderatedById], references: [id], onDelete: SetNull)
+
+  @@index([moduleSlug, createdAt])
+  @@index([studentId])
+}
+
+model Certificate {
+  id         String   @id @default(uuid())
+  serial     String   @unique
+  studentId  String
+  moduleSlug String
+  issuedById String
+  issuedAt   DateTime @default(now())
+  student    Student  @relation("CertificateStudent", fields: [studentId], references: [id], onDelete: Cascade)
+  issuedBy   Student  @relation("CertificateIssuer", fields: [issuedById], references: [id], onDelete: Restrict)
+
+  @@unique([studentId, moduleSlug])
+}
+
+model PaymentEvent {
+  id          String   @id @default(uuid())
+  provider    String
+  providerRef String
+  eventType   String
+  payload     Json
+  processedAt DateTime @default(now())
+
+  @@unique([provider, providerRef])
+}

@@ -108,7 +108,7 @@ export default function EnrollForm({
       <div className={`field${err.password ? " err" : ""}`}>
         <label htmlFor="password">Password</label>
         <input id="password" name="password" type="password" autoComplete="new-password" />
-        <div className="hint">At least 8 characters.</div>
+        <div className="hint">At least 10 characters.</div>
         {err.password ? <div className="msg">{err.password}</div> : null}
       </div>
 

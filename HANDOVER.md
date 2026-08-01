@@ -1,5 +1,10 @@
 # Build Brief — from static syllabus to enrolling students
 
+> Historical planning document. The Next.js platform, PostgreSQL adapter, staff operations,
+> server-recorded assessment flow, and manual enrollment activation are now implemented.
+> Use `DEPLOY.md` for the current production launch runbook. The remaining sections preserve
+> the original product decisions and content scope.
+
 This document scopes the work of turning the current static site into a live program
 that students can find, pay for, and study inside. Read `README.md` first for how the
 content pipeline works; this brief covers everything that sits on top of it.

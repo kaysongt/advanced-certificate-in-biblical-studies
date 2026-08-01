@@ -3,6 +3,10 @@
 Course scaffold for the KingsWord Training Institute **Advanced Certificate in Biblical Studies**,
 generated from `Certificate-in-Biblical-Studies-Course-Catalog.pdf`.
 
+The production student platform is a Next.js application. See [`DEPLOY.md`](DEPLOY.md) for
+the PostgreSQL, administrator, Vercel, domain, and launch runbook. The generated `docs/`
+folder is retained as an authoring preview only; it is not the production student platform.
+
 Everything the catalog states is already filled in. Everything that must come from the
 textbooks is marked `[FROM BOOK]` and renders on the site as a **TO WRITE** badge.
 
@@ -45,7 +49,7 @@ kti-advanced-certificate/
 │   └── 05-spiritual-formation/    (SF 501–510)
 ├── _templates/         Reference copies of each file type.
 └── docs/               Generated. Do not edit — it is deleted on every build.
-                        Served by GitHub Pages from main.
+                        Legacy authoring preview; not the production application.
 ```
 
 ---
@@ -64,7 +68,7 @@ want to wipe your writing and start a file over.
 
 Open the site locally: `docs/index.html`
 
-Published: <https://kaysongt.github.io/advanced-certificate-in-biblical-studies/>
+Production deployment instructions: see `DEPLOY.md`.
 
 Optional: `pip install markdown` gives better rendering (tables, nested lists).
 Without it the builder falls back to a built-in renderer and still works.

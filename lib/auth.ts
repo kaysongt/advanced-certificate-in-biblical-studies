@@ -31,3 +31,7 @@ export async function currentStudent(): Promise<Student | null> {
   if (!studentId) return null;
   return db.getStudentById(studentId);
 }
+
+export function isStaff(student: Student): boolean {
+  return student.role === "staff" || student.role === "admin";
+}

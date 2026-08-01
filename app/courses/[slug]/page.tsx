@@ -128,7 +128,7 @@ export default async function CoursePage({ params }: Props) {
           );
         })}
 
-        <div className={`row${allDone ? "" : " is-locked"}`}>
+        {allDone ? <Link className="row" href={`/courses/${course.slug}/assessment`}>
           <span className="code">&mdash;</span>
           <span className="body">
             <span className="t">Course Assessment</span>
@@ -136,8 +136,17 @@ export default async function CoursePage({ params }: Props) {
               Taken after all {rows.length} topics. Pass mark {grading.pass_mark}%.
             </span>
           </span>
-          <span className="meta">{allDone ? "Ready" : "Locked"}</span>
-        </div>
+          <span className="meta">Ready</span>
+        </Link> : <div className="row is-locked">
+          <span className="code">&mdash;</span>
+          <span className="body">
+            <span className="t">Course Assessment</span>
+            <span className="s">
+              Taken after all {rows.length} topics. Pass mark {grading.pass_mark}%.
+            </span>
+          </span>
+          <span className="meta">Locked</span>
+        </div>}
       </div>
 
       {doc.html ? <div className="prose" dangerouslySetInnerHTML={{ __html: doc.html }} /> : null}

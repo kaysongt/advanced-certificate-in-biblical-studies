@@ -1,26 +1,32 @@
 "use server";
 
 import { redirect } from "next/navigation";
+import { z } from "zod";
 
 import { endSession, startSession, verifyPassword } from "@/lib/auth";
 import { db } from "@/lib/db";
 
 export type LoginState = { error?: string; email?: string };
 
-export async function signIn(_prev: LoginState, formData: FormData): Promise<LoginState> {
-  const email = String(formData.get("email") ?? "").trim();
-  const password = String(formData.get("password") ?? "");
-  const requested = String(formData.get("next") ?? "");
+const loginSchema = z.object({
+  email: z.string().trim().toLowerCase().email(),
+  password: z.string().min(1).max(200),
+  next: z.string().max(500),
+});
+
+export async function signIn(_previous: LoginState, formData: FormData): Promise<LoginState> {
+  const parsed = loginSchema.safeParse({
+    email: String(formData.get("email") ?? ""),
+    password: String(formData.get("password") ?? ""),
+    next: String(formData.get("next") ?? ""),
+  });
+  if (!parsed.success) return { error: "Enter a valid email and password." };
+
+  const { email, password, next: requested } = parsed.data;
   const next = requested.startsWith("/") && !requested.startsWith("//") ? requested : "/dashboard";
-
-  if (!email || !password) {
-    return { error: "Enter your email and password.", email };
-  }
-
   const student = await db.getStudentByEmail(email);
-  // Same message either way — do not reveal which accounts exist.
-  const ok = student ? await verifyPassword(password, student.passwordHash) : false;
-  if (!student || !ok) {
+  const valid = student ? await verifyPassword(password, student.passwordHash) : false;
+  if (!student || !valid) {
     return { error: "That email and password do not match.", email };
   }
 

@@ -15,7 +15,7 @@ type Props = {
   passMark: number;
   assessment?: boolean;
   /** Called when the quiz is fully answered, with the score as a percentage. */
-  onScored?: (pct: number, correct: number, total: number) => void;
+  onScored?: (pct: number, correct: number, total: number, answers: number[]) => void;
 };
 
 export type QuizResult = { correct: number; total: number; pct: number } | null;
@@ -25,10 +25,10 @@ export default function LessonBody({ html, passMark, assessment = false, onScore
   const [result, setResult] = useState<QuizResult>(null);
 
   const report = useCallback(
-    (correct: number, total: number) => {
+    (correct: number, total: number, answers: number[]) => {
       const pct = total ? Math.round((correct / total) * 100) : 0;
       setResult({ correct, total, pct });
-      onScored?.(pct, correct, total);
+      onScored?.(pct, correct, total, answers);
     },
     [onScored]
   );
@@ -47,6 +47,7 @@ export default function LessonBody({ html, passMark, assessment = false, onScore
       const resetBtn = quiz.querySelector<HTMLButtonElement>(".reset");
       let answered = 0;
       let correct = 0;
+      const selectedAnswers = Array<number>(total).fill(-1);
 
       const paint = () => {
         if (scoreEl) scoreEl.textContent = `${answered} of ${total} answered`;
@@ -58,11 +59,11 @@ export default function LessonBody({ html, passMark, assessment = false, onScore
             : `${correct} of ${total} correct (${pct}%). ` +
               (passed ? "Pass." : `You need ${passMark}% to continue. Review and try again.`);
           verdictEl.className = assessment ? "verdict" : `verdict ${passed ? "pass" : "fail"}`;
-          report(correct, total);
+          report(correct, total, selectedAnswers);
         }
       };
 
-      questions.forEach((q) => {
+      questions.forEach((q, questionIndex) => {
         const opts = Array.from(q.querySelectorAll<HTMLButtonElement>(".opt"));
         const why = q.querySelector<HTMLElement>(".why");
         opts.forEach((opt) => {
@@ -70,6 +71,7 @@ export default function LessonBody({ html, passMark, assessment = false, onScore
             if (q.getAttribute("data-done")) return;
             q.setAttribute("data-done", "1");
             answered += 1;
+            selectedAnswers[questionIndex] = opts.indexOf(opt);
             if (opt.getAttribute("data-correct") === "1") correct += 1;
             opts.forEach((o) => {
               o.disabled = true;
@@ -89,6 +91,7 @@ export default function LessonBody({ html, passMark, assessment = false, onScore
         const onReset = () => {
           answered = 0;
           correct = 0;
+          selectedAnswers.fill(-1);
           setResult(null);
           questions.forEach((q) => {
             q.removeAttribute("data-done");

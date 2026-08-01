@@ -1,4 +1,5 @@
 import { fileStore } from "./file-store";
+import { prismaStore } from "./prisma-store";
 import type { DataStore } from "./types";
 
 /**
@@ -15,7 +16,8 @@ import type { DataStore } from "./types";
  *   students(email) unique, enrollments(student_id), progress(student_id, lesson_id) unique
  */
 
-const store: DataStore = fileStore;
+const store: DataStore = process.env.DATABASE_URL ? prismaStore : fileStore;
 
 export const db = store;
+export const hasDurableStorage = Boolean(process.env.DATABASE_URL);
 export type * from "./types";

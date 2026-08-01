@@ -1,170 +1,194 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useState, useTransition } from "react";
 
-import type { QuizQuestion } from "@/lib/markdown";
+import {
+  submitAssessmentSectionA,
+  submitWrittenAssessment,
+  type AssessmentAttemptResult,
+} from "@/app/courses/[slug]/assessment/actions";
 
-type AttemptQuestion = QuizQuestion & { options: QuizQuestion["options"] };
-type Result = { correct: number; pct: number; passed: boolean } | null;
+export type PublicAssessmentQuestion = {
+  id: string;
+  stem: string;
+  options: string[];
+};
 
-function shuffled<T>(items: T[]): T[] {
-  const copy = [...items];
-  const random = new Uint32Array(Math.max(1, copy.length));
-  crypto.getRandomValues(random);
-  for (let index = copy.length - 1; index > 0; index -= 1) {
-    const target = random[index] % (index + 1);
-    [copy[index], copy[target]] = [copy[target], copy[index]];
-  }
-  return copy;
-}
+type ExistingSubmission = {
+  status: "in-progress" | "pending-review" | "graded";
+  sectionAPoints: number;
+  totalScore: number | null;
+  feedback: string | null;
+} | null;
 
 export default function AssessmentQuiz({
   bank,
   courseSlug,
   passMark,
+  writtenHtml,
+  existingSubmission,
   attemptSize = 20,
 }: {
-  bank: QuizQuestion[];
+  bank: PublicAssessmentQuestion[];
   courseSlug: string;
   passMark: number;
+  writtenHtml: string;
+  existingSubmission: ExistingSubmission;
   attemptSize?: number;
 }) {
-  const [attempt, setAttempt] = useState<AttemptQuestion[]>([]);
-  const [answers, setAnswers] = useState<Record<string, number>>({});
-  const [result, setResult] = useState<Result>(null);
-
-  const beginAttempt = useCallback(
-    (avoid: string[] = []) => {
-      const avoided = new Set(avoid);
-      const fresh = bank.filter((question) => !avoided.has(question.id));
-      const candidates = fresh.length >= attemptSize ? fresh : bank;
-      setAttempt(
-        shuffled(candidates)
-          .slice(0, Math.min(attemptSize, candidates.length))
-          .map((question) => ({ ...question, options: shuffled(question.options) }))
-      );
-      setAnswers({});
-      setResult(null);
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    },
-    [attemptSize, bank]
+  const [attempt] = useState<PublicAssessmentQuestion[]>(() =>
+    bank.slice(0, Math.min(attemptSize, bank.length))
   );
+  const [answers, setAnswers] = useState<Record<string, string>>({});
+  const [result, setResult] = useState<AssessmentAttemptResult | null>(null);
+  const [writtenResponse, setWrittenResponse] = useState("");
+  const [writtenMessage, setWrittenMessage] = useState("");
+  const [submitting, startSubmitting] = useTransition();
+  const [submittingWritten, startSubmittingWritten] = useTransition();
 
-  useEffect(() => {
-    beginAttempt();
-  }, [beginAttempt]);
+  if (existingSubmission?.status === "pending-review") {
+    return (
+      <div className="notice">
+        <strong>Your assessment is awaiting instructor review.</strong> Section A is recorded at{" "}
+        {existingSubmission.sectionAPoints}/40. Your final result will appear after Sections B and C are graded.
+      </div>
+    );
+  }
+
+  if (
+    existingSubmission?.status === "graded" &&
+    existingSubmission.totalScore !== null &&
+    existingSubmission.totalScore >= passMark
+  ) {
+    return (
+      <div className="scorecard pass">
+        <div className="pct">{existingSubmission.totalScore}%</div>
+        <div className="detail">
+          <strong>Course assessment passed</strong>
+          <span>{existingSubmission.feedback ?? "Your instructor has completed the review."}</span>
+        </div>
+      </div>
+    );
+  }
 
   const answered = Object.keys(answers).length;
   const ready = attempt.length > 0 && answered === attempt.length;
-  const storedPass = useMemo(() => `kti.assessment.${courseSlug}.passed`, [courseSlug]);
 
   function submit() {
-    if (!ready || result) return;
-    const correct = attempt.reduce(
-      (total, question) => total + (question.options[answers[question.id]]?.correct ? 1 : 0),
-      0
-    );
-    const pct = Math.round((correct / attempt.length) * 100);
-    const passed = pct >= passMark;
-    setResult({ correct, pct, passed });
-    if (passed) {
-      try {
-        localStorage.setItem(storedPass, "true");
-      } catch {
-        // The result still displays when browser storage is unavailable.
-      }
-    }
+    if (!ready || result || submitting) return;
+    startSubmitting(async () => {
+      const response = await submitAssessmentSectionA(
+        courseSlug,
+        attempt.map((question) => ({ questionId: question.id, answer: answers[question.id] }))
+      );
+      setResult(response);
+    });
   }
 
-  if (!attempt.length) {
-    return <div className="notice">Preparing a fresh assessment attempt&hellip;</div>;
+  function submitWritten() {
+    if (!result?.submissionId || submittingWritten) return;
+    startSubmittingWritten(async () => {
+      const response = await submitWrittenAssessment(result.submissionId!, writtenResponse);
+      setWrittenMessage(
+        response.success
+          ? "Submitted for instructor review. Your final result will appear after grading."
+          : response.error ?? "Unable to submit your written work."
+      );
+    });
   }
+
+  if (!attempt.length) return <div className="notice">Preparing a fresh assessment attempt...</div>;
 
   return (
-    <section className="quiz assessment-bank" aria-labelledby="assessment-bank-title">
-      <header>
-        <span className="hd" id="assessment-bank-title">
-          Randomized Section A
-        </span>
-        <span className="score">
-          {answered} of {attempt.length} answered
-        </span>
-      </header>
+    <>
+      {existingSubmission?.status === "graded" && existingSubmission.totalScore !== null ? (
+        <div className="notice bad">
+          Previous result: {existingSubmission.totalScore}%. {existingSubmission.feedback} Start a fresh attempt below.
+        </div>
+      ) : null}
 
-      <div className="bank-intro">
-        <strong>Pass mark: {passMark}%.</strong> Each attempt draws {attempt.length} questions
-        from a bank of {bank.length}. Answers are marked only after you submit the full attempt.
-      </div>
+      <section className="quiz assessment-bank" aria-labelledby="assessment-bank-title">
+        <header>
+          <span className="hd" id="assessment-bank-title">Randomized Section A</span>
+          <span className="score">{answered} of {attempt.length} answered</span>
+        </header>
 
-      {attempt.map((question, questionIndex) => {
-        const selected = answers[question.id];
-        return (
+        <div className="bank-intro">
+          <strong>Final pass mark: {passMark}%.</strong> Section A contributes 40 points. Answers are
+          verified and recorded on the server after the complete attempt is submitted.
+        </div>
+
+        {attempt.map((question, questionIndex) => (
           <div className="q" key={question.id}>
-            <p className="stem">
-              <span className="n">{questionIndex + 1}</span>
-              {question.stem}
-            </p>
+            <p className="stem"><span className="n">{questionIndex + 1}</span>{question.stem}</p>
             <div className="opts" role="group" aria-label={`Question ${questionIndex + 1}`}>
               {question.options.map((option, optionIndex) => {
-                const chosen = selected === optionIndex;
-                const reviewClass = result
-                  ? option.correct
-                    ? " right"
-                    : chosen
-                      ? " wrong"
-                      : " dim"
-                  : chosen
-                    ? " selected"
-                    : "";
+                const chosen = answers[question.id] === option;
                 return (
                   <button
                     type="button"
-                    className={`opt${reviewClass}`}
+                    className={`opt${chosen ? " selected" : ""}`}
                     aria-pressed={chosen}
-                    disabled={Boolean(result)}
+                    disabled={Boolean(result) || submitting}
                     key={`${question.id}-${optionIndex}`}
-                    onClick={() =>
-                      setAnswers((current) => ({ ...current, [question.id]: optionIndex }))
-                    }
+                    onClick={() => setAnswers((current) => ({ ...current, [question.id]: option }))}
                   >
                     <span className="mk">{String.fromCharCode(65 + optionIndex)}</span>
-                    <span>{option.text}</span>
+                    <span>{option}</span>
                   </button>
                 );
               })}
             </div>
-            {result && question.explanation ? (
-              <div className="why show">{question.explanation}</div>
-            ) : null}
           </div>
-        );
-      })}
+        ))}
 
-      <footer>
-        {result ? (
-          <button
-            type="button"
-            className="btn primary"
-            onClick={() => beginAttempt(attempt.map((question) => question.id))}
-          >
-            {result.passed ? "Start another attempt" : "Try a fresh set"}
+        <footer>
+          <button type="button" className="btn primary" disabled={!ready || submitting || Boolean(result)} onClick={submit}>
+            {submitting ? "Verifying..." : "Submit Section A"}
           </button>
-        ) : (
-          <button type="button" className="btn primary" disabled={!ready} onClick={submit}>
-            Submit assessment
-          </button>
-        )}
-        <span className={`verdict${result ? (result.passed ? " pass" : " fail") : ""}`} aria-live="polite">
-          {result
-            ? `${result.correct} of ${attempt.length} correct (${result.pct}%). ${
-                result.passed ? "Pass." : `You need ${passMark}%. Review, then try a fresh set.`
-              }`
-            : ready
-              ? "All questions answered. Submit when you are ready."
-              : `${attempt.length - answered} remaining.`}
-        </span>
-      </footer>
-    </section>
+          <span className={`verdict${result?.error ? " fail" : result ? " pass" : ""}`} aria-live="polite">
+            {result?.error
+              ? result.error
+              : result
+                ? `${result.correct} of ${result.total} correct (${result.pct}%). Section A: ${result.sectionAPoints}/40.`
+                : ready
+                  ? "All questions answered. Submit when you are ready."
+                  : `${attempt.length - answered} remaining.`}
+          </span>
+        </footer>
+      </section>
+
+      {result?.submissionId ? (
+        <section className="written-assessment">
+          <div className="notice">
+            Sections B and C contribute 60 points and are reviewed by an instructor. Respond to every
+            prompt below in one clearly labelled submission.
+          </div>
+          <div className="prose lesson-prose" dangerouslySetInnerHTML={{ __html: writtenHtml }} />
+          <div className="field assessment-response-field">
+            <label htmlFor="writtenResponse">Your responses to Sections B and C</label>
+            <textarea
+              id="writtenResponse"
+              rows={18}
+              value={writtenResponse}
+              minLength={100}
+              maxLength={30000}
+              onChange={(event) => setWrittenResponse(event.target.value)}
+              disabled={submittingWritten || writtenMessage.startsWith("Submitted")}
+            />
+            <div className="hint">Label each answer clearly. Your work is saved when you submit it.</div>
+            <button
+              type="button"
+              className="btn primary"
+              disabled={writtenResponse.trim().length < 100 || submittingWritten || writtenMessage.startsWith("Submitted")}
+              onClick={submitWritten}
+            >
+              {submittingWritten ? "Submitting..." : "Submit written assessment"}
+            </button>
+            {writtenMessage ? <p className="community-form-message" aria-live="polite">{writtenMessage}</p> : null}
+          </div>
+        </section>
+      ) : null}
+    </>
   );
 }
-

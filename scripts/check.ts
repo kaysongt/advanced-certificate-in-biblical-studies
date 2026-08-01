@@ -17,6 +17,7 @@ import {
   getCourseStatuses,
   getIndexes,
   getLesson,
+  getLessonQuizQuestions,
   getLessonRows,
   getModuleDoc,
 } from "../lib/content";
@@ -68,6 +69,16 @@ async function main() {
   check("quiz marks a correct answer", () =>
     assert.match(lesson.html, /data-correct="1"/)
   );
+  check("rendered and server-graded quiz options use the same order", () => {
+    const serverQuestions = getLessonQuizQuestions(module, course, 1);
+    const renderedOptions = [...lesson.html.matchAll(/class="opt" data-correct="([01])"/g)].map(
+      (match) => match[1] === "1"
+    );
+    assert.deepEqual(
+      renderedOptions,
+      serverQuestions.flatMap((question) => question.options.map((option) => option.correct))
+    );
+  });
   check("no raw directive markers leak through", () =>
     assert.ok(!lesson.html.includes(":::"), "found an unrendered ::: marker")
   );
@@ -178,28 +189,38 @@ async function main() {
   await fs.rm(live, { force: true });
 
   const { db } = await import("../lib/db");
-  const student = await db.createStudent({
-    fullName: "Test Student",
-    email: "Test@Example.com",
-    country: "Nigeria",
-    passwordHash: hash,
-  });
+  const registered = await db.createStudentWithEnrollment(
+    {
+      fullName: "Test Student",
+      email: "Test@Example.com",
+      country: "Nigeria",
+      passwordHash: hash,
+    },
+    {
+      product: "advanced",
+      plan: "advanced",
+      status: "pending",
+      amount: 1000,
+      currency: "USD",
+      provider: null,
+      providerRef: null,
+    }
+  );
+  const { student, enrollment } = registered;
+  check("registration creates student and enrollment together", () =>
+    assert.equal(enrollment.studentId, student.id)
+  );
   check("student is created", () => assert.ok(student.id));
   check("email is normalized", () => assert.equal(student.email, "test@example.com"));
+  check("public registration creates a student role", () => assert.equal(student.role, "student"));
   const byEmail = await db.getStudentByEmail("TEST@EXAMPLE.COM");
   check("lookup is case-insensitive", () => assert.equal(byEmail?.id, student.id));
 
-  const enrollment = await db.createEnrollment({
-    studentId: student.id,
-    product: "advanced",
-    plan: "advanced",
-    status: "pending",
-    amount: 1000,
-    currency: "USD",
-    provider: null,
-    providerRef: null,
-  });
   check("enrollment starts pending", () => assert.equal(enrollment.status, "pending"));
+  const pendingEnrollments = await db.listPendingEnrollments();
+  check("staff queue includes pending enrollment", () =>
+    assert.equal(pendingEnrollments[0]?.student.email, student.email)
+  );
   const activated = await db.activateEnrollment(enrollment.id, "test_ref_123");
   check("enrollment activates", () => assert.equal(activated?.status, "active"));
 
@@ -208,21 +229,76 @@ async function main() {
   const progress = await db.getProgress(student.id);
   check("progress is idempotent", () => assert.equal(progress.length, 1));
 
+  await db.createQuizAttempt({
+    studentId: student.id,
+    courseSlug: "st-101",
+    lessonId: "st-101-1",
+    kind: "topic",
+    correct: 4,
+    total: 5,
+    scorePct: 80,
+    passed: true,
+    answers: [0, 1, 2, 3, 0],
+  });
+  const hasPassingAttempt = await db.hasPassingTopicAttempt(student.id, "st-101-1");
+  check("passing topic attempt is recorded server-side", () =>
+    assert.equal(hasPassingAttempt, true)
+  );
+
+  const assessment = await db.createAssessmentSubmission({
+    studentId: student.id,
+    courseSlug: "st-101",
+    sectionACorrect: 18,
+    sectionATotal: 20,
+    sectionAPoints: 36,
+  });
+  await db.submitAssessmentWrittenWork(
+    assessment.id,
+    student.id,
+    "A complete set of clearly labelled written responses for instructor review."
+  );
+  const pendingAssessments = await db.listPendingAssessments();
+  check("written assessment enters the staff grading queue", () =>
+    assert.equal(pendingAssessments[0]?.id, assessment.id)
+  );
+  const grader = await db.createStudent({
+    fullName: "Test Administrator",
+    email: "admin@example.com",
+    country: "United States",
+    passwordHash: hash,
+    role: "admin",
+  });
+  const graded = await db.gradeAssessment({
+    id: assessment.id,
+    graderId: grader.id,
+    writtenPoints: 50,
+    feedback: "Strong work.",
+  });
+  check("instructor grading calculates the final score", () =>
+    assert.equal(graded?.totalScore, 86)
+  );
+
   const communityPost = await db.createCommunityPost({
     moduleSlug: module.slug,
     studentId: student.id,
     body: "This is a thoughtful reflection on the first module lesson.",
   });
-  check("community post is created with an engagement credit", () =>
-    assert.equal(communityPost.engagementCredits, 1)
+  check("community post starts without automatic extra credit", () =>
+    assert.equal(communityPost.engagementCredits, 0)
   );
   const communityPosts = await db.getCommunityPosts(module.slug);
   check("community posts are scoped to the module", () =>
     assert.equal(communityPosts.length, 1)
   );
+  await db.moderateCommunityPost({
+    postId: communityPost.id,
+    moderatorId: grader.id,
+    hidden: false,
+    engagementCredits: 2,
+  });
   const engagement = await db.getCommunityEngagement(student.id);
-  check("community engagement totals posts and credits", () =>
-    assert.deepEqual(engagement, { posts: 1, credits: 1 })
+  check("staff-awarded engagement credits are tracked separately", () =>
+    assert.deepEqual(engagement, { posts: 1, credits: 2 })
   );
 
   await fs.rm(live, { force: true });

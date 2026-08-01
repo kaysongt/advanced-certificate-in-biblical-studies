@@ -1,21 +1,15 @@
-import { FlatCompat } from "@eslint/eslintrc";
-import { dirname } from "node:path";
-import { fileURLToPath } from "node:url";
+import { defineConfig, globalIgnores } from "eslint/config";
+import nextVitals from "eslint-config-next/core-web-vitals";
+import nextTypescript from "eslint-config-next/typescript";
 
-const compat = new FlatCompat({ baseDirectory: dirname(fileURLToPath(import.meta.url)) });
-
-const config = [
-  ...compat.extends("next/core-web-vitals", "next/typescript"),
-  {
-    ignores: [".next/**", "assets/**", "docs/**", "node_modules/**", "next-env.d.ts"],
-  },
+export default defineConfig([
+  ...nextVitals,
+  ...nextTypescript,
+  globalIgnores([".next/**", "assets/**", "docs/**", "node_modules/**", "next-env.d.ts"]),
   {
     rules: {
-      // The content domain deliberately calls curriculum records `module`.
-      // These are ESM/TypeScript files and do not shadow CommonJS module.exports.
+      // Curriculum records deliberately use the domain name `module`.
       "@next/next/no-assign-module-variable": "off",
     },
   },
-];
-
-export default config;
+]);

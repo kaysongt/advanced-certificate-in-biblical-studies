@@ -5,7 +5,7 @@ import { notFound, redirect } from "next/navigation";
 import CommunityComposer from "@/components/CommunityComposer";
 import { hasActiveAccess } from "@/lib/access";
 import { currentStudent } from "@/lib/auth";
-import { getCurriculum, getModule } from "@/lib/curriculum";
+import { getModule } from "@/lib/curriculum";
 import { db } from "@/lib/db";
 
 type Props = { params: Promise<{ slug: string }> };
@@ -27,13 +27,11 @@ export default async function CommunityModulePage({ params }: Props) {
   const enrollments = await db.getEnrollmentsForStudent(student.id);
   if (!hasActiveAccess(enrollments, module.slug)) redirect("/enroll");
 
-  const { program } = getCurriculum();
   const [posts, engagement] = await Promise.all([
     db.getCommunityPosts(module.slug),
     db.getCommunityEngagement(student.id),
   ]);
   const authors = await Promise.all(posts.map((post) => db.getStudentById(post.studentId)));
-  const staffEmail = program.contact.email.toLowerCase();
   const dateFormatter = new Intl.DateTimeFormat("en-US", {
     day: "numeric",
     month: "short",
@@ -86,7 +84,7 @@ export default async function CommunityModulePage({ params }: Props) {
             <div className="community-posts">
               {posts.map((post, index) => {
                 const author = authors[index];
-                const isStaff = author?.email.toLowerCase() === staffEmail;
+                const staffAuthor = author?.role === "staff" || author?.role === "admin";
                 return (
                   <article className="community-post" key={post.id}>
                     <div className="community-avatar" aria-hidden="true">
@@ -95,8 +93,8 @@ export default async function CommunityModulePage({ params }: Props) {
                     <div>
                       <div className="community-post-meta">
                         <strong>{author?.fullName ?? "KingsWord student"}</strong>
-                        <span className={isStaff ? "community-role staff" : "community-role"}>
-                          {isStaff ? "KingsWord team" : "Student"}
+                        <span className={staffAuthor ? "community-role staff" : "community-role"}>
+                          {staffAuthor ? "KingsWord team" : "Student"}
                         </span>
                         <time dateTime={post.createdAt}>{dateFormatter.format(new Date(post.createdAt))}</time>
                       </div>

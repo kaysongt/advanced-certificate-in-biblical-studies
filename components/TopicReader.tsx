@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useState, useTransition } from "react";
 
-import { setTopicComplete } from "@/app/courses/actions";
+import { recordTopicQuizAttempt, setTopicComplete } from "@/app/courses/actions";
 
 import LessonBody from "./LessonBody";
 
@@ -37,17 +37,19 @@ export default function TopicReader({
   const [complete, setComplete] = useState(alreadyComplete);
   const [passed, setPassed] = useState(alreadyComplete);
   const [pending, startTransition] = useTransition();
+  const [scorePending, startScoreTransition] = useTransition();
+  const [verification, setVerification] = useState("");
 
   // A topic with a quiz must be passed before it can be completed. Topics that
   // carry no quiz can simply be marked done.
-  const canComplete = complete || !hasQuiz || !mustPass || passed;
+  const canComplete = complete || !hasQuiz || !mustPass || (passed && !scorePending);
   const canAdvance = !mustPass || complete;
 
   function toggle() {
     const nextValue = !complete;
-    setComplete(nextValue);
-    startTransition(() => {
-      setTopicComplete(courseSlug, lessonId, nextValue, path);
+    startTransition(async () => {
+      const saved = await setTopicComplete(courseSlug, lessonId, nextValue, path);
+      if (saved) setComplete(nextValue);
     });
   }
 
@@ -56,8 +58,28 @@ export default function TopicReader({
       <LessonBody
         html={html}
         passMark={passMark}
-        onScored={(pct) => setPassed(pct >= passMark)}
+        onScored={(_pct, _correct, _total, answers) => {
+          setPassed(false);
+          setVerification("Saving and verifying your result...");
+          startScoreTransition(async () => {
+            const result = await recordTopicQuizAttempt(courseSlug, lessonId, answers);
+            setPassed(result.passed);
+            setVerification(
+              result.error
+                ? result.error
+                : result.passed
+                  ? `Verified: ${result.pct}%. You can mark this topic complete.`
+                  : `Verified: ${result.pct}%. Review the topic and try again.`
+            );
+          });
+        }}
       />
+
+      {verification ? (
+        <div className={`notice${passed ? "" : " bad"}`} aria-live="polite">
+          {verification}
+        </div>
+      ) : null}
 
       <div className={`done-strip${complete ? " is-done" : ""}`}>
         <button

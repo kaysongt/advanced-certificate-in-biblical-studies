@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
+import { randomInt } from "node:crypto";
 
 import AssessmentQuiz from "@/components/AssessmentQuiz";
 import { hasActiveAccess } from "@/lib/access";
@@ -50,6 +51,16 @@ export default async function AssessmentPage({ params }: Props) {
   const { grading } = getCurriculum();
   const bank = getAssessmentBank(module, course);
   const writtenHtml = getAssessmentWrittenHtml(module, course);
+  const latestSubmission = await db.getLatestAssessmentSubmission(student.id, course.slug);
+  const publicBank = bank.map((question) => ({
+    id: question.id,
+    stem: question.stem,
+    options: question.options.map((option) => option.text),
+  }));
+  for (let index = publicBank.length - 1; index > 0; index -= 1) {
+    const target = randomInt(index + 1);
+    [publicBank[index], publicBank[target]] = [publicBank[target], publicBank[index]];
+  }
 
   return (
     <main className="shell">
@@ -74,17 +85,18 @@ export default async function AssessmentPage({ params }: Props) {
           </div>
         </header>
 
-        <AssessmentQuiz bank={bank} courseSlug={course.slug} passMark={grading.pass_mark} />
-
-        {writtenHtml ? (
-          <section className="written-assessment">
-            <div className="notice">
-              Passing Section A completes the automatically marked portion. Sections B and C
-              are submitted to your instructor and count toward the final course result.
-            </div>
-            <div className="prose lesson-prose" dangerouslySetInnerHTML={{ __html: writtenHtml }} />
-          </section>
-        ) : null}
+        <AssessmentQuiz
+          bank={publicBank}
+          courseSlug={course.slug}
+          passMark={grading.pass_mark}
+          writtenHtml={writtenHtml}
+          existingSubmission={latestSubmission ? {
+            status: latestSubmission.status,
+            sectionAPoints: latestSubmission.sectionAPoints,
+            totalScore: latestSubmission.totalScore,
+            feedback: latestSubmission.feedback,
+          } : null}
+        />
 
         <nav className="topicnav">
           <Link href={`/courses/${course.slug}`}>

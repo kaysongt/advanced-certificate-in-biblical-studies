@@ -13,14 +13,16 @@ import { useEffect, useState } from "react";
  * prerenderable. See app/api/session/route.ts.
  */
 export default function AuthNav() {
-  const [signedIn, setSignedIn] = useState(false);
+  const [session, setSession] = useState({ signedIn: false, staff: false });
 
   useEffect(() => {
     let cancelled = false;
     fetch("/api/session")
       .then((r) => r.json())
       .then((d) => {
-        if (!cancelled) setSignedIn(!!d.signedIn);
+        if (!cancelled) {
+          setSession({ signedIn: Boolean(d.signedIn), staff: Boolean(d.staff) });
+        }
       })
       .catch(() => {
         /* stay logged-out on failure — /enroll and /login both work either way */
@@ -30,11 +32,14 @@ export default function AuthNav() {
     };
   }, []);
 
-  if (signedIn) {
+  if (session.signedIn) {
     return (
-      <Link href="/dashboard" className="btn primary" style={{ marginLeft: 6 }}>
-        My studies
-      </Link>
+      <>
+        {session.staff ? <Link href="/admin">Staff</Link> : null}
+        <Link href="/dashboard" className="btn primary" style={{ marginLeft: 6 }}>
+          My studies
+        </Link>
+      </>
     );
   }
 

@@ -1,11 +1,13 @@
 "use server";
 
 import { redirect } from "next/navigation";
+import { z } from "zod";
 
 import { hashPassword, startSession } from "@/lib/auth";
+import { getAvailableModules } from "@/lib/content";
+import { PRICING } from "@/lib/curriculum";
 import { db } from "@/lib/db";
-import { StorageUnavailableError, type Plan } from "@/lib/db/types";
-import { PRICING, getCurriculum } from "@/lib/curriculum";
+import { StorageUnavailableError } from "@/lib/db/types";
 
 export type FormState = {
   error?: string;
@@ -13,33 +15,52 @@ export type FormState = {
   values?: Record<string, string>;
 };
 
-const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const registrationSchema = z.object({
+  fullName: z.string().trim().min(2, "Please enter your full name.").max(100),
+  email: z.string().trim().toLowerCase().email("Please enter a valid email address.").max(254),
+  country: z.string().trim().min(1, "Please select your country.").max(80),
+  password: z.string().min(10, "Use at least 10 characters.").max(200),
+  plan: z.enum(["certificate", "advanced"]),
+  product: z.string().trim().max(80),
+});
 
 export async function registerStudent(
-  _prev: FormState,
+  _previous: FormState,
   formData: FormData
 ): Promise<FormState> {
-  const fullName = String(formData.get("fullName") ?? "").trim();
-  const email = String(formData.get("email") ?? "").trim();
-  const country = String(formData.get("country") ?? "").trim();
-  const password = String(formData.get("password") ?? "");
-  const plan = String(formData.get("plan") ?? "advanced") as Plan;
-  const product = String(formData.get("product") ?? "").trim();
-
-  const values = { fullName, email, country, plan, product };
+  const raw = {
+    fullName: String(formData.get("fullName") ?? ""),
+    email: String(formData.get("email") ?? ""),
+    country: String(formData.get("country") ?? ""),
+    password: String(formData.get("password") ?? ""),
+    plan: String(formData.get("plan") ?? "advanced"),
+    product: String(formData.get("product") ?? ""),
+  };
+  const values = {
+    fullName: raw.fullName.trim(),
+    email: raw.email.trim(),
+    country: raw.country.trim(),
+    plan: raw.plan,
+    product: raw.product.trim(),
+  };
+  const parsed = registrationSchema.safeParse(raw);
   const fieldErrors: Record<string, string> = {};
-
-  if (fullName.length < 2) fieldErrors.fullName = "Please enter your full name.";
-  if (!EMAIL.test(email)) fieldErrors.email = "Please enter a valid email address.";
-  if (!country) fieldErrors.country = "Please select your country.";
-  if (password.length < 8) fieldErrors.password = "Use at least 8 characters.";
-
-  const moduleSlugs = getCurriculum().modules.map((m) => m.slug);
-  if (plan === "certificate" && !moduleSlugs.includes(product)) {
-    fieldErrors.product = "Please choose which certificate you want to start with.";
+  if (!parsed.success) {
+    for (const issue of parsed.error.issues) {
+      const field = String(issue.path[0] ?? "form");
+      if (!fieldErrors[field]) fieldErrors[field] = issue.message;
+    }
+    return { fieldErrors, values };
   }
 
-  if (Object.keys(fieldErrors).length) return { fieldErrors, values };
+  const { fullName, email, country, password, plan, product } = parsed.data;
+  const availableProducts = new Set(getAvailableModules().map((module) => module.slug));
+  if (plan === "certificate" && !availableProducts.has(product)) {
+    return {
+      fieldErrors: { product: "Please choose a certificate that is ready to study." },
+      values,
+    };
+  }
 
   let studentId: string;
   try {
@@ -50,37 +71,33 @@ export async function registerStudent(
       };
     }
 
-    const student = await db.createStudent({
-      fullName,
-      email,
-      country,
-      passwordHash: await hashPassword(password),
-    });
-    studentId = student.id;
-
     const price = plan === "advanced" ? PRICING.advanced : PRICING.certificate;
-    await db.createEnrollment({
-      studentId: student.id,
-      product: plan === "advanced" ? "advanced" : product,
-      plan,
-      // Payment is not connected yet — see HANDOVER.md §4.3. Enrollments stay
-      // pending until a payment webhook activates them.
-      status: "pending",
-      amount: price.amount,
-      currency: price.currency,
-      provider: null,
-      providerRef: null,
-    });
-  } catch (err) {
-    if (err instanceof StorageUnavailableError) {
+    const { student } = await db.createStudentWithEnrollment(
+      {
+        fullName,
+        email,
+        country,
+        passwordHash: await hashPassword(password),
+      },
+      {
+        product: plan === "advanced" ? "advanced" : product,
+        plan,
+        status: "pending",
+        amount: price.amount,
+        currency: price.currency,
+        provider: null,
+        providerRef: null,
+      }
+    );
+    studentId = student.id;
+  } catch (error) {
+    if (error instanceof StorageUnavailableError) {
       return {
-        error:
-          "Enrollment is not open yet — we cannot save your details on this server " +
-          "right now. Please email kti@kingsword.org and we will enroll you directly.",
+        error: "Enrollment storage is unavailable. Please email kti@kingsword.org for help.",
         values,
       };
     }
-    throw err;
+    return { error: "We could not create your enrollment. Please try again.", values };
   }
 
   await startSession(studentId);
