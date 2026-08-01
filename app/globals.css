@@ -1342,6 +1342,30 @@ a.card:hover::after { opacity: .9; }
   max-width: 62ch;
 }
 
+.payment-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 22px; }
+.secure-payment-mark { margin-top: 5px; padding: 8px 11px; border: 1px solid color-mix(in srgb, var(--deep) 28%, var(--rule)); border-radius: 999px; background: color-mix(in srgb, var(--deep) 7%, var(--card)); color: var(--deep); font: 750 9px/1 var(--sans); letter-spacing: .075em; text-transform: uppercase; white-space: nowrap; }
+.pending-payment > .notice { margin: 21px 0 0; }
+.pending-enrollment-list { display: grid; gap: 12px; margin: 24px 0 28px; }
+.pending-enrollment { position: relative; display: flex; align-items: center; justify-content: space-between; gap: 25px; overflow: hidden; padding: 22px; border: 1px solid rgba(255, 255, 255, .11); border-radius: 17px; background: linear-gradient(125deg, #0d284c, #1d4a75); color: #fdf9ef; box-shadow: 0 15px 34px rgba(9, 33, 63, .16); }
+.pending-enrollment::after { content: ""; position: absolute; right: -58px; bottom: -96px; width: 210px; height: 210px; border: 1px solid rgba(231, 195, 111, .17); border-radius: 50%; box-shadow: 0 0 0 28px rgba(231, 195, 111, .04), 0 0 0 56px rgba(231, 195, 111, .025); pointer-events: none; }
+.pending-enrollment > * { position: relative; z-index: 1; }
+.pending-enrollment-plan { display: block; margin-bottom: 8px; color: #e8c777; font: 750 8.5px/1 var(--sans); letter-spacing: .13em; text-transform: uppercase; }
+.pending-enrollment h3 { max-width: 420px; margin: 0 0 8px; color: #fffaf1; font-size: clamp(1.18rem, 2.2vw, 1.5rem); }
+.pending-enrollment > div > strong { display: inline-block; color: #fffaf1; font: 600 1rem/1 var(--sans); }
+.payment-state { display: inline-block; margin-left: 9px; padding: 5px 7px; border: 1px solid rgba(255, 255, 255, .2); border-radius: 999px; color: rgba(255, 255, 255, .82); font: 700 7.5px/1 var(--sans); letter-spacing: .08em; text-transform: uppercase; vertical-align: 2px; }
+.payment-state.paid { border-color: rgba(121, 220, 178, .5); color: #a7ebce; }
+.payment-state.failed,
+.payment-state.refunded,
+.payment-state.disputed { border-color: rgba(255, 174, 164, .48); color: #ffc5bd; }
+.stripe-checkout-button { min-width: 220px; display: grid; gap: 4px; padding: 13px 18px; border-color: #efcf83; background: linear-gradient(135deg, #e2b752, #f0d792); color: #17263a; box-shadow: 0 10px 24px rgba(4, 20, 39, .22); text-align: left; }
+.stripe-checkout-button:hover { border-color: #f7df9e; background: linear-gradient(135deg, #edc968, #f7e1a5); }
+.stripe-checkout-button span { font: 800 12px/1.1 var(--sans); letter-spacing: .02em; }
+.stripe-checkout-button small { font: 600 8.5px/1.2 var(--sans); opacity: .72; }
+.payment-processing-note { max-width: 245px; margin: 0; color: rgba(255, 255, 255, .72); font: 550 11px/1.55 var(--sans); }
+.payment-divider { display: flex; align-items: center; gap: 13px; margin: 3px 0 0; color: var(--muted); font: 700 8px/1 var(--sans); letter-spacing: .11em; text-transform: uppercase; }
+.payment-divider::before,
+.payment-divider::after { content: ""; height: 1px; flex: 1; background: var(--rule); }
+
 .payment-details {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1382,6 +1406,11 @@ a.card:hover::after { opacity: .9; }
 }
 
 @media (max-width: 620px) {
+  .payment-heading,
+  .pending-enrollment { align-items: stretch; flex-direction: column; }
+  .secure-payment-mark { align-self: flex-start; white-space: normal; }
+  .pending-enrollment form,
+  .stripe-checkout-button { width: 100%; }
   .payment-details {
     grid-template-columns: 1fr;
   }
@@ -1505,6 +1534,7 @@ a.card:hover::after { opacity: .9; }
 .registration-status { padding: 5px 8px; border: 1px solid var(--rule); border-radius: 999px; background: var(--rule-soft); color: var(--muted); font: 750 8px/1 var(--sans); letter-spacing: .08em; text-transform: uppercase; }
 .registration-status.pending { border-color: var(--gold-line); background: var(--gold-wash); color: var(--gold); }
 .registration-status.active { border-color: var(--ok); background: var(--ok-wash); color: var(--ok); }
+.registration-status.suspended { border-color: var(--no); background: var(--no-wash); color: var(--no); }
 .admin-registration-person > p a { color: var(--deep); font-weight: 650; }
 .admin-registration-meta { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px 18px; margin: 18px 0 0; }
 .admin-registration-meta div { min-width: 0; }
@@ -1514,6 +1544,11 @@ a.card:hover::after { opacity: .9; }
 .admin-registration-payment span { color: var(--faint); font: 700 8px/1.2 var(--sans); letter-spacing: .1em; text-transform: uppercase; }
 .admin-registration-payment strong { overflow-wrap: anywhere; font: 650 12px/1.45 var(--sans); }
 .admin-registration-payment small { color: var(--muted); font: 500 10px/1.4 var(--sans); }
+.admin-payment-column { display: grid; gap: 10px; }
+.admin-stripe-state { display: grid; gap: 4px; padding: 11px 13px; border: 1px solid color-mix(in srgb, var(--deep) 28%, var(--rule)); border-radius: 10px; background: color-mix(in srgb, var(--deep) 6%, var(--page)); }
+.admin-stripe-state.review { border-color: var(--gold-line); background: var(--gold-wash); }
+.admin-stripe-state span { color: var(--deep); font: 750 9px/1.2 var(--sans); letter-spacing: .08em; text-transform: uppercase; }
+.admin-stripe-state small { color: var(--muted); font: 500 10px/1.45 var(--sans); }
 .admin-grade-form { display: grid; grid-template-columns: 180px minmax(0, 1fr) auto; gap: 14px; align-items: end; margin-top: 18px; }
 .admin-shell label { display: grid; gap: 7px; color: var(--muted); font: 650 10px/1.3 var(--sans); letter-spacing: .06em; text-transform: uppercase; }
 .admin-check { display: flex !important; align-items: center; gap: 7px !important; white-space: nowrap; }

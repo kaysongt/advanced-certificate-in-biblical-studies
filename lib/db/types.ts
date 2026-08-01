@@ -37,7 +37,11 @@ export type Enrollment = {
   /** "stripe" | "paystack" | "manual" — set when payment is wired up. */
   provider: string | null;
   providerRef: string | null;
+  activatedAt: string | null;
+  /** A disputed Stripe payment can suspend access without erasing the enrollment. */
+  accessSuspendedAt: string | null;
   createdAt: string;
+  updatedAt: string;
 };
 
 export type ProgressRecord = {
@@ -99,7 +103,10 @@ export type CommunityEngagement = {
 };
 
 export type NewStudent = Omit<Student, "id" | "createdAt" | "role"> & { role?: StudentRole };
-export type NewEnrollment = Omit<Enrollment, "id" | "createdAt">;
+export type NewEnrollment = Omit<
+  Enrollment,
+  "id" | "createdAt" | "updatedAt" | "activatedAt" | "accessSuspendedAt"
+>;
 export type NewEnrollmentForStudent = Omit<NewEnrollment, "studentId">;
 export type NewCommunityPost = Omit<CommunityPost, "id" | "createdAt" | "engagementCredits">;
 

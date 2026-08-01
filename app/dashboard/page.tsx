@@ -3,25 +3,88 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { signOut } from "@/app/login/actions";
+import StripeCheckoutButton from "@/components/StripeCheckoutButton";
 import { hasActiveAccess } from "@/lib/access";
 import { currentStudent } from "@/lib/auth";
 import { getModuleStatuses } from "@/lib/content";
 import { db } from "@/lib/db";
 import { getCurriculum, moduleReleaseLabel } from "@/lib/curriculum";
+import { isStripeCheckoutConfigured } from "@/lib/payments/stripe-client";
+import {
+  listLatestStripePaymentAttempts,
+  type StripePaymentAttemptSummary,
+} from "@/lib/payments/stripe-store";
+
+import { beginStripeCheckout } from "./actions";
 
 export const metadata: Metadata = { title: "My studies" };
 
-export default async function DashboardPage() {
+const paymentMessages: Record<string, { tone: "good" | "warn" | "bad"; text: string }> = {
+  success: {
+    tone: "good",
+    text: "Payment was submitted securely. Stripe is confirming it now; access updates automatically after the signed confirmation arrives.",
+  },
+  processing: {
+    tone: "warn",
+    text: "Your Checkout Session is complete and payment confirmation is still processing. You do not need to pay again.",
+  },
+  cancelled: {
+    tone: "warn",
+    text: "Checkout was cancelled and no new access was granted. You can resume secure payment below.",
+  },
+  invalid: { tone: "bad", text: "That enrollment could not be opened for payment." },
+  unavailable: {
+    tone: "bad",
+    text: "Secure card payment is temporarily unavailable. Please try again or use the bank-transfer option below.",
+  },
+};
+
+const paymentStatusLabels: Record<StripePaymentAttemptSummary["status"], string> = {
+  created: "Starting checkout",
+  open: "Checkout ready",
+  processing: "Payment processing",
+  paid: "Paid",
+  failed: "Payment failed",
+  expired: "Checkout expired",
+  "partially-refunded": "Partially refunded",
+  refunded: "Refunded",
+  disputed: "Payment under review",
+};
+
+function tuition(amount: number, currency: string): string {
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency,
+    maximumFractionDigits: 0,
+  }).format(amount);
+}
+
+export default async function DashboardPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ payment?: string }>;
+}) {
   const student = await currentStudent();
   if (!student) redirect("/login");
 
+  const { payment } = await searchParams;
   const { program, grading } = getCurriculum();
-  const enrollments = await db.getEnrollmentsForStudent(student.id);
-  const progress = await db.getProgress(student.id);
-  const engagement = await db.getCommunityEngagement(student.id);
+  const [enrollments, progress, engagement] = await Promise.all([
+    db.getEnrollmentsForStudent(student.id),
+    db.getProgress(student.id),
+    db.getCommunityEngagement(student.id),
+  ]);
   const statuses = getModuleStatuses();
 
   const pending = enrollments.filter((e) => e.status === "pending");
+  const stripeConfigured = isStripeCheckoutConfigured();
+  const paymentAttempts = await listLatestStripePaymentAttempts(
+    pending.map((enrollment) => enrollment.id)
+  );
+  const moduleNames = new Map(
+    getCurriculum().modules.map((module) => [module.slug, module.short_title])
+  );
+  const paymentMessage = payment ? paymentMessages[payment] : null;
   const paymentDetails = {
     accountName: process.env.PAYMENT_BANK_ACCOUNT_NAME?.trim(),
     bankName: process.env.PAYMENT_BANK_NAME?.trim(),
@@ -42,12 +105,74 @@ export default async function DashboardPage() {
 
       {pending.length ? (
         <section className="pending-payment" aria-labelledby="pending-payment-title">
-          <div className="eyebrow">Enrollment reserved</div>
-          <h2 id="pending-payment-title">Complete your payment</h2>
-          <p>
-            Your place is held and access will be activated after the KingsWord team confirms
-            your payment.
-          </p>
+          <div className="payment-heading">
+            <div>
+              <div className="eyebrow">Enrollment reserved</div>
+              <h2 id="pending-payment-title">Complete your payment</h2>
+            </div>
+            <span className="secure-payment-mark">
+              {stripeConfigured ? "Secure checkout by Stripe" : "Bank transfer available"}
+            </span>
+          </div>
+          <p>Your account is ready. Choose secure card checkout or use the bank-transfer option.</p>
+
+          {paymentMessage ? (
+            <div className={`notice ${paymentMessage.tone}`} role="status">
+              {paymentMessage.text}
+            </div>
+          ) : null}
+
+          <div className="pending-enrollment-list">
+            {pending.map((enrollment) => {
+              const attempt = paymentAttempts.get(enrollment.id);
+              const paymentInFlight = attempt?.status === "processing";
+              const staffReview =
+                attempt?.needsReview ||
+                attempt?.status === "partially-refunded" ||
+                attempt?.status === "disputed";
+              const canOpenCheckout = stripeConfigured && !paymentInFlight && !staffReview;
+              return (
+                <article className="pending-enrollment" key={enrollment.id}>
+                  <div>
+                    <span className="pending-enrollment-plan">
+                      {enrollment.plan === "advanced" ? "Full program" : "Single certificate"}
+                    </span>
+                    <h3>
+                      {enrollment.product === "advanced"
+                        ? "Advanced Certificate in Biblical Studies"
+                        : moduleNames.get(enrollment.product) ?? enrollment.product}
+                    </h3>
+                    <strong>{tuition(enrollment.amount, enrollment.currency)}</strong>
+                    {attempt ? (
+                      <span className={`payment-state ${attempt.status}`}>
+                        {paymentStatusLabels[attempt.status]}
+                      </span>
+                    ) : null}
+                  </div>
+                  {canOpenCheckout ? (
+                    <form action={beginStripeCheckout}>
+                      <input type="hidden" name="enrollmentId" value={enrollment.id} />
+                      <StripeCheckoutButton />
+                    </form>
+                  ) : paymentInFlight ? (
+                    <p className="payment-processing-note">
+                      Confirmation is in progress. Please do not submit another payment.
+                    </p>
+                  ) : staffReview ? (
+                    <p className="payment-processing-note">
+                      The KingsWord team is reviewing this payment. No further payment is needed.
+                    </p>
+                  ) : (
+                    <p className="payment-processing-note">
+                      Online checkout is being configured. Bank transfer remains available.
+                    </p>
+                  )}
+                </article>
+              );
+            })}
+          </div>
+
+          <div className="payment-divider"><span>Bank transfer option</span></div>
           {canShowPaymentDetails ? (
             <>
               <dl className="payment-details">

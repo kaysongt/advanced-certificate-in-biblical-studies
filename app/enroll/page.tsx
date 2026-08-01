@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { currentStudent } from "@/lib/auth";
 import { getModuleStatuses } from "@/lib/content";
 import { formatModuleReleaseDate, getCurriculum } from "@/lib/curriculum";
+import { isStripeCheckoutConfigured } from "@/lib/payments/stripe-client";
 
 import EnrollForm from "./EnrollForm";
 
@@ -28,6 +29,7 @@ export default async function EnrollPage({
   const availableCount = modules.filter((m) => m.available).length;
   const firstReleaseDate = modules[0].availability;
   const initialPlan = plan === "certificate" && availableCount > 0 ? "certificate" : "advanced";
+  const stripeConfigured = isStripeCheckoutConfigured();
 
   return (
     <main className="shell">
@@ -39,10 +41,12 @@ export default async function EnrollPage({
             your place in the full program.
           </p>
 
-          <div className="notice warn">
-            <strong>Launch enrollment uses direct invoicing.</strong> Your account and enrollment
-            are held as pending until the KingsWord team confirms payment and activates access.
-            Questions can be sent to{" "}
+          <div className={stripeConfigured ? "notice good" : "notice warn"}>
+            <strong>
+              {stripeConfigured ? "Secure online payment follows registration." : "Direct payment instructions follow registration."}
+            </strong>{" "}
+            Your account and enrollment are created first, then held as pending until payment is
+            securely confirmed. Bank transfer remains available. Questions can be sent to{" "}
             <a href={`mailto:${program.contact.email}`}>{program.contact.email}</a>.
           </div>
 

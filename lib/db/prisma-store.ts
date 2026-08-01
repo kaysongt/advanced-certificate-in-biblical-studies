@@ -96,7 +96,10 @@ function mapEnrollment(enrollment: PrismaEnrollment): Enrollment {
     currency: enrollment.currency,
     provider: enrollment.provider,
     providerRef: enrollment.providerRef,
+    activatedAt: enrollment.activatedAt?.toISOString() ?? null,
+    accessSuspendedAt: enrollment.accessSuspendedAt?.toISOString() ?? null,
     createdAt: enrollment.createdAt.toISOString(),
+    updatedAt: enrollment.updatedAt.toISOString(),
   };
 }
 
@@ -233,14 +236,18 @@ export const prismaStore: DataStore = {
   },
 
   async activateEnrollment(id, providerRef, provider = "manual") {
-    const existing = await prisma.enrollment.findUnique({ where: { id } });
-    if (!existing) return null;
-    return mapEnrollment(
-      await prisma.enrollment.update({
-        where: { id },
-        data: { status: PrismaEnrollmentStatus.ACTIVE, provider, providerRef },
-      })
-    );
+    const updated = await prisma.enrollment.updateMany({
+      where: { id, status: PrismaEnrollmentStatus.PENDING },
+      data: {
+        status: PrismaEnrollmentStatus.ACTIVE,
+        provider,
+        providerRef,
+        activatedAt: new Date(),
+        accessSuspendedAt: null,
+      },
+    });
+    if (!updated.count) return null;
+    return mapEnrollment(await prisma.enrollment.findUniqueOrThrow({ where: { id } }));
   },
 
   async listEnrollments() {

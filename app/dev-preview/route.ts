@@ -27,6 +27,7 @@ export async function GET(request: Request) {
   const search = new URL(request.url).searchParams;
   const requested = search.get("to");
   const staffPreview = search.get("as") === "staff";
+  const paymentPreview = search.get("payment") === "pending";
   // Only allow relative in-app paths — never redirect off-site from this route.
   const destination = requested && requested.startsWith("/")
     ? requested
@@ -34,13 +35,17 @@ export async function GET(request: Request) {
       ? "/admin"
       : "/dashboard";
 
-  const email = staffPreview ? "staff-preview@kingsword.test" : "preview@kingsword.test";
+  const email = staffPreview
+    ? "staff-preview@kingsword.test"
+    : paymentPreview
+      ? "payment-preview@kingsword.test"
+      : "preview@kingsword.test";
 
   try {
     let student = await db.getStudentByEmail(email);
     if (!student) {
       student = await db.createStudent({
-        fullName: "Preview Student",
+        fullName: paymentPreview ? "Payment Preview" : "Preview Student",
         email,
         country: "Nigeria",
         passwordHash: await hashPassword(randomUUID()),
@@ -50,11 +55,11 @@ export async function GET(request: Request) {
         studentId: student.id,
         product: "advanced",
         plan: "advanced",
-        status: "active",
+        status: paymentPreview ? "pending" : "active",
         amount: 1000,
         currency: "USD",
-        provider: "manual",
-        providerRef: "dev-preview",
+        provider: paymentPreview ? null : "manual",
+        providerRef: paymentPreview ? null : "dev-preview",
       });
     }
     await startSession(student.id);

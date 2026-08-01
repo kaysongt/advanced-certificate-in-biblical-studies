@@ -5,7 +5,7 @@ export function hasActiveAccess(enrollments: Enrollment[], moduleSlug: string): 
   return enrollments.some(
     (enrollment) =>
       enrollment.status === "active" &&
+      !enrollment.accessSuspendedAt &&
       (enrollment.product === "advanced" || enrollment.product === moduleSlug)
   );
 }
-

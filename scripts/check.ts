@@ -7,6 +7,8 @@ import assert from "node:assert/strict";
 import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
+import { StripePaymentStatus } from "@prisma/client";
+import Stripe from "stripe";
 
 import { hashPassword, verifyPassword } from "../lib/auth-core";
 import { hasActiveAccess } from "../lib/access";
@@ -29,6 +31,13 @@ import {
   isModuleReleased,
 } from "../lib/curriculum";
 import { isPrimaryRouteActive, PRIMARY_NAV_ITEMS } from "../lib/navigation";
+import { getStripeCatalogItem } from "../lib/payments/catalog";
+import {
+  blocksLatePaymentActivation,
+  refundPaymentStatus,
+  wonDisputePaymentStatus,
+} from "../lib/payments/payment-policy";
+import { STRIPE_API_VERSION } from "../lib/payments/stripe-version";
 
 let passed = 0;
 function check(name: string, fn: () => void) {
@@ -199,13 +208,25 @@ async function main() {
     currency: "USD",
     provider: null,
     providerRef: null,
+    activatedAt: null,
+    accessSuspendedAt: null,
     createdAt: new Date(0).toISOString(),
+    updatedAt: new Date(0).toISOString(),
   };
   check("pending enrollment does not grant access", () =>
     assert.equal(hasActiveAccess([{ ...enrollmentBase, status: "pending" }], module.slug), false)
   );
   check("active advanced enrollment grants access", () =>
     assert.equal(hasActiveAccess([{ ...enrollmentBase, status: "active" }], module.slug), true)
+  );
+  check("a payment dispute suspends otherwise active access", () =>
+    assert.equal(
+      hasActiveAccess(
+        [{ ...enrollmentBase, status: "active", accessSuspendedAt: new Date().toISOString() }],
+        module.slug
+      ),
+      false
+    )
   );
   check("active single-certificate enrollment is scoped", () =>
     assert.equal(
@@ -216,6 +237,78 @@ async function main() {
       true
     )
   );
+
+  console.log("\npayments");
+  const advancedPayment = getStripeCatalogItem({
+    plan: "advanced",
+    product: "advanced",
+    amount: 1000,
+    currency: "USD",
+  });
+  check("advanced tuition converts to Stripe minor units on the server", () =>
+    assert.equal(advancedPayment.amountMinor, 100_000)
+  );
+  const certificatePayment = getStripeCatalogItem({
+    plan: "certificate",
+    product: module.slug,
+    amount: 250,
+    currency: "USD",
+  });
+  check("certificate tuition converts to Stripe minor units on the server", () =>
+    assert.equal(certificatePayment.amountMinor, 25_000)
+  );
+  check("stored price tampering is rejected", () =>
+    assert.throws(() =>
+      getStripeCatalogItem({
+        plan: "advanced",
+        product: "advanced",
+        amount: 1,
+        currency: "USD",
+      })
+    )
+  );
+  check("refunds and disputes block stale success events", () => {
+    assert.equal(blocksLatePaymentActivation(StripePaymentStatus.REFUNDED), true);
+    assert.equal(blocksLatePaymentActivation(StripePaymentStatus.DISPUTED), true);
+    assert.equal(blocksLatePaymentActivation(StripePaymentStatus.FAILED), false);
+  });
+  check("partial and full refunds produce different durable states", () => {
+    assert.equal(
+      refundPaymentStatus(10_000, 25_000),
+      StripePaymentStatus.PARTIALLY_REFUNDED
+    );
+    assert.equal(refundPaymentStatus(25_000, 25_000), StripePaymentStatus.REFUNDED);
+  });
+  check("a won dispute cannot restore a fully refunded payment", () => {
+    assert.equal(wonDisputePaymentStatus(0, 25_000), StripePaymentStatus.PAID);
+    assert.equal(
+      wonDisputePaymentStatus(25_000, 25_000),
+      StripePaymentStatus.REFUNDED
+    );
+  });
+  const stripe = new Stripe("sk_test_signature_check", { apiVersion: STRIPE_API_VERSION });
+  const webhookBody = JSON.stringify({ id: "evt_signature_check", type: "checkout.session.completed" });
+  const webhookHeader = stripe.webhooks.generateTestHeaderString({
+    payload: webhookBody,
+    secret: "whsec_signature_check",
+  });
+  check("Stripe webhook verification requires the untouched signed body", () => {
+    assert.equal(
+      stripe.webhooks.constructEvent(
+        webhookBody,
+        webhookHeader,
+        "whsec_signature_check"
+      ).id,
+      "evt_signature_check"
+    );
+    assert.throws(() =>
+      stripe.webhooks.constructEvent(
+        `${webhookBody} `,
+        webhookHeader,
+        "whsec_signature_check"
+      )
+    );
+  });
 
   console.log("\npasswords");
   const hash = await hashPassword("correct horse battery staple");

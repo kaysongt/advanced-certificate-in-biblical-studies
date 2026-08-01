@@ -4,6 +4,10 @@ import { redirect } from "next/navigation";
 import { currentStudent, isStaff } from "@/lib/auth";
 import { getCurriculum } from "@/lib/curriculum";
 import { db } from "@/lib/db";
+import {
+  listLatestStripePaymentAttempts,
+  type StripePaymentAttemptSummary,
+} from "@/lib/payments/stripe-store";
 
 import { activateEnrollment, gradeAssessment, moderateCommunityPost } from "./actions";
 
@@ -27,6 +31,18 @@ function tuition(amount: number, currency: string): string {
   }).format(amount);
 }
 
+const paymentStatusLabels: Record<StripePaymentAttemptSummary["status"], string> = {
+  created: "Checkout starting",
+  open: "Checkout open",
+  processing: "Payment processing",
+  paid: "Stripe paid",
+  failed: "Payment failed",
+  expired: "Checkout expired",
+  "partially-refunded": "Partial refund",
+  refunded: "Refunded",
+  disputed: "Disputed",
+};
+
 export default async function AdminPage() {
   const staff = await currentStudent();
   if (!staff || !isStaff(staff)) redirect("/");
@@ -39,9 +55,16 @@ export default async function AdminPage() {
   const moduleNames = new Map(
     getCurriculum().modules.map((module) => [module.slug, module.short_title])
   );
+  const paymentAttempts = await listLatestStripePaymentAttempts(
+    registrations.map((enrollment) => enrollment.id)
+  );
   const registrationCounts = {
     pending: registrations.filter((item) => item.status === "pending").length,
-    active: registrations.filter((item) => item.status === "active").length,
+    active: registrations.filter(
+      (item) => item.status === "active" && !item.accessSuspendedAt
+    ).length,
+    suspended: registrations.filter((item) => Boolean(item.accessSuspendedAt)).length,
+    stripeReview: [...paymentAttempts.values()].filter((attempt) => attempt.needsReview).length,
   };
 
   return (
@@ -73,16 +96,32 @@ export default async function AdminPage() {
           <span>
             <strong>{registrationCounts.active}</strong> Active
           </span>
+          <span>
+            <strong>{registrationCounts.stripeReview}</strong> Payment review
+          </span>
+          <span>
+            <strong>{registrationCounts.suspended}</strong> Access suspended
+          </span>
         </div>
         {registrations.length ? (
           <div className="admin-list">
-            {registrations.map((enrollment) => (
+            {registrations.map((enrollment) => {
+              const paymentAttempt = paymentAttempts.get(enrollment.id);
+              return (
               <article className="admin-card admin-registration-card" key={enrollment.id}>
                 <div className="admin-registration-person">
                   <div className="admin-registration-title">
                     <strong>{enrollment.student.fullName}</strong>
-                    <span className={`registration-status ${enrollment.status}`}>
-                      {enrollment.status === "pending" ? "Awaiting payment" : enrollment.status}
+                    <span
+                      className={`registration-status ${
+                        enrollment.accessSuspendedAt ? "suspended" : enrollment.status
+                      }`}
+                    >
+                      {enrollment.accessSuspendedAt
+                        ? "Access suspended"
+                        : enrollment.status === "pending"
+                          ? "Awaiting payment"
+                          : enrollment.status}
                     </span>
                   </div>
                   <p>
@@ -117,17 +156,35 @@ export default async function AdminPage() {
                       <dt>Tuition</dt>
                       <dd>{tuition(enrollment.amount, enrollment.currency)}</dd>
                     </div>
+                    <div>
+                      <dt>Online payment</dt>
+                      <dd>
+                        {paymentAttempt
+                          ? paymentStatusLabels[paymentAttempt.status]
+                          : "No Stripe attempt"}
+                      </dd>
+                    </div>
                   </dl>
                 </div>
                 {enrollment.status === "pending" ? (
-                  <form action={activateEnrollment} className="admin-inline-form">
-                    <input type="hidden" name="enrollmentId" value={enrollment.id} />
-                    <label>
-                      Payment or invoice reference
-                      <input name="paymentReference" required minLength={3} maxLength={120} />
-                    </label>
-                    <button className="btn primary" type="submit">Activate access</button>
-                  </form>
+                  <div className="admin-payment-column">
+                    {paymentAttempt ? (
+                      <div className={`admin-stripe-state${paymentAttempt.needsReview ? " review" : ""}`}>
+                        <span>{paymentStatusLabels[paymentAttempt.status]}</span>
+                        {paymentAttempt.needsReview ? (
+                          <small>{paymentAttempt.reviewReason ?? "Staff review required."}</small>
+                        ) : null}
+                      </div>
+                    ) : null}
+                    <form action={activateEnrollment} className="admin-inline-form">
+                      <input type="hidden" name="enrollmentId" value={enrollment.id} />
+                      <label>
+                        Bank payment or invoice reference
+                        <input name="paymentReference" required minLength={3} maxLength={120} />
+                      </label>
+                      <button className="btn primary" type="submit">Activate manual payment</button>
+                    </form>
+                  </div>
                 ) : (
                   <div className="admin-registration-payment">
                     <span>
@@ -135,10 +192,19 @@ export default async function AdminPage() {
                     </span>
                     <strong>{enrollment.providerRef ?? "No payment reference recorded"}</strong>
                     {enrollment.provider ? <small>Recorded via {enrollment.provider}</small> : null}
+                    {paymentAttempt ? (
+                      <small>
+                        Stripe: {paymentStatusLabels[paymentAttempt.status]}
+                        {paymentAttempt.needsReview
+                          ? ` · ${paymentAttempt.reviewReason ?? "Staff review required."}`
+                          : ""}
+                      </small>
+                    ) : null}
                   </div>
                 )}
               </article>
-            ))}
+              );
+            })}
           </div>
         ) : <p className="admin-empty">No student has registered yet.</p>}
       </section>

@@ -1,6 +1,7 @@
 # Production launch runbook
 
-The launch product is **Module I: Systematic Theology** with direct invoicing. The public
+The launch product is **Module I: Systematic Theology** with Stripe-hosted Checkout and bank
+transfer as a manual fallback. The public
 site, accounts, gated lessons, progress, server-verified quizzes, written assessment
 submission, staff grading, community moderation, and staff-awarded engagement credits are
 implemented in the Next.js application.
@@ -28,6 +29,12 @@ Set these in Vercel for Production and Preview:
 | `DATABASE_URL` | Yes | Durable PostgreSQL connection |
 | `SESSION_SECRET` | Yes | Signs 30-day secure session cookies |
 | `NEXT_PUBLIC_SITE_URL` | Yes | Canonical metadata and social links |
+| `APP_BASE_URL` | Yes | Trusted origin for Stripe success and cancel redirects |
+| `STRIPE_MODE` | For online payment | `test` during verification, then `live` at launch |
+| `STRIPE_SECRET_KEY` | For online payment | Server-only Stripe API credential |
+| `STRIPE_WEBHOOK_SECRET` | For online payment | Verifies signed events at `/api/stripe/webhook` |
+| `STRIPE_PRICE_CERTIFICATE` | For online payment | Stripe Price ID for the $250 certificate |
+| `STRIPE_PRICE_ADVANCED` | For online payment | Stripe Price ID for the $1,000 program |
 
 Generate the session secret with:
 
@@ -57,22 +64,49 @@ not grant staff privileges.
 3. Add the environment variables before the first production deploy.
 4. Deploy. Every later push to `main` creates a production deployment.
 
-`vercel.json` uses `npm ci` and `next build`. Prisma Client is generated during install.
+`vercel.json` uses `npm ci`, applies committed Prisma migrations, and then runs `next build`.
+Prisma Client is generated during install.
 
-## 5. Attach the domain
+## 5. Configure Stripe Checkout
+
+Start in a Stripe sandbox/test environment. Do not use a secret key that has appeared in chat,
+email, source control, command history, or logs; rotate it first.
+
+1. In Stripe, create two one-time USD Prices: **Single Certificate** for `$250.00` and
+   **Advanced Certificate in Biblical Studies** for `$1,000.00`.
+2. Put the resulting test Price IDs in `STRIPE_PRICE_CERTIFICATE` and
+   `STRIPE_PRICE_ADVANCED` in Vercel.
+3. Add the rotated test secret as `STRIPE_SECRET_KEY`, set `STRIPE_MODE=test`, and set
+   `APP_BASE_URL=https://www.thekti.org`.
+4. In Stripe Workbench, create a webhook destination at
+   `https://www.thekti.org/api/stripe/webhook` for:
+   `checkout.session.completed`, `checkout.session.async_payment_succeeded`,
+   `checkout.session.async_payment_failed`, `checkout.session.expired`, `charge.refunded`,
+   `charge.dispute.created`, and `charge.dispute.closed`.
+5. Put that destination's signing secret in `STRIPE_WEBHOOK_SECRET` in Vercel.
+6. Redeploy, register a fresh test student, and complete payment with a Stripe test card.
+7. Confirm the signed webhook changes the exact pending enrollment to active and that `/admin`
+   shows the payment state. The success redirect alone must never activate access.
+
+Stripe-hosted Checkout does not need a publishable key in this application because no payment
+form or card data is rendered on the KingsWord site.
+
+## 6. Attach the domain
 
 The application uses `https://www.thekti.org` as its canonical fallback. Keep both
 `thekti.org` and `www.thekti.org` attached in Vercel, with the apex domain redirecting to
 `www.thekti.org`. Set `NEXT_PUBLIC_SITE_URL=https://www.thekti.org` in production and preview.
 
-## 6. Test the real enrollment path
+## 7. Test the real enrollment path
 
 Before announcing:
 
 1. Register a non-staff test student.
 2. Confirm the dashboard shows a pending enrollment and no course access.
-3. Send and mark a test invoice as paid.
-4. Sign in as staff, open `/admin`, and activate the enrollment with the invoice reference.
+3. Complete Stripe test Checkout and confirm webhook activation. Repeat with a canceled Session,
+   declined card, delayed method, duplicate webhook, refund, and dispute test.
+4. Separately test bank transfer by signing in as staff, opening `/admin`, and activating a
+   pending enrollment with the verified bank reference.
 5. Confirm Module I access, topic sequencing, the 80% pass requirement, saved progress,
    assessment submission, staff grading, community posting, moderation, and extra credits.
 6. Test on a phone, desktop, and a slow connection.
@@ -82,8 +116,8 @@ Before announcing:
 - Open modules on the published schedule: Systematic Theology on September 1, 2026; Biblical Foundations on November 1, 2026; Old Testament Survey on January 1, 2027; New Testament Survey on March 1, 2027; and Spiritual Formation on May 1, 2027.
 - The $1,000 full-program option is a scheduled-release reservation, not immediate access to
   all five certificates.
-- Direct invoicing is operational. Stripe or Paystack automation can be added after the
-  receiving merchant entity is confirmed.
+- Stripe-hosted Checkout activates access only from signed, idempotently processed webhooks.
+  Bank transfer and staff activation remain available as an audited fallback.
 - Certificate issuance remains staff-controlled until the final grading weights, module
   assignment rule, certificate wording, and signer are approved.
 - Opening and closing video slots are ready, but the actual video URLs must be supplied.

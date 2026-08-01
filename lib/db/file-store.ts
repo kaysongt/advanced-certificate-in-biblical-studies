@@ -94,7 +94,10 @@ export const fileStore: DataStore = {
       ...enrollmentInput,
       studentId: student.id,
       id: randomUUID(),
+      activatedAt: null,
+      accessSuspendedAt: null,
       createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
     };
     data.students.push(student);
     data.enrollments.push(enrollment);
@@ -117,7 +120,10 @@ export const fileStore: DataStore = {
     const enrollment: Enrollment = {
       ...input,
       id: randomUUID(),
+      activatedAt: null,
+      accessSuspendedAt: null,
       createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
     };
     data.enrollments.push(enrollment);
     await write(data);
@@ -136,10 +142,13 @@ export const fileStore: DataStore = {
   ): Promise<Enrollment | null> {
     const data = await read();
     const found = data.enrollments.find((enrollment) => enrollment.id === id);
-    if (!found) return null;
+    if (!found || found.status !== "pending") return null;
     found.status = "active";
     found.provider = provider;
     found.providerRef = providerRef;
+    found.activatedAt = new Date().toISOString();
+    found.accessSuspendedAt = null;
+    found.updatedAt = new Date().toISOString();
     await write(data);
     return found;
   },
