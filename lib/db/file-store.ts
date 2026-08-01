@@ -144,6 +144,16 @@ export const fileStore: DataStore = {
     return found;
   },
 
+  async listEnrollments(): Promise<(Enrollment & { student: Student })[]> {
+    const data = await read();
+    return data.enrollments
+      .flatMap((enrollment) => {
+        const student = data.students.find((candidate) => candidate.id === enrollment.studentId);
+        return student ? [{ ...enrollment, student }] : [];
+      })
+      .sort((a, b) => Date.parse(b.createdAt) - Date.parse(a.createdAt));
+  },
+
   async listPendingEnrollments(): Promise<(Enrollment & { student: Student })[]> {
     const data = await read();
     return data.enrollments.flatMap((enrollment) => {

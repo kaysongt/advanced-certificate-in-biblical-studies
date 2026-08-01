@@ -243,6 +243,17 @@ export const prismaStore: DataStore = {
     );
   },
 
+  async listEnrollments() {
+    const enrollments = await prisma.enrollment.findMany({
+      include: { student: true },
+      orderBy: { createdAt: "desc" },
+    });
+    return enrollments.map(({ student, ...enrollment }) => ({
+      ...mapEnrollment(enrollment),
+      student: mapStudent(student),
+    }));
+  },
+
   async listPendingEnrollments() {
     const enrollments = await prisma.enrollment.findMany({
       where: { status: PrismaEnrollmentStatus.PENDING },

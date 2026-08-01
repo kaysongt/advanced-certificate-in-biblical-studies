@@ -2,55 +2,145 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 
 import { currentStudent, isStaff } from "@/lib/auth";
+import { getCurriculum } from "@/lib/curriculum";
 import { db } from "@/lib/db";
 
 import { activateEnrollment, gradeAssessment, moderateCommunityPost } from "./actions";
 
 export const metadata: Metadata = { title: "Staff operations" };
 
+const registrationDate = new Intl.DateTimeFormat("en-US", {
+  month: "short",
+  day: "numeric",
+  year: "numeric",
+  hour: "numeric",
+  minute: "2-digit",
+  timeZone: "America/Chicago",
+  timeZoneName: "short",
+});
+
+function tuition(amount: number, currency: string): string {
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency,
+    maximumFractionDigits: 0,
+  }).format(amount);
+}
+
 export default async function AdminPage() {
   const staff = await currentStudent();
   if (!staff || !isStaff(staff)) redirect("/");
 
-  const [enrollments, assessments, posts] = await Promise.all([
-    db.listPendingEnrollments(),
+  const [registrations, assessments, posts] = await Promise.all([
+    db.listEnrollments(),
     db.listPendingAssessments(),
     db.listRecentCommunityPosts(),
   ]);
+  const moduleNames = new Map(
+    getCurriculum().modules.map((module) => [module.slug, module.short_title])
+  );
+  const registrationCounts = {
+    pending: registrations.filter((item) => item.status === "pending").length,
+    active: registrations.filter((item) => item.status === "active").length,
+  };
 
   return (
     <main className="shell admin-shell">
       <header className="pagehead">
         <div className="eyebrow">KingsWord team</div>
         <h1>Staff operations</h1>
-        <p className="deck">Activate verified payments, grade submitted work, and moderate engagement.</p>
+        <p className="deck">
+          Review registrations, activate verified payments, grade submitted work, and moderate
+          engagement.
+        </p>
       </header>
 
       <section className="admin-section">
         <div className="admin-section-head">
-          <h2>Pending enrollments</h2>
-          <span>{enrollments.length}</span>
+          <div>
+            <h2>Student registrations</h2>
+            <p>Everyone who has registered through the website, newest first.</p>
+          </div>
+          <span>{registrations.length}</span>
         </div>
-        {enrollments.length ? (
+        <div className="admin-registration-summary" aria-label="Registration totals">
+          <span>
+            <strong>{registrations.length}</strong> Total
+          </span>
+          <span>
+            <strong>{registrationCounts.pending}</strong> Awaiting payment
+          </span>
+          <span>
+            <strong>{registrationCounts.active}</strong> Active
+          </span>
+        </div>
+        {registrations.length ? (
           <div className="admin-list">
-            {enrollments.map((enrollment) => (
-              <article className="admin-card" key={enrollment.id}>
-                <div>
-                  <strong>{enrollment.student.fullName}</strong>
-                  <p>{enrollment.student.email} · {enrollment.product} · {enrollment.currency} {enrollment.amount}</p>
+            {registrations.map((enrollment) => (
+              <article className="admin-card admin-registration-card" key={enrollment.id}>
+                <div className="admin-registration-person">
+                  <div className="admin-registration-title">
+                    <strong>{enrollment.student.fullName}</strong>
+                    <span className={`registration-status ${enrollment.status}`}>
+                      {enrollment.status === "pending" ? "Awaiting payment" : enrollment.status}
+                    </span>
+                  </div>
+                  <p>
+                    <a href={`mailto:${enrollment.student.email}`}>{enrollment.student.email}</a>
+                    <span aria-hidden="true"> &middot; </span>
+                    {enrollment.student.country}
+                  </p>
+                  <dl className="admin-registration-meta">
+                    <div>
+                      <dt>Registration</dt>
+                      <dd>
+                        <time dateTime={enrollment.createdAt}>
+                          {registrationDate.format(new Date(enrollment.createdAt))}
+                        </time>
+                      </dd>
+                    </div>
+                    <div>
+                      <dt>Plan</dt>
+                      <dd>
+                        {enrollment.plan === "advanced" ? "Full program" : "Single certificate"}
+                      </dd>
+                    </div>
+                    <div>
+                      <dt>Program</dt>
+                      <dd>
+                        {enrollment.product === "advanced"
+                          ? "All five certificates"
+                          : moduleNames.get(enrollment.product) ?? enrollment.product}
+                      </dd>
+                    </div>
+                    <div>
+                      <dt>Tuition</dt>
+                      <dd>{tuition(enrollment.amount, enrollment.currency)}</dd>
+                    </div>
+                  </dl>
                 </div>
-                <form action={activateEnrollment} className="admin-inline-form">
-                  <input type="hidden" name="enrollmentId" value={enrollment.id} />
-                  <label>
-                    Payment or invoice reference
-                    <input name="paymentReference" required minLength={3} maxLength={120} />
-                  </label>
-                  <button className="btn primary" type="submit">Activate access</button>
-                </form>
+                {enrollment.status === "pending" ? (
+                  <form action={activateEnrollment} className="admin-inline-form">
+                    <input type="hidden" name="enrollmentId" value={enrollment.id} />
+                    <label>
+                      Payment or invoice reference
+                      <input name="paymentReference" required minLength={3} maxLength={120} />
+                    </label>
+                    <button className="btn primary" type="submit">Activate access</button>
+                  </form>
+                ) : (
+                  <div className="admin-registration-payment">
+                    <span>
+                      {enrollment.status === "active" ? "Access activated" : "Enrollment closed"}
+                    </span>
+                    <strong>{enrollment.providerRef ?? "No payment reference recorded"}</strong>
+                    {enrollment.provider ? <small>Recorded via {enrollment.provider}</small> : null}
+                  </div>
+                )}
               </article>
             ))}
           </div>
-        ) : <p className="admin-empty">No enrollment is waiting for activation.</p>}
+        ) : <p className="admin-empty">No student has registered yet.</p>}
       </section>
 
       <section className="admin-section">

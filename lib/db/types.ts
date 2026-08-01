@@ -136,6 +136,7 @@ export interface DataStore {
   createEnrollment(input: NewEnrollment): Promise<Enrollment>;
   getEnrollmentsForStudent(studentId: string): Promise<Enrollment[]>;
   activateEnrollment(id: string, providerRef: string, provider?: string): Promise<Enrollment | null>;
+  listEnrollments(): Promise<(Enrollment & { student: Student })[]>;
   listPendingEnrollments(): Promise<(Enrollment & { student: Student })[]>;
 
   // progress

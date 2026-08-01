@@ -277,6 +277,12 @@ async function main() {
   );
   const activated = await db.activateEnrollment(enrollment.id, "test_ref_123");
   check("enrollment activates", () => assert.equal(activated?.status, "active"));
+  const registrations = await db.listEnrollments();
+  check("staff roster retains activated registrations", () => {
+    assert.equal(registrations[0]?.student.email, student.email);
+    assert.equal(registrations[0]?.status, "active");
+    assert.equal(registrations[0]?.providerRef, "test_ref_123");
+  });
 
   await db.markLessonComplete(student.id, "st-101-1");
   await db.markLessonComplete(student.id, "st-101-1");
