@@ -39,11 +39,18 @@ By the end of this certificate, students will be able to:
 | ST 105 | [Ecclesiology](/courses/st-105) | God's Covenant Community and Mission | 6 | 6 |
 | ST 106 | [Eschatology](/courses/st-106) | Our Blessed Hope | 6 | 6 |
 
-## Course Assessment Folder
+## Course Assessments
 
-Assessments for all six Module I courses are collected in this folder:
+Every assessment is completed securely on this website. An assessment unlocks after the
+student completes all six topics in its course. Multiple-choice responses are scored on the
+site, written responses are submitted to the instructor, and the pass mark is 80%.
 
-[Module I Course Assessment Folder](https://drive.google.com/drive/folders/16VFOvO7dE74DeyqtvMCCtfwkZsiSxIWQ)
+- [ST 101 Course Assessment](/courses/st-101/assessment)
+- [ST 102 Course Assessment](/courses/st-102/assessment)
+- [ST 103 Course Assessment](/courses/st-103/assessment)
+- [ST 104 Course Assessment](/courses/st-104/assessment)
+- [ST 105 Course Assessment](/courses/st-105/assessment)
+- [ST 106 Course Assessment](/courses/st-106/assessment)
 
 ## Required Textbooks
 
