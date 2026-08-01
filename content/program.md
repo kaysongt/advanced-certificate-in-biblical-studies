@@ -106,4 +106,4 @@ Pass mark: **80%**
 
 ## Enroll Today
 
-KingsWord Training Institute · +1 773 277 8701 · kti@kingsword.org · institute.kingsword.org
+KingsWord Training Institute · +1 773 277 8701 · kti@kingsword.org · www.thekti.org

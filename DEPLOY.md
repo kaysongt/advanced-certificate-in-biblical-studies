@@ -61,10 +61,9 @@ not grant staff privileges.
 
 ## 5. Attach the domain
 
-The application currently uses `https://institute.kingsword.org` as its canonical fallback.
-Add the final domain under **Vercel → Project → Settings → Domains**, then add the DNS record
-shown by Vercel. If the final domain is `thekti.org`, set
-`NEXT_PUBLIC_SITE_URL=https://thekti.org` instead.
+The application uses `https://www.thekti.org` as its canonical fallback. Keep both
+`thekti.org` and `www.thekti.org` attached in Vercel, with the apex domain redirecting to
+`www.thekti.org`. Set `NEXT_PUBLIC_SITE_URL=https://www.thekti.org` in production and preview.
 
 ## 6. Test the real enrollment path
 
