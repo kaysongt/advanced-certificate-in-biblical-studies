@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 
 import { getModuleStatuses } from "@/lib/content";
 import { PRICING, getCurriculum } from "@/lib/curriculum";
@@ -181,17 +182,29 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="section home-section founder-section">
+      <section className="section home-section founder-section" id="founder">
         <div className="wide founder-grid">
-          <div className="founder-quote-card">
-            <span className="founder-quote-mark" aria-hidden="true">&ldquo;</span>
-            <p>{program.motto}</p>
-            <span>KingsWord Training Institute</span>
+          <div className="founder-portrait">
+            <Image
+              src="/assets/dr-kay-ijisesan.jpg"
+              alt="Dr. Kay Ijisesan, Founder and President of KingsWord Training Institute"
+              fill
+              sizes="(max-width: 700px) calc(100vw - 36px), (max-width: 1040px) 520px, 38vw"
+            />
+            <div className="founder-portrait-label">
+              <span>Founder &amp; President</span>
+              <strong>Dr. Kay Ijisesan</strong>
+            </div>
           </div>
           <div className="founder-copy">
             <div className="eyebrow">{program.founder.role}</div>
             <h2>{program.founder.name}</h2>
             <p>{program.founder.bio}</p>
+            <blockquote className="founder-quote">
+              <span aria-hidden="true">&ldquo;</span>
+              <p>{program.motto}</p>
+              <cite>KingsWord Training Institute</cite>
+            </blockquote>
           </div>
         </div>
       </section>
