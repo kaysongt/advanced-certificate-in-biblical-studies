@@ -1,7 +1,15 @@
 import fs from "node:fs";
 import path from "node:path";
 
-import { CONTENT_DIR, TODO, getCurriculum, lessonId, type Course, type Module } from "./curriculum";
+import {
+  CONTENT_DIR,
+  TODO,
+  getCurriculum,
+  isModuleReleased,
+  lessonId,
+  type Course,
+  type Module,
+} from "./curriculum";
 import {
   Collector,
   extractQuizQuestions,
@@ -239,10 +247,12 @@ export type CourseStatus = {
   written: number;
   todos: number;
   complete: boolean;
+  released: boolean;
+  available: boolean;
 };
 
-/** How much of each course is actually written. Drives "available now" badges. */
-export function getCourseStatuses(): CourseStatus[] {
+/** Content readiness and scheduled release are tracked independently. */
+export function getCourseStatuses(now = new Date()): CourseStatus[] {
   const out: CourseStatus[] = [];
   for (const module of getCurriculum().modules) {
     for (const course of module.courses) {
@@ -251,13 +261,17 @@ export function getCourseStatuses(): CourseStatus[] {
         countTodos(module.slug, course.slug, "course.md") +
         countTodos(module.slug, course.slug, "assessment.md");
       const todos = rows.reduce((sum, r) => sum + r.todos, 0) + extra;
+      const complete = todos === 0;
+      const released = isModuleReleased(module, now);
       out.push({
         course,
         module,
         lessons: rows.length,
         written: rows.filter((r) => r.written).length,
         todos,
-        complete: todos === 0,
+        complete,
+        released,
+        available: complete && released,
       });
     }
   }
@@ -270,28 +284,34 @@ export type ModuleStatus = {
   coursesComplete: number;
   todos: number;
   complete: boolean;
+  released: boolean;
+  available: boolean;
 };
 
-export function getModuleStatuses(): ModuleStatus[] {
-  const statuses = getCourseStatuses();
+export function getModuleStatuses(now = new Date()): ModuleStatus[] {
+  const statuses = getCourseStatuses(now);
   return getCurriculum().modules.map((module) => {
     const mine = statuses.filter((s) => s.module.slug === module.slug);
     const todos =
       mine.reduce((sum, s) => sum + s.todos, 0) + countTodos(module.slug, "module.md");
+    const complete = todos === 0;
+    const released = isModuleReleased(module, now);
     return {
       module,
       courses: mine.length,
       coursesComplete: mine.filter((s) => s.complete).length,
       todos,
-      complete: todos === 0,
+      complete,
+      released,
+      available: complete && released,
     };
   });
 }
 
 /** Modules a student can actually study today — used to gate what we sell. */
-export function getAvailableModules(): Module[] {
-  return getModuleStatuses()
-    .filter((s) => s.complete)
+export function getAvailableModules(now = new Date()): Module[] {
+  return getModuleStatuses(now)
+    .filter((s) => s.available)
     .map((s) => s.module);
 }
 

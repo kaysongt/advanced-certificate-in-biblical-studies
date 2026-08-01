@@ -2,13 +2,16 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 import { getModuleStatuses } from "@/lib/content";
-import { PRICING, getCurriculum } from "@/lib/curriculum";
+import { PRICING, formatModuleReleaseDate, getCurriculum } from "@/lib/curriculum";
 
 export const metadata: Metadata = { title: "Tuition" };
+export const dynamic = "force-dynamic";
 
 export default function PricingPage() {
   const { program, grading } = getCurriculum();
-  const available = getModuleStatuses().filter((s) => s.complete).length;
+  const statuses = getModuleStatuses();
+  const available = statuses.filter((s) => s.available).length;
+  const firstReleaseDate = formatModuleReleaseDate(statuses[0].module);
 
   return (
     <main className="shell">
@@ -25,7 +28,9 @@ export default function PricingPage() {
             {PRICING.certificate.label} <span>/ certificate</span>
           </div>
           <p className="blurb">
-            Any one of the five programs. {available} available to start today.
+            {available > 0
+              ? `Any one of the five programs. ${available} available to start today.`
+              : `Single-certificate enrollment opens ${firstReleaseDate}.`}
           </p>
           <ul>
             <li>All courses within that certificate</li>
@@ -33,8 +38,11 @@ export default function PricingPage() {
             <li>Customized textbooks</li>
             <li>Modular certificate on completion</li>
           </ul>
-          <Link href="/enroll?plan=certificate" className="btn primary lg">
-            Choose a certificate
+          <Link
+            href={available > 0 ? "/enroll?plan=certificate" : "/curriculum"}
+            className="btn primary lg"
+          >
+            {available > 0 ? "Choose a certificate" : "View release schedule"}
           </Link>
         </div>
 

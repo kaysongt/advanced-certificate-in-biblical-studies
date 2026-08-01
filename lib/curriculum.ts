@@ -30,11 +30,12 @@ export type Module = {
   slug: string;
   title: string;
   short_title: string;
+  /** Calendar date when enrolled students may begin, in YYYY-MM-DD format. */
+  release_date: string;
   series: string;
   hours: number;
   overview: string;
   catalog_blurb: string;
-  availability?: string;
   hours_per_course: number;
   /** Topics per course. The hierarchy is Module → Course → Topic. */
   lessons_per_course: number;
@@ -94,6 +95,42 @@ export function getCurriculum(): Curriculum {
 
 export function getModule(slug: string): Module | undefined {
   return getCurriculum().modules.find((m) => m.slug === slug);
+}
+
+export const PROGRAM_TIME_ZONE = "America/Chicago";
+
+const releaseDateDisplay = new Intl.DateTimeFormat("en-US", {
+  month: "long",
+  day: "numeric",
+  year: "numeric",
+  timeZone: "UTC",
+});
+const programDateDisplay = new Intl.DateTimeFormat("en-US", {
+  year: "numeric",
+  month: "2-digit",
+  day: "2-digit",
+  timeZone: PROGRAM_TIME_ZONE,
+});
+
+/** Human-readable release date from the date-only curriculum value. */
+export function formatModuleReleaseDate(module: Module): string {
+  return releaseDateDisplay.format(new Date(`${module.release_date}T12:00:00.000Z`));
+}
+
+/** Release dates become effective at midnight in the Institute's Chicago time zone. */
+export function isModuleReleased(module: Module, now = new Date()): boolean {
+  const parts = Object.fromEntries(
+    programDateDisplay
+      .formatToParts(now)
+      .filter((part) => part.type !== "literal")
+      .map((part) => [part.type, part.value])
+  );
+  const currentProgramDate = `${parts.year}-${parts.month}-${parts.day}`;
+  return currentProgramDate >= module.release_date;
+}
+
+export function moduleReleaseLabel(module: Module): string {
+  return `Opens ${formatModuleReleaseDate(module)}`;
 }
 
 /** Find a course by its url slug (e.g. "st-101"), with its parent module. */

@@ -40,6 +40,8 @@ export default function EnrollForm({
 
   const err = state.fieldErrors ?? {};
   const val = state.values ?? {};
+  const certificateAvailable = modules.some((module) => module.available);
+  const firstReleaseDate = modules[0]?.availability;
 
   return (
     <form action={action}>
@@ -53,8 +55,11 @@ export default function EnrollForm({
           value={plan}
           onChange={(e) => setPlan(e.target.value as "certificate" | "advanced")}
         >
-          <option value="advanced">Advanced Certificate — all five programs ($1,000)</option>
-          <option value="certificate">A single certificate ($250)</option>
+          <option value="advanced">Advanced Certificate - all five programs ($1,000)</option>
+          <option value="certificate" disabled={!certificateAvailable}>
+            A single certificate ($250)
+            {certificateAvailable ? "" : ` - opens ${firstReleaseDate ?? "later"}`}
+          </option>
         </select>
       </div>
 
@@ -64,10 +69,10 @@ export default function EnrollForm({
           <select id="product" name="product" defaultValue={val.product ?? ""}>
             <option value="">Select a certificate…</option>
             {modules.map((m) => (
-                <option key={m.slug} value={m.slug} disabled={!m.available}>
+              <option key={m.slug} value={m.slug} disabled={!m.available}>
                 {m.title}
-                {m.available ? "" : ` (${m.availability ?? "Coming soon"})`}
-                </option>
+                {m.available ? "" : ` (Opens ${m.availability ?? "later"})`}
+              </option>
             ))}
           </select>
           {err.product ? <div className="msg">{err.product}</div> : null}

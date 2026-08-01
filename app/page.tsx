@@ -2,13 +2,20 @@ import Link from "next/link";
 import Image from "next/image";
 
 import { getModuleStatuses } from "@/lib/content";
-import { PRICING, getCurriculum } from "@/lib/curriculum";
+import {
+  PRICING,
+  formatModuleReleaseDate,
+  getCurriculum,
+  moduleReleaseLabel,
+} from "@/lib/curriculum";
+
+export const dynamic = "force-dynamic";
 
 const STUDY_STEPS = [
   {
     number: "01",
     title: "Choose your path",
-    copy: "Begin with the certificate ready for study today, or reserve your place across the full program.",
+    copy: "Reserve your place, choose your certificate path, and begin when its scheduled study window opens.",
   },
   {
     number: "02",
@@ -25,7 +32,9 @@ const STUDY_STEPS = [
 export default function HomePage() {
   const { program, grading } = getCurriculum();
   const moduleStatuses = getModuleStatuses();
-  const availableCount = moduleStatuses.filter((status) => status.complete).length;
+  const availableCount = moduleStatuses.filter((status) => status.available).length;
+  const firstModule = moduleStatuses[0];
+  const firstReleaseDate = formatModuleReleaseDate(firstModule.module);
 
   return (
     <main className="marketing-home">
@@ -82,14 +91,16 @@ export default function HomePage() {
                 <strong>Module I</strong>
                 <span>Systematic Theology</span>
               </div>
-              <span className="hero-open">Available now</span>
+              <span className="hero-open">
+                {firstModule.available ? "Available now" : moduleReleaseLabel(firstModule.module)}
+              </span>
             </div>
             <ol className="hero-route">
-              {moduleStatuses.slice(0, 3).map(({ module, complete }, index) => (
-                <li key={module.slug} className={complete ? "ready" : "upcoming"}>
+              {moduleStatuses.slice(0, 3).map(({ module, available }, index) => (
+                <li key={module.slug} className={available ? "ready" : "upcoming"}>
                   <span>{String(index + 1).padStart(2, "0")}</span>
                   <strong>{module.short_title}</strong>
-                  <em>{complete ? "Open" : module.availability ?? "Coming soon"}</em>
+                  <em>{available ? "Open" : moduleReleaseLabel(module)}</em>
                 </li>
               ))}
             </ol>
@@ -130,12 +141,12 @@ export default function HomePage() {
             </p>
           </div>
           <div className="module-path-grid">
-            {moduleStatuses.map(({ module, complete }) => (
+            {moduleStatuses.map(({ module, available }) => (
               <Link className="path-card" href={`/curriculum/${module.slug}`} key={module.slug}>
                 <div className="path-card-top">
                   <span>0{module.number}</span>
-                  <span className={complete ? "path-status is-ready" : "path-status"}>
-                    {complete ? "Available" : module.availability ?? "Coming soon"}
+                  <span className={available ? "path-status is-ready" : "path-status"}>
+                    {available ? "Available" : moduleReleaseLabel(module)}
                   </span>
                 </div>
                 <h3>{module.short_title}</h3>
@@ -223,8 +234,9 @@ export default function HomePage() {
                 {PRICING.certificate.label} <span>/ certificate</span>
               </div>
               <p className="blurb">
-                Any one of the five certificate programs. {availableCount} available to begin
-                today.
+                {availableCount > 0
+                  ? `Any one of the five certificate programs. ${availableCount} available to begin today.`
+                  : `Single-certificate enrollment opens ${firstReleaseDate}.`}
               </p>
               <ul>
                 <li>All courses within that certificate</li>
@@ -232,8 +244,11 @@ export default function HomePage() {
                 <li>Customized textbooks</li>
                 <li>Modular certificate on completion</li>
               </ul>
-              <Link href="/enroll?plan=certificate" className="btn quiet lg">
-                Choose a certificate
+              <Link
+                href={availableCount > 0 ? "/enroll?plan=certificate" : "/curriculum"}
+                className="btn quiet lg"
+              >
+                {availableCount > 0 ? "Choose a certificate" : "View release schedule"}
               </Link>
             </div>
 

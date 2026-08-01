@@ -3,13 +3,11 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { getCourseStatuses, getModuleDoc } from "@/lib/content";
-import { getCurriculum, getModule } from "@/lib/curriculum";
+import { getModule, moduleReleaseLabel } from "@/lib/curriculum";
 
 type Props = { params: Promise<{ slug: string }> };
 
-export function generateStaticParams() {
-  return getCurriculum().modules.map((m) => ({ slug: m.slug }));
-}
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
@@ -25,6 +23,7 @@ export default async function ModulePage({ params }: Props) {
 
   const doc = getModuleDoc(module);
   const statuses = getCourseStatuses().filter((s) => s.module.slug === module.slug);
+  const moduleAvailable = statuses.length > 0 && statuses.every((status) => status.available);
   const lessons = module.courses.length * module.lessons_per_course;
   const videoBriefings = [
     {
@@ -66,23 +65,23 @@ export default async function ModulePage({ params }: Props) {
 
       <h2>Courses</h2>
       <div className="stack">
-        {statuses.map(({ course, complete }) => {
+        {statuses.map(({ course, available }) => {
           const contents = (
             <>
-            <span className="code">{course.code}</span>
-            <span className="body">
-              <span className="t">{course.title}</span>
-              <span className="s">{course.subtitle}</span>
-            </span>
+              <span className="code">{course.code}</span>
+              <span className="body">
+                <span className="t">{course.title}</span>
+                <span className="s">{course.subtitle}</span>
+              </span>
               <span className="meta">
-                <span className={`avail ${complete ? "now" : "soon"}`}>
-                {complete ? "Ready" : module.availability ?? "Coming soon"}
+                <span className={`avail ${available ? "now" : "soon"}`}>
+                  {available ? "Ready" : moduleReleaseLabel(module)}
                 </span>
               </span>
             </>
           );
 
-          return complete ? (
+          return available ? (
             <Link className="row" href={`/courses/${course.slug}`} key={course.slug}>
               {contents}
             </Link>
@@ -151,8 +150,11 @@ export default async function ModulePage({ params }: Props) {
       <div className="prose" dangerouslySetInnerHTML={{ __html: doc.html }} />
 
       <div style={{ marginTop: 36 }}>
-        <Link href="/enroll?plan=certificate" className="btn primary lg">
-          Enroll in this certificate
+        <Link
+          href={moduleAvailable ? "/enroll?plan=certificate" : "/enroll?plan=advanced"}
+          className="btn primary lg"
+        >
+          {moduleAvailable ? "Enroll in this certificate" : "Reserve the full program"}
         </Link>
       </div>
     </main>

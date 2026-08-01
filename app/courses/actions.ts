@@ -5,7 +5,12 @@ import { z } from "zod";
 
 import { hasActiveAccess } from "@/lib/access";
 import { currentStudent } from "@/lib/auth";
-import { findCourse, getCurriculum, lessonId as makeLessonId } from "@/lib/curriculum";
+import {
+  findCourse,
+  getCurriculum,
+  isModuleReleased,
+  lessonId as makeLessonId,
+} from "@/lib/curriculum";
 import { getLessonQuizQuestions } from "@/lib/content";
 import { db } from "@/lib/db";
 import { StorageUnavailableError } from "@/lib/db/types";
@@ -28,6 +33,7 @@ export async function setTopicComplete(
   ) {
     return false;
   }
+  if (!isModuleReleased(found.module)) return false;
 
   const enrollments = await db.getEnrollmentsForStudent(student.id);
   if (!hasActiveAccess(enrollments, found.module.slug)) return false;
@@ -81,6 +87,9 @@ export async function recordTopicQuizAttempt(
   const topicNumber = Number(parsed.data.lessonId.slice(parsed.data.courseSlug.length + 1));
   if (!found || makeLessonId(parsed.data.courseSlug, topicNumber) !== parsed.data.lessonId) {
     return { passed: false, pct: 0, correct: 0, total: 0, error: "Topic not found." };
+  }
+  if (!isModuleReleased(found.module)) {
+    return { passed: false, pct: 0, correct: 0, total: 0, error: "This module has not opened yet." };
   }
 
   const enrollments = await db.getEnrollmentsForStudent(student.id);

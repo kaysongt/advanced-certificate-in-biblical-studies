@@ -7,7 +7,7 @@ import { hasActiveAccess } from "@/lib/access";
 import { currentStudent } from "@/lib/auth";
 import { getModuleStatuses } from "@/lib/content";
 import { db } from "@/lib/db";
-import { getCurriculum } from "@/lib/curriculum";
+import { getCurriculum, moduleReleaseLabel } from "@/lib/curriculum";
 
 export const metadata: Metadata = { title: "My studies" };
 
@@ -84,7 +84,7 @@ export default async function DashboardPage() {
 
       <h2>Your program</h2>
       <div className="cards five">
-        {statuses.map(({ module, complete }) => {
+        {statuses.map(({ module, available }) => {
           const unlocked = hasActiveAccess(enrollments, module.slug);
           return (
             <div className="card" key={module.slug}>
@@ -92,23 +92,23 @@ export default async function DashboardPage() {
                 <span className="eyebrow">
                   Module {module.numeral} &middot; {module.hours} hrs
                 </span>
-                <span className={`avail ${complete && unlocked ? "now" : "soon"}`}>
+                <span className={`avail ${available && unlocked ? "now" : "soon"}`}>
                   {!unlocked
                     ? "Not enrolled"
-                    : complete
+                    : available
                       ? "Ready"
-                      : module.availability ?? "Coming soon"}
+                      : moduleReleaseLabel(module)}
                 </span>
               </div>
               <span className="t">{module.short_title}</span>
               <p>{module.catalog_blurb}</p>
               <span className="foot">
-                {unlocked && complete ? (
+                {unlocked && available ? (
                   <Link href={`/curriculum/${module.slug}`}>Start studying →</Link>
                 ) : !unlocked ? (
                   <Link href="/enroll">Add this certificate →</Link>
                 ) : (
-                  "Releasing soon"
+                  moduleReleaseLabel(module)
                 )}
               </span>
             </div>

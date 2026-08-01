@@ -29,7 +29,7 @@ export default async function TopicPage({ params }: Props) {
   const { module, course } = found;
 
   const available = getCourseStatuses().some(
-    (status) => status.course.slug === course.slug && status.complete
+    (status) => status.course.slug === course.slug && status.available
   );
   if (!available) redirect(`/curriculum/${module.slug}`);
 

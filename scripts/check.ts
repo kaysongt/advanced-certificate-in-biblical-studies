@@ -20,8 +20,14 @@ import {
   getLessonQuizQuestions,
   getLessonRows,
   getModuleDoc,
+  getModuleStatuses,
 } from "../lib/content";
-import { getCurriculum, findCourse } from "../lib/curriculum";
+import {
+  findCourse,
+  formatModuleReleaseDate,
+  getCurriculum,
+  isModuleReleased,
+} from "../lib/curriculum";
 import { isPrimaryRouteActive, PRIMARY_NAV_ITEMS } from "../lib/navigation";
 
 let passed = 0;
@@ -44,6 +50,26 @@ async function main() {
   check("all assessments use the confirmed 80% pass mark", () =>
     assert.equal(curriculum.grading.pass_mark, 80)
   );
+  check("module release schedule matches the confirmed launch dates", () =>
+    assert.deepEqual(
+      curriculum.modules.map((item) => [
+        item.short_title,
+        item.release_date,
+        formatModuleReleaseDate(item),
+      ]),
+      [
+        ["Systematic Theology", "2026-09-01", "September 1, 2026"],
+        ["Biblical Foundations", "2026-11-01", "November 1, 2026"],
+        ["Old Testament Survey", "2027-01-01", "January 1, 2027"],
+        ["New Testament Survey", "2027-03-01", "March 1, 2027"],
+        ["Spiritual Formation", "2027-05-01", "May 1, 2027"],
+      ]
+    )
+  );
+  check("Module I opens at midnight Chicago time on September 1", () => {
+    assert.equal(isModuleReleased(curriculum.modules[0], new Date("2026-09-01T04:59:59Z")), false);
+    assert.equal(isModuleReleased(curriculum.modules[0], new Date("2026-09-01T05:00:00Z")), true);
+  });
 
   console.log("\nnavigation");
   check("primary tabs point to distinct routes", () =>
@@ -131,6 +157,14 @@ async function main() {
   check("a module II course reports incomplete", () =>
     assert.equal(statuses.find((s) => s.course.slug === "bf-201")!.complete, false)
   );
+  check("completed Module I content stays locked before its release date", () => {
+    const prelaunch = getCourseStatuses(new Date("2026-08-31T12:00:00Z"));
+    assert.equal(prelaunch.find((s) => s.course.slug === "st-101")!.available, false);
+  });
+  check("completed Module I content opens on its release date", () => {
+    const launch = getModuleStatuses(new Date("2026-09-01T12:00:00Z"));
+    assert.equal(launch.find((s) => s.module.slug === module.slug)!.available, true);
+  });
   const assessmentBank = getAssessmentBank(module, course);
   check("st-101 has a deep randomized assessment bank", () =>
     assert.ok(assessmentBank.length >= 100, `${assessmentBank.length} questions`)

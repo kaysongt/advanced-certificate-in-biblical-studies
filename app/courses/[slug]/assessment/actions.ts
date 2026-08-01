@@ -6,7 +6,7 @@ import { z } from "zod";
 import { hasActiveAccess } from "@/lib/access";
 import { currentStudent } from "@/lib/auth";
 import { getAssessmentBank, getLessonRows } from "@/lib/content";
-import { findCourse, getCurriculum } from "@/lib/curriculum";
+import { findCourse, getCurriculum, isModuleReleased } from "@/lib/curriculum";
 import { db } from "@/lib/db";
 
 const answerSchema = z.object({ questionId: z.string().min(1).max(120), answer: z.string().max(2000) });
@@ -38,6 +38,9 @@ export async function submitAssessmentSectionA(
   if (!student) return { correct: 0, total: 0, pct: 0, sectionAPoints: 0, error: "Sign in again." };
   const found = findCourse(parsed.data.courseSlug);
   if (!found) return { correct: 0, total: 0, pct: 0, sectionAPoints: 0, error: "Course not found." };
+  if (!isModuleReleased(found.module)) {
+    return { correct: 0, total: 0, pct: 0, sectionAPoints: 0, error: "This module has not opened yet." };
+  }
 
   const enrollments = await db.getEnrollmentsForStudent(student.id);
   if (!hasActiveAccess(enrollments, found.module.slug)) {

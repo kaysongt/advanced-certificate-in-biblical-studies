@@ -2,9 +2,10 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 import { getModuleStatuses } from "@/lib/content";
-import { getCurriculum } from "@/lib/curriculum";
+import { getCurriculum, moduleReleaseLabel } from "@/lib/curriculum";
 
 export const metadata: Metadata = { title: "Curriculum" };
+export const dynamic = "force-dynamic";
 
 export default function CurriculumPage() {
   const { program } = getCurriculum();
@@ -22,16 +23,14 @@ export default function CurriculumPage() {
       </div>
 
       <div className="cards">
-        {statuses.map(({ module, complete, coursesComplete, courses }) => (
+        {statuses.map(({ module, available }) => (
           <Link className="card" href={`/curriculum/${module.slug}`} key={module.slug}>
             <div className="cardtop">
               <span className="eyebrow">
                 Module {module.numeral} &middot; {module.hours} hrs
               </span>
-              <span className={`avail ${complete ? "now" : "soon"}`}>
-                {complete
-                  ? "Available now"
-                  : module.availability ?? `${coursesComplete}/${courses} written`}
+              <span className={`avail ${available ? "now" : "soon"}`}>
+                {available ? "Available now" : moduleReleaseLabel(module)}
               </span>
             </div>
             <span className="t">{module.short_title}</span>

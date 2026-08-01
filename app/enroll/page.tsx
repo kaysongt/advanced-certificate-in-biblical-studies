@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 
 import { currentStudent } from "@/lib/auth";
 import { getModuleStatuses } from "@/lib/content";
-import { getCurriculum } from "@/lib/curriculum";
+import { formatModuleReleaseDate, getCurriculum } from "@/lib/curriculum";
 
 import EnrollForm from "./EnrollForm";
 
@@ -17,16 +17,17 @@ export default async function EnrollPage({
   if (await currentStudent()) redirect("/dashboard");
 
   const { plan } = await searchParams;
-  const initialPlan = plan === "certificate" ? "certificate" : "advanced";
 
   const { program } = getCurriculum();
   const modules = getModuleStatuses().map((s) => ({
     slug: s.module.slug,
     title: s.module.title,
-    available: s.complete,
-    availability: s.module.availability,
+    available: s.available,
+    availability: formatModuleReleaseDate(s.module),
   }));
   const availableCount = modules.filter((m) => m.available).length;
+  const firstReleaseDate = modules[0].availability;
+  const initialPlan = plan === "certificate" && availableCount > 0 ? "certificate" : "advanced";
 
   return (
     <main className="shell">
@@ -47,8 +48,9 @@ export default async function EnrollPage({
 
           {availableCount < program.total_certificates ? (
             <div className="notice">
-              {availableCount} of {program.total_certificates} certificates are ready to study
-              today. The rest unlock according to the published release schedule.
+              {availableCount > 0
+                ? `${availableCount} of ${program.total_certificates} certificates are ready to study today. The rest unlock according to the published release schedule.`
+                : `The first certificate opens ${firstReleaseDate}. Full-program enrollment is open now, and each certificate unlocks on its published date.`}
             </div>
           ) : null}
 
