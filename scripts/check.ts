@@ -32,6 +32,7 @@ import {
 } from "../lib/curriculum";
 import { isPrimaryRouteActive, PRIMARY_NAV_ITEMS } from "../lib/navigation";
 import { getStripeCatalogItem } from "../lib/payments/catalog";
+import { buildCheckoutSessionParams } from "../lib/payments/checkout-session";
 import {
   blocksLatePaymentActivation,
   refundPaymentStatus,
@@ -297,6 +298,19 @@ async function main() {
       })
     )
   );
+  const checkoutParams = buildCheckoutSessionParams({
+    enrollmentId: "enrollment-check",
+    paymentAttemptId: "attempt-check",
+    catalogKey: "advanced",
+    customerEmail: "checkout-check@example.com",
+    priceId: "price_check",
+    appBaseUrl: "https://www.thekti.org",
+  });
+  check("Checkout remains compatible with Stripe Managed Payments", () => {
+    assert.equal("custom_text" in checkoutParams, false);
+    assert.equal(checkoutParams.customer_email, "checkout-check@example.com");
+    assert.equal(checkoutParams.success_url, "https://www.thekti.org/dashboard?payment=success");
+  });
   check("refunds and disputes block stale success events", () => {
     assert.equal(blocksLatePaymentActivation(StripePaymentStatus.REFUNDED), true);
     assert.equal(blocksLatePaymentActivation(StripePaymentStatus.DISPUTED), true);

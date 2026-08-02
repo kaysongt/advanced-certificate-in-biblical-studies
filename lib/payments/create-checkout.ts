@@ -3,6 +3,7 @@ import "server-only";
 import Stripe from "stripe";
 
 import { getStripeCatalogItem } from "@/lib/payments/catalog";
+import { buildCheckoutSessionParams } from "@/lib/payments/checkout-session";
 import {
   getStripeCheckoutConfiguration,
   getStripeClient,
@@ -83,29 +84,15 @@ export async function createCheckoutForEnrollment(input: {
       }
     }
 
-    const metadata = {
-      enrollmentId: enrollment.id,
-      paymentAttemptId: attempt.id,
-      catalogKey: catalog.key,
-    };
     const session = await stripe.checkout.sessions.create(
-      {
-        mode: "payment",
-        client_reference_id: enrollment.id,
-        customer_email: enrollment.student.email,
-        line_items: [{ price: priceId, quantity: 1 }],
-        metadata,
-        payment_intent_data: { metadata },
-        success_url: `${config.appBaseUrl}/dashboard?payment=success`,
-        cancel_url: `${config.appBaseUrl}/dashboard?payment=cancelled`,
-        expires_at: Math.floor(Date.now() / 1000) + 60 * 60,
-        submit_type: "pay",
-        custom_text: {
-          submit: {
-            message: `Payment reserves access to ${catalog.title}. Access is activated after secure payment confirmation.`,
-          },
-        },
-      },
+      buildCheckoutSessionParams({
+        enrollmentId: enrollment.id,
+        paymentAttemptId: attempt.id,
+        catalogKey: catalog.key,
+        customerEmail: enrollment.student.email,
+        priceId,
+        appBaseUrl: config.appBaseUrl,
+      }),
       { idempotencyKey: `kti-checkout:${attempt.id}` }
     );
     if (!session.url) throw new Error("Stripe did not return a hosted Checkout URL.");
