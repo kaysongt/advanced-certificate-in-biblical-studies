@@ -4,7 +4,7 @@ import { notFound, redirect } from "next/navigation";
 import { randomInt } from "node:crypto";
 
 import AssessmentQuiz from "@/components/AssessmentQuiz";
-import { hasActiveAccess } from "@/lib/access";
+import { entitlementRedirectPath, hasActiveAccess } from "@/lib/access";
 import { currentStudent } from "@/lib/auth";
 import {
   getAssessmentBank,
@@ -39,7 +39,7 @@ export default async function AssessmentPage({ params }: Props) {
   if (!student) redirect(`/login?next=/courses/${slug}/assessment`);
 
   const enrollments = await db.getEnrollmentsForStudent(student.id);
-  if (!hasActiveAccess(enrollments, module.slug)) redirect("/enroll");
+  if (!hasActiveAccess(enrollments, module.slug)) redirect(entitlementRedirectPath(enrollments));
 
   const rows = getLessonRows(module, course);
   const progress = await db.getProgress(student.id);

@@ -3,7 +3,7 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 
 import TopicReader from "@/components/TopicReader";
-import { hasActiveAccess } from "@/lib/access";
+import { entitlementRedirectPath, hasActiveAccess } from "@/lib/access";
 import { currentStudent } from "@/lib/auth";
 import { getCourseStatuses, getLesson, getLessonRows } from "@/lib/content";
 import { findCourse, getCurriculum, lessonId } from "@/lib/curriculum";
@@ -43,7 +43,7 @@ export default async function TopicPage({ params }: Props) {
 
   const enrollments = await db.getEnrollmentsForStudent(student.id);
   const entitled = hasActiveAccess(enrollments, module.slug);
-  if (!entitled) redirect("/enroll");
+  if (!entitled) redirect(entitlementRedirectPath(enrollments));
 
   const { grading } = getCurriculum();
   const lesson = getLesson(module, course, index);

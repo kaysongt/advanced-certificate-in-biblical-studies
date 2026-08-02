@@ -3,7 +3,7 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 
 import CommunityComposer from "@/components/CommunityComposer";
-import { hasActiveAccess } from "@/lib/access";
+import { entitlementRedirectPath, hasActiveAccess } from "@/lib/access";
 import { currentStudent } from "@/lib/auth";
 import { getModule } from "@/lib/curriculum";
 import { db } from "@/lib/db";
@@ -25,7 +25,7 @@ export default async function CommunityModulePage({ params }: Props) {
   if (!student) redirect(`/login?next=/community/${module.slug}`);
 
   const enrollments = await db.getEnrollmentsForStudent(student.id);
-  if (!hasActiveAccess(enrollments, module.slug)) redirect("/enroll");
+  if (!hasActiveAccess(enrollments, module.slug)) redirect(entitlementRedirectPath(enrollments));
 
   const [posts, engagement] = await Promise.all([
     db.getCommunityPosts(module.slug),

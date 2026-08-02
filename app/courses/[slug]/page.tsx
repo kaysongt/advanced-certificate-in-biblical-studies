@@ -3,7 +3,7 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 
 import { currentStudent } from "@/lib/auth";
-import { hasActiveAccess } from "@/lib/access";
+import { entitlementRedirectPath, hasActiveAccess } from "@/lib/access";
 import { getCourseAudio, getCourseDoc, getCourseStatuses, getLessonRows } from "@/lib/content";
 import { findCourse, getCurriculum } from "@/lib/curriculum";
 import { db } from "@/lib/db";
@@ -32,7 +32,7 @@ export default async function CoursePage({ params }: Props) {
 
   const enrollments = await db.getEnrollmentsForStudent(student.id);
   const entitled = hasActiveAccess(enrollments, module.slug);
-  if (!entitled) redirect("/enroll");
+  if (!entitled) redirect(entitlementRedirectPath(enrollments));
 
   const { grading } = getCurriculum();
   const rows = getLessonRows(module, course);

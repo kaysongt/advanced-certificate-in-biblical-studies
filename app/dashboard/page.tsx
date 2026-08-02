@@ -20,6 +20,10 @@ import { beginStripeCheckout } from "./actions";
 export const metadata: Metadata = { title: "My studies" };
 
 const paymentMessages: Record<string, { tone: "good" | "warn" | "bad"; text: string }> = {
+  required: {
+    tone: "warn",
+    text: "Your place is reserved, but tuition has not been paid yet. Complete payment below to unlock your study material.",
+  },
   success: {
     tone: "good",
     text: "Payment was submitted securely. Stripe is confirming it now; access updates automatically after the signed confirmation arrives.",

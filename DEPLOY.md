@@ -75,7 +75,9 @@ email, source control, command history, or logs; rotate it first.
 1. In Stripe, create two one-time USD Prices: **Single Certificate** for `$250.00` and
    **Advanced Certificate in Biblical Studies** for `$1,000.00`.
 2. Put the resulting test Price IDs in `STRIPE_PRICE_CERTIFICATE` and
-   `STRIPE_PRICE_ADVANCED` in Vercel.
+   `STRIPE_PRICE_ADVANCED` in Vercel. If those Prices already exist behind Payment Links,
+   run `STRIPE_SECRET_KEY=sk_test_... npm run stripe:prices` to print each link's Price ID
+   and which variable it belongs in.
 3. Add the rotated test secret as `STRIPE_SECRET_KEY`, set `STRIPE_MODE=test`, and set
    `APP_BASE_URL=https://www.thekti.org`.
 4. In Stripe Workbench, create a webhook destination at
@@ -103,13 +105,16 @@ Before announcing:
 
 1. Register a non-staff test student.
 2. Confirm the dashboard shows a pending enrollment and no course access.
-3. Complete Stripe test Checkout and confirm webhook activation. Repeat with a canceled Session,
+3. Sign out and sign back in. An unpaid student must land on `/dashboard?payment=required`
+   even when a `next` destination was requested, and any course, assessment, or community
+   URL must bounce back to the same payment prompt.
+4. Complete Stripe test Checkout and confirm webhook activation. Repeat with a canceled Session,
    declined card, delayed method, duplicate webhook, refund, and dispute test.
-4. Separately test bank transfer by signing in as staff, opening `/admin`, and activating a
+5. Separately test bank transfer by signing in as staff, opening `/admin`, and activating a
    pending enrollment with the verified bank reference.
-5. Confirm Module I access, topic sequencing, the 80% pass requirement, saved progress,
+6. Confirm Module I access, topic sequencing, the 80% pass requirement, saved progress,
    assessment submission, staff grading, community posting, moderation, and extra credits.
-6. Test on a phone, desktop, and a slow connection.
+7. Test on a phone, desktop, and a slow connection.
 
 ## Launch boundaries
 

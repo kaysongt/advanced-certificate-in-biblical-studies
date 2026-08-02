@@ -11,7 +11,7 @@ import { StripePaymentStatus } from "@prisma/client";
 import Stripe from "stripe";
 
 import { hashPassword, verifyPassword } from "../lib/auth-core";
-import { hasActiveAccess } from "../lib/access";
+import { entitlementRedirectPath, hasActiveAccess, mustPayBeforeStudying } from "../lib/access";
 import {
   getAssessmentBank,
   getCourseAudio,
@@ -236,6 +236,36 @@ async function main() {
       ),
       true
     )
+  );
+  check("an unpaid student is sent to payment at sign-in", () =>
+    assert.equal(mustPayBeforeStudying([{ ...enrollmentBase, status: "pending" }]), true)
+  );
+  check("a student who already paid for something is not sent to payment", () =>
+    assert.equal(
+      mustPayBeforeStudying([
+        { ...enrollmentBase, status: "active" },
+        { ...enrollmentBase, id: "second", product: module.slug, plan: "certificate", status: "pending" },
+      ]),
+      false
+    )
+  );
+  check("a suspended enrollment still counts as owing payment", () =>
+    assert.equal(
+      mustPayBeforeStudying([
+        { ...enrollmentBase, status: "active", accessSuspendedAt: new Date().toISOString() },
+        { ...enrollmentBase, id: "second", status: "pending" },
+      ]),
+      true
+    )
+  );
+  check("unpaid students reach the payment prompt, not the sign-up form", () =>
+    assert.equal(
+      entitlementRedirectPath([{ ...enrollmentBase, status: "pending" }]),
+      "/dashboard?payment=required"
+    )
+  );
+  check("students with nothing pending are still offered enrollment", () =>
+    assert.equal(entitlementRedirectPath([{ ...enrollmentBase, status: "refunded" }]), "/enroll")
   );
 
   console.log("\npayments");

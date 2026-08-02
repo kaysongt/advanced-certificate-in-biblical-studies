@@ -3,6 +3,7 @@
 import { redirect } from "next/navigation";
 import { z } from "zod";
 
+import { mustPayBeforeStudying } from "@/lib/access";
 import { endSession, startSession, verifyPassword } from "@/lib/auth";
 import { db } from "@/lib/db";
 
@@ -31,7 +32,11 @@ export async function signIn(_previous: LoginState, formData: FormData): Promise
   }
 
   await startSession(student.id);
-  redirect(next);
+
+  // Students who registered before checkout was live owe tuition. Send them
+  // straight to payment instead of wherever they were heading.
+  const enrollments = await db.getEnrollmentsForStudent(student.id);
+  redirect(mustPayBeforeStudying(enrollments) ? "/dashboard?payment=required" : next);
 }
 
 export async function signOut(): Promise<void> {
