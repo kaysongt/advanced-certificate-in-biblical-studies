@@ -44,6 +44,9 @@ export default function LoginForm({ next }: { next: string }) {
       <p className="formfoot">
         Not enrolled yet? <Link href="/enroll">Enroll in the program</Link>
       </p>
+      <p className="formfoot formfoot-secondary">
+        Password help: <a href="mailto:kti@kingsword.org?subject=KTI%20password%20help">contact the KTI team</a>
+      </p>
     </form>
   );
 }

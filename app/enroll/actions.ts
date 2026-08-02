@@ -22,6 +22,9 @@ const registrationSchema = z.object({
   password: z.string().min(10, "Use at least 10 characters.").max(200),
   plan: z.enum(["certificate", "advanced"]),
   product: z.string().trim().max(80),
+  privacyAccepted: z
+    .string()
+    .refine((value) => value === "yes", "Please confirm that you have read the privacy notice."),
 });
 
 export async function registerStudent(
@@ -35,6 +38,8 @@ export async function registerStudent(
     password: String(formData.get("password") ?? ""),
     plan: String(formData.get("plan") ?? "advanced"),
     product: String(formData.get("product") ?? ""),
+    privacyAccepted: String(formData.get("privacyAccepted") ?? ""),
+    website: String(formData.get("website") ?? ""),
   };
   const values = {
     fullName: raw.fullName.trim(),
@@ -42,7 +47,11 @@ export async function registerStudent(
     country: raw.country.trim(),
     plan: raw.plan,
     product: raw.product.trim(),
+    privacyAccepted: raw.privacyAccepted,
   };
+  if (raw.website.trim()) {
+    return { error: "We could not create your enrollment. Please try again." };
+  }
   const parsed = registrationSchema.safeParse(raw);
   const fieldErrors: Record<string, string> = {};
   if (!parsed.success) {

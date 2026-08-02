@@ -1,4 +1,5 @@
 import { getCurriculum } from "@/lib/curriculum";
+import Link from "next/link";
 
 export default function SiteFooter() {
   const { program } = getCurriculum();
@@ -11,6 +12,7 @@ export default function SiteFooter() {
         <span className="right">
           <a href={`tel:${phone.replace(/\s/g, "")}`}>{phone}</a>
           &nbsp; <a href={`mailto:${email}`}>{email}</a>
+          &nbsp; <Link href="/privacy">Privacy</Link>
           &nbsp; <a href={`https://${website}`}>{website}</a>
         </span>
       </div>

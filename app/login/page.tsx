@@ -5,7 +5,10 @@ import { currentStudent } from "@/lib/auth";
 
 import LoginForm from "./LoginForm";
 
-export const metadata: Metadata = { title: "Sign in" };
+export const metadata: Metadata = {
+  title: "Sign in",
+  robots: { index: false, follow: false },
+};
 
 export default async function LoginPage({
   searchParams,

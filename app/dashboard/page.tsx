@@ -17,7 +17,10 @@ import {
 
 import { beginStripeCheckout } from "./actions";
 
-export const metadata: Metadata = { title: "My studies" };
+export const metadata: Metadata = {
+  title: "My studies",
+  robots: { index: false, follow: false },
+};
 
 const paymentMessages: Record<string, { tone: "good" | "warn" | "bad"; text: string }> = {
   required: {

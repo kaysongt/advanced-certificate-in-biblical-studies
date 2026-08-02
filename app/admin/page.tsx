@@ -11,7 +11,10 @@ import {
 
 import { activateEnrollment, gradeAssessment, moderateCommunityPost } from "./actions";
 
-export const metadata: Metadata = { title: "Staff operations" };
+export const metadata: Metadata = {
+  title: "Staff operations",
+  robots: { index: false, follow: false },
+};
 
 const registrationDate = new Intl.DateTimeFormat("en-US", {
   month: "short",

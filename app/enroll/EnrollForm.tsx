@@ -66,7 +66,7 @@ export default function EnrollForm({
       {plan === "certificate" ? (
         <div className={`field${err.product ? " err" : ""}`}>
           <label htmlFor="product">Which certificate?</label>
-          <select id="product" name="product" defaultValue={val.product ?? ""}>
+          <select id="product" name="product" defaultValue={val.product ?? ""} required>
             <option value="">Select a certificate…</option>
             {modules.map((m) => (
               <option key={m.slug} value={m.slug} disabled={!m.available}>
@@ -81,7 +81,15 @@ export default function EnrollForm({
 
       <div className={`field${err.fullName ? " err" : ""}`}>
         <label htmlFor="fullName">Full name</label>
-        <input id="fullName" name="fullName" defaultValue={val.fullName ?? ""} autoComplete="name" />
+        <input
+          id="fullName"
+          name="fullName"
+          defaultValue={val.fullName ?? ""}
+          autoComplete="name"
+          minLength={2}
+          maxLength={100}
+          required
+        />
         {err.fullName ? <div className="msg">{err.fullName}</div> : null}
       </div>
 
@@ -93,13 +101,15 @@ export default function EnrollForm({
           type="email"
           defaultValue={val.email ?? ""}
           autoComplete="email"
+          maxLength={254}
+          required
         />
         {err.email ? <div className="msg">{err.email}</div> : null}
       </div>
 
       <div className={`field${err.country ? " err" : ""}`}>
         <label htmlFor="country">Country</label>
-        <select id="country" name="country" defaultValue={val.country ?? ""}>
+        <select id="country" name="country" defaultValue={val.country ?? ""} required>
           <option value="">Select your country…</option>
           {COUNTRIES.map((c) => (
             <option key={c} value={c}>
@@ -112,9 +122,49 @@ export default function EnrollForm({
 
       <div className={`field${err.password ? " err" : ""}`}>
         <label htmlFor="password">Password</label>
-        <input id="password" name="password" type="password" autoComplete="new-password" />
+        <input
+          id="password"
+          name="password"
+          type="password"
+          autoComplete="new-password"
+          minLength={10}
+          maxLength={200}
+          required
+        />
         <div className="hint">At least 10 characters.</div>
         {err.password ? <div className="msg">{err.password}</div> : null}
+      </div>
+
+      <div className="form-trap" aria-hidden="true">
+        <label htmlFor="website" aria-hidden="true">
+          Website
+        </label>
+        <input
+          id="website"
+          name="website"
+          type="text"
+          tabIndex={-1}
+          autoComplete="off"
+          aria-hidden="true"
+        />
+      </div>
+
+      <div className={`field consent-field${err.privacyAccepted ? " err" : ""}`}>
+        <label className="consent-row" htmlFor="privacyAccepted">
+          <input
+            id="privacyAccepted"
+            name="privacyAccepted"
+            type="checkbox"
+            value="yes"
+            required
+            defaultChecked={val.privacyAccepted === "yes"}
+          />
+          <span>
+            I have read the <Link href="/privacy">privacy notice</Link> and understand how my
+            registration and learning records are used.
+          </span>
+        </label>
+        {err.privacyAccepted ? <div className="msg">{err.privacyAccepted}</div> : null}
       </div>
 
       <Submit label="Create my account" />
