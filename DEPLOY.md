@@ -105,9 +105,11 @@ Before announcing:
 
 1. Register a non-staff test student.
 2. Confirm the dashboard shows a pending enrollment and no course access.
-3. Sign out and sign back in. An unpaid student must land on `/dashboard?payment=required`
-   even when a `next` destination was requested, and any course, assessment, or community
-   URL must bounce back to the same payment prompt.
+3. Sign out and sign back in. Once the Stripe variables above are set, an unpaid student must
+   land on `/dashboard?payment=required` even when a `next` destination was requested, and any
+   course, assessment, or community URL must bounce back to the same payment prompt. Without
+   those variables the sign-in redirect is skipped, so a configuration gap cannot lock students
+   out of a site they have no way to pay on.
 4. Complete Stripe test Checkout and confirm webhook activation. Repeat with a canceled Session,
    declined card, delayed method, duplicate webhook, refund, and dispute test.
 5. Separately test bank transfer by signing in as staff, opening `/admin`, and activating a
