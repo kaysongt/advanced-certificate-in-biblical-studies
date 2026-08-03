@@ -44,6 +44,10 @@ const paymentMessages: Record<string, { tone: "good" | "warn" | "bad"; text: str
     tone: "bad",
     text: "Secure card payment is temporarily unavailable. Please try again or use the bank-transfer option below.",
   },
+  "scholarship-submitted": {
+    tone: "good",
+    text: "Your scholarship application was submitted. The KingsWord team can now review it in the staff dashboard.",
+  },
 };
 
 const paymentStatusLabels: Record<StripePaymentAttemptSummary["status"], string> = {
@@ -76,10 +80,11 @@ export default async function DashboardPage({
 
   const { payment } = await searchParams;
   const { program, grading } = getCurriculum();
-  const [enrollments, progress, engagement] = await Promise.all([
+  const [enrollments, progress, engagement, scholarshipApplications] = await Promise.all([
     db.getEnrollmentsForStudent(student.id),
     db.getProgress(student.id),
     db.getCommunityEngagement(student.id),
+    db.getScholarshipApplicationsForStudent(student.id),
   ]);
   const statuses = getModuleStatuses();
 
@@ -87,6 +92,9 @@ export default async function DashboardPage({
   const stripeConfigured = isStripeCheckoutConfigured();
   const paymentAttempts = await listLatestStripePaymentAttempts(
     pending.map((enrollment) => enrollment.id)
+  );
+  const scholarshipsByEnrollment = new Map(
+    scholarshipApplications.map((application) => [application.enrollmentId, application])
   );
   const moduleNames = new Map(
     getCurriculum().modules.map((module) => [module.slug, module.short_title])
@@ -138,6 +146,7 @@ export default async function DashboardPage({
                 attempt?.status === "partially-refunded" ||
                 attempt?.status === "disputed";
               const canOpenCheckout = stripeConfigured && !paymentInFlight && !staffReview;
+              const scholarship = scholarshipsByEnrollment.get(enrollment.id);
               return (
                 <article className="pending-enrollment" key={enrollment.id}>
                   <div>
@@ -156,24 +165,44 @@ export default async function DashboardPage({
                       </span>
                     ) : null}
                   </div>
-                  {canOpenCheckout ? (
-                    <form action={beginStripeCheckout}>
-                      <input type="hidden" name="enrollmentId" value={enrollment.id} />
-                      <StripeCheckoutButton />
-                    </form>
-                  ) : paymentInFlight ? (
-                    <p className="payment-processing-note">
-                      Confirmation is in progress. Please do not submit another payment.
-                    </p>
-                  ) : staffReview ? (
-                    <p className="payment-processing-note">
-                      The KingsWord team is reviewing this payment. No further payment is needed.
-                    </p>
-                  ) : (
-                    <p className="payment-processing-note">
-                      Online checkout is being configured. Bank transfer remains available.
-                    </p>
-                  )}
+                  <div className="pending-enrollment-actions">
+                    {canOpenCheckout ? (
+                      <form action={beginStripeCheckout}>
+                        <input type="hidden" name="enrollmentId" value={enrollment.id} />
+                        <StripeCheckoutButton />
+                      </form>
+                    ) : paymentInFlight ? (
+                      <p className="payment-processing-note">
+                        Confirmation is in progress. Please do not submit another payment.
+                      </p>
+                    ) : staffReview ? (
+                      <p className="payment-processing-note">
+                        The KingsWord team is reviewing this payment. No further payment is needed.
+                      </p>
+                    ) : (
+                      <p className="payment-processing-note">
+                        Online checkout is being configured. Bank transfer remains available.
+                      </p>
+                    )}
+                    <div className={`scholarship-payment-option${scholarship ? ` ${scholarship.status}` : ""}`}>
+                      {scholarship?.status === "pending" ? (
+                        <>
+                          <strong>Scholarship under review</strong>
+                          <Link href={`/scholarship?enrollment=${enrollment.id}`}>View application status</Link>
+                        </>
+                      ) : scholarship?.status === "declined" ? (
+                        <>
+                          <strong>Scholarship application reviewed</strong>
+                          <Link href={`/scholarship?enrollment=${enrollment.id}`}>View decision and payment options</Link>
+                        </>
+                      ) : (
+                        <>
+                          <span>Unable to afford tuition?</span>
+                          <Link href={`/scholarship?enrollment=${enrollment.id}`}>Apply for a scholarship</Link>
+                        </>
+                      )}
+                    </div>
+                  </div>
                 </article>
               );
             })}

@@ -28,6 +28,30 @@ export async function activateEnrollment(formData: FormData): Promise<void> {
   revalidatePath("/admin");
 }
 
+const scholarshipReviewSchema = z.object({
+  applicationId: z.string().uuid(),
+  decision: z.enum(["approved", "declined"]),
+  adminNotes: z.string().trim().max(2000),
+});
+
+export async function reviewScholarshipApplication(formData: FormData): Promise<void> {
+  const reviewer = await staffMember();
+  const input = scholarshipReviewSchema.parse({
+    applicationId: formData.get("applicationId"),
+    decision: formData.get("decision"),
+    adminNotes: formData.get("adminNotes") ?? "",
+  });
+  await db.reviewScholarshipApplication({
+    applicationId: input.applicationId,
+    reviewerId: reviewer.id,
+    decision: input.decision,
+    adminNotes: input.adminNotes,
+  });
+  revalidatePath("/admin");
+  revalidatePath("/dashboard");
+  revalidatePath("/scholarship");
+}
+
 const gradeSchema = z.object({
   submissionId: z.string().uuid(),
   writtenPoints: z.coerce.number().int().min(0).max(60),

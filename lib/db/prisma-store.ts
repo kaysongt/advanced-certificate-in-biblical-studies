@@ -4,6 +4,7 @@ import {
   EnrollmentStatus as PrismaEnrollmentStatus,
   Prisma,
   QuizKind as PrismaQuizKind,
+  ScholarshipStatus as PrismaScholarshipStatus,
   StudentRole as PrismaStudentRole,
 } from "@prisma/client";
 
@@ -18,6 +19,8 @@ import type {
   Plan,
   QuizAttempt,
   QuizKind,
+  ScholarshipApplication,
+  ScholarshipStatus,
   Student,
   StudentRole,
 } from "./types";
@@ -67,11 +70,20 @@ const assessmentStatusFromPrisma: Record<PrismaAssessmentStatus, AssessmentStatu
   GRADED: "graded",
 };
 
+const scholarshipStatusFromPrisma: Record<PrismaScholarshipStatus, ScholarshipStatus> = {
+  PENDING: "pending",
+  APPROVED: "approved",
+  DECLINED: "declined",
+};
+
 type PrismaStudent = Awaited<ReturnType<typeof prisma.student.findUniqueOrThrow>>;
 type PrismaEnrollment = Awaited<ReturnType<typeof prisma.enrollment.findUniqueOrThrow>>;
 type PrismaQuizAttempt = Awaited<ReturnType<typeof prisma.quizAttempt.findUniqueOrThrow>>;
 type PrismaAssessment = Awaited<ReturnType<typeof prisma.assessmentSubmission.findUniqueOrThrow>>;
 type PrismaCommunityPost = Awaited<ReturnType<typeof prisma.communityPost.findUniqueOrThrow>>;
+type PrismaScholarshipApplication = Awaited<
+  ReturnType<typeof prisma.scholarshipApplication.findUniqueOrThrow>
+>;
 
 function mapStudent(student: PrismaStudent): Student {
   return {
@@ -149,9 +161,30 @@ function mapCommunityPost(post: PrismaCommunityPost): CommunityPost {
   };
 }
 
+function mapScholarshipApplication(
+  application: PrismaScholarshipApplication
+): ScholarshipApplication {
+  return {
+    id: application.id,
+    enrollmentId: application.enrollmentId,
+    studentId: application.studentId,
+    financialNeed: application.financialNeed,
+    trainingGoals: application.trainingGoals,
+    amountAbleToPay: application.amountAbleToPay,
+    status: scholarshipStatusFromPrisma[application.status],
+    adminNotes: application.adminNotes,
+    reviewedById: application.reviewedById,
+    reviewedAt: application.reviewedAt?.toISOString() ?? null,
+    createdAt: application.createdAt.toISOString(),
+    updatedAt: application.updatedAt.toISOString(),
+  };
+}
+
 function jsonValue(value: unknown): Prisma.InputJsonValue {
   return JSON.parse(JSON.stringify(value)) as Prisma.InputJsonValue;
 }
+
+class ScholarshipReviewConflict extends Error {}
 
 export const prismaStore: DataStore = {
   async createStudent(input) {
@@ -271,6 +304,128 @@ export const prismaStore: DataStore = {
       ...mapEnrollment(enrollment),
       student: mapStudent(student),
     }));
+  },
+
+  async createScholarshipApplication(input) {
+    try {
+      return await prisma.$transaction(async (transaction) => {
+        const enrollment = await transaction.enrollment.findFirst({
+          where: {
+            id: input.enrollmentId,
+            studentId: input.studentId,
+            status: PrismaEnrollmentStatus.PENDING,
+          },
+          select: { amount: true },
+        });
+        if (
+          !enrollment ||
+          input.amountAbleToPay < 0 ||
+          input.amountAbleToPay > enrollment.amount
+        ) {
+          return null;
+        }
+
+        const existing = await transaction.scholarshipApplication.findUnique({
+          where: { enrollmentId: input.enrollmentId },
+        });
+        if (existing) return mapScholarshipApplication(existing);
+
+        return mapScholarshipApplication(
+          await transaction.scholarshipApplication.create({ data: input })
+        );
+      });
+    } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") {
+        const existing = await prisma.scholarshipApplication.findFirst({
+          where: { enrollmentId: input.enrollmentId, studentId: input.studentId },
+        });
+        if (existing) return mapScholarshipApplication(existing);
+      }
+      throw error;
+    }
+  },
+
+  async getScholarshipApplicationForEnrollment(enrollmentId, studentId) {
+    const application = await prisma.scholarshipApplication.findFirst({
+      where: { enrollmentId, studentId },
+    });
+    return application ? mapScholarshipApplication(application) : null;
+  },
+
+  async getScholarshipApplicationsForStudent(studentId) {
+    const applications = await prisma.scholarshipApplication.findMany({
+      where: { studentId },
+      orderBy: { createdAt: "desc" },
+    });
+    return applications.map(mapScholarshipApplication);
+  },
+
+  async listScholarshipApplications() {
+    const applications = await prisma.scholarshipApplication.findMany({
+      include: { student: true, enrollment: true },
+      orderBy: [{ status: "asc" }, { createdAt: "desc" }],
+    });
+    return applications.map(({ student, enrollment, ...application }) => ({
+      ...mapScholarshipApplication(application),
+      student: mapStudent(student),
+      enrollment: mapEnrollment(enrollment),
+    }));
+  },
+
+  async reviewScholarshipApplication(input) {
+    try {
+      return await prisma.$transaction(async (transaction) => {
+        const reviewer = await transaction.student.findFirst({
+          where: {
+            id: input.reviewerId,
+            role: { in: [PrismaStudentRole.STAFF, PrismaStudentRole.ADMIN] },
+          },
+          select: { id: true },
+        });
+        const application = await transaction.scholarshipApplication.findFirst({
+          where: { id: input.applicationId, status: PrismaScholarshipStatus.PENDING },
+        });
+        if (!reviewer || !application) return null;
+
+        // Claim the pending application first so two staff reviews cannot diverge.
+        const reviewed = await transaction.scholarshipApplication.updateMany({
+          where: { id: application.id, status: PrismaScholarshipStatus.PENDING },
+          data: {
+            status:
+              input.decision === "approved"
+                ? PrismaScholarshipStatus.APPROVED
+                : PrismaScholarshipStatus.DECLINED,
+            adminNotes: input.adminNotes.trim() || null,
+            reviewedById: reviewer.id,
+            reviewedAt: new Date(),
+          },
+        });
+        if (!reviewed.count) return null;
+
+        if (input.decision === "approved") {
+          const activated = await transaction.enrollment.updateMany({
+            where: { id: application.enrollmentId, status: PrismaEnrollmentStatus.PENDING },
+            data: {
+              status: PrismaEnrollmentStatus.ACTIVE,
+              provider: "scholarship",
+              providerRef: application.id,
+              activatedAt: new Date(),
+              accessSuspendedAt: null,
+            },
+          });
+          if (!activated.count) throw new ScholarshipReviewConflict();
+        }
+
+        return mapScholarshipApplication(
+          await transaction.scholarshipApplication.findUniqueOrThrow({
+            where: { id: application.id },
+          })
+        );
+      });
+    } catch (error) {
+      if (error instanceof ScholarshipReviewConflict) return null;
+      throw error;
+    }
   },
 
   async markLessonComplete(studentId, lessonId) {

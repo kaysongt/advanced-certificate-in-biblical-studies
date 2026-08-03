@@ -48,67 +48,97 @@ enum AssessmentStatus {
   GRADED
 }
 
+enum ScholarshipStatus {
+  PENDING
+  APPROVED
+  DECLINED
+}
+
 model Student {
-  id                    String                 @id @default(uuid())
-  email                 String                 @unique
-  fullName              String
-  country               String
-  passwordHash          String
-  role                  StudentRole            @default(STUDENT)
-  createdAt             DateTime               @default(now())
-  enrollments           Enrollment[]
-  progress              Progress[]
-  quizAttempts          QuizAttempt[]
-  assessmentSubmissions AssessmentSubmission[] @relation("AssessmentStudent")
-  assessmentsGraded     AssessmentSubmission[] @relation("AssessmentGrader")
-  communityPosts        CommunityPost[]        @relation("CommunityAuthor")
-  communityModeration   CommunityPost[]        @relation("CommunityModerator")
-  certificates          Certificate[]          @relation("CertificateStudent")
-  certificatesIssued    Certificate[]          @relation("CertificateIssuer")
+  id                      String                   @id @default(uuid())
+  email                   String                   @unique
+  fullName                String
+  country                 String
+  passwordHash            String
+  role                    StudentRole              @default(STUDENT)
+  createdAt               DateTime                 @default(now())
+  enrollments             Enrollment[]
+  progress                Progress[]
+  quizAttempts            QuizAttempt[]
+  assessmentSubmissions   AssessmentSubmission[]   @relation("AssessmentStudent")
+  assessmentsGraded       AssessmentSubmission[]   @relation("AssessmentGrader")
+  communityPosts          CommunityPost[]          @relation("CommunityAuthor")
+  communityModeration     CommunityPost[]          @relation("CommunityModerator")
+  certificates            Certificate[]            @relation("CertificateStudent")
+  certificatesIssued      Certificate[]            @relation("CertificateIssuer")
+  scholarshipApplications ScholarshipApplication[] @relation("ScholarshipApplicant")
+  scholarshipsReviewed    ScholarshipApplication[] @relation("ScholarshipReviewer")
 }
 
 model Enrollment {
-  id                    String                 @id @default(uuid())
-  studentId             String
-  product               String
-  plan                  EnrollmentPlan
-  status                EnrollmentStatus       @default(PENDING)
-  amount                Int
-  currency              String                 @default("USD")
-  provider              String?
-  providerRef           String?
-  activatedAt           DateTime?
-  accessSuspendedAt     DateTime?
-  createdAt             DateTime               @default(now())
-  updatedAt             DateTime               @updatedAt
-  student               Student                @relation(fields: [studentId], references: [id], onDelete: Cascade)
-  stripePaymentAttempts StripePaymentAttempt[]
+  id                     String                  @id @default(uuid())
+  studentId              String
+  product                String
+  plan                   EnrollmentPlan
+  status                 EnrollmentStatus        @default(PENDING)
+  amount                 Int
+  currency               String                  @default("USD")
+  provider               String?
+  providerRef            String?
+  activatedAt            DateTime?
+  accessSuspendedAt      DateTime?
+  createdAt              DateTime                @default(now())
+  updatedAt              DateTime                @updatedAt
+  student                Student                 @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  stripePaymentAttempts  StripePaymentAttempt[]
+  scholarshipApplication ScholarshipApplication?
 
   @@unique([provider, providerRef])
   @@index([studentId])
   @@index([status, createdAt])
 }
 
+model ScholarshipApplication {
+  id              String            @id @default(uuid())
+  enrollmentId    String            @unique
+  studentId       String
+  financialNeed   String
+  trainingGoals   String
+  amountAbleToPay Int
+  status          ScholarshipStatus @default(PENDING)
+  adminNotes      String?
+  reviewedById    String?
+  reviewedAt      DateTime?
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  enrollment      Enrollment        @relation(fields: [enrollmentId], references: [id], onDelete: Cascade)
+  student         Student           @relation("ScholarshipApplicant", fields: [studentId], references: [id], onDelete: Cascade)
+  reviewedBy      Student?          @relation("ScholarshipReviewer", fields: [reviewedById], references: [id], onDelete: SetNull)
+
+  @@index([status, createdAt])
+  @@index([studentId])
+}
+
 model StripePaymentAttempt {
-  id                    String              @id @default(uuid())
-  enrollmentId          String
-  activeKey             String?             @unique
-  checkoutSessionId     String?             @unique
-  paymentIntentId       String?             @unique
-  latestChargeId        String?             @unique
-  expectedAmountMinor   Int
-  currency              String
-  status                StripePaymentStatus @default(CREATED)
-  paidAmountMinor       Int                 @default(0)
-  refundedAmountMinor   Int                 @default(0)
-  disputeStatus         String?
-  needsReview           Boolean             @default(false)
-  reviewReason          String?
-  stripeCreatedAt       DateTime?
-  lastEventCreatedAt    DateTime?
-  createdAt             DateTime            @default(now())
-  updatedAt             DateTime            @updatedAt
-  enrollment            Enrollment          @relation(fields: [enrollmentId], references: [id], onDelete: Cascade)
+  id                  String              @id @default(uuid())
+  enrollmentId        String
+  activeKey           String?             @unique
+  checkoutSessionId   String?             @unique
+  paymentIntentId     String?             @unique
+  latestChargeId      String?             @unique
+  expectedAmountMinor Int
+  currency            String
+  status              StripePaymentStatus @default(CREATED)
+  paidAmountMinor     Int                 @default(0)
+  refundedAmountMinor Int                 @default(0)
+  disputeStatus       String?
+  needsReview         Boolean             @default(false)
+  reviewReason        String?
+  stripeCreatedAt     DateTime?
+  lastEventCreatedAt  DateTime?
+  createdAt           DateTime            @default(now())
+  updatedAt           DateTime            @updatedAt
+  enrollment          Enrollment          @relation(fields: [enrollmentId], references: [id], onDelete: Cascade)
 
   @@index([enrollmentId, createdAt])
   @@index([status, updatedAt])

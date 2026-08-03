@@ -24,8 +24,9 @@ export default function PrivacyPage() {
           When you register, we collect your name, email address, country, selected program,
           and a securely hashed password. As you study, we record course progress, quiz and
           assessment results, written submissions, instructor feedback, certificates, and
-          community contributions. Our hosting providers may also retain standard security
-          and request logs.
+          community contributions. If you apply for a scholarship, we also collect the financial
+          circumstances, training goals, and possible contribution amount you choose to share.
+          Our hosting providers may also retain standard security and request logs.
         </p>
 
         <h2>Payments</h2>
@@ -40,13 +41,14 @@ export default function PrivacyPage() {
         <p>
           We use this information to create and secure your account, administer enrollment,
           confirm payment, provide course access, save learning progress, grade assessments,
-          moderate community groups, issue certificates, respond to support requests, and
-          protect the service from misuse.
+          review scholarship eligibility, moderate community groups, issue certificates, respond
+          to support requests, and protect the service from misuse.
         </p>
 
         <h2>Service providers and access</h2>
         <p>
-          Authorized KingsWord staff can access records needed to operate the program. The
+          Authorized KingsWord staff can access records needed to operate the program. Scholarship
+          applications and private review notes are restricted to authorized staff. The
           website relies on Vercel for hosting, Neon for managed database services, and Stripe
           for online payments. These providers process information under their own security
           and privacy terms. We do not sell registration or learning records.

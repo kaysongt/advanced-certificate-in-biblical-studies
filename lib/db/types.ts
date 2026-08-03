@@ -44,6 +44,25 @@ export type Enrollment = {
   updatedAt: string;
 };
 
+export type ScholarshipStatus = "pending" | "approved" | "declined";
+
+export type ScholarshipApplication = {
+  id: string;
+  enrollmentId: string;
+  studentId: string;
+  financialNeed: string;
+  trainingGoals: string;
+  /** Whole US dollars the applicant says they could contribute. */
+  amountAbleToPay: number;
+  status: ScholarshipStatus;
+  /** Private staff notes. Never shown to the applicant. */
+  adminNotes: string | null;
+  reviewedById: string | null;
+  reviewedAt: string | null;
+  createdAt: string;
+  updatedAt: string;
+};
+
 export type ProgressRecord = {
   studentId: string;
   /** Matches the existing lesson id format: "{course-slug}-{n}", e.g. "st-101-1". */
@@ -109,6 +128,10 @@ export type NewEnrollment = Omit<
 >;
 export type NewEnrollmentForStudent = Omit<NewEnrollment, "studentId">;
 export type NewCommunityPost = Omit<CommunityPost, "id" | "createdAt" | "engagementCredits">;
+export type NewScholarshipApplication = Pick<
+  ScholarshipApplication,
+  "enrollmentId" | "studentId" | "financialNeed" | "trainingGoals" | "amountAbleToPay"
+>;
 
 /**
  * Thrown when the store cannot persist — most often the dev file adapter
@@ -145,6 +168,25 @@ export interface DataStore {
   activateEnrollment(id: string, providerRef: string, provider?: string): Promise<Enrollment | null>;
   listEnrollments(): Promise<(Enrollment & { student: Student })[]>;
   listPendingEnrollments(): Promise<(Enrollment & { student: Student })[]>;
+
+  // scholarship applications
+  createScholarshipApplication(
+    input: NewScholarshipApplication
+  ): Promise<ScholarshipApplication | null>;
+  getScholarshipApplicationForEnrollment(
+    enrollmentId: string,
+    studentId: string
+  ): Promise<ScholarshipApplication | null>;
+  getScholarshipApplicationsForStudent(studentId: string): Promise<ScholarshipApplication[]>;
+  listScholarshipApplications(): Promise<
+    (ScholarshipApplication & { student: Student; enrollment: Enrollment })[]
+  >;
+  reviewScholarshipApplication(input: {
+    applicationId: string;
+    reviewerId: string;
+    decision: Exclude<ScholarshipStatus, "pending">;
+    adminNotes: string;
+  }): Promise<ScholarshipApplication | null>;
 
   // progress
   markLessonComplete(studentId: string, lessonId: string): Promise<void>;

@@ -428,13 +428,113 @@ async function main() {
   check("staff queue includes pending enrollment", () =>
     assert.equal(pendingEnrollments[0]?.student.email, student.email)
   );
-  const activated = await db.activateEnrollment(enrollment.id, "test_ref_123");
-  check("enrollment activates", () => assert.equal(activated?.status, "active"));
+  const grader = await db.createStudent({
+    fullName: "Test Administrator",
+    email: "admin@example.com",
+    country: "United States",
+    passwordHash: hash,
+    role: "admin",
+  });
+
+  const scholarship = await db.createScholarshipApplication({
+    enrollmentId: enrollment.id,
+    studentId: student.id,
+    financialNeed:
+      "Tuition is not currently affordable because of my present financial responsibilities.",
+    trainingGoals:
+      "I plan to use the training to serve my church community with greater biblical clarity.",
+    amountAbleToPay: 100,
+  });
+  check("student can submit a scholarship application for a pending enrollment", () => {
+    assert.equal(scholarship?.status, "pending");
+    assert.equal(scholarship?.amountAbleToPay, 100);
+  });
+  const duplicateScholarship = await db.createScholarshipApplication({
+    enrollmentId: enrollment.id,
+    studentId: student.id,
+    financialNeed: "A duplicate application should not replace the original financial statement.",
+    trainingGoals: "A duplicate application should not replace the original training goals.",
+    amountAbleToPay: 0,
+  });
+  check("scholarship submission is idempotent per enrollment", () =>
+    assert.equal(duplicateScholarship?.id, scholarship?.id)
+  );
+  const scholarshipQueue = await db.listScholarshipApplications();
+  check("staff scholarship queue includes applicant and enrollment", () => {
+    assert.equal(scholarshipQueue[0]?.student.email, student.email);
+    assert.equal(scholarshipQueue[0]?.enrollment.id, enrollment.id);
+  });
+  const approvedScholarship = await db.reviewScholarshipApplication({
+    applicationId: scholarship?.id ?? "",
+    reviewerId: grader.id,
+    decision: "approved",
+    adminNotes: "Approved for full tuition support.",
+  });
+  check("scholarship approval records the private staff decision", () => {
+    assert.equal(approvedScholarship?.status, "approved");
+    assert.equal(approvedScholarship?.reviewedById, grader.id);
+    assert.equal(approvedScholarship?.adminNotes, "Approved for full tuition support.");
+  });
+  const scholarshipEnrollment = (await db.getEnrollmentsForStudent(student.id)).find(
+    (item) => item.id === enrollment.id
+  );
+  check("scholarship approval activates only its enrollment", () => {
+    assert.equal(scholarshipEnrollment?.status, "active");
+    assert.equal(scholarshipEnrollment?.provider, "scholarship");
+    assert.equal(scholarshipEnrollment?.providerRef, scholarship?.id);
+  });
+
+  const manualEnrollment = await db.createEnrollment({
+    studentId: student.id,
+    product: module.slug,
+    plan: "certificate",
+    status: "pending",
+    amount: 250,
+    currency: "USD",
+    provider: null,
+    providerRef: null,
+  });
+  const activated = await db.activateEnrollment(manualEnrollment.id, "test_ref_123");
+  check("manual enrollment activation remains available", () =>
+    assert.equal(activated?.status, "active")
+  );
   const registrations = await db.listEnrollments();
   check("staff roster retains activated registrations", () => {
-    assert.equal(registrations[0]?.student.email, student.email);
-    assert.equal(registrations[0]?.status, "active");
-    assert.equal(registrations[0]?.providerRef, "test_ref_123");
+    const registration = registrations.find((item) => item.id === manualEnrollment.id);
+    assert.equal(registration?.student.email, student.email);
+    assert.equal(registration?.status, "active");
+    assert.equal(registration?.providerRef, "test_ref_123");
+  });
+
+  const declinedEnrollment = await db.createEnrollment({
+    studentId: student.id,
+    product: curriculum.modules[1].slug,
+    plan: "certificate",
+    status: "pending",
+    amount: 250,
+    currency: "USD",
+    provider: null,
+    providerRef: null,
+  });
+  const declinedApplication = await db.createScholarshipApplication({
+    enrollmentId: declinedEnrollment.id,
+    studentId: student.id,
+    financialNeed: "This second request exercises the staff decline workflow in storage checks.",
+    trainingGoals: "The requested course would support future service and personal Bible study.",
+    amountAbleToPay: 25,
+  });
+  const declinedScholarship = await db.reviewScholarshipApplication({
+    applicationId: declinedApplication?.id ?? "",
+    reviewerId: grader.id,
+    decision: "declined",
+    adminNotes: "No award available in this review cycle.",
+  });
+  const stillPendingEnrollment = (await db.getEnrollmentsForStudent(student.id)).find(
+    (item) => item.id === declinedEnrollment.id
+  );
+  check("declining a scholarship leaves payment available", () => {
+    assert.equal(declinedScholarship?.status, "declined");
+    assert.equal(stillPendingEnrollment?.status, "pending");
   });
 
   await db.markLessonComplete(student.id, "st-101-1");
@@ -474,13 +574,6 @@ async function main() {
   check("written assessment enters the staff grading queue", () =>
     assert.equal(pendingAssessments[0]?.id, assessment.id)
   );
-  const grader = await db.createStudent({
-    fullName: "Test Administrator",
-    email: "admin@example.com",
-    country: "United States",
-    passwordHash: hash,
-    role: "admin",
-  });
   const graded = await db.gradeAssessment({
     id: assessment.id,
     graderId: grader.id,

@@ -12,9 +12,11 @@ import type {
   NewCommunityPost,
   NewEnrollment,
   NewEnrollmentForStudent,
+  NewScholarshipApplication,
   NewStudent,
   ProgressRecord,
   QuizAttempt,
+  ScholarshipApplication,
   Student,
 } from "./types";
 
@@ -32,6 +34,7 @@ type Shape = {
   quizAttempts: QuizAttempt[];
   assessmentSubmissions: AssessmentSubmission[];
   communityPosts: StoredCommunityPost[];
+  scholarshipApplications: ScholarshipApplication[];
 };
 
 const FILE = path.join(process.cwd(), ".data", "store.json");
@@ -42,6 +45,7 @@ const EMPTY: Shape = {
   quizAttempts: [],
   assessmentSubmissions: [],
   communityPosts: [],
+  scholarshipApplications: [],
 };
 
 async function read(): Promise<Shape> {
@@ -169,6 +173,107 @@ export const fileStore: DataStore = {
       const student = data.students.find((candidate) => candidate.id === enrollment.studentId);
       return enrollment.status === "pending" && student ? [{ ...enrollment, student }] : [];
     });
+  },
+
+  async createScholarshipApplication(
+    input: NewScholarshipApplication
+  ): Promise<ScholarshipApplication | null> {
+    const data = await read();
+    const enrollment = data.enrollments.find(
+      (item) =>
+        item.id === input.enrollmentId &&
+        item.studentId === input.studentId &&
+        item.status === "pending"
+    );
+    if (
+      !enrollment ||
+      input.amountAbleToPay < 0 ||
+      input.amountAbleToPay > enrollment.amount
+    ) {
+      return null;
+    }
+    const existing = data.scholarshipApplications.find(
+      (item) => item.enrollmentId === input.enrollmentId
+    );
+    if (existing) return existing;
+
+    const now = new Date().toISOString();
+    const application: ScholarshipApplication = {
+      ...input,
+      id: randomUUID(),
+      status: "pending",
+      adminNotes: null,
+      reviewedById: null,
+      reviewedAt: null,
+      createdAt: now,
+      updatedAt: now,
+    };
+    data.scholarshipApplications.push(application);
+    await write(data);
+    return application;
+  },
+
+  async getScholarshipApplicationForEnrollment(enrollmentId, studentId) {
+    const data = await read();
+    return (
+      data.scholarshipApplications.find(
+        (item) => item.enrollmentId === enrollmentId && item.studentId === studentId
+      ) ?? null
+    );
+  },
+
+  async getScholarshipApplicationsForStudent(studentId) {
+    const data = await read();
+    return data.scholarshipApplications
+      .filter((item) => item.studentId === studentId)
+      .sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+  },
+
+  async listScholarshipApplications() {
+    const data = await read();
+    return data.scholarshipApplications
+      .slice()
+      .sort((a, b) => {
+        if (a.status === "pending" && b.status !== "pending") return -1;
+        if (a.status !== "pending" && b.status === "pending") return 1;
+        return b.createdAt.localeCompare(a.createdAt);
+      })
+      .flatMap((application) => {
+        const student = data.students.find((item) => item.id === application.studentId);
+        const enrollment = data.enrollments.find((item) => item.id === application.enrollmentId);
+        return student && enrollment ? [{ ...application, student, enrollment }] : [];
+      });
+  },
+
+  async reviewScholarshipApplication(input) {
+    const data = await read();
+    const application = data.scholarshipApplications.find(
+      (item) => item.id === input.applicationId && item.status === "pending"
+    );
+    const reviewer = data.students.find(
+      (item) => item.id === input.reviewerId && (item.role === "staff" || item.role === "admin")
+    );
+    if (!application || !reviewer) return null;
+
+    const enrollment = data.enrollments.find((item) => item.id === application.enrollmentId);
+    if (input.decision === "approved") {
+      if (!enrollment || enrollment.status !== "pending") return null;
+      enrollment.status = "active";
+      enrollment.provider = "scholarship";
+      enrollment.providerRef = application.id;
+      enrollment.activatedAt = new Date().toISOString();
+      enrollment.accessSuspendedAt = null;
+      enrollment.updatedAt = new Date().toISOString();
+    }
+
+    const now = new Date().toISOString();
+    application.status = input.decision;
+    application.adminNotes = input.adminNotes.trim() || null;
+    application.reviewedById = reviewer.id;
+    application.reviewedAt = now;
+    application.updatedAt = now;
+    await write(data);
+    return application;
   },
 
   async markLessonComplete(studentId: string, lessonId: string): Promise<void> {
