@@ -4,7 +4,6 @@ import Image from "next/image";
 import { getModuleStatuses } from "@/lib/content";
 import {
   PRICING,
-  formatModuleReleaseDate,
   getCurriculum,
   moduleReleaseLabel,
 } from "@/lib/curriculum";
@@ -32,9 +31,7 @@ const STUDY_STEPS = [
 export default function HomePage() {
   const { program, grading } = getCurriculum();
   const moduleStatuses = getModuleStatuses();
-  const availableCount = moduleStatuses.filter((status) => status.available).length;
   const firstModule = moduleStatuses[0];
-  const firstReleaseDate = formatModuleReleaseDate(firstModule.module);
 
   return (
     <main className="marketing-home">
@@ -234,9 +231,8 @@ export default function HomePage() {
                 {PRICING.certificate.label} <span>/ certificate</span>
               </div>
               <p className="blurb">
-                {availableCount > 0
-                  ? `Any one of the five certificate programs. ${availableCount} available to begin today.`
-                  : `Single-certificate enrollment opens ${firstReleaseDate}.`}
+                Choose any one of the five certificate programs. Enroll now, then begin studying
+                on its published opening date.
               </p>
               <ul>
                 <li>All courses within that certificate</li>
@@ -244,11 +240,8 @@ export default function HomePage() {
                 <li>Customized textbooks</li>
                 <li>Modular certificate on completion</li>
               </ul>
-              <Link
-                href={availableCount > 0 ? "/enroll?plan=certificate" : "/curriculum"}
-                className="btn quiet lg"
-              >
-                {availableCount > 0 ? "Choose a certificate" : "View release schedule"}
+              <Link href="/enroll?plan=certificate" className="btn quiet lg">
+                Choose a certificate
               </Link>
             </div>
 

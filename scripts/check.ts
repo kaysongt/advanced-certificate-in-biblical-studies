@@ -23,6 +23,7 @@ import {
   getLessonRows,
   getModuleDoc,
   getModuleStatuses,
+  getPurchasableModules,
 } from "../lib/content";
 import {
   findCourse,
@@ -80,6 +81,12 @@ async function main() {
     assert.equal(isModuleReleased(curriculum.modules[0], new Date("2026-09-01T04:59:59Z")), false);
     assert.equal(isModuleReleased(curriculum.modules[0], new Date("2026-09-01T05:00:00Z")), true);
   });
+  check("all scheduled modules can be purchased before release", () =>
+    assert.deepEqual(
+      getPurchasableModules().map((item) => item.slug),
+      curriculum.modules.map((item) => item.slug)
+    )
+  );
 
   console.log("\nnavigation");
   check("primary tabs point to distinct routes", () =>
@@ -287,6 +294,15 @@ async function main() {
   });
   check("certificate tuition converts to Stripe minor units on the server", () =>
     assert.equal(certificatePayment.amountMinor, 25_000)
+  );
+  const futureCertificatePayment = getStripeCatalogItem({
+    plan: "certificate",
+    product: curriculum.modules[4].slug,
+    amount: 250,
+    currency: "USD",
+  });
+  check("an unreleased certificate can be paid for in advance", () =>
+    assert.equal(futureCertificatePayment.amountMinor, 25_000)
   );
   check("stored price tampering is rejected", () =>
     assert.throws(() =>

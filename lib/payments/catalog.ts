@@ -1,4 +1,3 @@
-import { getAvailableModules } from "@/lib/content";
 import { getModule, PRICING } from "@/lib/curriculum";
 import type { Enrollment, Plan } from "@/lib/db/types";
 
@@ -15,7 +14,7 @@ export type StripeCatalogItem = {
 
 export class PaymentCatalogError extends Error {
   constructor(
-    public readonly code: "invalid_product" | "not_available" | "stored_price_mismatch",
+    public readonly code: "invalid_product" | "stored_price_mismatch",
     message: string
   ) {
     super(message);
@@ -25,8 +24,7 @@ export class PaymentCatalogError extends Error {
 
 /** Resolve payment facts from server-owned curriculum and pricing, never browser input. */
 export function getStripeCatalogItem(
-  enrollment: CatalogEnrollment,
-  options: { requireAvailableCertificate?: boolean } = {}
+  enrollment: CatalogEnrollment
 ): StripeCatalogItem {
   const price = enrollment.plan === "advanced" ? PRICING.advanced : PRICING.certificate;
   let title: string;
@@ -40,15 +38,6 @@ export function getStripeCatalogItem(
     const module = getModule(enrollment.product);
     if (!module) {
       throw new PaymentCatalogError("invalid_product", "The certificate enrollment is invalid.");
-    }
-    if (
-      options.requireAvailableCertificate &&
-      !getAvailableModules().some((availableModule) => availableModule.slug === module.slug)
-    ) {
-      throw new PaymentCatalogError(
-        "not_available",
-        "This certificate is not open for payment yet."
-      );
     }
     title = `${module.short_title} Certificate`;
   }
@@ -70,4 +59,3 @@ export function getStripeCatalogItem(
       enrollment.plan === "advanced" ? "STRIPE_PRICE_ADVANCED" : "STRIPE_PRICE_CERTIFICATE",
   };
 }
-

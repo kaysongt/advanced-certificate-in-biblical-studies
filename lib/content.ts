@@ -308,7 +308,12 @@ export function getModuleStatuses(now = new Date()): ModuleStatus[] {
   });
 }
 
-/** Modules a student can actually study today — used to gate what we sell. */
+/** Published modules may be purchased before release; study access remains date-gated. */
+export function getPurchasableModules(): Module[] {
+  return getCurriculum().modules;
+}
+
+/** Modules a student can actually study today. */
 export function getAvailableModules(now = new Date()): Module[] {
   return getModuleStatuses(now)
     .filter((s) => s.available)

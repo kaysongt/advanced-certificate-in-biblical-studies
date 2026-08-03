@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 
 import { hashPassword, startSession } from "@/lib/auth";
-import { getAvailableModules } from "@/lib/content";
+import { getPurchasableModules } from "@/lib/content";
 import { PRICING } from "@/lib/curriculum";
 import { db } from "@/lib/db";
 import { StorageUnavailableError } from "@/lib/db/types";
@@ -63,10 +63,10 @@ export async function registerStudent(
   }
 
   const { fullName, email, country, password, plan, product } = parsed.data;
-  const availableProducts = new Set(getAvailableModules().map((module) => module.slug));
-  if (plan === "certificate" && !availableProducts.has(product)) {
+  const purchasableProducts = new Set(getPurchasableModules().map((module) => module.slug));
+  if (plan === "certificate" && !purchasableProducts.has(product)) {
     return {
-      fieldErrors: { product: "Please choose a certificate that is ready to study." },
+      fieldErrors: { product: "Please choose a certificate from the published program." },
       values,
     };
   }

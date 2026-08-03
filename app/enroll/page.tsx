@@ -28,7 +28,7 @@ export default async function EnrollPage({
   }));
   const availableCount = modules.filter((m) => m.available).length;
   const firstReleaseDate = modules[0].availability;
-  const initialPlan = plan === "certificate" && availableCount > 0 ? "certificate" : "advanced";
+  const initialPlan = plan === "certificate" ? "certificate" : "advanced";
   const stripeConfigured = isStripeCheckoutConfigured();
 
   return (
@@ -54,7 +54,7 @@ export default async function EnrollPage({
             <div className="notice">
               {availableCount > 0
                 ? `${availableCount} of ${program.total_certificates} certificates are ready to study today. The rest unlock according to the published release schedule.`
-                : `The first certificate opens ${firstReleaseDate}. Full-program enrollment is open now, and each certificate unlocks on its published date.`}
+                : `Enrollment is open now for individual certificates and the full program. The first certificate opens ${firstReleaseDate}, and each certificate unlocks on its published date.`}
             </div>
           ) : null}
 

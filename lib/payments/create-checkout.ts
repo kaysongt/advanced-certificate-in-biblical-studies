@@ -35,7 +35,7 @@ export async function createCheckoutForEnrollment(input: {
 }): Promise<CheckoutResult> {
   const config = getStripeCheckoutConfiguration();
   const stripe = getStripeClient();
-  const catalog = getStripeCatalogItem(input.enrollment, { requireAvailableCertificate: true });
+  const catalog = getStripeCatalogItem(input.enrollment);
   const priceId =
     catalog.key === "advanced" ? config.advancedPriceId : config.certificatePriceId;
   const stripePrice = await stripe.prices.retrieve(priceId);
