@@ -32,6 +32,13 @@ export default function HomePage() {
   const { program, grading } = getCurriculum();
   const moduleStatuses = getModuleStatuses();
   const firstModule = moduleStatuses[0];
+  const fullProgramSavings =
+    PRICING.certificate.amount * program.total_certificates - PRICING.advanced.amount;
+  const fullProgramSavingsLabel = new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: PRICING.advanced.currency,
+    maximumFractionDigits: 0,
+  }).format(fullProgramSavings);
 
   return (
     <main className="marketing-home">
@@ -39,10 +46,6 @@ export default function HomePage() {
         <div className="hero-glow" aria-hidden="true" />
         <div className="wide hero-grid">
           <div className="hero-copy">
-            <p className="hero-kicker">
-              <span aria-hidden="true" />
-              {program.institute}
-            </p>
             <h1>
               Know God&rsquo;s Word <em>for yourself.</em>
             </h1>
@@ -51,11 +54,15 @@ export default function HomePage() {
               sound doctrine, and practical Christian living.
             </p>
             <div className="hero-actions">
-              <Link href="/enroll" className="btn lg gold">
-                Begin your training
+              <Link href="/enroll" className="btn lg gold hero-action" aria-label="Start your training">
+                Start
               </Link>
-              <Link href="/curriculum" className="text-action">
-                Explore the curriculum <span aria-hidden="true">&rarr;</span>
+              <Link
+                href="/curriculum"
+                className="btn lg ghost hero-action"
+                aria-label="Explore the curriculum"
+              >
+                Explore
               </Link>
             </div>
 
@@ -69,8 +76,8 @@ export default function HomePage() {
                 <dd>certificates</dd>
               </div>
               <div>
-                <dt>{grading.pass_mark}%</dt>
-                <dd>pass mark</dd>
+                <dt>{program.total_courses}</dt>
+                <dd>courses</dd>
               </div>
             </dl>
           </div>
@@ -78,7 +85,7 @@ export default function HomePage() {
           <aside className="hero-panel" aria-label="Program overview">
             <div className="hero-panel-top">
               <span>Advanced Certificate</span>
-              <span>{program.total_courses} courses</span>
+              <span>Now enrolling</span>
             </div>
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img className="hero-mark" src="/assets/logo-mark.jpg" alt="" width={440} height={268} />
@@ -210,7 +217,9 @@ export default function HomePage() {
             <p>{program.founder.bio}</p>
             <blockquote className="founder-quote">
               <span aria-hidden="true">&ldquo;</span>
-              <p>{program.motto}</p>
+              <p>
+                {program.motto}<span className="founder-quote-close" aria-hidden="true">&rdquo;</span>
+              </p>
               <cite>KingsWord Training Institute</cite>
             </blockquote>
           </div>
@@ -246,13 +255,17 @@ export default function HomePage() {
             </div>
 
             <div className="price feature">
+              {fullProgramSavings > 0 ? (
+                <span className="price-ribbon">Save {fullProgramSavingsLabel}</span>
+              ) : null}
               <div className="plan">Advanced Certificate</div>
               <div className="amount">
                 {PRICING.advanced.label} <span>/ full program</span>
               </div>
               <p className="blurb">
                 All five certificates, {program.total_hours} hours, and {program.total_courses}
-                {" "}courses. Each certificate unlocks according to its release schedule.
+                {" "}courses. Save {fullProgramSavingsLabel} compared with enrolling in all five
+                separately. Each certificate unlocks according to its release schedule.
               </p>
               <ul>
                 <li>Everything in all five certificates</li>
@@ -271,7 +284,7 @@ export default function HomePage() {
       <section className="section home-section faq-section">
         <div className="wide faq-layout">
           <div className="faq-heading">
-            <div className="eyebrow">Questions, answered</div>
+            <div className="eyebrow">FAQ</div>
             <h2>Everything you need to begin with clarity.</h2>
             <Link href="/pricing" className="text-action">
               View tuition details <span aria-hidden="true">&rarr;</span>

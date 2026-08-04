@@ -26,6 +26,7 @@ import {
   getPurchasableModules,
 } from "../lib/content";
 import {
+  PRICING,
   findCourse,
   formatModuleReleaseDate,
   getCurriculum,
@@ -60,6 +61,12 @@ async function main() {
   );
   check("all assessments use the confirmed 80% pass mark", () =>
     assert.equal(curriculum.grading.pass_mark, 80)
+  );
+  check("full-program pricing saves $250 over five individual certificates", () =>
+    assert.equal(
+      PRICING.certificate.amount * curriculum.program.total_certificates - PRICING.advanced.amount,
+      250
+    )
   );
   check("module release schedule matches the confirmed launch dates", () =>
     assert.deepEqual(
