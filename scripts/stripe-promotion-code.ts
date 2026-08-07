@@ -7,10 +7,13 @@
  *
  * Run with:
  *   STRIPE_SECRET_KEY=sk_test_... STRIPE_PRICE_ADVANCED=price_... \
- *   PROMO_CODE=KTI100 npm run stripe:promo
+ *   PROMO_CODE=SUMMERBLAST2026 npm run stripe:promo
  *
  * Optional: PROMO_MAX_REDEMPTIONS, PROMO_EXPIRES_ON (YYYY-MM-DD).
  * Re-running with the same code reports the existing one instead of duplicating it.
+ *
+ * Stripe matches codes without regard to case, so students may type the code in
+ * any capitalisation. It is stored upper case here only so staff read it easily.
  */
 
 import Stripe from "stripe";
@@ -26,8 +29,9 @@ const input = z
     STRIPE_PRICE_ADVANCED: z.string().startsWith("price_"),
     PROMO_CODE: z
       .string()
-      .regex(/^[A-Z0-9]{4,20}$/, "Use 4-20 uppercase letters or digits.")
-      .default("KTI100"),
+      .regex(/^[A-Za-z0-9-]{4,40}$/, "Use 4-40 letters, digits, or dashes.")
+      .default("SUMMERBLAST2026")
+      .transform((value) => value.toUpperCase()),
     PROMO_MAX_REDEMPTIONS: z.coerce.number().int().positive().optional(),
     PROMO_EXPIRES_ON: z
       .string()
@@ -85,18 +89,31 @@ const coupon = await stripe.coupons.create({
   applies_to: { products: [productId] },
 });
 
-const promotionCode = await stripe.promotionCodes.create({
-  promotion: { type: "coupon", coupon: coupon.id },
-  code: config.PROMO_CODE,
-  ...(config.PROMO_MAX_REDEMPTIONS ? { max_redemptions: config.PROMO_MAX_REDEMPTIONS } : {}),
-  ...(config.PROMO_EXPIRES_ON
-    ? { expires_at: Math.floor(Date.parse(`${config.PROMO_EXPIRES_ON}T23:59:59Z`) / 1000) }
-    : {}),
-  restrictions: {
-    minimum_amount: advancedAmountMinor,
-    minimum_amount_currency: "usd",
-  },
-});
+let promotionCode: Stripe.PromotionCode;
+try {
+  promotionCode = await stripe.promotionCodes.create({
+    promotion: { type: "coupon", coupon: coupon.id },
+    code: config.PROMO_CODE,
+    ...(config.PROMO_MAX_REDEMPTIONS ? { max_redemptions: config.PROMO_MAX_REDEMPTIONS } : {}),
+    ...(config.PROMO_EXPIRES_ON
+      ? { expires_at: Math.floor(Date.parse(`${config.PROMO_EXPIRES_ON}T23:59:59Z`) / 1000) }
+      : {}),
+    restrictions: {
+      minimum_amount: advancedAmountMinor,
+      minimum_amount_currency: "usd",
+    },
+  });
+} catch (error) {
+  // Leave no orphan coupon behind when the code itself cannot be claimed.
+  await stripe.coupons.del(coupon.id).catch(() => undefined);
+  console.error(
+    `Could not create the promotion code: ${error instanceof Error ? error.message : error}`
+  );
+  console.error(
+    "Stripe treats codes as case-insensitive, so this can mean the code already exists in another capitalisation."
+  );
+  process.exit(1);
+}
 
 console.log(`Created promotion code ${promotionCode.code} (${promotionCode.id}).`);
 console.log(`  coupon: ${coupon.id}`);
@@ -107,4 +124,5 @@ console.log(
 console.log(
   `  redemptions: ${config.PROMO_MAX_REDEMPTIONS ?? "unlimited"}; expires: ${config.PROMO_EXPIRES_ON ?? "never"}`
 );
+console.log("  students may type the code in any capitalisation");
 console.log("\nShare the code with students. No redeploy is needed.");

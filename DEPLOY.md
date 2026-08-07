@@ -101,12 +101,16 @@ field is hidden on those Sessions. Create the code once per Stripe environment:
 ```bash
 STRIPE_SECRET_KEY=sk_test_... \
 STRIPE_PRICE_ADVANCED=price_... \
-PROMO_CODE=KTI100 \
+PROMO_CODE=SUMMERBLAST2026 \
 npm run stripe:promo
 ```
 
 `PROMO_MAX_REDEMPTIONS` and `PROMO_EXPIRES_ON=YYYY-MM-DD` are optional limits. Re-running with
 an existing code reports it instead of creating a duplicate.
+
+Stripe matches promotion codes without regard to case, so a student may type
+`summerblast2026`, `SUMMERBLAST2026`, or any mix and it will be accepted. The script stores the
+code upper case only so it reads clearly in the Stripe Dashboard and on `/admin`.
 
 The script restricts the coupon to the product behind `STRIPE_PRICE_ADVANCED` and sets a
 minimum order amount, so the code cannot discount a single certificate. Independently, the
