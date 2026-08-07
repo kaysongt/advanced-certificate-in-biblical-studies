@@ -93,6 +93,41 @@ email, source control, command history, or logs; rotate it first.
 Stripe-hosted Checkout does not need a publishable key in this application because no payment
 form or card data is rendered on the KingsWord site.
 
+## 5a. Create the $100-off promotion code
+
+The full program accepts a promotion code at Checkout. Single certificates do not, so the code
+field is hidden on those Sessions. Create the code once per Stripe environment:
+
+```bash
+STRIPE_SECRET_KEY=sk_test_... \
+STRIPE_PRICE_ADVANCED=price_... \
+PROMO_CODE=KTI100 \
+npm run stripe:promo
+```
+
+`PROMO_MAX_REDEMPTIONS` and `PROMO_EXPIRES_ON=YYYY-MM-DD` are optional limits. Re-running with
+an existing code reports it instead of creating a duplicate.
+
+The script restricts the coupon to the product behind `STRIPE_PRICE_ADVANCED` and sets a
+minimum order amount, so the code cannot discount a single certificate. Independently, the
+webhook rejects any Session whose discount exceeds `FULL_PROGRAM_DISCOUNT_MINOR` in
+`lib/payments/promotions.ts`, or whose pre-discount subtotal is not the catalog price. Raising
+the discount in the Stripe Dashboard alone will not activate access — that constant must be
+changed and deployed too.
+
+Because Checkout lets a student type any active code, **every promotion code created on this
+Stripe account must be restricted to a specific product**, the way `npm run stripe:promo`
+restricts this one. An unrestricted code created later in the Dashboard could be typed on the
+full program. The webhook still refuses to activate access for a discount over the approved
+ceiling, but that leaves a captured payment for staff to refund by hand — so restrict the
+coupon when you create it rather than relying on the ceiling.
+
+The code is not printed anywhere on the public site. Share it directly with the people meant to
+use it. Test it end to end before announcing it: apply the code at Checkout, confirm the total
+falls to $900, pay with a test card, and confirm the webhook activates the enrollment and that
+`/admin` shows the promotion line on that registration. Repeat the refund test on a discounted
+payment — a $900 refund must read as fully refunded, not partial.
+
 ## 6. Attach the domain
 
 The application uses `https://www.thekti.org` as its canonical fallback. Keep both
@@ -111,7 +146,7 @@ Before announcing:
    those variables the sign-in redirect is skipped, so a configuration gap cannot lock students
    out of a site they have no way to pay on.
 4. Complete Stripe test Checkout and confirm webhook activation. Repeat with a canceled Session,
-   declined card, delayed method, duplicate webhook, refund, and dispute test.
+   declined card, delayed method, duplicate webhook, refund, dispute, and a promotion-code test.
 5. Separately test bank transfer by signing in as staff, opening `/admin`, and activating a
    pending enrollment with the verified bank reference.
 6. Confirm Module I access, topic sequencing, the 80% pass requirement, saved progress,

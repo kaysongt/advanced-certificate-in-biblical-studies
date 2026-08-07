@@ -280,6 +280,15 @@ export default async function AdminPage() {
                       <dt>Tuition</dt>
                       <dd>{tuition(enrollment.amount, enrollment.currency)}</dd>
                     </div>
+                    {paymentAttempt?.discountAmountMinor ? (
+                      <div>
+                        <dt>Promotion</dt>
+                        <dd>
+                          &minus;{tuition(paymentAttempt.discountAmountMinor / 100, enrollment.currency)}
+                          {paymentAttempt.promotionCode ? ` · ${paymentAttempt.promotionCode}` : ""}
+                        </dd>
+                      </div>
+                    ) : null}
                     <div>
                       <dt>Online payment</dt>
                       <dd>

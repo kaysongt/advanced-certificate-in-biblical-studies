@@ -9,6 +9,7 @@ import { currentStudent } from "@/lib/auth";
 import { getModuleStatuses } from "@/lib/content";
 import { db } from "@/lib/db";
 import { getCurriculum, moduleReleaseLabel } from "@/lib/curriculum";
+import { promotionCodesAllowed } from "@/lib/payments/promotions";
 import { isStripeCheckoutConfigured } from "@/lib/payments/stripe-client";
 import {
   listLatestStripePaymentAttempts,
@@ -162,6 +163,12 @@ export default async function DashboardPage({
                     {attempt ? (
                       <span className={`payment-state ${attempt.status}`}>
                         {paymentStatusLabels[attempt.status]}
+                      </span>
+                    ) : null}
+                    {canOpenCheckout && promotionCodesAllowed(enrollment.plan) ? (
+                      <span className="promo-code-note">
+                        Have a promo code? Enter it on the Stripe checkout page to see your
+                        discount before you pay.
                       </span>
                     ) : null}
                   </div>

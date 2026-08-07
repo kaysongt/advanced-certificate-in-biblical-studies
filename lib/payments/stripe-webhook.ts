@@ -8,12 +8,14 @@ import {
 import type Stripe from "stripe";
 
 import { prisma } from "@/lib/db/prisma";
+import type { Plan } from "@/lib/db/types";
 import { getStripeCatalogItem } from "@/lib/payments/catalog";
 import {
   blocksLatePaymentActivation,
   refundPaymentStatus,
   wonDisputePaymentStatus,
 } from "@/lib/payments/payment-policy";
+import { chargeableAmountMinor, isAcceptedDiscount } from "@/lib/payments/promotions";
 import { getStripeClient } from "@/lib/payments/stripe-client";
 
 type Transaction = Prisma.TransactionClient;
@@ -117,10 +119,28 @@ async function recordEvent(
   });
 }
 
+/**
+ * The readable code staff will recognise. Stripe only guarantees the id on the
+ * Session, so the lookup degrades to that id rather than failing the event.
+ */
+async function resolvePromotionLabel(
+  session: Stripe.Checkout.Session
+): Promise<string | null> {
+  const promotionCode = session.discounts?.[0]?.promotion_code;
+  if (!promotionCode) return null;
+  if (typeof promotionCode !== "string") return promotionCode.code;
+  try {
+    return (await getStripeClient().promotionCodes.retrieve(promotionCode)).code;
+  } catch {
+    return promotionCode;
+  }
+}
+
 async function processSessionEvent(
   transaction: Transaction,
   event: Stripe.Event,
-  session: Stripe.Checkout.Session
+  session: Stripe.Checkout.Session,
+  promotionLabel: string | null
 ): Promise<StripeWebhookResult["result"]> {
   const metadataAttemptId = session.metadata?.paymentAttemptId ?? null;
   const metadataEnrollmentId = session.metadata?.enrollmentId ?? null;
@@ -138,10 +158,11 @@ async function processSessionEvent(
   });
   if (!attempt) return "unlinked";
 
+  const plan: Plan = attempt.enrollment.plan === "ADVANCED" ? "advanced" : "certificate";
   const issues: string[] = [];
   try {
     getStripeCatalogItem({
-      plan: attempt.enrollment.plan === "ADVANCED" ? "advanced" : "certificate",
+      plan,
       product: attempt.enrollment.product,
       amount: attempt.enrollment.amount,
       currency: attempt.enrollment.currency,
@@ -150,6 +171,10 @@ async function processSessionEvent(
     issues.push("catalog mismatch");
   }
 
+  // A promotion code may lower the total, so the catalog price is verified
+  // against the pre-discount subtotal and the discount is bounded separately.
+  const discountMinor = session.total_details?.amount_discount ?? 0;
+  const chargeableMinor = attempt.expectedAmountMinor - discountMinor;
   const lineItems = session.line_items?.data ?? [];
   const lineItem = lineItems[0];
   if (metadataAttemptId !== attempt.id) issues.push("attempt metadata mismatch");
@@ -160,16 +185,27 @@ async function processSessionEvent(
   }
   if (session.mode !== "payment") issues.push("invalid Checkout mode");
   if (session.currency?.toLowerCase() !== attempt.currency) issues.push("currency mismatch");
-  if (session.amount_total !== attempt.expectedAmountMinor) issues.push("amount mismatch");
+  if (!isAcceptedDiscount(plan, discountMinor)) issues.push("discount outside the approved promotion");
+  if (attempt.discountAmountMinor && attempt.discountAmountMinor !== discountMinor) {
+    issues.push("recorded discount mismatch");
+  }
+  if (session.total_details?.amount_tax || session.total_details?.amount_shipping) {
+    issues.push("unexpected tax or shipping");
+  }
+  if (chargeableMinor <= 0) issues.push("non-positive charge");
+  if (session.amount_subtotal !== attempt.expectedAmountMinor) issues.push("subtotal mismatch");
+  if (session.amount_total !== chargeableMinor) issues.push("amount mismatch");
   if (lineItems.length !== 1 || lineItem?.quantity !== 1) issues.push("line item mismatch");
-  if (lineItem?.amount_total !== attempt.expectedAmountMinor) issues.push("line amount mismatch");
+  if (lineItem?.amount_subtotal !== attempt.expectedAmountMinor) issues.push("line subtotal mismatch");
+  if (lineItem?.amount_discount !== discountMinor) issues.push("line discount mismatch");
+  if (lineItem?.amount_total !== chargeableMinor) issues.push("line amount mismatch");
   if (paymentIntent && paymentIntent.metadata.paymentAttemptId !== attempt.id) {
     issues.push("PaymentIntent attempt mismatch");
   }
   if (paymentIntent && paymentIntent.metadata.enrollmentId !== attempt.enrollmentId) {
     issues.push("PaymentIntent enrollment mismatch");
   }
-  if (session.payment_status === "paid" && paymentIntent?.amount_received !== attempt.expectedAmountMinor) {
+  if (session.payment_status === "paid" && paymentIntent?.amount_received !== chargeableMinor) {
     issues.push("received amount mismatch");
   }
   if (
@@ -194,6 +230,8 @@ async function processSessionEvent(
     checkoutSessionId: session.id,
     paymentIntentId,
     latestChargeId,
+    discountAmountMinor: discountMinor,
+    promotionCode: promotionLabel ?? attempt.promotionCode,
     lastEventCreatedAt: newestDate(attempt.lastEventCreatedAt, eventDate(event)),
   };
 
@@ -238,7 +276,7 @@ async function processSessionEvent(
         ...commonData,
         activeKey: null,
         status: StripePaymentStatus.PAID,
-        paidAmountMinor: session.amount_total ?? attempt.expectedAmountMinor,
+        paidAmountMinor: session.amount_total ?? chargeableMinor,
         needsReview,
         reviewReason: needsReview
           ? "Payment succeeded after another payment or manual activation."
@@ -323,7 +361,9 @@ async function processRefundEvent(
     return "review";
   }
 
-  const fullyRefunded = charge.amount_refunded >= attempt.expectedAmountMinor;
+  // A discounted enrollment is fully refunded at the amount actually charged.
+  const chargeableMinor = chargeableAmountMinor(attempt);
+  const fullyRefunded = charge.amount_refunded >= chargeableMinor;
   const manualActivation =
     attempt.enrollment.status === EnrollmentStatus.ACTIVE &&
     attempt.enrollment.provider !== "stripe";
@@ -334,7 +374,7 @@ async function processRefundEvent(
       paymentIntentId,
       latestChargeId: charge.id,
       refundedAmountMinor: charge.amount_refunded,
-      status: refundPaymentStatus(charge.amount_refunded, attempt.expectedAmountMinor),
+      status: refundPaymentStatus(charge.amount_refunded, chargeableMinor),
       needsReview: !fullyRefunded || manualActivation,
       reviewReason: !fullyRefunded
         ? "A partial refund requires staff review."
@@ -393,9 +433,10 @@ async function processDisputeEvent(
   }
 
   const won = event.type === "charge.dispute.closed" && dispute.status === "won";
-  const fullyRefunded = attempt.refundedAmountMinor >= attempt.expectedAmountMinor;
+  const chargeableMinor = chargeableAmountMinor(attempt);
+  const fullyRefunded = attempt.refundedAmountMinor >= chargeableMinor;
   const status = won
-    ? wonDisputePaymentStatus(attempt.refundedAmountMinor, attempt.expectedAmountMinor)
+    ? wonDisputePaymentStatus(attempt.refundedAmountMinor, chargeableMinor)
     : StripePaymentStatus.DISPUTED;
   await transaction.stripePaymentAttempt.update({
     where: { id: attempt.id },
@@ -470,8 +511,9 @@ export async function processStripeWebhookEvent(
     const session = await getStripeClient().checkout.sessions.retrieve(eventSession.id, {
       expand: ["line_items", "payment_intent.latest_charge"],
     });
+    const promotionLabel = await resolvePromotionLabel(session);
     return withIdempotentEvent(event, session.id, (transaction) =>
-      processSessionEvent(transaction, event, session)
+      processSessionEvent(transaction, event, session, promotionLabel)
     );
   }
 

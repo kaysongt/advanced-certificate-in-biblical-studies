@@ -40,6 +40,11 @@ import {
   refundPaymentStatus,
   wonDisputePaymentStatus,
 } from "../lib/payments/payment-policy";
+import {
+  chargeableAmountMinor,
+  FULL_PROGRAM_DISCOUNT_MINOR,
+  isAcceptedDiscount,
+} from "../lib/payments/promotions";
 import { STRIPE_API_VERSION } from "../lib/payments/stripe-version";
 
 let passed = 0;
@@ -333,6 +338,52 @@ async function main() {
     assert.equal("custom_text" in checkoutParams, false);
     assert.equal(checkoutParams.customer_email, "checkout-check@example.com");
     assert.equal(checkoutParams.success_url, "https://www.thekti.org/dashboard?payment=success");
+  });
+  const certificateCheckoutParams = buildCheckoutSessionParams({
+    enrollmentId: "enrollment-check",
+    paymentAttemptId: "attempt-check",
+    catalogKey: "certificate",
+    customerEmail: "checkout-check@example.com",
+    priceId: "price_check",
+    appBaseUrl: "https://www.thekti.org",
+  });
+  check("the full program accepts a promotion code and a single certificate does not", () => {
+    assert.equal(checkoutParams.allow_promotion_codes, true);
+    assert.equal("allow_promotion_codes" in certificateCheckoutParams, false);
+  });
+  check("the promotion takes exactly $100 off the full program", () => {
+    assert.equal(FULL_PROGRAM_DISCOUNT_MINOR, 10_000);
+    assert.equal(
+      advancedPayment.amountMinor - FULL_PROGRAM_DISCOUNT_MINOR,
+      90_000
+    );
+  });
+  check("a discount beyond the approved promotion is refused", () => {
+    assert.equal(isAcceptedDiscount("advanced", 0), true);
+    assert.equal(isAcceptedDiscount("advanced", FULL_PROGRAM_DISCOUNT_MINOR), true);
+    assert.equal(isAcceptedDiscount("advanced", FULL_PROGRAM_DISCOUNT_MINOR + 1), false);
+    assert.equal(isAcceptedDiscount("advanced", -1), false);
+  });
+  check("a single certificate cannot be discounted at all", () => {
+    assert.equal(isAcceptedDiscount("certificate", 0), true);
+    assert.equal(isAcceptedDiscount("certificate", 1), false);
+  });
+  check("a discounted enrollment is charged the reduced amount", () =>
+    assert.equal(
+      chargeableAmountMinor({
+        expectedAmountMinor: advancedPayment.amountMinor,
+        discountAmountMinor: FULL_PROGRAM_DISCOUNT_MINOR,
+      }),
+      90_000
+    )
+  );
+  check("refunding a discounted payment in full is not treated as partial", () => {
+    const chargeable = chargeableAmountMinor({
+      expectedAmountMinor: advancedPayment.amountMinor,
+      discountAmountMinor: FULL_PROGRAM_DISCOUNT_MINOR,
+    });
+    assert.equal(refundPaymentStatus(90_000, chargeable), StripePaymentStatus.REFUNDED);
+    assert.equal(refundPaymentStatus(89_999, chargeable), StripePaymentStatus.PARTIALLY_REFUNDED);
   });
   check("refunds and disputes block stale success events", () => {
     assert.equal(blocksLatePaymentActivation(StripePaymentStatus.REFUNDED), true);

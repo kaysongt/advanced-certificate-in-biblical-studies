@@ -127,6 +127,8 @@ model StripePaymentAttempt {
   paymentIntentId     String?             @unique
   latestChargeId      String?             @unique
   expectedAmountMinor Int
+  discountAmountMinor Int                 @default(0)
+  promotionCode       String?
   currency            String
   status              StripePaymentStatus @default(CREATED)
   paidAmountMinor     Int                 @default(0)

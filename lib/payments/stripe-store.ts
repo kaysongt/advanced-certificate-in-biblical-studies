@@ -26,6 +26,8 @@ export type StripePaymentAttemptSummary = {
     | "disputed";
   paidAmountMinor: number;
   refundedAmountMinor: number;
+  discountAmountMinor: number;
+  promotionCode: string | null;
   needsReview: boolean;
   reviewReason: string | null;
   updatedAt: string;
@@ -54,6 +56,8 @@ function summarizeAttempt(attempt: {
   status: StripePaymentStatus;
   paidAmountMinor: number;
   refundedAmountMinor: number;
+  discountAmountMinor: number;
+  promotionCode: string | null;
   needsReview: boolean;
   reviewReason: string | null;
   updatedAt: Date;

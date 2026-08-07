@@ -1368,6 +1368,7 @@ a.card:hover::after { opacity: .9; }
 .stripe-checkout-button span { font: 800 12px/1.1 var(--sans); letter-spacing: .02em; }
 .stripe-checkout-button small { font: 600 8.5px/1.2 var(--sans); opacity: .72; }
 .payment-processing-note { max-width: 245px; margin: 0; color: rgba(255, 255, 255, .72); font: 550 11px/1.55 var(--sans); }
+.promo-code-note { display: block; max-width: 420px; margin-top: 7px; color: rgba(255, 255, 255, .7); font: 550 11px/1.5 var(--sans); }
 .pending-enrollment-actions { display: grid; min-width: 220px; gap: 13px; justify-items: stretch; }
 .scholarship-payment-option { display: grid; gap: 5px; padding-top: 12px; border-top: 1px solid rgba(255, 255, 255, .16); font-family: var(--sans); }
 .scholarship-payment-option span,
