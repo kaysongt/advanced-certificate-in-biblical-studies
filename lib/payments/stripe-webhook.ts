@@ -15,7 +15,8 @@ import {
   refundPaymentStatus,
   wonDisputePaymentStatus,
 } from "@/lib/payments/payment-policy";
-import { chargeableAmountMinor, isAcceptedDiscount } from "@/lib/payments/promotions";
+import { chargeableAmountMinor } from "@/lib/payments/promotions";
+import { sessionAmountIssues } from "@/lib/payments/session-amounts";
 import { getStripeClient } from "@/lib/payments/stripe-client";
 
 type Transaction = Prisma.TransactionClient;
@@ -184,29 +185,33 @@ async function processSessionEvent(
     issues.push("Checkout Session mismatch");
   }
   if (session.mode !== "payment") issues.push("invalid Checkout mode");
-  if (session.currency?.toLowerCase() !== attempt.currency) issues.push("currency mismatch");
-  if (!isAcceptedDiscount(plan, discountMinor)) issues.push("discount outside the approved promotion");
-  if (attempt.discountAmountMinor && attempt.discountAmountMinor !== discountMinor) {
-    issues.push("recorded discount mismatch");
-  }
-  if (session.total_details?.amount_tax || session.total_details?.amount_shipping) {
-    issues.push("unexpected tax or shipping");
-  }
-  if (chargeableMinor <= 0) issues.push("non-positive charge");
-  if (session.amount_subtotal !== attempt.expectedAmountMinor) issues.push("subtotal mismatch");
-  if (session.amount_total !== chargeableMinor) issues.push("amount mismatch");
-  if (lineItems.length !== 1 || lineItem?.quantity !== 1) issues.push("line item mismatch");
-  if (lineItem?.amount_subtotal !== attempt.expectedAmountMinor) issues.push("line subtotal mismatch");
-  if (lineItem?.amount_discount !== discountMinor) issues.push("line discount mismatch");
-  if (lineItem?.amount_total !== chargeableMinor) issues.push("line amount mismatch");
+  issues.push(
+    ...sessionAmountIssues({
+      plan,
+      expectedAmountMinor: attempt.expectedAmountMinor,
+      recordedDiscountMinor: attempt.discountAmountMinor,
+      attemptCurrency: attempt.currency,
+      sessionCurrency: session.currency,
+      amountSubtotal: session.amount_subtotal,
+      amountTotal: session.amount_total,
+      discountMinor,
+      taxMinor: session.total_details?.amount_tax ?? 0,
+      shippingMinor: session.total_details?.amount_shipping ?? 0,
+      lineItemCount: lineItems.length,
+      lineQuantity: lineItem?.quantity ?? null,
+      lineAmountSubtotal: lineItem?.amount_subtotal ?? null,
+      lineAmountDiscount: lineItem?.amount_discount ?? null,
+      lineAmountTax: lineItem?.amount_tax ?? null,
+      lineAmountTotal: lineItem?.amount_total ?? null,
+      paymentStatusPaid: session.payment_status === "paid",
+      amountReceived: paymentIntent?.amount_received ?? null,
+    })
+  );
   if (paymentIntent && paymentIntent.metadata.paymentAttemptId !== attempt.id) {
     issues.push("PaymentIntent attempt mismatch");
   }
   if (paymentIntent && paymentIntent.metadata.enrollmentId !== attempt.enrollmentId) {
     issues.push("PaymentIntent enrollment mismatch");
-  }
-  if (session.payment_status === "paid" && paymentIntent?.amount_received !== chargeableMinor) {
-    issues.push("received amount mismatch");
   }
   if (
     await externalIdConflicts(transaction, attempt.id, paymentIntentId, latestChargeId)

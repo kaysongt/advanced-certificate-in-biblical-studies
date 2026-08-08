@@ -126,6 +126,15 @@ full program. The webhook still refuses to activate access for a discount over t
 ceiling, but that leaves a captured payment for staff to refund by hand — so restrict the
 coupon when you create it rather than relying on the ceiling.
 
+Stripe Tax may be switched on in the Dashboard without a deploy, so the webhook accepts a total
+raised by tax and checks the catalog price against the pre-discount subtotal instead. Shipping
+is always refused. `sessionAmountIssues` in `lib/payments/session-amounts.ts` holds that
+arithmetic and is covered by `npm run check`.
+
+Adaptive Pricing is safe to leave on: Stripe reports the Session and PaymentIntent in the
+integration currency, and puts the customer's local figure in `presentment_details`, so USD
+validation still passes.
+
 The code is not printed anywhere on the public site. Share it directly with the people meant to
 use it. Test it end to end before announcing it: apply the code at Checkout, confirm the total
 falls to $900, pay with a test card, and confirm the webhook activates the enrollment and that

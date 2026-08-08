@@ -45,6 +45,7 @@ import {
   FULL_PROGRAM_DISCOUNT_MINOR,
   isAcceptedDiscount,
 } from "../lib/payments/promotions";
+import { sessionAmountIssues } from "../lib/payments/session-amounts";
 import { STRIPE_API_VERSION } from "../lib/payments/stripe-version";
 
 let passed = 0;
@@ -375,6 +376,131 @@ async function main() {
         discountAmountMinor: FULL_PROGRAM_DISCOUNT_MINOR,
       }),
       90_000
+    )
+  );
+  // A paid full-program Session at list price, as Stripe reports it back.
+  const paidSessionFacts = {
+    plan: "advanced" as const,
+    expectedAmountMinor: 100_000,
+    recordedDiscountMinor: 0,
+    attemptCurrency: "usd",
+    sessionCurrency: "usd",
+    amountSubtotal: 100_000,
+    amountTotal: 100_000,
+    discountMinor: 0,
+    taxMinor: 0,
+    shippingMinor: 0,
+    lineItemCount: 1,
+    lineQuantity: 1,
+    lineAmountSubtotal: 100_000,
+    lineAmountDiscount: 0,
+    lineAmountTax: 0,
+    lineAmountTotal: 100_000,
+    paymentStatusPaid: true,
+    amountReceived: 100_000,
+  };
+  check("an undiscounted full-program payment validates cleanly", () =>
+    assert.deepEqual(sessionAmountIssues(paidSessionFacts), [])
+  );
+  check("a payment discounted by the promotion validates cleanly", () =>
+    assert.deepEqual(
+      sessionAmountIssues({
+        ...paidSessionFacts,
+        amountTotal: 90_000,
+        discountMinor: 10_000,
+        lineAmountDiscount: 10_000,
+        lineAmountTotal: 90_000,
+        amountReceived: 90_000,
+      }),
+      []
+    )
+  );
+  check("Stripe Tax raising the total does not block activation", () =>
+    assert.deepEqual(
+      sessionAmountIssues({
+        ...paidSessionFacts,
+        amountTotal: 108_250,
+        taxMinor: 8_250,
+        lineAmountTax: 8_250,
+        lineAmountTotal: 108_250,
+        amountReceived: 108_250,
+      }),
+      []
+    )
+  );
+  check("tax and the promotion combine without blocking activation", () =>
+    assert.deepEqual(
+      sessionAmountIssues({
+        ...paidSessionFacts,
+        amountTotal: 97_425,
+        discountMinor: 10_000,
+        taxMinor: 7_425,
+        lineAmountDiscount: 10_000,
+        lineAmountTax: 7_425,
+        lineAmountTotal: 97_425,
+        amountReceived: 97_425,
+      }),
+      []
+    )
+  );
+  check("a discount larger than the promotion is refused", () =>
+    assert.deepEqual(
+      sessionAmountIssues({
+        ...paidSessionFacts,
+        amountTotal: 50_000,
+        discountMinor: 50_000,
+        lineAmountDiscount: 50_000,
+        lineAmountTotal: 50_000,
+        amountReceived: 50_000,
+      }),
+      ["discount outside the approved promotion"]
+    )
+  );
+  check("a tampered catalog price trips every amount guard, not just one", () =>
+    assert.deepEqual(
+      sessionAmountIssues({
+        ...paidSessionFacts,
+        amountSubtotal: 10_000,
+        amountTotal: 10_000,
+        lineAmountSubtotal: 10_000,
+        lineAmountTotal: 10_000,
+        amountReceived: 10_000,
+      }),
+      [
+        "subtotal mismatch",
+        "amount mismatch",
+        "line subtotal mismatch",
+        "line amount mismatch",
+        "received amount mismatch",
+      ]
+    )
+  );
+  check("paying less than the total owed is refused", () =>
+    assert.deepEqual(
+      sessionAmountIssues({ ...paidSessionFacts, amountReceived: 1_000 }),
+      ["received amount mismatch"]
+    )
+  );
+  check("a single certificate accepts no discount at checkout", () =>
+    assert.ok(
+      sessionAmountIssues({
+        ...paidSessionFacts,
+        plan: "certificate",
+        expectedAmountMinor: 25_000,
+        amountSubtotal: 25_000,
+        amountTotal: 20_000,
+        discountMinor: 5_000,
+        lineAmountSubtotal: 25_000,
+        lineAmountDiscount: 5_000,
+        lineAmountTotal: 20_000,
+        amountReceived: 20_000,
+      }).includes("discount outside the approved promotion")
+    )
+  );
+  check("a currency other than the enrollment's is refused", () =>
+    assert.deepEqual(
+      sessionAmountIssues({ ...paidSessionFacts, sessionCurrency: "ngn" }),
+      ["currency mismatch"]
     )
   );
   check("refunding a discounted payment in full is not treated as partial", () => {
