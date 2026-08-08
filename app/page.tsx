@@ -235,13 +235,13 @@ export default function HomePage() {
           </div>
           <div className="pricing">
             <div className="price">
-              <div className="plan">Single certificate</div>
+              <div className="plan">Pay per certificate</div>
               <div className="amount">
                 {PRICING.certificate.label} <span>/ certificate</span>
               </div>
               <p className="blurb">
-                Choose any one of the five certificate programs. Enroll now, then begin studying
-                on its published opening date.
+                Start with a certificate and pay as you progress through the program. Complete all
+                five certificates to earn the Advanced Certificate in Biblical Studies.
               </p>
               <ul>
                 <li>All courses within that certificate</li>
