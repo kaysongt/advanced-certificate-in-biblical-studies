@@ -240,7 +240,17 @@ async function processSessionEvent(
     lastEventCreatedAt: newestDate(attempt.lastEventCreatedAt, eventDate(event)),
   };
 
-  if (session.payment_status === "paid") {
+  // A fully discounted Session has nothing to charge, so Stripe completes it
+  // without a PaymentIntent and reports "no_payment_required" rather than
+  // "paid". That still earns access, but only when the total really is zero —
+  // a non-zero total left uncollected must never activate an enrollment.
+  const settled =
+    session.payment_status === "paid" ||
+    (session.payment_status === "no_payment_required" &&
+      session.status === "complete" &&
+      (session.amount_total ?? 0) === 0);
+
+  if (settled) {
     if (blocksLatePaymentActivation(attempt.status)) {
       await transaction.stripePaymentAttempt.update({
         where: { id: attempt.id },
