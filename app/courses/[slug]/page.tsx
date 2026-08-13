@@ -70,6 +70,36 @@ export default async function CoursePage({ params }: Props) {
         </div>
       ) : null}
 
+      {/*
+        * These clips arrive in portrait, square, and landscape, so the frame
+        * sizes itself from each file's own dimensions rather than forcing one
+        * shape. width/height on the element reserve the right box up front,
+        * which keeps the page from jumping once the video loads.
+        */}
+      {course.intro_video?.url ? (
+        <section className="course-intro" aria-labelledby="course-intro-title">
+          <div className="eyebrow">Start here</div>
+          <h2 id="course-intro-title">
+            {course.intro_video.title ?? `Introducing ${course.title}`}
+          </h2>
+          <div className="course-intro-frame">
+            <video
+              src={course.intro_video.url}
+              poster={course.intro_video.poster ?? undefined}
+              width={course.intro_video.width ?? undefined}
+              height={course.intro_video.height ?? undefined}
+              controls
+              playsInline
+              preload="metadata"
+              aria-label={course.intro_video.title ?? `Introducing ${course.title}`}
+            />
+          </div>
+          {course.intro_video.duration ? (
+            <p className="course-intro-meta">{course.intro_video.duration}</p>
+          ) : null}
+        </section>
+      ) : null}
+
       {audio ? (
         <section className="audio-library" aria-labelledby="audio-library-title">
           <div>

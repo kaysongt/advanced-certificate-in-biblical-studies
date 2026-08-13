@@ -14,6 +14,8 @@ export type Course = {
   description: string;
   textbook?: string;
   isbn?: string;
+  /** Short orientation clip opening the course. Null until supplied. */
+  intro_video?: ModuleVideo;
 };
 
 /** One video per module, shown after the final course. Null until supplied. */
@@ -25,6 +27,13 @@ export type ModuleVideo = {
   duration: string | null;
   /** Still frame shown before playback starts. Self-hosted files only. */
   poster?: string | null;
+  /**
+   * Native pixel size. Set on the video element so the browser reserves the
+   * right box before the file loads — these clips arrive in portrait, square,
+   * and landscape, so the shape cannot be assumed from CSS alone.
+   */
+  width?: number | null;
+  height?: number | null;
 };
 
 export type Module = {
