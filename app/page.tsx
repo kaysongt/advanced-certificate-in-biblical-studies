@@ -133,12 +133,20 @@ export default function HomePage() {
                 </p>
               ) : null}
             </div>
+            {/*
+              * Self-hosted rather than embedded: the file is small enough to
+              * ship with the site, which keeps a third party's branding and
+              * traffic limits off the homepage. preload="metadata" fetches the
+              * poster and duration without pulling the whole clip.
+              */}
             <div className="intro-video-frame">
-              <iframe
+              <video
                 src={program.intro_video.url}
-                title={program.intro_video.title ?? `Welcome to ${program.institute}`}
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; picture-in-picture"
-                allowFullScreen
+                poster={program.intro_video.poster ?? undefined}
+                controls
+                playsInline
+                preload="metadata"
+                aria-label={program.intro_video.title ?? `Welcome to ${program.institute}`}
               />
             </div>
           </div>

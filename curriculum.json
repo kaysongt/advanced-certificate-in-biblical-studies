@@ -13,9 +13,10 @@
     },
     "intro_video": {
       "title": "Welcome to KingsWord Training Institute",
-      "url": "https://drive.google.com/file/d/1NAEHwkqmEKR3RZCCcfoXLRPzg5H-fdJV/preview",
+      "url": "/assets/kti-intro.mp4",
       "speaker": "Dr. Kay Ijisesan",
-      "duration": null
+      "duration": "1:35",
+      "poster": "/assets/kti-intro-poster.jpg"
     },
     "total_hours": 172,
     "total_certificates": 5,

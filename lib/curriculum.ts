@@ -19,9 +19,12 @@ export type Course = {
 /** One video per module, shown after the final course. Null until supplied. */
 export type ModuleVideo = {
   title: string | null;
+  /** An iframe embed URL, or a path under /public for a self-hosted file. */
   url: string | null;
   speaker: string | null;
   duration: string | null;
+  /** Still frame shown before playback starts. Self-hosted files only. */
+  poster?: string | null;
 };
 
 export type Module = {
