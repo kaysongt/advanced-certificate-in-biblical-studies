@@ -61,6 +61,8 @@ export type Curriculum = {
     founder: { name: string; role: string; bio: string };
     /** Institute-wide welcome shown on the homepage. Null until supplied. */
     intro_video?: ModuleVideo;
+    /** Course orientation, shown on the dashboard once a student registers. */
+    welcome_video?: ModuleVideo;
     total_hours: number;
     total_certificates: number;
     total_courses: number;

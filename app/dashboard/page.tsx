@@ -119,6 +119,47 @@ export default async function DashboardPage({
         </p>
       </div>
 
+      {/*
+        * The orientation video is the first thing a newly registered student
+        * meets, above the payment prompt. It stays available afterwards rather
+        * than disappearing at payment, since it explains the course itself.
+        */}
+      {program.welcome_video?.url && enrollments.length ? (
+        <section className="welcome-video" aria-labelledby="welcome-video-title">
+          <div className="welcome-video-copy">
+            <div className="eyebrow">Start here</div>
+            <h2 id="welcome-video-title">
+              {program.welcome_video.title ?? "Thank you for registering"}
+            </h2>
+            <p>
+              A short orientation from the Institute on what the {program.title} covers
+              and how to get the most from it.
+            </p>
+            {program.welcome_video.speaker ? (
+              <p className="welcome-video-meta">
+                <strong>{program.welcome_video.speaker}</strong>
+                {program.welcome_video.duration ? (
+                  <>
+                    <span aria-hidden="true">&middot;</span>
+                    {program.welcome_video.duration}
+                  </>
+                ) : null}
+              </p>
+            ) : null}
+          </div>
+          <div className="welcome-video-frame">
+            <video
+              src={program.welcome_video.url}
+              poster={program.welcome_video.poster ?? undefined}
+              controls
+              playsInline
+              preload="metadata"
+              aria-label={program.welcome_video.title ?? "Thank you for registering"}
+            />
+          </div>
+        </section>
+      ) : null}
+
       {pending.length ? (
         <section className="pending-payment" aria-labelledby="pending-payment-title">
           <div className="payment-heading">

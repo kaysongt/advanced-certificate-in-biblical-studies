@@ -18,6 +18,13 @@
       "duration": "1:35",
       "poster": "/assets/kti-intro-poster.jpg"
     },
+    "welcome_video": {
+      "title": "Thank you for registering",
+      "url": "/assets/kti-welcome.mp4",
+      "speaker": "Dr. Kay Ijisesan",
+      "duration": "3:51",
+      "poster": "/assets/kti-welcome-poster.jpg"
+    },
     "total_hours": 172,
     "total_certificates": 5,
     "total_courses": 32,
