@@ -16,7 +16,7 @@
     "db:deploy": "prisma migrate deploy",
     "admin:create": "tsx scripts/create-admin.ts",
     "stripe:prices": "tsx scripts/stripe-price-ids.ts",
-    "stripe:promo": "tsx scripts/stripe-promotion-code.ts"
+    "stripe:promo": "tsx scripts/stripe-promotion-code.mts"
   },
   "dependencies": {
     "@prisma/client": "^6.19.3",

@@ -93,20 +93,30 @@ email, source control, command history, or logs; rotate it first.
 Stripe-hosted Checkout does not need a publishable key in this application because no payment
 form or card data is rendered on the KingsWord site.
 
-## 5a. Create the $100-off promotion code
+## 5a. Create the 100%-off promotion code
 
-The full program accepts a promotion code at Checkout. Single certificates do not, so the code
-field is hidden on those Sessions. Create the code once per Stripe environment:
+The full program accepts a promotion code at Checkout, and that code takes **100% off** — a
+student who redeems it pays nothing. Single certificates accept no code at all, so the field is
+hidden on those Sessions. Create the code once per Stripe environment:
 
 ```bash
 STRIPE_SECRET_KEY=sk_test_... \
 STRIPE_PRICE_ADVANCED=price_... \
 PROMO_CODE=SUMMERBLAST2026 \
+PROMO_MAX_REDEMPTIONS=unlimited \
+PROMO_EXPIRES_ON=never \
 npm run stripe:promo
 ```
 
-`PROMO_MAX_REDEMPTIONS` and `PROMO_EXPIRES_ON=YYYY-MM-DD` are optional limits. Re-running with
-an existing code reports it instead of creating a duplicate.
+`PROMO_MAX_REDEMPTIONS` and `PROMO_EXPIRES_ON` are both **required**, because the code gives
+tuition away outright and a forgotten variable must never be the reason it ends up uncapped.
+Pass a positive whole number and a `YYYY-MM-DD` date to limit the giveaway, or the literal
+`unlimited` and `never` to opt out — the script warns loudly when both are waived. Re-running
+with an existing code reports it instead of creating a duplicate.
+
+The code is currently configured **uncapped and non-expiring**: anyone who receives or forwards
+it enrols free, with no automatic stop. Treat it as a private credential rather than marketing
+copy, and deactivate it in the Stripe Dashboard the moment the offer ends.
 
 Stripe matches promotion codes without regard to case, so a student may type
 `summerblast2026`, `SUMMERBLAST2026`, or any mix and it will be accepted. The script stores the
@@ -137,9 +147,19 @@ validation still passes.
 
 The code is not printed anywhere on the public site. Share it directly with the people meant to
 use it. Test it end to end before announcing it: apply the code at Checkout, confirm the total
-falls to $900, pay with a test card, and confirm the webhook activates the enrollment and that
-`/admin` shows the promotion line on that registration. Repeat the refund test on a discounted
-payment — a $900 refund must read as fully refunded, not partial.
+falls to $0, complete the Session, and confirm the webhook activates the enrollment and that
+`/admin` shows the promotion line on that registration.
+
+A $0 total is settled differently by Stripe: no PaymentIntent and no charge are created, and
+the Session reports `payment_status: no_payment_required` rather than `paid`. The webhook in
+`lib/payments/stripe-webhook.ts` treats that as settled **only** when `amount_total` is really
+zero and the Session is complete, so an uncollected non-zero total still cannot buy access. The
+attempt is stored as `PAID` with `paidAmountMinor` of 0.
+
+There is no charge behind a free enrollment, so there is nothing to refund and no self-serve way
+to take the access back: `/admin` can activate a pending enrollment but has no revoke action.
+Undoing a mistaken redemption means editing the database by hand. Deactivate the code in Stripe
+the moment the offer ends.
 
 ## 6. Attach the domain
 
