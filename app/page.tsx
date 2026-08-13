@@ -112,6 +112,39 @@ export default function HomePage() {
         </div>
       </section>
 
+      {program.intro_video?.url ? (
+        <section className="section home-section intro-video-section" aria-labelledby="intro-video-heading">
+          <div className="wide intro-video-layout">
+            <div className="intro-video-copy">
+              <div className="eyebrow">Meet the Institute</div>
+              <h2 id="intro-video-heading">
+                {program.intro_video.title ?? `Welcome to ${program.institute}`}
+              </h2>
+              <p>{program.about}</p>
+              {program.intro_video.speaker ? (
+                <p className="intro-video-meta">
+                  <strong>{program.intro_video.speaker}</strong>
+                  {program.intro_video.duration ? (
+                    <>
+                      <span aria-hidden="true">&middot;</span>
+                      {program.intro_video.duration}
+                    </>
+                  ) : null}
+                </p>
+              ) : null}
+            </div>
+            <div className="intro-video-frame">
+              <iframe
+                src={program.intro_video.url}
+                title={program.intro_video.title ?? `Welcome to ${program.institute}`}
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; picture-in-picture"
+                allowFullScreen
+              />
+            </div>
+          </div>
+        </section>
+      ) : null}
+
       <section className="section home-section gain-section">
         <div className="wide">
           <div className="section-lead split-lead">
