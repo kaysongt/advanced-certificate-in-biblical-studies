@@ -73,7 +73,7 @@ export default function PrivacyPage() {
 
         <h2>Contact us</h2>
         <p>
-          For privacy questions or account requests, email <a href="mailto:kti@kingsword.org">kti@kingsword.org</a>
+          For privacy questions or account requests, email <a href="mailto:kti@kingsword.org">kti@kingsword.org</a>{" "}
           or call <a href="tel:+17732778701">+1 773 277 8701</a>. We may update this notice as
           the program or its service providers change.
         </p>

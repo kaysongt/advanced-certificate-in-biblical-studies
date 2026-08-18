@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 
 import { signOut } from "@/app/login/actions";
 import StripeCheckoutButton from "@/components/StripeCheckoutButton";
-import { hasActiveAccess } from "@/lib/access";
+import { getModuleEnrollmentState } from "@/lib/access";
 import { currentStudent } from "@/lib/auth";
 import { getModuleStatuses } from "@/lib/content";
 import { db } from "@/lib/db";
@@ -120,7 +120,11 @@ export default async function DashboardPage({
       </div>
 
       {pending.length ? (
-        <section className="pending-payment" aria-labelledby="pending-payment-title">
+        <section
+          id="complete-payment"
+          className="pending-payment"
+          aria-labelledby="pending-payment-title"
+        >
           <div className="payment-heading">
             <div>
               <div className="eyebrow">Enrollment reserved</div>
@@ -253,30 +257,48 @@ export default async function DashboardPage({
       <h2>Your program</h2>
       <div className="cards five">
         {statuses.map(({ module, available }) => {
-          const unlocked = hasActiveAccess(enrollments, module.slug);
+          const enrollmentState = getModuleEnrollmentState(enrollments, module.slug);
+          const unlocked = enrollmentState === "active";
+          const statusClass =
+            unlocked && available
+              ? "now"
+              : enrollmentState === "pending"
+                ? "reserved"
+                : "soon";
+          const statusLabel =
+            enrollmentState === "none"
+              ? "Not included"
+              : enrollmentState === "pending"
+                ? "Included"
+                : enrollmentState === "suspended"
+                  ? "Access on hold"
+                  : available
+                    ? "Ready"
+                    : moduleReleaseLabel(module);
+          const contactHref = `mailto:${program.contact.email}?subject=${encodeURIComponent(
+            `Add ${module.short_title} certificate`
+          )}`;
           return (
             <div className="card" key={module.slug}>
               <div className="cardtop">
                 <span className="eyebrow">
                   Module {module.numeral} &middot; {module.hours} hrs
                 </span>
-                <span className={`avail ${available && unlocked ? "now" : "soon"}`}>
-                  {!unlocked
-                    ? "Not enrolled"
-                    : available
-                      ? "Ready"
-                      : moduleReleaseLabel(module)}
-                </span>
+                <span className={`avail ${statusClass}`}>{statusLabel}</span>
               </div>
               <span className="t">{module.short_title}</span>
               <p>{module.catalog_blurb}</p>
               <span className="foot">
                 {unlocked && available ? (
                   <Link href={`/curriculum/${module.slug}`}>Start studying →</Link>
-                ) : !unlocked ? (
-                  <Link href="/enroll">Add this certificate →</Link>
-                ) : (
+                ) : unlocked ? (
                   moduleReleaseLabel(module)
+                ) : enrollmentState === "pending" ? (
+                  <Link href="#complete-payment">Complete payment to unlock →</Link>
+                ) : enrollmentState === "suspended" ? (
+                  <a href={`mailto:${program.contact.email}`}>Contact KTI about access →</a>
+                ) : (
+                  <a href={contactHref}>Ask about adding this certificate →</a>
                 )}
               </span>
             </div>
