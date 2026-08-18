@@ -11,7 +11,12 @@ import { StripePaymentStatus } from "@prisma/client";
 import Stripe from "stripe";
 
 import { hashPassword, verifyPassword } from "../lib/auth-core";
-import { entitlementRedirectPath, hasActiveAccess, mustPayBeforeStudying } from "../lib/access";
+import {
+  entitlementRedirectPath,
+  getModuleEnrollmentState,
+  hasActiveAccess,
+  mustPayBeforeStudying,
+} from "../lib/access";
 import {
   getAssessmentBank,
   getCourseAudio,
@@ -237,6 +242,29 @@ async function main() {
   check("pending enrollment does not grant access", () =>
     assert.equal(hasActiveAccess([{ ...enrollmentBase, status: "pending" }], module.slug), false)
   );
+  check("pending full-program enrollment includes every certificate", () => {
+    const pendingAdvanced = [{ ...enrollmentBase, status: "pending" as const }];
+    assert.equal(getModuleEnrollmentState(pendingAdvanced, module.slug), "pending");
+    assert.equal(
+      getModuleEnrollmentState(pendingAdvanced, curriculum.modules[1].slug),
+      "pending"
+    );
+  });
+  check("pending single-certificate enrollment only includes its selected certificate", () => {
+    const pendingCertificate = [
+      {
+        ...enrollmentBase,
+        product: module.slug,
+        plan: "certificate" as const,
+        status: "pending" as const,
+      },
+    ];
+    assert.equal(getModuleEnrollmentState(pendingCertificate, module.slug), "pending");
+    assert.equal(
+      getModuleEnrollmentState(pendingCertificate, curriculum.modules[1].slug),
+      "none"
+    );
+  });
   check("active advanced enrollment grants access", () =>
     assert.equal(hasActiveAccess([{ ...enrollmentBase, status: "active" }], module.slug), true)
   );
@@ -247,6 +275,15 @@ async function main() {
         module.slug
       ),
       false
+    )
+  );
+  check("a suspended payment remains enrolled without granting access", () =>
+    assert.equal(
+      getModuleEnrollmentState(
+        [{ ...enrollmentBase, status: "active", accessSuspendedAt: new Date().toISOString() }],
+        module.slug
+      ),
+      "suspended"
     )
   );
   check("active single-certificate enrollment is scoped", () =>
@@ -352,12 +389,11 @@ async function main() {
     assert.equal(checkoutParams.allow_promotion_codes, true);
     assert.equal("allow_promotion_codes" in certificateCheckoutParams, false);
   });
-  check("the promotion takes exactly $100 off the full program", () => {
-    assert.equal(FULL_PROGRAM_DISCOUNT_MINOR, 10_000);
-    assert.equal(
-      advancedPayment.amountMinor - FULL_PROGRAM_DISCOUNT_MINOR,
-      90_000
-    );
+  check("the promotion takes 100% off the full program", () => {
+    // The ceiling must track the catalog price, or the webhook refuses the
+    // very redemption the Stripe coupon is built to allow.
+    assert.equal(FULL_PROGRAM_DISCOUNT_MINOR, advancedPayment.amountMinor);
+    assert.equal(advancedPayment.amountMinor - FULL_PROGRAM_DISCOUNT_MINOR, 0);
   });
   check("a discount beyond the approved promotion is refused", () => {
     assert.equal(isAcceptedDiscount("advanced", 0), true);
@@ -369,13 +405,13 @@ async function main() {
     assert.equal(isAcceptedDiscount("certificate", 0), true);
     assert.equal(isAcceptedDiscount("certificate", 1), false);
   });
-  check("a discounted enrollment is charged the reduced amount", () =>
+  check("a fully discounted enrollment owes nothing", () =>
     assert.equal(
       chargeableAmountMinor({
         expectedAmountMinor: advancedPayment.amountMinor,
         discountAmountMinor: FULL_PROGRAM_DISCOUNT_MINOR,
       }),
-      90_000
+      0
     )
   );
   // A paid full-program Session at list price, as Stripe reports it back.
@@ -402,15 +438,18 @@ async function main() {
   check("an undiscounted full-program payment validates cleanly", () =>
     assert.deepEqual(sessionAmountIssues(paidSessionFacts), [])
   );
-  check("a payment discounted by the promotion validates cleanly", () =>
+  // Stripe charges nothing for a $0 total, so there is no PaymentIntent to
+  // report an amount received and payment_status never reaches "paid".
+  check("a Session zeroed by the promotion validates cleanly", () =>
     assert.deepEqual(
       sessionAmountIssues({
         ...paidSessionFacts,
-        amountTotal: 90_000,
-        discountMinor: 10_000,
-        lineAmountDiscount: 10_000,
-        lineAmountTotal: 90_000,
-        amountReceived: 90_000,
+        amountTotal: 0,
+        discountMinor: 100_000,
+        lineAmountDiscount: 100_000,
+        lineAmountTotal: 0,
+        paymentStatusPaid: false,
+        amountReceived: null,
       }),
       []
     )
@@ -428,17 +467,18 @@ async function main() {
       []
     )
   );
+  // Tax survives the discount, so a zeroed enrollment can still owe tax alone.
   check("tax and the promotion combine without blocking activation", () =>
     assert.deepEqual(
       sessionAmountIssues({
         ...paidSessionFacts,
-        amountTotal: 97_425,
-        discountMinor: 10_000,
-        taxMinor: 7_425,
-        lineAmountDiscount: 10_000,
-        lineAmountTax: 7_425,
-        lineAmountTotal: 97_425,
-        amountReceived: 97_425,
+        amountTotal: 8_250,
+        discountMinor: 100_000,
+        taxMinor: 8_250,
+        lineAmountDiscount: 100_000,
+        lineAmountTax: 8_250,
+        lineAmountTotal: 8_250,
+        amountReceived: 8_250,
       }),
       []
     )
@@ -447,13 +487,13 @@ async function main() {
     assert.deepEqual(
       sessionAmountIssues({
         ...paidSessionFacts,
-        amountTotal: 50_000,
-        discountMinor: 50_000,
-        lineAmountDiscount: 50_000,
-        lineAmountTotal: 50_000,
-        amountReceived: 50_000,
+        amountTotal: -1,
+        discountMinor: 100_001,
+        lineAmountDiscount: 100_001,
+        lineAmountTotal: -1,
+        amountReceived: -1,
       }),
-      ["discount outside the approved promotion"]
+      ["discount outside the approved promotion", "negative charge"]
     )
   );
   check("a tampered catalog price trips every amount guard, not just one", () =>
@@ -503,13 +543,16 @@ async function main() {
       ["currency mismatch"]
     )
   );
-  check("refunding a discounted payment in full is not treated as partial", () => {
+  check("a zeroed enrollment leaves no balance a refund could partly cover", () => {
     const chargeable = chargeableAmountMinor({
       expectedAmountMinor: advancedPayment.amountMinor,
       discountAmountMinor: FULL_PROGRAM_DISCOUNT_MINOR,
     });
-    assert.equal(refundPaymentStatus(90_000, chargeable), StripePaymentStatus.REFUNDED);
-    assert.equal(refundPaymentStatus(89_999, chargeable), StripePaymentStatus.PARTIALLY_REFUNDED);
+    assert.equal(chargeable, 0);
+    // Tuition raises no charge at all, so the only refund that can arrive is
+    // for tax collected on top of it, and that reads as full, never partial.
+    assert.equal(refundPaymentStatus(0, chargeable), StripePaymentStatus.REFUNDED);
+    assert.equal(refundPaymentStatus(8_250, chargeable), StripePaymentStatus.REFUNDED);
   });
   check("refunds and disputes block stale success events", () => {
     assert.equal(blocksLatePaymentActivation(StripePaymentStatus.REFUNDED), true);

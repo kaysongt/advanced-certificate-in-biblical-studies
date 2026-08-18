@@ -1,11 +1,16 @@
 import type { Plan } from "@/lib/db/types";
 
 /**
- * The approved launch promotion: $100 off the full program only. Stripe holds
- * the code itself; this module holds the ceiling the server enforces, so a code
- * edited in the Stripe Dashboard can never discount more than was approved here.
+ * The approved launch promotion: 100% off the full program only, so a redeemed
+ * code leaves nothing to charge. Stripe holds the code itself; this module holds
+ * the ceiling the server enforces, so a code edited in the Stripe Dashboard can
+ * never discount more than was approved here.
+ *
+ * This must stay equal to the full-program catalog price in minor units
+ * (PRICING.advanced.amount * 100). `npm run check` asserts the two agree; the
+ * catalog is not imported here because it reads from disk.
  */
-export const FULL_PROGRAM_DISCOUNT_MINOR = 10_000;
+export const FULL_PROGRAM_DISCOUNT_MINOR = 100_000;
 
 /** Single certificates are never discounted, so Checkout hides the code field. */
 export function promotionCodesAllowed(plan: Plan): boolean {

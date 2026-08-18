@@ -50,7 +50,9 @@ export function sessionAmountIssues(facts: SessionAmountFacts): string[] {
   }
   if (facts.shippingMinor) issues.push("unexpected shipping");
   if (facts.taxMinor < 0) issues.push("negative tax");
-  if (chargeableMinor <= 0) issues.push("non-positive charge");
+  // Zero is legitimate: the approved promotion takes the full program to $0.
+  // Anything below zero would mean the discount beat the catalog price.
+  if (chargeableMinor < 0) issues.push("negative charge");
   if (facts.amountSubtotal !== facts.expectedAmountMinor) issues.push("subtotal mismatch");
   if (facts.amountTotal !== expectedTotal) issues.push("amount mismatch");
   if (facts.lineItemCount !== 1 || facts.lineQuantity !== 1) issues.push("line item mismatch");
