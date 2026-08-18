@@ -1406,6 +1406,16 @@ a.card:hover::after { opacity: .9; }
   background: var(--card);
 }
 .welcome-video h2 { margin: 8px 0 10px; }
+/* Paid, waiting on release: the same panel, but dressed as a confirmation
+   rather than a to-do, matching the gold treatment of the payment prompt. */
+.welcome-video.is-enrolled {
+  border-color: color-mix(in srgb, var(--gold) 46%, var(--line));
+  background:
+    radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--gold) 15%, transparent), transparent 42%),
+    var(--panel);
+  box-shadow: var(--shadow-sm);
+}
+.welcome-video.is-enrolled .eyebrow { color: var(--gold); }
 .welcome-video-copy > p { max-width: 46ch; margin: 0; color: var(--muted); font: 400 15px/1.7 var(--sans); }
 .welcome-video-meta {
   display: flex;

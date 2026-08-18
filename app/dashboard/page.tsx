@@ -8,7 +8,11 @@ import { getModuleEnrollmentState } from "@/lib/access";
 import { currentStudent } from "@/lib/auth";
 import { getModuleStatuses } from "@/lib/content";
 import { db } from "@/lib/db";
-import { getCurriculum, moduleReleaseLabel } from "@/lib/curriculum";
+import {
+  formatModuleReleaseDate,
+  getCurriculum,
+  moduleReleaseLabel,
+} from "@/lib/curriculum";
 import { promotionCodesAllowed } from "@/lib/payments/promotions";
 import { isStripeCheckoutConfigured } from "@/lib/payments/stripe-client";
 import {
@@ -109,33 +113,60 @@ export default async function DashboardPage({
   };
   const canShowPaymentDetails = Object.values(paymentDetails).every(Boolean);
 
+  // A student who has paid but whose first module has not opened yet is in a
+  // real state of its own: nothing to pay, nothing to study, and a date to
+  // wait for. Without this they were told only how many topics they had
+  // completed, which reads as zero progress rather than "you are in".
+  const activeStatuses = statuses.filter(
+    ({ module }) => getModuleEnrollmentState(enrollments, module.slug) === "active"
+  );
+  const openNow = activeStatuses.filter((status) => status.available);
+  const nextOpening =
+    activeStatuses
+      .filter((status) => !status.available)
+      .sort((a, b) => a.module.release_date.localeCompare(b.module.release_date))[0] ?? null;
+  const awaitingFirstModule = Boolean(nextOpening) && openNow.length === 0;
+
   return (
     <main className="shell">
       <div className="pagehead">
         <div className="eyebrow">{program.institute}</div>
         <h1>Welcome, {student.fullName.split(" ")[0]}</h1>
         <p className="deck">
-          {progress.length} {progress.length === 1 ? "topic" : "topics"} completed.
+          {progress.length
+            ? `${progress.length} ${progress.length === 1 ? "topic" : "topics"} completed.`
+            : awaitingFirstModule
+              ? "Your place is confirmed. Nothing else is needed from you before study opens."
+              : "Your studies start here."}
         </p>
       </div>
 
       {/*
-        * The orientation video is the first thing a newly registered student
-        * meets, above the payment prompt. It stays available afterwards rather
-        * than disappearing at payment, since it explains the course itself.
+        * One panel serving two states. A student still owing tuition gets the
+        * orientation video framed as a welcome; a paid student waiting on the
+        * release gets the opening date instead, because "complete payment to
+        * unlock" is the wrong thing to say to someone who has already paid.
         */}
-      {program.welcome_video?.url && enrollments.length ? (
-        <section className="welcome-video" aria-labelledby="welcome-video-title">
+      {enrollments.length ? (
+        <section
+          className={`welcome-video${awaitingFirstModule ? " is-enrolled" : ""}`}
+          aria-labelledby="welcome-video-title"
+        >
           <div className="welcome-video-copy">
-            <div className="eyebrow">Start here</div>
+            <div className="eyebrow">
+              {awaitingFirstModule ? "You are enrolled" : "Start here"}
+            </div>
             <h2 id="welcome-video-title">
-              {program.welcome_video.title ?? "Thank you for registering"}
+              {awaitingFirstModule && nextOpening
+                ? `${nextOpening.module.short_title} opens ${formatModuleReleaseDate(nextOpening.module)}`
+                : program.welcome_video?.title ?? "Thank you for registering"}
             </h2>
             <p>
-              A short orientation from the Institute on what the {program.title} covers
-              and how to get the most from it.
+              {awaitingFirstModule
+                ? `Your access is already paid and reserved. Module ${nextOpening?.module.numeral} unlocks on release day and appears here automatically — watch the orientation below in the meantime.`
+                : `A short orientation from the Institute on what the ${program.title} covers and how to get the most from it.`}
             </p>
-            {program.welcome_video.speaker ? (
+            {program.welcome_video?.speaker ? (
               <p className="welcome-video-meta">
                 <strong>{program.welcome_video.speaker}</strong>
                 {program.welcome_video.duration ? (
@@ -147,16 +178,18 @@ export default async function DashboardPage({
               </p>
             ) : null}
           </div>
-          <div className="welcome-video-frame">
-            <video
-              src={program.welcome_video.url}
-              poster={program.welcome_video.poster ?? undefined}
-              controls
-              playsInline
-              preload="metadata"
-              aria-label={program.welcome_video.title ?? "Thank you for registering"}
-            />
-          </div>
+          {program.welcome_video?.url ? (
+            <div className="welcome-video-frame">
+              <video
+                src={program.welcome_video.url}
+                poster={program.welcome_video.poster ?? undefined}
+                controls
+                playsInline
+                preload="metadata"
+                aria-label={program.welcome_video.title ?? "Thank you for registering"}
+              />
+            </div>
+          ) : null}
         </section>
       ) : null}
 
