@@ -11,7 +11,12 @@ import { StripePaymentStatus } from "@prisma/client";
 import Stripe from "stripe";
 
 import { hashPassword, verifyPassword } from "../lib/auth-core";
-import { entitlementRedirectPath, hasActiveAccess, mustPayBeforeStudying } from "../lib/access";
+import {
+  entitlementRedirectPath,
+  getModuleEnrollmentState,
+  hasActiveAccess,
+  mustPayBeforeStudying,
+} from "../lib/access";
 import {
   getAssessmentBank,
   getCourseAudio,
@@ -237,6 +242,29 @@ async function main() {
   check("pending enrollment does not grant access", () =>
     assert.equal(hasActiveAccess([{ ...enrollmentBase, status: "pending" }], module.slug), false)
   );
+  check("pending full-program enrollment includes every certificate", () => {
+    const pendingAdvanced = [{ ...enrollmentBase, status: "pending" as const }];
+    assert.equal(getModuleEnrollmentState(pendingAdvanced, module.slug), "pending");
+    assert.equal(
+      getModuleEnrollmentState(pendingAdvanced, curriculum.modules[1].slug),
+      "pending"
+    );
+  });
+  check("pending single-certificate enrollment only includes its selected certificate", () => {
+    const pendingCertificate = [
+      {
+        ...enrollmentBase,
+        product: module.slug,
+        plan: "certificate" as const,
+        status: "pending" as const,
+      },
+    ];
+    assert.equal(getModuleEnrollmentState(pendingCertificate, module.slug), "pending");
+    assert.equal(
+      getModuleEnrollmentState(pendingCertificate, curriculum.modules[1].slug),
+      "none"
+    );
+  });
   check("active advanced enrollment grants access", () =>
     assert.equal(hasActiveAccess([{ ...enrollmentBase, status: "active" }], module.slug), true)
   );
@@ -247,6 +275,15 @@ async function main() {
         module.slug
       ),
       false
+    )
+  );
+  check("a suspended payment remains enrolled without granting access", () =>
+    assert.equal(
+      getModuleEnrollmentState(
+        [{ ...enrollmentBase, status: "active", accessSuspendedAt: new Date().toISOString() }],
+        module.slug
+      ),
+      "suspended"
     )
   );
   check("active single-certificate enrollment is scoped", () =>

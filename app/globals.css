@@ -635,6 +635,7 @@ tbody tr:last-child td { border-bottom: 1px solid var(--rule); }
   padding: 3px 8px; border-radius: 100px; white-space: nowrap;
 }
 .avail.now { background: var(--ok-wash); color: var(--ok); border: 1px solid var(--ok); }
+.avail.reserved { background: var(--gold-wash); color: var(--gold); border: 1px solid var(--gold-line); }
 .avail.soon { background: var(--rule-soft); color: var(--faint); border: 1px solid var(--rule); }
 
 /*
