@@ -157,6 +157,13 @@ export const fileStore: DataStore = {
     return found;
   },
 
+  async listStaff(): Promise<Student[]> {
+    const data = await read();
+    return data.students
+      .filter((student) => student.role === "staff" || student.role === "admin")
+      .sort((a, b) => a.role.localeCompare(b.role) || a.fullName.localeCompare(b.fullName));
+  },
+
   async listEnrollments(): Promise<(Enrollment & { student: Student })[]> {
     const data = await read();
     return data.enrollments

@@ -55,11 +55,12 @@ export default async function AdminPage() {
   const staff = await currentStudent();
   if (!staff || !isStaff(staff)) redirect("/");
 
-  const [registrations, scholarships, assessments, posts] = await Promise.all([
+  const [registrations, scholarships, assessments, posts, team] = await Promise.all([
     db.listEnrollments(),
     db.listScholarshipApplications(),
     db.listPendingAssessments(),
     db.listRecentCommunityPosts(),
+    db.listStaff(),
   ]);
   const moduleNames = new Map(
     getCurriculum().modules.map((module) => [module.slug, module.short_title])
@@ -76,6 +77,35 @@ export default async function AdminPage() {
     stripeReview: [...paymentAttempts.values()].filter((attempt) => attempt.needsReview).length,
   };
   const pendingScholarships = scholarships.filter((item) => item.status === "pending").length;
+
+  // Money, which the card list alone never added up. It matters more now that a
+  // promotion code can clear a whole tuition: "active" no longer implies "paid",
+  // so collected, discounted, and outstanding are tracked apart.
+  const money = registrations.reduce(
+    (totals, enrollment) => {
+      const attempt = paymentAttempts.get(enrollment.id);
+      const listMinor = enrollment.amount * 100;
+      const discountMinor = attempt?.discountAmountMinor ?? 0;
+      if (enrollment.status === "active") {
+        totals.collectedMinor += Math.max(0, listMinor - discountMinor);
+        totals.discountedMinor += discountMinor;
+        if (discountMinor >= listMinor) totals.freeSeats += 1;
+      } else if (enrollment.status === "pending") {
+        totals.outstandingMinor += listMinor;
+      }
+      return totals;
+    },
+    { collectedMinor: 0, discountedMinor: 0, outstandingMinor: 0, freeSeats: 0 }
+  );
+
+  // Which codes are actually being used, and how many times.
+  const promotionUse = new Map<string, number>();
+  for (const enrollment of registrations) {
+    const code = paymentAttempts.get(enrollment.id)?.promotionCode;
+    if (code) promotionUse.set(code, (promotionUse.get(code) ?? 0) + 1);
+  }
+  const promotionRows = [...promotionUse.entries()].sort((a, b) => b[1] - a[1]);
+
 
   return (
     <main className="shell admin-shell">
@@ -210,6 +240,35 @@ export default async function AdminPage() {
           </div>
           <span>{registrations.length}</span>
         </div>
+        <div className="admin-money-summary" aria-label="Tuition totals">
+          <div>
+            <dt>Collected</dt>
+            <dd>{tuition(money.collectedMinor / 100, "USD")}</dd>
+            <small>Activated enrolments, after any discount</small>
+          </div>
+          <div>
+            <dt>Given as discount</dt>
+            <dd>{tuition(money.discountedMinor / 100, "USD")}</dd>
+            <small>
+              {money.freeSeats} {money.freeSeats === 1 ? "seat" : "seats"} fully free
+            </small>
+          </div>
+          <div>
+            <dt>Outstanding</dt>
+            <dd>{tuition(money.outstandingMinor / 100, "USD")}</dd>
+            <small>Reserved but not yet paid</small>
+          </div>
+        </div>
+        {promotionRows.length ? (
+          <div className="admin-promo-usage" aria-label="Promotion code use">
+            <span className="admin-promo-label">Codes redeemed</span>
+            {promotionRows.map(([code, count]) => (
+              <span className="admin-promo-chip" key={code}>
+                <strong>{code}</strong> &times;{count}
+              </span>
+            ))}
+          </div>
+        ) : null}
         <div className="admin-registration-summary" aria-label="Registration totals">
           <span>
             <strong>{registrations.length}</strong> Total
@@ -400,6 +459,37 @@ export default async function AdminPage() {
             </article>
           ))}
         </div>
+      </section>
+
+      {/*
+        * Who can reach this page at all. Read from the student table rather
+        * than from enrolments, because an administrator created by
+        * `npm run admin:create` never enrols and would otherwise be invisible
+        * on the one screen meant to show who holds access.
+        */}
+      <section className="admin-section">
+        <div className="admin-section-head">
+          <div>
+            <h2>Team access</h2>
+            <p>Accounts that can open this page. Change one with `npm run admin:promote`.</p>
+          </div>
+          <span>{team.length}</span>
+        </div>
+        {team.length ? (
+          <div className="admin-team-list">
+            {team.map((member) => (
+              <article className="admin-team-member" key={member.id}>
+                <div>
+                  <strong>{member.fullName}</strong>
+                  <a href={`mailto:${member.email}`}>{member.email}</a>
+                </div>
+                <span className={`admin-role-badge ${member.role}`}>{member.role}</span>
+              </article>
+            ))}
+          </div>
+        ) : (
+          <p className="admin-empty">No staff or administrator account exists yet.</p>
+        )}
       </section>
     </main>
   );

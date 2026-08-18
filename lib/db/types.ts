@@ -166,6 +166,8 @@ export interface DataStore {
   createEnrollment(input: NewEnrollment): Promise<Enrollment>;
   getEnrollmentsForStudent(studentId: string): Promise<Enrollment[]>;
   activateEnrollment(id: string, providerRef: string, provider?: string): Promise<Enrollment | null>;
+  /** Everyone with staff or admin access, for the team roster on /admin. */
+  listStaff(): Promise<Student[]>;
   listEnrollments(): Promise<(Enrollment & { student: Student })[]>;
   listPendingEnrollments(): Promise<(Enrollment & { student: Student })[]>;
 

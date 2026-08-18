@@ -283,6 +283,14 @@ export const prismaStore: DataStore = {
     return mapEnrollment(await prisma.enrollment.findUniqueOrThrow({ where: { id } }));
   },
 
+  async listStaff() {
+    const students = await prisma.student.findMany({
+      where: { role: { in: [PrismaStudentRole.STAFF, PrismaStudentRole.ADMIN] } },
+      orderBy: [{ role: "asc" }, { fullName: "asc" }],
+    });
+    return students.map(mapStudent);
+  },
+
   async listEnrollments() {
     const enrollments = await prisma.enrollment.findMany({
       include: { student: true },
