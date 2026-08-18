@@ -14,14 +14,26 @@ export type Course = {
   description: string;
   textbook?: string;
   isbn?: string;
+  /** Short orientation clip opening the course. Null until supplied. */
+  intro_video?: ModuleVideo;
 };
 
 /** One video per module, shown after the final course. Null until supplied. */
 export type ModuleVideo = {
   title: string | null;
+  /** An iframe embed URL, or a path under /public for a self-hosted file. */
   url: string | null;
   speaker: string | null;
   duration: string | null;
+  /** Still frame shown before playback starts. Self-hosted files only. */
+  poster?: string | null;
+  /**
+   * Native pixel size. Set on the video element so the browser reserves the
+   * right box before the file loads — these clips arrive in portrait, square,
+   * and landscape, so the shape cannot be assumed from CSS alone.
+   */
+  width?: number | null;
+  height?: number | null;
 };
 
 export type Module = {
@@ -56,6 +68,10 @@ export type Curriculum = {
     about: string;
     motto: string;
     founder: { name: string; role: string; bio: string };
+    /** Institute-wide welcome shown on the homepage. Null until supplied. */
+    intro_video?: ModuleVideo;
+    /** Course orientation, shown on the dashboard once a student registers. */
+    welcome_video?: ModuleVideo;
     total_hours: number;
     total_certificates: number;
     total_courses: number;

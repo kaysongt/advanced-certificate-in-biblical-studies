@@ -415,6 +415,30 @@ a.card:hover { border-color: var(--deep); text-decoration: none; }
 }
 .written-assessment { margin-top: 42px; }
 
+/*
+ * Course opener. The Module I clips are a mix of 9:16, 1:1, and 16:9, so the
+ * video is capped by height and left to derive its own width — every course
+ * then occupies a similar band of the page whatever shape it was shot in.
+ */
+.course-intro { margin: 30px 0 42px; }
+.course-intro h2 { margin: 6px 0 14px; padding: 0; border: 0; }
+.course-intro-frame {
+  width: fit-content;
+  max-width: 100%;
+  overflow: hidden;
+  border: 1px solid var(--rule);
+  border-radius: var(--r);
+  background: #000;
+}
+.course-intro-frame video {
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: 460px;
+}
+.course-intro-meta { margin: 10px 0 0; color: var(--faint); font: 600 12px/1.5 var(--sans); }
+
 .audio-library {
   display: grid; grid-template-columns: minmax(0, 1fr) minmax(280px, 1.2fr); gap: 28px;
   align-items: start; margin: 30px 0 42px; padding: 24px;
@@ -1212,6 +1236,7 @@ a.card:hover::after { opacity: .9; }
 .section-lead h2,
 .faq-heading h2,
 .founder-copy h2,
+.intro-video-copy h2,
 .process-intro h2 {
   margin: 10px 0 0;
   padding: 0;
@@ -1223,11 +1248,46 @@ a.card:hover::after { opacity: .9; }
 .split-lead p,
 .centered-lead p,
 .process-intro > p,
+.intro-video-copy > p,
 .founder-copy > p {
   margin: 0;
   color: var(--muted);
   font: 400 16px/1.75 var(--sans);
 }
+
+/*
+ * The institute welcome, sitting directly under the hero. The clip is a 9:16
+ * vertical cut, so it gets a portrait frame at a capped width instead of the
+ * 16:9 box the module briefings use — stretched across a column it would be
+ * mostly black bars.
+ */
+.intro-video-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 340px);
+  gap: clamp(28px, 5vw, 76px);
+  align-items: center;
+}
+.intro-video-copy > p { margin-top: 20px; }
+.intro-video-meta {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin: 24px 0 0;
+  color: var(--faint);
+  font: 600 12px/1.5 var(--sans);
+}
+.intro-video-meta strong { color: var(--ink-2); font-weight: 700; }
+.intro-video-frame {
+  width: 100%;
+  max-width: 340px;
+  margin-inline: auto;
+  aspect-ratio: 9 / 16;
+  overflow: hidden;
+  border: 1px solid var(--rule-soft);
+  border-radius: 18px;
+  background: #000;
+}
+.intro-video-frame video { display: block; width: 100%; height: 100%; object-fit: cover; }
 .capability-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-top: 1px solid var(--rule); border-left: 1px solid var(--rule); }
 /*
  * Was a hardcoded near-white rgba(255,253,248,.45) — a soft frosted tint that
@@ -1329,6 +1389,55 @@ a.card:hover::after { opacity: .9; }
 
 /* ---------- Enrollment, modules, and community ---------- */
 
+/*
+ * Course orientation, above the payment prompt on the dashboard. Same portrait
+ * treatment as the homepage intro because both clips are 9:16 social cuts.
+ */
+.welcome-video {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 300px);
+  align-items: center;
+  gap: clamp(24px, 4vw, 48px);
+  max-width: 760px;
+  margin-bottom: 42px;
+  padding: clamp(24px, 4vw, 38px);
+  border: 1px solid var(--rule);
+  border-radius: 24px;
+  background: var(--card);
+}
+.welcome-video h2 { margin: 8px 0 10px; }
+/* Paid, waiting on release: the same panel, but dressed as a confirmation
+   rather than a to-do, matching the gold treatment of the payment prompt. */
+.welcome-video.is-enrolled {
+  border-color: color-mix(in srgb, var(--gold) 46%, var(--line));
+  background:
+    radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--gold) 15%, transparent), transparent 42%),
+    var(--panel);
+  box-shadow: var(--shadow-sm);
+}
+.welcome-video.is-enrolled .eyebrow { color: var(--gold); }
+.welcome-video-copy > p { max-width: 46ch; margin: 0; color: var(--muted); font: 400 15px/1.7 var(--sans); }
+.welcome-video-meta {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin: 18px 0 0;
+  color: var(--faint);
+  font: 600 12px/1.5 var(--sans);
+}
+.welcome-video-meta strong { color: var(--ink-2); font-weight: 700; }
+.welcome-video-frame {
+  width: 100%;
+  max-width: 300px;
+  margin-inline: auto;
+  aspect-ratio: 9 / 16;
+  overflow: hidden;
+  border: 1px solid var(--rule-soft);
+  border-radius: 18px;
+  background: #000;
+}
+.welcome-video-frame video { display: block; width: 100%; height: 100%; object-fit: cover; }
+
 .pending-payment {
   max-width: 760px;
   margin-bottom: 42px;
@@ -1421,6 +1530,7 @@ a.card:hover::after { opacity: .9; }
 }
 
 @media (max-width: 620px) {
+  .welcome-video { grid-template-columns: 1fr; }
   .payment-heading,
   .pending-enrollment { align-items: stretch; flex-direction: column; }
   .secure-payment-mark { align-self: flex-start; white-space: normal; }
@@ -1664,6 +1774,7 @@ a.card:hover::after { opacity: .9; }
   .section-lead { margin-bottom: 34px; }
   .capability-grid,
   .module-path-grid,
+  .intro-video-layout,
   .video-briefing-grid { grid-template-columns: 1fr; }
   .capability { min-height: 0; padding: 20px; }
   .path-card { min-height: 214px; }
