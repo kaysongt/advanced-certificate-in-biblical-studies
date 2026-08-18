@@ -102,7 +102,7 @@ hidden on those Sessions. Create the code once per Stripe environment:
 ```bash
 STRIPE_SECRET_KEY=sk_test_... \
 STRIPE_PRICE_ADVANCED=price_... \
-PROMO_CODE=SUMMERBLAST2026 \
+PROMO_CODE=ORDAINEDMINISTERS2026 \
 PROMO_MAX_REDEMPTIONS=unlimited \
 PROMO_EXPIRES_ON=never \
 npm run stripe:promo
@@ -119,7 +119,7 @@ it enrols free, with no automatic stop. Treat it as a private credential rather 
 copy, and deactivate it in the Stripe Dashboard the moment the offer ends.
 
 Stripe matches promotion codes without regard to case, so a student may type
-`summerblast2026`, `SUMMERBLAST2026`, or any mix and it will be accepted. The script stores the
+`ordainedministers2026`, `ORDAINEDMINISTERS2026`, or any mix and it will be accepted. The script stores the
 code upper case only so it reads clearly in the Stripe Dashboard and on `/admin`.
 
 The script restricts the coupon to the product behind `STRIPE_PRICE_ADVANCED` and sets a
