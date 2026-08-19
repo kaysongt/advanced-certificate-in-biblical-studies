@@ -188,7 +188,7 @@ Before announcing:
 
 ## Launch boundaries
 
-- Open modules on the published schedule: Systematic Theology on September 1, 2026; Biblical Foundations on November 1, 2026; Old Testament Survey on January 1, 2027; New Testament Survey on March 1, 2027; and Spiritual Formation on May 1, 2027.
+- Open modules on the published schedule: Systematic Theology on October 1, 2026; Biblical Foundations on December 1, 2026; Old Testament Survey on February 1, 2027; New Testament Survey on April 1, 2027; and Spiritual Formation on June 1, 2027.
 - The $1,000 full-program option is a scheduled-release reservation, not immediate access to
   all five certificates.
 - Stripe-hosted Checkout activates access only from signed, idempotently processed webhooks.

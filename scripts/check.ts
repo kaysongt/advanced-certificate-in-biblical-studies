@@ -88,17 +88,17 @@ async function main() {
         formatModuleReleaseDate(item),
       ]),
       [
-        ["Systematic Theology", "2026-09-01", "September 1, 2026"],
-        ["Biblical Foundations", "2026-11-01", "November 1, 2026"],
-        ["Old Testament Survey", "2027-01-01", "January 1, 2027"],
-        ["New Testament Survey", "2027-03-01", "March 1, 2027"],
-        ["Spiritual Formation", "2027-05-01", "May 1, 2027"],
+        ["Systematic Theology", "2026-10-01", "October 1, 2026"],
+        ["Biblical Foundations", "2026-12-01", "December 1, 2026"],
+        ["Old Testament Survey", "2027-02-01", "February 1, 2027"],
+        ["New Testament Survey", "2027-04-01", "April 1, 2027"],
+        ["Spiritual Formation", "2027-06-01", "June 1, 2027"],
       ]
     )
   );
-  check("Module I opens at midnight Chicago time on September 1", () => {
-    assert.equal(isModuleReleased(curriculum.modules[0], new Date("2026-09-01T04:59:59Z")), false);
-    assert.equal(isModuleReleased(curriculum.modules[0], new Date("2026-09-01T05:00:00Z")), true);
+  check("Module I opens at midnight Chicago time on October 1", () => {
+    assert.equal(isModuleReleased(curriculum.modules[0], new Date("2026-10-01T04:59:59Z")), false);
+    assert.equal(isModuleReleased(curriculum.modules[0], new Date("2026-10-01T05:00:00Z")), true);
   });
   check("all scheduled modules can be purchased before release", () =>
     assert.deepEqual(
@@ -250,7 +250,7 @@ async function main() {
     assert.equal(prelaunch.find((s) => s.course.slug === "st-101")!.available, false);
   });
   check("completed Module I content opens on its release date", () => {
-    const launch = getModuleStatuses(new Date("2026-09-01T12:00:00Z"));
+    const launch = getModuleStatuses(new Date("2026-10-01T12:00:00Z"));
     assert.equal(launch.find((s) => s.module.slug === module.slug)!.available, true);
   });
   const assessmentBank = getAssessmentBank(module, course);
