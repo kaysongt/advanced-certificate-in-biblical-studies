@@ -1549,6 +1549,13 @@ a.card:hover::after { opacity: .9; }
 .scholarship-intro .eyebrow { color: #e8c777; }
 .scholarship-intro h1 { max-width: 10ch; margin: 12px 0 18px; color: #fffaf1; font-size: clamp(2.8rem, 6vw, 5rem); line-height: .98; letter-spacing: -.045em; }
 .scholarship-intro .deck { max-width: 54ch; margin: 0; color: rgba(255, 255, 255, .75); }
+.scholarship-prospect-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 28px; }
+.scholarship-prospect-actions .quiet { border-color: rgba(255, 255, 255, .35); color: #fffaf1; }
+.scholarship-prospect-actions .quiet:hover { border-color: #e8c777; color: #e8c777; }
+.scholarship-prospect-steps { padding: 25px; border: 1px solid rgba(255, 255, 255, .17); border-radius: 20px; background: rgba(255, 255, 255, .09); color: #fffaf1; }
+.scholarship-prospect-steps > span { display: block; margin-bottom: 14px; color: #e8c777; font: 750 9px/1 var(--sans); letter-spacing: .13em; text-transform: uppercase; }
+.scholarship-prospect-steps ol { display: grid; gap: 12px; margin: 0; padding-left: 20px; color: rgba(255, 255, 255, .88); font: 500 12px/1.55 var(--sans); }
+.scholarship-prospect-steps p { margin: 18px 0 0; padding-top: 14px; border-top: 1px solid rgba(255, 255, 255, .13); color: rgba(255, 255, 255, .62); font: 500 11px/1.55 var(--sans); }
 .scholarship-enrollment-summary { padding: 25px; border: 1px solid rgba(255, 255, 255, .17); border-radius: 20px; background: rgba(255, 255, 255, .09); backdrop-filter: blur(10px); color: #fffaf1; }
 .scholarship-enrollment-summary > span { display: block; margin-bottom: 10px; color: #e8c777; font: 750 9px/1 var(--sans); letter-spacing: .13em; text-transform: uppercase; }
 .scholarship-enrollment-summary > strong { display: block; font: 600 clamp(1.35rem, 2.8vw, 1.9rem)/1.18 var(--serif); }

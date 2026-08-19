@@ -114,6 +114,7 @@ async function main() {
       [
         ["Curriculum", "/curriculum"],
         ["Pricing", "/pricing"],
+        ["Scholarships", "/scholarship"],
         ["Community", "/community"],
         ["Glossary", "/glossary"],
       ]
@@ -125,6 +126,40 @@ async function main() {
   check("community never activates the curriculum tab", () =>
     assert.equal(isPrimaryRouteActive("/community", "/curriculum"), false)
   );
+  check("scholarship route activates the public scholarship tab", () =>
+    assert.equal(isPrimaryRouteActive("/scholarship", "/scholarship"), true)
+  );
+
+  console.log("\nprospective scholarship wiring");
+  const scholarshipPageSource = await fs.readFile(
+    path.join(process.cwd(), "app/scholarship/page.tsx"),
+    "utf8"
+  );
+  const enrollPageSource = await fs.readFile(
+    path.join(process.cwd(), "app/enroll/page.tsx"),
+    "utf8"
+  );
+  const enrollFormSource = await fs.readFile(
+    path.join(process.cwd(), "app/enroll/EnrollForm.tsx"),
+    "utf8"
+  );
+  const enrollActionsSource = await fs.readFile(
+    path.join(process.cwd(), "app/enroll/actions.ts"),
+    "utf8"
+  );
+  check("public scholarship page wires the prospect enrollment handoff", () => {
+    assert.ok(scholarshipPageSource.includes('href="/enroll?scholarship=apply"'));
+    assert.ok(scholarshipPageSource.includes('href="/login?next=%2Fscholarship"'));
+  });
+  check("enrollment carries scholarship intent back to the private form", () => {
+    assert.ok(enrollPageSource.includes('scholarship === "apply"'));
+    assert.ok(enrollFormSource.includes('name="scholarshipIntent" value="apply"'));
+    assert.ok(
+      enrollActionsSource.includes(
+        'redirect(scholarshipIntent === "apply" ? "/scholarship" : "/dashboard")'
+      )
+    );
+  });
 
   console.log("\nadmin navigation");
   check("admin tabs point to operations and scholarship applications", () =>
@@ -725,7 +760,7 @@ async function main() {
       "I plan to use the training to serve my church community with greater biblical clarity.",
     amountAbleToPay: 100,
   });
-  check("student can submit a scholarship application for a pending enrollment", () => {
+  check("newly registered prospect can submit a scholarship application", () => {
     assert.equal(scholarship?.status, "pending");
     assert.equal(scholarship?.amountAbleToPay, 100);
   });

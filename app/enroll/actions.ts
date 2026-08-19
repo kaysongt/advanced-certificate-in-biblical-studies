@@ -25,12 +25,14 @@ const registrationSchema = z.object({
   privacyAccepted: z
     .string()
     .refine((value) => value === "yes", "Please confirm that you have read the privacy notice."),
+  scholarshipIntent: z.union([z.literal(""), z.literal("apply")]),
 });
 
 export async function registerStudent(
   _previous: FormState,
   formData: FormData
 ): Promise<FormState> {
+  const scholarshipIntentEntry = formData.get("scholarshipIntent");
   const raw = {
     fullName: String(formData.get("fullName") ?? ""),
     email: String(formData.get("email") ?? ""),
@@ -39,6 +41,8 @@ export async function registerStudent(
     plan: String(formData.get("plan") ?? "advanced"),
     product: String(formData.get("product") ?? ""),
     privacyAccepted: String(formData.get("privacyAccepted") ?? ""),
+    scholarshipIntent:
+      typeof scholarshipIntentEntry === "string" ? scholarshipIntentEntry.trim() : "",
     website: String(formData.get("website") ?? ""),
   };
   const values = {
@@ -48,6 +52,7 @@ export async function registerStudent(
     plan: raw.plan,
     product: raw.product.trim(),
     privacyAccepted: raw.privacyAccepted,
+    scholarshipIntent: raw.scholarshipIntent,
   };
   if (raw.website.trim()) {
     return { error: "We could not create your enrollment. Please try again." };
@@ -62,7 +67,7 @@ export async function registerStudent(
     return { fieldErrors, values };
   }
 
-  const { fullName, email, country, password, plan, product } = parsed.data;
+  const { fullName, email, country, password, plan, product, scholarshipIntent } = parsed.data;
   const purchasableProducts = new Set(getPurchasableModules().map((module) => module.slug));
   if (plan === "certificate" && !purchasableProducts.has(product)) {
     return {
@@ -110,5 +115,5 @@ export async function registerStudent(
   }
 
   await startSession(studentId);
-  redirect("/dashboard");
+  redirect(scholarshipIntent === "apply" ? "/scholarship" : "/dashboard");
 }
