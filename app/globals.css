@@ -1549,6 +1549,13 @@ a.card:hover::after { opacity: .9; }
 .scholarship-intro .eyebrow { color: #e8c777; }
 .scholarship-intro h1 { max-width: 10ch; margin: 12px 0 18px; color: #fffaf1; font-size: clamp(2.8rem, 6vw, 5rem); line-height: .98; letter-spacing: -.045em; }
 .scholarship-intro .deck { max-width: 54ch; margin: 0; color: rgba(255, 255, 255, .75); }
+.scholarship-prospect-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 28px; }
+.scholarship-prospect-actions .quiet { border-color: rgba(255, 255, 255, .35); color: #fffaf1; }
+.scholarship-prospect-actions .quiet:hover { border-color: #e8c777; color: #e8c777; }
+.scholarship-prospect-steps { padding: 25px; border: 1px solid rgba(255, 255, 255, .17); border-radius: 20px; background: rgba(255, 255, 255, .09); color: #fffaf1; }
+.scholarship-prospect-steps > span { display: block; margin-bottom: 14px; color: #e8c777; font: 750 9px/1 var(--sans); letter-spacing: .13em; text-transform: uppercase; }
+.scholarship-prospect-steps ol { display: grid; gap: 12px; margin: 0; padding-left: 20px; color: rgba(255, 255, 255, .88); font: 500 12px/1.55 var(--sans); }
+.scholarship-prospect-steps p { margin: 18px 0 0; padding-top: 14px; border-top: 1px solid rgba(255, 255, 255, .13); color: rgba(255, 255, 255, .62); font: 500 11px/1.55 var(--sans); }
 .scholarship-enrollment-summary { padding: 25px; border: 1px solid rgba(255, 255, 255, .17); border-radius: 20px; background: rgba(255, 255, 255, .09); backdrop-filter: blur(10px); color: #fffaf1; }
 .scholarship-enrollment-summary > span { display: block; margin-bottom: 10px; color: #e8c777; font: 750 9px/1 var(--sans); letter-spacing: .13em; text-transform: uppercase; }
 .scholarship-enrollment-summary > strong { display: block; font: 600 clamp(1.35rem, 2.8vw, 1.9rem)/1.18 var(--serif); }
@@ -1671,6 +1678,28 @@ a.card:hover::after { opacity: .9; }
 .admin-shell textarea:focus { outline: none; border-color: var(--deep); box-shadow: 0 0 0 3px var(--wash); }
 
 .admin-shell { max-width: 1120px; padding-bottom: 90px; }
+.admin-tabs {
+  display: flex; gap: 6px; margin-top: 28px; padding: 5px;
+  overflow-x: auto; border: 1px solid var(--rule); border-radius: 12px;
+  background: var(--card); font: 650 12px/1.2 var(--sans);
+  scrollbar-width: thin;
+}
+.admin-tab {
+  display: inline-flex; align-items: center; gap: 8px; flex: 0 0 auto;
+  min-height: 42px; padding: 10px 14px; border-radius: 8px;
+  color: var(--muted); white-space: nowrap;
+}
+.admin-tab:hover { color: var(--ink); background: var(--rule-soft); text-decoration: none; }
+.admin-tab.on { color: var(--deep); background: var(--wash); box-shadow: inset 0 -2px 0 var(--gold-line); }
+.admin-tab-count {
+  display: inline-grid; min-width: 22px; height: 22px; padding: 0 6px;
+  place-items: center; border-radius: 999px; background: var(--gold-wash);
+  color: var(--gold); font-size: 10px; font-variant-numeric: tabular-nums;
+}
+@media (max-width: 560px) {
+  .admin-tabs { margin-inline: -4px; }
+  .admin-tab { min-height: 44px; padding-inline: 12px; }
+}
 .admin-section { margin-top: 44px; }
 .admin-section-head { display: flex; align-items: center; justify-content: space-between; gap: 18px; margin-bottom: 16px; }
 .admin-section-head h2 { margin: 0; padding: 0; border: 0; }

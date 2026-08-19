@@ -380,6 +380,12 @@ export const prismaStore: DataStore = {
     }));
   },
 
+  async countPendingScholarshipApplications() {
+    return prisma.scholarshipApplication.count({
+      where: { status: PrismaScholarshipStatus.PENDING },
+    });
+  },
+
   async reviewScholarshipApplication(input) {
     try {
       return await prisma.$transaction(async (transaction) => {
