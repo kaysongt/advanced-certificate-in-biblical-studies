@@ -48,6 +48,7 @@ export async function reviewScholarshipApplication(formData: FormData): Promise<
     adminNotes: input.adminNotes,
   });
   revalidatePath("/admin");
+  revalidatePath("/admin/scholarships");
   revalidatePath("/dashboard");
   revalidatePath("/scholarship");
 }

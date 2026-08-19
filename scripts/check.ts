@@ -37,6 +37,7 @@ import {
   getCurriculum,
   isModuleReleased,
 } from "../lib/curriculum";
+import { ADMIN_NAV_ITEMS, isAdminRouteActive } from "../lib/admin-navigation";
 import { isPrimaryRouteActive, PRIMARY_NAV_ITEMS } from "../lib/navigation";
 import { getStripeCatalogItem } from "../lib/payments/catalog";
 import { buildCheckoutSessionParams } from "../lib/payments/checkout-session";
@@ -123,6 +124,58 @@ async function main() {
   );
   check("community never activates the curriculum tab", () =>
     assert.equal(isPrimaryRouteActive("/community", "/curriculum"), false)
+  );
+
+  console.log("\nadmin navigation");
+  check("admin tabs point to operations and scholarship applications", () =>
+    assert.deepEqual(
+      ADMIN_NAV_ITEMS.map((item) => [item.label, item.href]),
+      [
+        ["Operations", "/admin"],
+        ["Scholarship applications", "/admin/scholarships"],
+      ]
+    )
+  );
+  check("operations tab is only active on its own route, not a nested one", () => {
+    assert.equal(isAdminRouteActive("/admin", "/admin"), true);
+    assert.equal(isAdminRouteActive("/admin/scholarships", "/admin"), false);
+  });
+  check("scholarships tab stays active on nested scholarship routes", () => {
+    assert.equal(isAdminRouteActive("/admin/scholarships", "/admin/scholarships"), true);
+    assert.equal(isAdminRouteActive("/admin/scholarships/123", "/admin/scholarships"), true);
+    assert.equal(isAdminRouteActive("/admin", "/admin/scholarships"), false);
+  });
+
+  console.log("\nadmin route wiring");
+  const adminPageSource = await fs.readFile(
+    path.join(process.cwd(), "app/admin/page.tsx"),
+    "utf8"
+  );
+  const adminScholarshipsPageSource = await fs.readFile(
+    path.join(process.cwd(), "app/admin/scholarships/page.tsx"),
+    "utf8"
+  );
+  check("/admin source omits the direct private scholarship-list call", () =>
+    assert.ok(!adminPageSource.includes("listScholarshipApplications"))
+  );
+  check("/admin/scholarships source includes the scholarship-list call", () =>
+    assert.ok(adminScholarshipsPageSource.includes("listScholarshipApplications"))
+  );
+  const globalCssSource = await fs.readFile(
+    path.join(process.cwd(), "app/globals.css"),
+    "utf8"
+  );
+  check("the stylesheet includes the admin tab selectors", () => {
+    assert.match(globalCssSource, /\.admin-tabs\s*\{/);
+    assert.match(globalCssSource, /\.admin-tab\s*\{/);
+    assert.match(globalCssSource, /\.admin-tab-count\s*\{/);
+  });
+  const adminActionsSource = await fs.readFile(
+    path.join(process.cwd(), "app/admin/actions.ts"),
+    "utf8"
+  );
+  check("the review action wires revalidation for the dedicated route", () =>
+    assert.ok(adminActionsSource.includes('revalidatePath("/admin/scholarships")'))
   );
 
   console.log("\ncontent rendering");
@@ -763,6 +816,49 @@ async function main() {
     assert.equal(declinedScholarship?.status, "declined");
     assert.equal(stillPendingEnrollment?.status, "pending");
   });
+
+  const racedEnrollment = await db.createEnrollment({
+    studentId: student.id,
+    product: curriculum.modules[2].slug,
+    plan: "certificate",
+    status: "pending",
+    amount: 250,
+    currency: "USD",
+    provider: null,
+    providerRef: null,
+  });
+  const racedApplication = await db.createScholarshipApplication({
+    enrollmentId: racedEnrollment.id,
+    studentId: student.id,
+    financialNeed: "This request verifies that two staff decisions cannot both win concurrently.",
+    trainingGoals: "The course would support future church teaching and personal Bible study.",
+    amountAbleToPay: 50,
+  });
+  const racedReviews = await Promise.all([
+    db.reviewScholarshipApplication({
+      applicationId: racedApplication?.id ?? "",
+      reviewerId: grader.id,
+      decision: "approved",
+      adminNotes: "Concurrent approval attempt.",
+    }),
+    db.reviewScholarshipApplication({
+      applicationId: racedApplication?.id ?? "",
+      reviewerId: grader.id,
+      decision: "declined",
+      adminNotes: "Concurrent decline attempt.",
+    }),
+  ]);
+  const winningReviews = racedReviews.filter((result) => result !== null);
+  const storedRacedApplication = await db.getScholarshipApplicationForEnrollment(
+    racedEnrollment.id,
+    student.id
+  );
+  check("concurrent scholarship reviews produce exactly one winner", () =>
+    assert.equal(winningReviews.length, 1)
+  );
+  check("the stored scholarship decision matches the concurrent winner", () =>
+    assert.equal(storedRacedApplication?.status, winningReviews[0]?.status)
+  );
 
   await db.markLessonComplete(student.id, "st-101-1");
   await db.markLessonComplete(student.id, "st-101-1");
