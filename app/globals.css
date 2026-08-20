@@ -1778,7 +1778,22 @@ a.card:hover::after { opacity: .9; }
 .admin-role-badge.staff { border: 1px solid var(--rule); background: var(--panel); color: var(--muted); }
 
 .admin-registration-summary { display: flex; flex-wrap: wrap; gap: 9px; margin: -2px 0 16px; }
-.admin-registration-summary > span { display: flex; align-items: baseline; gap: 5px; padding: 8px 11px; border: 1px solid var(--rule); border-radius: 999px; background: var(--card); color: var(--muted); font: 650 10px/1 var(--sans); letter-spacing: .04em; text-transform: uppercase; }
+.admin-registration-summary > span,
+.admin-registration-summary > a { display: flex; align-items: baseline; gap: 5px; padding: 8px 11px; border: 1px solid var(--rule); border-radius: 999px; background: var(--card); color: var(--muted); font: 650 10px/1 var(--sans); letter-spacing: .04em; text-transform: uppercase; text-decoration: none; }
+.admin-registration-summary > a:hover { border-color: var(--deep); color: var(--ink); }
+.admin-registration-summary > a.is-active { border-color: var(--gold); background: var(--gold-wash); color: var(--deep); }
+.admin-registration-summary > a.is-active strong { color: var(--deep); }
+
+.admin-search { display: flex; align-items: center; gap: 8px; margin: 0 0 14px; flex-wrap: wrap; }
+.admin-search input {
+  flex: 1 1 260px; max-width: 360px; font-family: var(--sans); font-size: 13.5px;
+  padding: 8px 12px; border: 1px solid var(--rule); border-radius: var(--r);
+  background: var(--page); color: var(--ink);
+}
+.admin-search input:focus { outline: none; border-color: var(--deep); box-shadow: 0 0 0 3px var(--wash); }
+.admin-search-clear { color: var(--muted); font: 600 12.5px/1 var(--sans); text-decoration: underline; text-underline-offset: 3px; }
+.admin-search-clear:hover { color: var(--ink); }
+.admin-filter-note { margin: -4px 0 14px; color: var(--muted); font: 500 12.5px/1.5 var(--sans); }
 .admin-registration-summary strong { color: var(--ink); font-size: 13px; }
 .admin-registration-card { align-items: center; }
 .admin-registration-title { display: flex; flex-wrap: wrap; align-items: center; gap: 9px; }
