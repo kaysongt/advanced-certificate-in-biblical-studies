@@ -165,6 +165,8 @@ export interface DataStore {
   listStudents(): Promise<Student[]>;
   /** Replaces a stored password hash. Callers hash before calling. */
   updateStudentPassword(studentId: string, passwordHash: string): Promise<void>;
+  /** Changes what a student may reach. Guarded by callers, not here. */
+  updateStudentRole(studentId: string, role: StudentRole): Promise<void>;
 
   // enrollments
   createEnrollment(input: NewEnrollment): Promise<Enrollment>;

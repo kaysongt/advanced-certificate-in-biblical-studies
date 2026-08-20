@@ -11,6 +11,7 @@ import { StripePaymentStatus } from "@prisma/client";
 import Stripe from "stripe";
 
 import { hashPassword, verifyPassword } from "../lib/auth-core";
+import { isStaff } from "../lib/auth";
 import {
   entitlementRedirectPath,
   getModuleEnrollmentState,
@@ -756,6 +757,17 @@ async function main() {
   check("admin roster lists every account", () =>
     assert.ok(everyone.some((person) => person.id === student.id))
   );
+
+  await db.updateStudentRole(student.id, "staff");
+  const promoted = await db.getStudentById(student.id);
+  check("role change is persisted", () => assert.equal(promoted?.role, "staff"));
+  check("promotion grants staff access", () => assert.ok(isStaff(promoted!)));
+  await db.updateStudentRole(student.id, "admin");
+  const asAdmin = await db.getStudentById(student.id);
+  check("an admin can be created from the roster", () => assert.equal(asAdmin?.role, "admin"));
+  await db.updateStudentRole(student.id, "student");
+  const demoted = await db.getStudentById(student.id);
+  check("demotion removes staff access", () => assert.equal(isStaff(demoted!), false));
 
   check("enrollment starts pending", () => assert.equal(enrollment.status, "pending"));
   const pendingEnrollments = await db.listPendingEnrollments();

@@ -15,11 +15,27 @@ import {
   gradeAssessment,
   moderateCommunityPost,
   resetStudentPassword,
+  setStudentRole,
 } from "./actions";
 
 export const metadata: Metadata = {
   title: "Staff operations",
   robots: { index: false, follow: false },
+};
+
+const roleMessages: Record<string, { tone: "good" | "warn" | "bad"; text: string }> = {
+  done: { tone: "good", text: "Access level updated. It applies the next time they load a page." },
+  self: {
+    tone: "warn",
+    text: "You cannot change your own access level. Ask the other administrator to do it.",
+  },
+  last: {
+    tone: "bad",
+    text: "That is the last administrator. Promote someone else first, or nobody can reach this page.",
+  },
+  nochange: { tone: "warn", text: "That account already has this access level." },
+  missing: { tone: "bad", text: "That account no longer exists." },
+  invalid: { tone: "bad", text: "Choose one of student, staff, or administrator." },
 };
 
 const resetMessages: Record<string, { tone: "good" | "warn" | "bad"; text: string }> = {
@@ -64,14 +80,15 @@ const paymentStatusLabels: Record<StripePaymentAttemptSummary["status"], string>
 export default async function AdminPage({
   searchParams,
 }: {
-  searchParams: Promise<{ reset?: string }>;
+  searchParams: Promise<{ reset?: string; role?: string }>;
 }) {
   const staff = await currentStudent();
   if (!staff || !isStaff(staff)) redirect("/");
 
   const isAdministrator = staff.role === "admin";
-  const { reset } = await searchParams;
+  const { reset, role } = await searchParams;
   const resetMessage = reset ? resetMessages[reset] : null;
+  const roleMessage = role ? roleMessages[role] : null;
 
   const [registrations, pendingScholarships, assessments, posts, team, students] =
     await Promise.all([
@@ -392,6 +409,12 @@ export default async function AdminPage({
           </div>
         ) : null}
 
+        {roleMessage ? (
+          <div className={`notice ${roleMessage.tone}`} role="status">
+            {roleMessage.text}
+          </div>
+        ) : null}
+
         {students.length ? (
           <div className="admin-student-list">
             {students.map((person) => (
@@ -403,7 +426,26 @@ export default async function AdminPage({
                     Joined {registrationDate.format(new Date(person.createdAt))}
                   </span>
                 </div>
-                <span className={`admin-role-badge ${person.role}`}>{person.role}</span>
+                {isAdministrator && person.id !== staff.id ? (
+                  <form action={setStudentRole} className="admin-role-form">
+                    <input type="hidden" name="studentId" value={person.id} />
+                    <label className="sr-only" htmlFor={`role-${person.id}`}>
+                      Access level for {person.fullName}
+                    </label>
+                    <select id={`role-${person.id}`} name="role" defaultValue={person.role}>
+                      <option value="student">Student</option>
+                      <option value="staff">Staff</option>
+                      <option value="admin">Administrator</option>
+                    </select>
+                    <button type="submit" className="btn quiet sm">
+                      Save
+                    </button>
+                  </form>
+                ) : (
+                  <span className={`admin-role-badge ${person.role}`}>
+                    {person.id === staff.id ? "you" : person.role}
+                  </span>
+                )}
                 {isAdministrator ? (
                   <form action={resetStudentPassword} className="admin-reset-form">
                     <input type="hidden" name="studentId" value={person.id} />
@@ -437,7 +479,7 @@ export default async function AdminPage({
         <div className="admin-section-head">
           <div>
             <h2>Team access</h2>
-            <p>Accounts that can open this page. Change one with `npm run admin:promote`.</p>
+            <p>Accounts that can open this page. Set access levels in the roster above.</p>
           </div>
           <span>{team.length}</span>
         </div>
