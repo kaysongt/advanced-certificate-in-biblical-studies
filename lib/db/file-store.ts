@@ -18,6 +18,7 @@ import type {
   QuizAttempt,
   ScholarshipApplication,
   Student,
+  StudentRole,
 } from "./types";
 
 /** Development-only persistence used when DATABASE_URL is absent. */
@@ -148,6 +149,14 @@ export const fileStore: DataStore = {
     const student = data.students.find((candidate) => candidate.id === studentId);
     if (!student) return;
     student.passwordHash = passwordHash;
+    await write(data);
+  },
+
+  async updateStudentRole(studentId: string, role: StudentRole): Promise<void> {
+    const data = await read();
+    const student = data.students.find((candidate) => candidate.id === studentId);
+    if (!student) return;
+    student.role = role;
     await write(data);
   },
 

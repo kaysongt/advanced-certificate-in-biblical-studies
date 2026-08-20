@@ -108,6 +108,42 @@ export async function moderateCommunityPost(formData: FormData): Promise<void> {
   revalidatePath("/community");
 }
 
+const roleChangeSchema = z.object({
+  studentId: z.string().uuid(),
+  role: z.enum(["student", "staff", "admin"]),
+});
+
+/**
+ * Promotes or demotes an account. Two locks, because this is the one action
+ * that can end with nobody able to reach /admin:
+ *
+ *  - you cannot change your own role, so an admin cannot demote themselves;
+ *  - the last remaining admin cannot be demoted by anyone.
+ */
+export async function setStudentRole(formData: FormData): Promise<void> {
+  const actor = await administrator();
+  const parsed = roleChangeSchema.safeParse({
+    studentId: formData.get("studentId"),
+    role: formData.get("role"),
+  });
+  if (!parsed.success) redirect("/admin?role=invalid#students");
+
+  if (parsed.data.studentId === actor.id) redirect("/admin?role=self#students");
+
+  const student = await db.getStudentById(parsed.data.studentId);
+  if (!student) redirect("/admin?role=missing#students");
+  if (student.role === parsed.data.role) redirect("/admin?role=nochange#students");
+
+  if (student.role === "admin" && parsed.data.role !== "admin") {
+    const admins = (await db.listStudents()).filter((person) => person.role === "admin");
+    if (admins.length <= 1) redirect("/admin?role=last#students");
+  }
+
+  await db.updateStudentRole(student.id, parsed.data.role);
+  revalidatePath("/admin");
+  redirect("/admin?role=done#students");
+}
+
 const passwordResetSchema = z.object({
   studentId: z.string().uuid(),
   newPassword: z.string().min(10, "Use at least 10 characters.").max(200),

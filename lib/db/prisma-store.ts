@@ -252,6 +252,13 @@ export const prismaStore: DataStore = {
     await prisma.student.update({ where: { id: studentId }, data: { passwordHash } });
   },
 
+  async updateStudentRole(studentId, role) {
+    await prisma.student.update({
+      where: { id: studentId },
+      data: { role: roleToPrisma[role] },
+    });
+  },
+
   async createEnrollment(input) {
     return mapEnrollment(
       await prisma.enrollment.create({

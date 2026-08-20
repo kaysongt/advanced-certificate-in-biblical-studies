@@ -1739,6 +1739,13 @@ a.card:hover::after { opacity: .9; }
 .admin-student-identity strong { font-size: 14.5px; }
 .admin-student-identity a { color: var(--muted); font: 500 12.5px/1.4 var(--sans); overflow-wrap: anywhere; }
 .admin-student-meta { color: var(--muted); font: 500 11.5px/1.4 var(--sans); }
+.admin-role-form { display: flex; align-items: center; gap: 6px; flex: none; }
+.admin-role-form select {
+  font-family: var(--sans); font-size: 12.5px; padding: 7px 9px;
+  border: 1px solid var(--rule); border-radius: var(--r);
+  background: var(--page); color: var(--ink);
+}
+.admin-role-form select:focus { outline: none; border-color: var(--deep); box-shadow: 0 0 0 3px var(--wash); }
 .admin-reset-form { display: flex; align-items: center; gap: 8px; flex: 1 1 260px; justify-content: flex-end; }
 .admin-reset-form input {
   flex: 1 1 180px; min-width: 0; font-family: var(--sans); font-size: 13.5px;
