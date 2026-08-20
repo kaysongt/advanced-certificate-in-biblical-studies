@@ -3,9 +3,10 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { signOut } from "@/app/login/actions";
+import { changeOwnPassword } from "./actions";
 import StripeCheckoutButton from "@/components/StripeCheckoutButton";
 import { getModuleEnrollmentState } from "@/lib/access";
-import { currentStudent } from "@/lib/auth";
+import { currentStudent, isStaff } from "@/lib/auth";
 import { getModuleStatuses } from "@/lib/content";
 import { db } from "@/lib/db";
 import {
@@ -25,6 +26,16 @@ import { beginStripeCheckout } from "./actions";
 export const metadata: Metadata = {
   title: "My studies",
   robots: { index: false, follow: false },
+};
+
+const passwordMessages: Record<string, { tone: "good" | "warn" | "bad"; text: string }> = {
+  changed: { tone: "good", text: "Your password has been updated." },
+  wrong: { tone: "bad", text: "That current password is not right. Nothing was changed." },
+  same: { tone: "warn", text: "The new password matches your current one. Choose a different one." },
+  invalid: {
+    tone: "bad",
+    text: "Check the form: the new password needs at least 10 characters and both new fields must match.",
+  },
 };
 
 const paymentMessages: Record<string, { tone: "good" | "warn" | "bad"; text: string }> = {
@@ -78,12 +89,12 @@ function tuition(amount: number, currency: string): string {
 export default async function DashboardPage({
   searchParams,
 }: {
-  searchParams: Promise<{ payment?: string }>;
+  searchParams: Promise<{ payment?: string; password?: string }>;
 }) {
   const student = await currentStudent();
   if (!student) redirect("/login");
 
-  const { payment } = await searchParams;
+  const { payment, password } = await searchParams;
   const { program, grading } = getCurriculum();
   const [enrollments, progress, engagement, scholarshipApplications] = await Promise.all([
     db.getEnrollmentsForStudent(student.id),
@@ -105,6 +116,7 @@ export default async function DashboardPage({
     getCurriculum().modules.map((module) => [module.slug, module.short_title])
   );
   const paymentMessage = payment ? paymentMessages[payment] : null;
+  const passwordMessage = password ? passwordMessages[password] : null;
   const paymentDetails = {
     accountName: process.env.PAYMENT_BANK_ACCOUNT_NAME?.trim(),
     bankName: process.env.PAYMENT_BANK_NAME?.trim(),
@@ -140,6 +152,18 @@ export default async function DashboardPage({
               : "Your studies start here."}
         </p>
       </div>
+
+      {isStaff(student) ? (
+        <Link href="/admin" className="staff-entry">
+          <span className="staff-entry-label">
+            {student.role === "admin" ? "Administrator" : "Staff"} access
+          </span>
+          <strong>Open operations</strong>
+          <span className="staff-entry-hint">
+            Registrations, payments, scholarships, grading, and every account on the course.
+          </span>
+        </Link>
+      ) : null}
 
       {/*
         * One panel serving two states. A student still owing tuition gets the
@@ -432,6 +456,55 @@ export default async function DashboardPage({
         <Link href="/community" className="btn quiet lg">
           Open community groups
         </Link>
+      </section>
+
+      <section className="panel" id="password" style={{ marginTop: 44, scrollMarginTop: 90 }}>
+        <h2>Change your password</h2>
+        <p>
+          Choose something only you know, at least 10 characters. You will stay signed in on this
+          device after the change.
+        </p>
+
+        {passwordMessage ? (
+          <div className={`notice ${passwordMessage.tone}`} role="status">
+            {passwordMessage.text}
+          </div>
+        ) : null}
+
+        <form action={changeOwnPassword} className="password-form">
+          <label htmlFor="currentPassword">Current password</label>
+          <input
+            id="currentPassword"
+            name="currentPassword"
+            type="password"
+            autoComplete="current-password"
+            required
+          />
+
+          <label htmlFor="newPassword">New password</label>
+          <input
+            id="newPassword"
+            name="newPassword"
+            type="password"
+            autoComplete="new-password"
+            minLength={10}
+            required
+          />
+
+          <label htmlFor="confirmPassword">Confirm new password</label>
+          <input
+            id="confirmPassword"
+            name="confirmPassword"
+            type="password"
+            autoComplete="new-password"
+            minLength={10}
+            required
+          />
+
+          <button type="submit" className="btn quiet">
+            Update password
+          </button>
+        </form>
       </section>
 
       <form action={signOut} style={{ marginTop: 44 }}>

@@ -738,6 +738,25 @@ async function main() {
   const byEmail = await db.getStudentByEmail("TEST@EXAMPLE.COM");
   check("lookup is case-insensitive", () => assert.equal(byEmail?.id, student.id));
 
+  // Password changes: self-service on /dashboard and admin reset on /admin both
+  // land on the same store call, so that is what gets covered here.
+  const replacement = await hashPassword("a different pass phrase");
+  await db.updateStudentPassword(student.id, replacement);
+  const afterChange = await db.getStudentById(student.id);
+  const newVerifies = await verifyPassword("a different pass phrase", afterChange!.passwordHash);
+  const oldVerifies = await verifyPassword("correct horse battery staple", afterChange!.passwordHash);
+  check("password change replaces the stored hash", () =>
+    assert.notEqual(afterChange?.passwordHash, hash)
+  );
+  check("the new password verifies", () => assert.ok(newVerifies));
+  check("the old password stops working", () => assert.equal(oldVerifies, false));
+  await db.updateStudentPassword(student.id, hash);
+
+  const everyone = await db.listStudents();
+  check("admin roster lists every account", () =>
+    assert.ok(everyone.some((person) => person.id === student.id))
+  );
+
   check("enrollment starts pending", () => assert.equal(enrollment.status, "pending"));
   const pendingEnrollments = await db.listPendingEnrollments();
   check("staff queue includes pending enrollment", () =>

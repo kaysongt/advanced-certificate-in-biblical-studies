@@ -13,7 +13,7 @@ import { useEffect, useState } from "react";
  * prerenderable. See app/api/session/route.ts.
  */
 export default function AuthNav() {
-  const [session, setSession] = useState({ signedIn: false, staff: false });
+  const [session, setSession] = useState({ signedIn: false, staff: false, admin: false });
 
   useEffect(() => {
     let cancelled = false;
@@ -21,7 +21,11 @@ export default function AuthNav() {
       .then((r) => r.json())
       .then((d) => {
         if (!cancelled) {
-          setSession({ signedIn: Boolean(d.signedIn), staff: Boolean(d.staff) });
+          setSession({
+            signedIn: Boolean(d.signedIn),
+            staff: Boolean(d.staff),
+            admin: Boolean(d.admin),
+          });
         }
       })
       .catch(() => {
@@ -35,7 +39,9 @@ export default function AuthNav() {
   if (session.signedIn) {
     return (
       <>
-        {session.staff ? <Link href="/admin">Staff</Link> : null}
+        {session.staff ? (
+          <Link href="/admin">{session.admin ? "Admin" : "Staff"}</Link>
+        ) : null}
         <Link href="/dashboard" className="btn primary" style={{ marginLeft: 6 }}>
           My studies
         </Link>

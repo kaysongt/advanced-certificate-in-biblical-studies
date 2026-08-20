@@ -138,6 +138,19 @@ export const fileStore: DataStore = {
     return data.students.find((student) => student.id === id) ?? null;
   },
 
+  async listStudents(): Promise<Student[]> {
+    const data = await read();
+    return [...data.students].sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+  },
+
+  async updateStudentPassword(studentId: string, passwordHash: string): Promise<void> {
+    const data = await read();
+    const student = data.students.find((candidate) => candidate.id === studentId);
+    if (!student) return;
+    student.passwordHash = passwordHash;
+    await write(data);
+  },
+
   async createEnrollment(input: NewEnrollment): Promise<Enrollment> {
     const data = await read();
     const enrollment: Enrollment = {
