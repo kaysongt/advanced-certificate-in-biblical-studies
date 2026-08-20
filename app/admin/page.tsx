@@ -10,11 +10,25 @@ import {
   type StripePaymentAttemptSummary,
 } from "@/lib/payments/stripe-store";
 
-import { activateEnrollment, gradeAssessment, moderateCommunityPost } from "./actions";
+import {
+  activateEnrollment,
+  gradeAssessment,
+  moderateCommunityPost,
+  resetStudentPassword,
+} from "./actions";
 
 export const metadata: Metadata = {
   title: "Staff operations",
   robots: { index: false, follow: false },
+};
+
+const resetMessages: Record<string, { tone: "good" | "warn" | "bad"; text: string }> = {
+  done: {
+    tone: "good",
+    text: "Password updated. Pass it to the student directly — nothing was emailed.",
+  },
+  invalid: { tone: "bad", text: "A new password needs at least 10 characters." },
+  missing: { tone: "bad", text: "That account no longer exists." },
 };
 
 const registrationDate = new Intl.DateTimeFormat("en-US", {
@@ -47,16 +61,26 @@ const paymentStatusLabels: Record<StripePaymentAttemptSummary["status"], string>
   disputed: "Disputed",
 };
 
-export default async function AdminPage() {
+export default async function AdminPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ reset?: string }>;
+}) {
   const staff = await currentStudent();
   if (!staff || !isStaff(staff)) redirect("/");
 
-  const [registrations, pendingScholarships, assessments, posts, team] = await Promise.all([
+  const isAdministrator = staff.role === "admin";
+  const { reset } = await searchParams;
+  const resetMessage = reset ? resetMessages[reset] : null;
+
+  const [registrations, pendingScholarships, assessments, posts, team, students] =
+    await Promise.all([
     db.listEnrollments(),
     db.countPendingScholarshipApplications(),
     db.listPendingAssessments(),
     db.listRecentCommunityPosts(),
     db.listStaff(),
+    db.listStudents(),
   ]);
   const moduleNames = new Map(
     getCurriculum().modules.map((module) => [module.slug, module.short_title])
@@ -350,6 +374,65 @@ export default async function AdminPage() {
         * `npm run admin:create` never enrols and would otherwise be invisible
         * on the one screen meant to show who holds access.
         */}
+      <section className="admin-section" id="students" style={{ scrollMarginTop: 90 }}>
+        <div className="admin-section-head">
+          <div>
+            <h2>Everyone enrolled</h2>
+            <p>
+              Every account on the course. Setting a password here replaces the old one
+              immediately — hand the new one to the student yourself.
+            </p>
+          </div>
+          <span>{students.length}</span>
+        </div>
+
+        {resetMessage ? (
+          <div className={`notice ${resetMessage.tone}`} role="status">
+            {resetMessage.text}
+          </div>
+        ) : null}
+
+        {students.length ? (
+          <div className="admin-student-list">
+            {students.map((person) => (
+              <article className="admin-student-row" key={person.id}>
+                <div className="admin-student-identity">
+                  <strong>{person.fullName}</strong>
+                  <a href={`mailto:${person.email}`}>{person.email}</a>
+                  <span className="admin-student-meta">
+                    Joined {registrationDate.format(new Date(person.createdAt))}
+                  </span>
+                </div>
+                <span className={`admin-role-badge ${person.role}`}>{person.role}</span>
+                {isAdministrator ? (
+                  <form action={resetStudentPassword} className="admin-reset-form">
+                    <input type="hidden" name="studentId" value={person.id} />
+                    <label className="sr-only" htmlFor={`pw-${person.id}`}>
+                      New password for {person.fullName}
+                    </label>
+                    <input
+                      id={`pw-${person.id}`}
+                      name="newPassword"
+                      type="text"
+                      placeholder="New password (10+ characters)"
+                      minLength={10}
+                      maxLength={200}
+                      autoComplete="off"
+                      required
+                    />
+                    <button type="submit" className="btn quiet sm">
+                      Reset
+                    </button>
+                  </form>
+                ) : null}
+              </article>
+            ))}
+          </div>
+        ) : (
+          <p className="admin-empty">No accounts yet.</p>
+        )}
+      </section>
+
       <section className="admin-section">
         <div className="admin-section-head">
           <div>

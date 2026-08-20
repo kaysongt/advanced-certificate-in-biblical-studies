@@ -243,6 +243,15 @@ export const prismaStore: DataStore = {
     return student ? mapStudent(student) : null;
   },
 
+  async listStudents() {
+    const students = await prisma.student.findMany({ orderBy: { createdAt: "desc" } });
+    return students.map(mapStudent);
+  },
+
+  async updateStudentPassword(studentId, passwordHash) {
+    await prisma.student.update({ where: { id: studentId }, data: { passwordHash } });
+  },
+
   async createEnrollment(input) {
     return mapEnrollment(
       await prisma.enrollment.create({

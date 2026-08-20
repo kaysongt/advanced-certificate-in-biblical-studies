@@ -161,6 +161,10 @@ export interface DataStore {
   ): Promise<{ student: Student; enrollment: Enrollment }>;
   getStudentByEmail(email: string): Promise<Student | null>;
   getStudentById(id: string): Promise<Student | null>;
+  /** Everyone with an account, newest first, for the admin roster. */
+  listStudents(): Promise<Student[]>;
+  /** Replaces a stored password hash. Callers hash before calling. */
+  updateStudentPassword(studentId: string, passwordHash: string): Promise<void>;
 
   // enrollments
   createEnrollment(input: NewEnrollment): Promise<Enrollment>;
