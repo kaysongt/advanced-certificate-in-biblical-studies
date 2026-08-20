@@ -6,7 +6,7 @@ import { signOut } from "@/app/login/actions";
 import { changeOwnPassword } from "./actions";
 import StripeCheckoutButton from "@/components/StripeCheckoutButton";
 import { getModuleEnrollmentState } from "@/lib/access";
-import { currentStudent } from "@/lib/auth";
+import { currentStudent, isStaff } from "@/lib/auth";
 import { getModuleStatuses } from "@/lib/content";
 import { db } from "@/lib/db";
 import {
@@ -152,6 +152,18 @@ export default async function DashboardPage({
               : "Your studies start here."}
         </p>
       </div>
+
+      {isStaff(student) ? (
+        <Link href="/admin" className="staff-entry">
+          <span className="staff-entry-label">
+            {student.role === "admin" ? "Administrator" : "Staff"} access
+          </span>
+          <strong>Open operations</strong>
+          <span className="staff-entry-hint">
+            Registrations, payments, scholarships, grading, and every account on the course.
+          </span>
+        </Link>
+      ) : null}
 
       {/*
         * One panel serving two states. A student still owing tuition gets the

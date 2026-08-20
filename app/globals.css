@@ -1723,6 +1723,16 @@ a.card:hover::after { opacity: .9; }
 .admin-promo-label { color: var(--faint); font: 700 9px/1 var(--sans); letter-spacing: .13em; text-transform: uppercase; }
 .admin-promo-chip { padding: 6px 11px; border: 1px solid var(--gold-line); border-radius: 999px; background: var(--gold-wash); font: 600 11.5px/1 var(--sans); }
 .admin-promo-chip strong { font-weight: 750; }
+.staff-entry {
+  display: grid; gap: 3px; margin: 22px 0 0; padding: 16px 20px;
+  border: 1px solid var(--gold-line); border-radius: 14px; background: var(--gold-wash);
+  color: var(--ink); text-decoration: none;
+}
+.staff-entry:hover { border-color: var(--gold); }
+.staff-entry-label { font: 750 9.5px/1 var(--sans); letter-spacing: .12em; text-transform: uppercase; color: var(--deep); }
+.staff-entry strong { font-size: 16px; }
+.staff-entry-hint { color: var(--muted); font: 500 12.5px/1.5 var(--sans); }
+
 .admin-student-list { display: grid; gap: 8px; }
 .admin-student-row { display: flex; align-items: center; flex-wrap: wrap; gap: 12px 18px; padding: 14px 18px; border: 1px solid var(--rule); border-radius: 14px; background: var(--card); }
 .admin-student-identity { display: grid; gap: 2px; min-width: 0; flex: 1 1 220px; }
