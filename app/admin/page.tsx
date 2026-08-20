@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import AdminNav from "@/components/AdminNav";
@@ -22,6 +23,22 @@ export const metadata: Metadata = {
   title: "Staff operations",
   robots: { index: false, follow: false },
 };
+
+// The summary chips double as the filter control, so the list and the counts
+// are driven by one definition rather than drifting apart.
+const REGISTRATION_FILTERS = [
+  { key: "all", label: "Total" },
+  { key: "pending", label: "Awaiting payment" },
+  { key: "active", label: "Active" },
+  { key: "review", label: "Payment review" },
+  { key: "suspended", label: "Access suspended" },
+] as const;
+
+function matchesQuery(haystack: string[], needle: string): boolean {
+  if (!needle) return true;
+  const term = needle.toLowerCase();
+  return haystack.some((value) => value.toLowerCase().includes(term));
+}
 
 const roleMessages: Record<string, { tone: "good" | "warn" | "bad"; text: string }> = {
   done: { tone: "good", text: "Access level updated. It applies the next time they load a page." },
@@ -80,13 +97,15 @@ const paymentStatusLabels: Record<StripePaymentAttemptSummary["status"], string>
 export default async function AdminPage({
   searchParams,
 }: {
-  searchParams: Promise<{ reset?: string; role?: string }>;
+  searchParams: Promise<{ reset?: string; role?: string; q?: string; status?: string }>;
 }) {
   const staff = await currentStudent();
   if (!staff || !isStaff(staff)) redirect("/");
 
   const isAdministrator = staff.role === "admin";
-  const { reset, role } = await searchParams;
+  const { reset, role, q, status } = await searchParams;
+  const query = (q ?? "").trim();
+  const activeStatus = REGISTRATION_FILTERS.some((f) => f.key === status) ? status! : "all";
   const resetMessage = reset ? resetMessages[reset] : null;
   const roleMessage = role ? roleMessages[role] : null;
 
@@ -113,6 +132,21 @@ export default async function AdminPage({
     suspended: registrations.filter((item) => Boolean(item.accessSuspendedAt)).length,
     stripeReview: [...paymentAttempts.values()].filter((attempt) => attempt.needsReview).length,
   };
+
+  const visibleRegistrations = registrations.filter((enrollment) => {
+    const attempt = paymentAttempts.get(enrollment.id);
+    const statusOk =
+      activeStatus === "all" ||
+      (activeStatus === "pending" && enrollment.status === "pending") ||
+      (activeStatus === "active" && enrollment.status === "active" && !enrollment.accessSuspendedAt) ||
+      (activeStatus === "suspended" && Boolean(enrollment.accessSuspendedAt)) ||
+      (activeStatus === "review" && Boolean(attempt?.needsReview));
+    return (
+      statusOk &&
+      matchesQuery([enrollment.student.fullName, enrollment.student.email, enrollment.student.country], query)
+    );
+  });
+  const filtered = activeStatus !== "all" || query !== "";
 
   // Money, which the card list alone never added up. It matters more now that a
   // promotion code can clear a whole tuition: "active" no longer implies "paid",
@@ -156,7 +190,7 @@ export default async function AdminPage({
 
       <AdminNav pendingScholarshipCount={pendingScholarships} />
 
-      <section className="admin-section">
+      <section className="admin-section" id="registrations" style={{ scrollMarginTop: 90 }}>
         <div className="admin-section-head">
           <div>
             <h2>Student registrations</h2>
@@ -193,26 +227,70 @@ export default async function AdminPage({
             ))}
           </div>
         ) : null}
-        <div className="admin-registration-summary" aria-label="Registration totals">
-          <span>
-            <strong>{registrations.length}</strong> Total
-          </span>
-          <span>
-            <strong>{registrationCounts.pending}</strong> Awaiting payment
-          </span>
-          <span>
-            <strong>{registrationCounts.active}</strong> Active
-          </span>
-          <span>
-            <strong>{registrationCounts.stripeReview}</strong> Payment review
-          </span>
-          <span>
-            <strong>{registrationCounts.suspended}</strong> Access suspended
-          </span>
+        <div className="admin-registration-summary" aria-label="Filter registrations">
+          {REGISTRATION_FILTERS.map((filter) => {
+            const count =
+              filter.key === "all"
+                ? registrations.length
+                : filter.key === "pending"
+                  ? registrationCounts.pending
+                  : filter.key === "active"
+                    ? registrationCounts.active
+                    : filter.key === "review"
+                      ? registrationCounts.stripeReview
+                      : registrationCounts.suspended;
+            const params = new URLSearchParams();
+            if (filter.key !== "all") params.set("status", filter.key);
+            if (query) params.set("q", query);
+            const href = `/admin${params.size ? `?${params}` : ""}#registrations`;
+            return (
+              <Link
+                key={filter.key}
+                href={href}
+                className={filter.key === activeStatus ? "is-active" : undefined}
+                aria-current={filter.key === activeStatus ? "true" : undefined}
+              >
+                <strong>{count}</strong> {filter.label}
+              </Link>
+            );
+          })}
         </div>
-        {registrations.length ? (
+
+        <form className="admin-search" method="get" action="/admin" role="search">
+          {activeStatus !== "all" ? <input type="hidden" name="status" value={activeStatus} /> : null}
+          <label className="sr-only" htmlFor="registrant-search">
+            Search registrants by name, email, or country
+          </label>
+          <input
+            id="registrant-search"
+            name="q"
+            type="search"
+            defaultValue={query}
+            placeholder="Search name, email, or country"
+          />
+          <button type="submit" className="btn quiet sm">
+            Search
+          </button>
+          {filtered ? (
+            <Link href="/admin#registrations" className="admin-search-clear">
+              Clear
+            </Link>
+          ) : null}
+        </form>
+
+        {filtered ? (
+          <p className="admin-filter-note">
+            Showing {visibleRegistrations.length} of {registrations.length}
+            {query ? ` matching "${query}"` : ""}
+            {activeStatus !== "all"
+              ? ` in ${REGISTRATION_FILTERS.find((f) => f.key === activeStatus)?.label.toLowerCase()}`
+              : ""}
+            .
+          </p>
+        ) : null}
+        {visibleRegistrations.length ? (
           <div className="admin-list">
-            {registrations.map((enrollment) => {
+            {visibleRegistrations.map((enrollment) => {
               const paymentAttempt = paymentAttempts.get(enrollment.id);
               return (
               <article className="admin-card admin-registration-card" key={enrollment.id}>
@@ -322,7 +400,11 @@ export default async function AdminPage({
               );
             })}
           </div>
-        ) : <p className="admin-empty">No student has registered yet.</p>}
+        ) : (
+          <p className="admin-empty">
+            {filtered ? "No registrant matches this filter." : "No student has registered yet."}
+          </p>
+        )}
       </section>
 
       <section className="admin-section">
