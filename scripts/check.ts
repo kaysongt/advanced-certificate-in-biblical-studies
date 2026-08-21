@@ -4,6 +4,7 @@
  */
 
 import assert from "node:assert/strict";
+import { createHmac } from "node:crypto";
 import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
@@ -12,6 +13,13 @@ import Stripe from "stripe";
 
 import { hashPassword, verifyPassword } from "../lib/auth-core";
 import { isStaff } from "../lib/auth";
+import { PRICING_NGN } from "../lib/curriculum";
+import {
+  isPaystackAvailableFor,
+  nairaAmountMinor,
+  prefersPaystack,
+  verifyWebhookSignature,
+} from "../lib/payments/paystack";
 import {
   entitlementRedirectPath,
   getModuleEnrollmentState,
@@ -1001,6 +1009,48 @@ async function main() {
   // Serverless hosts have a read-only filesystem. Simulate that by putting a
   // FILE where the .data directory must be, so mkdir fails, and confirm the
   // store reports it as a known condition rather than an opaque crash.
+  // Paystack: the parts that hold without live keys. The API calls themselves
+  // need a real integration and are exercised in test mode before launch.
+  console.log("\npaystack");
+  {
+    const secret = "sk_test_check_only";
+    process.env.PAYSTACK_SECRET_KEY = secret;
+
+    check("naira tuition converts to kobo", () => {
+      assert.equal(nairaAmountMinor("advanced"), PRICING_NGN.advanced.amount * 100);
+      assert.equal(nairaAmountMinor("certificate"), PRICING_NGN.certificate.amount * 100);
+    });
+    check("a priced plan is available once a key is set", () =>
+      assert.ok(isPaystackAvailableFor("advanced"))
+    );
+    check("nigeria is routed to paystack", () => assert.ok(prefersPaystack("Nigeria")));
+    check("routing ignores case and padding", () => assert.ok(prefersPaystack("  nigeria  ")));
+    check("other countries stay on stripe", () => {
+      assert.equal(prefersPaystack("United States"), false);
+      assert.equal(prefersPaystack(null), false);
+    });
+
+    const body = JSON.stringify({ event: "charge.success", data: { reference: "kti_x" } });
+    const signature = createHmac("sha512", secret).update(body).digest("hex");
+    check("a correctly signed webhook is accepted", () =>
+      assert.ok(verifyWebhookSignature(body, signature))
+    );
+    check("a tampered body is rejected", () =>
+      assert.equal(verifyWebhookSignature(body + " ", signature), false)
+    );
+    check("a wrong signature is rejected", () =>
+      assert.equal(verifyWebhookSignature(body, "0".repeat(128)), false)
+    );
+    check("a missing signature is rejected", () =>
+      assert.equal(verifyWebhookSignature(body, null), false)
+    );
+
+    delete process.env.PAYSTACK_SECRET_KEY;
+    check("paystack is hidden without a key", () =>
+      assert.equal(isPaystackAvailableFor("advanced"), false)
+    );
+  }
+
   console.log("\nread-only filesystem handling");
   await fs.rm(dataDir, { recursive: true, force: true });
   await fs.writeFile(dataDir, "blocked", "utf8");

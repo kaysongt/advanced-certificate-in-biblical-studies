@@ -37,6 +37,15 @@ enum StripePaymentStatus {
   DISPUTED
 }
 
+enum PaystackPaymentStatus {
+  CREATED
+  OPEN
+  PAID
+  FAILED
+  ABANDONED
+  REVERSED
+}
+
 enum QuizKind {
   TOPIC
   COURSE_ASSESSMENT
@@ -76,22 +85,23 @@ model Student {
 }
 
 model Enrollment {
-  id                     String                  @id @default(uuid())
-  studentId              String
-  product                String
-  plan                   EnrollmentPlan
-  status                 EnrollmentStatus        @default(PENDING)
-  amount                 Int
-  currency               String                  @default("USD")
-  provider               String?
-  providerRef            String?
-  activatedAt            DateTime?
-  accessSuspendedAt      DateTime?
-  createdAt              DateTime                @default(now())
-  updatedAt              DateTime                @updatedAt
-  student                Student                 @relation(fields: [studentId], references: [id], onDelete: Cascade)
-  stripePaymentAttempts  StripePaymentAttempt[]
-  scholarshipApplication ScholarshipApplication?
+  id                      String                   @id @default(uuid())
+  studentId               String
+  product                 String
+  plan                    EnrollmentPlan
+  status                  EnrollmentStatus         @default(PENDING)
+  amount                  Int
+  currency                String                   @default("USD")
+  provider                String?
+  providerRef             String?
+  activatedAt             DateTime?
+  accessSuspendedAt       DateTime?
+  createdAt               DateTime                 @default(now())
+  updatedAt               DateTime                 @updatedAt
+  student                 Student                  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  stripePaymentAttempts   StripePaymentAttempt[]
+  paystackPaymentAttempts PaystackPaymentAttempt[]
+  scholarshipApplication  ScholarshipApplication?
 
   @@unique([provider, providerRef])
   @@index([studentId])
@@ -117,6 +127,30 @@ model ScholarshipApplication {
 
   @@index([status, createdAt])
   @@index([studentId])
+}
+
+model PaystackPaymentAttempt {
+  id                  String                @id @default(uuid())
+  enrollmentId        String
+  activeKey           String?               @unique
+  reference           String                @unique
+  transactionId       String?               @unique
+  expectedAmountMinor Int
+  currency            String
+  status              PaystackPaymentStatus @default(CREATED)
+  paidAmountMinor     Int                   @default(0)
+  channel             String?
+  needsReview         Boolean               @default(false)
+  reviewReason        String?
+  paidAt              DateTime?
+  lastEventAt         DateTime?
+  createdAt           DateTime              @default(now())
+  updatedAt           DateTime              @updatedAt
+  enrollment          Enrollment            @relation(fields: [enrollmentId], references: [id], onDelete: Cascade)
+
+  @@index([enrollmentId, createdAt])
+  @@index([status, updatedAt])
+  @@index([needsReview, updatedAt])
 }
 
 model StripePaymentAttempt {
