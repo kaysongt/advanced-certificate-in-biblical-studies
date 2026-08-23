@@ -131,6 +131,41 @@ async function main() {
     assert.equal(isPrimaryRouteActive("/scholarship", "/scholarship"), true)
   );
 
+  console.log("\nhomepage faculty");
+  const homePageSource = await fs.readFile(path.join(process.cwd(), "app/page.tsx"), "utf8");
+  const homeStylesSource = await fs.readFile(
+    path.join(process.cwd(), "app/globals.css"),
+    "utf8"
+  );
+  const normalizedHomePageSource = homePageSource.replace(/\s+/g, " ");
+  const facultyNames = [
+    "Dr. Kay Ijisesan",
+    "Dr. John Oyeniran",
+    "Rev. Victor Adeyemi",
+    "Rev. Tokunbo Adejuwon",
+    "Pst. Buki Manufor",
+    "Pst. Achese Opuda",
+    "Dr. Sam Ekundayo",
+  ];
+  check("homepage includes the seven-member faculty section", () => {
+    assert.ok(homePageSource.includes('id="faculty"'));
+    for (const name of facultyNames) assert.ok(homePageSource.includes(name), name);
+  });
+  check("Dr. John has the supplied portrait and approved biography", () => {
+    assert.ok(homePageSource.includes('src="/assets/faculty/dr-john-oyeniran.jpg"'));
+    assert.ok(normalizedHomePageSource.includes("Global School of Biblical Interpretation"));
+  });
+  check("faculty styling includes feature and roster layouts", () => {
+    assert.match(homeStylesSource, /\.faculty-feature-grid\s*\{/);
+    assert.match(homeStylesSource, /\.faculty-roster-grid\s*\{/);
+  });
+  const johnPortrait = await fs.stat(
+    path.join(process.cwd(), "public/assets/faculty/dr-john-oyeniran.jpg")
+  );
+  check("Dr. John's portrait asset is present", () => {
+    assert.ok(johnPortrait.size > 100_000);
+  });
+
   console.log("\nprospective scholarship wiring");
   const scholarshipPageSource = await fs.readFile(
     path.join(process.cwd(), "app/scholarship/page.tsx"),

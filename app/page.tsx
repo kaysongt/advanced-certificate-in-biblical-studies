@@ -28,6 +28,14 @@ const STUDY_STEPS = [
   },
 ];
 
+const FACULTY_ROSTER = [
+  { name: "Rev. Victor Adeyemi", initials: "VA" },
+  { name: "Rev. Tokunbo Adejuwon", initials: "TA" },
+  { name: "Pst. Buki Manufor", initials: "BM" },
+  { name: "Pst. Achese Opuda", initials: "AO" },
+  { name: "Dr. Sam Ekundayo", initials: "SE" },
+] as const;
+
 export default function HomePage() {
   const { program, grading } = getCurriculum();
   const moduleStatuses = getModuleStatuses();
@@ -238,31 +246,88 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="section home-section founder-section" id="founder">
-        <div className="wide founder-grid">
-          <div className="founder-portrait">
-            <Image
-              src="/assets/dr-kay-ijisesan.jpg"
-              alt="Dr. Kay Ijisesan, Founder and President of KingsWord Training Institute"
-              fill
-              sizes="(max-width: 700px) calc(100vw - 36px), (max-width: 1040px) 520px, 38vw"
-            />
-            <div className="founder-portrait-label">
-              <span>Founder &amp; President</span>
-              <strong>Dr. Kay Ijisesan</strong>
+      <section className="section home-section faculty-section" id="faculty">
+        <div className="wide">
+          <div className="section-lead split-lead faculty-lead">
+            <div>
+              <div className="eyebrow">Faculty members</div>
+              <h2>Learn from leaders committed to the Word.</h2>
             </div>
+            <p>
+              Our faculty brings together biblical scholarship, pastoral ministry, teaching,
+              and practical experience to help students understand Scripture and communicate it
+              faithfully.
+            </p>
           </div>
-          <div className="founder-copy">
-            <div className="eyebrow">{program.founder.role}</div>
-            <h2>{program.founder.name}</h2>
-            <p>{program.founder.bio}</p>
-            <blockquote className="founder-quote">
-              <span aria-hidden="true">&ldquo;</span>
-              <p>
-                {program.motto}<span className="founder-quote-close" aria-hidden="true">&rdquo;</span>
-              </p>
-              <cite>KingsWord Training Institute</cite>
-            </blockquote>
+
+          <div className="faculty-feature-grid">
+            <article className="faculty-profile faculty-profile-kay">
+              <div className="faculty-profile-photo">
+                <Image
+                  src="/assets/dr-kay-ijisesan.jpg"
+                  alt="Dr. Kay Ijisesan, Founder and President of KingsWord Training Institute"
+                  fill
+                  sizes="(max-width: 700px) calc(100vw - 36px), (max-width: 1040px) 300px, 19vw"
+                />
+              </div>
+              <div className="faculty-profile-body">
+                <span className="faculty-role">{program.founder.role}</span>
+                <h3>{program.founder.name}</h3>
+                <p>{program.founder.bio}</p>
+                <blockquote className="faculty-motto">
+                  <span aria-hidden="true">&ldquo;</span>
+                  <p>
+                    {program.motto}<span aria-hidden="true">&rdquo;</span>
+                  </p>
+                </blockquote>
+              </div>
+            </article>
+
+            <article className="faculty-profile faculty-profile-john">
+              <div className="faculty-profile-photo">
+                <Image
+                  src="/assets/faculty/dr-john-oyeniran.jpg"
+                  alt="Dr. John Oyeniran"
+                  fill
+                  sizes="(max-width: 700px) calc(100vw - 36px), (max-width: 1040px) 300px, 19vw"
+                />
+              </div>
+              <div className="faculty-profile-body">
+                <span className="faculty-role">Bible Scholar, Pastor, Teacher &amp; Lecturer</span>
+                <h3>Dr. John Oyeniran</h3>
+                <p>
+                  Dr. John Oyeniran is a Bible scholar, pastor, teacher, and lecturer with a PhD
+                  in Biblical Studies. He is passionate about biblical interpretation, sound
+                  doctrine, and theological education.
+                </p>
+                <p>
+                  He teaches Scripture with a strong emphasis on context, exegesis, and
+                  responsible interpretation, equipping students to understand the Bible
+                  accurately and communicate it faithfully. He is the founder of the Global
+                  School of Biblical Interpretation and serves in pastoral ministry in Lagos,
+                  Nigeria.
+                </p>
+              </div>
+            </article>
+          </div>
+
+          <div className="faculty-roster">
+            <div className="faculty-roster-heading">
+              <span>Also serving on faculty</span>
+              <p>Additional faculty portraits and biographies will be published as they are provided.</p>
+            </div>
+            <div className="faculty-roster-grid">
+              {FACULTY_ROSTER.map((faculty, index) => (
+                <article className="faculty-roster-card" key={faculty.name}>
+                  <div className="faculty-roster-top">
+                    <span className="faculty-roster-index">{String(index + 3).padStart(2, "0")}</span>
+                    <span className="faculty-initials" aria-hidden="true">{faculty.initials}</span>
+                  </div>
+                  <h3>{faculty.name}</h3>
+                  <span className="faculty-roster-role">Faculty member</span>
+                </article>
+              ))}
+            </div>
           </div>
         </div>
       </section>
