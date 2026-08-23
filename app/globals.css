@@ -415,6 +415,30 @@ a.card:hover { border-color: var(--deep); text-decoration: none; }
 }
 .written-assessment { margin-top: 42px; }
 
+/*
+ * Course opener. The Module I clips are a mix of 9:16, 1:1, and 16:9, so the
+ * video is capped by height and left to derive its own width — every course
+ * then occupies a similar band of the page whatever shape it was shot in.
+ */
+.course-intro { margin: 30px 0 42px; }
+.course-intro h2 { margin: 6px 0 14px; padding: 0; border: 0; }
+.course-intro-frame {
+  width: fit-content;
+  max-width: 100%;
+  overflow: hidden;
+  border: 1px solid var(--rule);
+  border-radius: var(--r);
+  background: #000;
+}
+.course-intro-frame video {
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: 460px;
+}
+.course-intro-meta { margin: 10px 0 0; color: var(--faint); font: 600 12px/1.5 var(--sans); }
+
 .audio-library {
   display: grid; grid-template-columns: minmax(0, 1fr) minmax(280px, 1.2fr); gap: 28px;
   align-items: start; margin: 30px 0 42px; padding: 24px;
@@ -1212,6 +1236,7 @@ a.card:hover::after { opacity: .9; }
 .section-lead h2,
 .faq-heading h2,
 .founder-copy h2,
+.intro-video-copy h2,
 .process-intro h2 {
   margin: 10px 0 0;
   padding: 0;
@@ -1223,11 +1248,46 @@ a.card:hover::after { opacity: .9; }
 .split-lead p,
 .centered-lead p,
 .process-intro > p,
+.intro-video-copy > p,
 .founder-copy > p {
   margin: 0;
   color: var(--muted);
   font: 400 16px/1.75 var(--sans);
 }
+
+/*
+ * The institute welcome, sitting directly under the hero. The clip is a 9:16
+ * vertical cut, so it gets a portrait frame at a capped width instead of the
+ * 16:9 box the module briefings use — stretched across a column it would be
+ * mostly black bars.
+ */
+.intro-video-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 340px);
+  gap: clamp(28px, 5vw, 76px);
+  align-items: center;
+}
+.intro-video-copy > p { margin-top: 20px; }
+.intro-video-meta {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin: 24px 0 0;
+  color: var(--faint);
+  font: 600 12px/1.5 var(--sans);
+}
+.intro-video-meta strong { color: var(--ink-2); font-weight: 700; }
+.intro-video-frame {
+  width: 100%;
+  max-width: 340px;
+  margin-inline: auto;
+  aspect-ratio: 9 / 16;
+  overflow: hidden;
+  border: 1px solid var(--rule-soft);
+  border-radius: 18px;
+  background: #000;
+}
+.intro-video-frame video { display: block; width: 100%; height: 100%; object-fit: cover; }
 .capability-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-top: 1px solid var(--rule); border-left: 1px solid var(--rule); }
 /*
  * Was a hardcoded near-white rgba(255,253,248,.45) — a soft frosted tint that
@@ -1329,6 +1389,55 @@ a.card:hover::after { opacity: .9; }
 
 /* ---------- Enrollment, modules, and community ---------- */
 
+/*
+ * Course orientation, above the payment prompt on the dashboard. Same portrait
+ * treatment as the homepage intro because both clips are 9:16 social cuts.
+ */
+.welcome-video {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 300px);
+  align-items: center;
+  gap: clamp(24px, 4vw, 48px);
+  max-width: 760px;
+  margin-bottom: 42px;
+  padding: clamp(24px, 4vw, 38px);
+  border: 1px solid var(--rule);
+  border-radius: 24px;
+  background: var(--card);
+}
+.welcome-video h2 { margin: 8px 0 10px; }
+/* Paid, waiting on release: the same panel, but dressed as a confirmation
+   rather than a to-do, matching the gold treatment of the payment prompt. */
+.welcome-video.is-enrolled {
+  border-color: color-mix(in srgb, var(--gold) 46%, var(--line));
+  background:
+    radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--gold) 15%, transparent), transparent 42%),
+    var(--panel);
+  box-shadow: var(--shadow-sm);
+}
+.welcome-video.is-enrolled .eyebrow { color: var(--gold); }
+.welcome-video-copy > p { max-width: 46ch; margin: 0; color: var(--muted); font: 400 15px/1.7 var(--sans); }
+.welcome-video-meta {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin: 18px 0 0;
+  color: var(--faint);
+  font: 600 12px/1.5 var(--sans);
+}
+.welcome-video-meta strong { color: var(--ink-2); font-weight: 700; }
+.welcome-video-frame {
+  width: 100%;
+  max-width: 300px;
+  margin-inline: auto;
+  aspect-ratio: 9 / 16;
+  overflow: hidden;
+  border: 1px solid var(--rule-soft);
+  border-radius: 18px;
+  background: #000;
+}
+.welcome-video-frame video { display: block; width: 100%; height: 100%; object-fit: cover; }
+
 .pending-payment {
   max-width: 760px;
   margin-bottom: 42px;
@@ -1421,6 +1530,7 @@ a.card:hover::after { opacity: .9; }
 }
 
 @media (max-width: 620px) {
+  .welcome-video { grid-template-columns: 1fr; }
   .payment-heading,
   .pending-enrollment { align-items: stretch; flex-direction: column; }
   .secure-payment-mark { align-self: flex-start; white-space: normal; }
@@ -1439,6 +1549,13 @@ a.card:hover::after { opacity: .9; }
 .scholarship-intro .eyebrow { color: #e8c777; }
 .scholarship-intro h1 { max-width: 10ch; margin: 12px 0 18px; color: #fffaf1; font-size: clamp(2.8rem, 6vw, 5rem); line-height: .98; letter-spacing: -.045em; }
 .scholarship-intro .deck { max-width: 54ch; margin: 0; color: rgba(255, 255, 255, .75); }
+.scholarship-prospect-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 28px; }
+.scholarship-prospect-actions .quiet { border-color: rgba(255, 255, 255, .35); color: #fffaf1; }
+.scholarship-prospect-actions .quiet:hover { border-color: #e8c777; color: #e8c777; }
+.scholarship-prospect-steps { padding: 25px; border: 1px solid rgba(255, 255, 255, .17); border-radius: 20px; background: rgba(255, 255, 255, .09); color: #fffaf1; }
+.scholarship-prospect-steps > span { display: block; margin-bottom: 14px; color: #e8c777; font: 750 9px/1 var(--sans); letter-spacing: .13em; text-transform: uppercase; }
+.scholarship-prospect-steps ol { display: grid; gap: 12px; margin: 0; padding-left: 20px; color: rgba(255, 255, 255, .88); font: 500 12px/1.55 var(--sans); }
+.scholarship-prospect-steps p { margin: 18px 0 0; padding-top: 14px; border-top: 1px solid rgba(255, 255, 255, .13); color: rgba(255, 255, 255, .62); font: 500 11px/1.55 var(--sans); }
 .scholarship-enrollment-summary { padding: 25px; border: 1px solid rgba(255, 255, 255, .17); border-radius: 20px; background: rgba(255, 255, 255, .09); backdrop-filter: blur(10px); color: #fffaf1; }
 .scholarship-enrollment-summary > span { display: block; margin-bottom: 10px; color: #e8c777; font: 750 9px/1 var(--sans); letter-spacing: .13em; text-transform: uppercase; }
 .scholarship-enrollment-summary > strong { display: block; font: 600 clamp(1.35rem, 2.8vw, 1.9rem)/1.18 var(--serif); }
@@ -1561,6 +1678,28 @@ a.card:hover::after { opacity: .9; }
 .admin-shell textarea:focus { outline: none; border-color: var(--deep); box-shadow: 0 0 0 3px var(--wash); }
 
 .admin-shell { max-width: 1120px; padding-bottom: 90px; }
+.admin-tabs {
+  display: flex; gap: 6px; margin-top: 28px; padding: 5px;
+  overflow-x: auto; border: 1px solid var(--rule); border-radius: 12px;
+  background: var(--card); font: 650 12px/1.2 var(--sans);
+  scrollbar-width: thin;
+}
+.admin-tab {
+  display: inline-flex; align-items: center; gap: 8px; flex: 0 0 auto;
+  min-height: 42px; padding: 10px 14px; border-radius: 8px;
+  color: var(--muted); white-space: nowrap;
+}
+.admin-tab:hover { color: var(--ink); background: var(--rule-soft); text-decoration: none; }
+.admin-tab.on { color: var(--deep); background: var(--wash); box-shadow: inset 0 -2px 0 var(--gold-line); }
+.admin-tab-count {
+  display: inline-grid; min-width: 22px; height: 22px; padding: 0 6px;
+  place-items: center; border-radius: 999px; background: var(--gold-wash);
+  color: var(--gold); font-size: 10px; font-variant-numeric: tabular-nums;
+}
+@media (max-width: 560px) {
+  .admin-tabs { margin-inline: -4px; }
+  .admin-tab { min-height: 44px; padding-inline: 12px; }
+}
 .admin-section { margin-top: 44px; }
 .admin-section-head { display: flex; align-items: center; justify-content: space-between; gap: 18px; margin-bottom: 16px; }
 .admin-section-head h2 { margin: 0; padding: 0; border: 0; }
@@ -1573,8 +1712,88 @@ a.card:hover::after { opacity: .9; }
 .admin-card p { margin: 7px 0 0; color: var(--muted); font: 400 13px/1.6 var(--sans); }
 .admin-inline-form { display: flex; align-items: end; gap: 10px; }
 .admin-inline-form label { flex: 1; }
+
+/* Admin: money, promotion use, and who holds access. */
+.admin-money-summary { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin: 18px 0 14px; }
+.admin-money-summary > div { padding: 16px 18px; border: 1px solid var(--rule); border-radius: 14px; background: var(--card); }
+.admin-money-summary dt { color: var(--faint); font: 700 9px/1 var(--sans); letter-spacing: .13em; text-transform: uppercase; }
+.admin-money-summary dd { margin: 8px 0 0; font: 700 clamp(1.15rem, 2.4vw, 1.6rem)/1.1 var(--sans); letter-spacing: -.02em; }
+.admin-money-summary small { display: block; margin-top: 6px; color: var(--muted); font: 500 11.5px/1.45 var(--sans); }
+.admin-promo-usage { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 14px; }
+.admin-promo-label { color: var(--faint); font: 700 9px/1 var(--sans); letter-spacing: .13em; text-transform: uppercase; }
+.admin-promo-chip { padding: 6px 11px; border: 1px solid var(--gold-line); border-radius: 999px; background: var(--gold-wash); font: 600 11.5px/1 var(--sans); }
+.admin-promo-chip strong { font-weight: 750; }
+.staff-entry {
+  display: grid; gap: 3px; margin: 22px 0 0; padding: 16px 20px;
+  border: 1px solid var(--gold-line); border-radius: 14px; background: var(--gold-wash);
+  color: var(--ink); text-decoration: none;
+}
+.staff-entry:hover { border-color: var(--gold); }
+.staff-entry-label { font: 750 9.5px/1 var(--sans); letter-spacing: .12em; text-transform: uppercase; color: var(--deep); }
+.staff-entry strong { font-size: 16px; }
+.staff-entry-hint { color: var(--muted); font: 500 12.5px/1.5 var(--sans); }
+
+.admin-student-list { display: grid; gap: 8px; }
+.admin-student-row { display: flex; align-items: center; flex-wrap: wrap; gap: 12px 18px; padding: 14px 18px; border: 1px solid var(--rule); border-radius: 14px; background: var(--card); }
+.admin-student-identity { display: grid; gap: 2px; min-width: 0; flex: 1 1 220px; }
+.admin-student-identity strong { font-size: 14.5px; }
+.admin-student-identity a { color: var(--muted); font: 500 12.5px/1.4 var(--sans); overflow-wrap: anywhere; }
+.admin-student-meta { color: var(--muted); font: 500 11.5px/1.4 var(--sans); }
+.admin-role-form { display: flex; align-items: center; gap: 6px; flex: none; }
+.admin-role-form select {
+  font-family: var(--sans); font-size: 12.5px; padding: 7px 9px;
+  border: 1px solid var(--rule); border-radius: var(--r);
+  background: var(--page); color: var(--ink);
+}
+.admin-role-form select:focus { outline: none; border-color: var(--deep); box-shadow: 0 0 0 3px var(--wash); }
+.admin-reset-form { display: flex; align-items: center; gap: 8px; flex: 1 1 260px; justify-content: flex-end; }
+.admin-reset-form input {
+  flex: 1 1 180px; min-width: 0; font-family: var(--sans); font-size: 13.5px;
+  padding: 8px 11px; border: 1px solid var(--rule); border-radius: var(--r);
+  background: var(--page); color: var(--ink);
+}
+.admin-reset-form input:focus { outline: none; border-color: var(--deep); box-shadow: 0 0 0 3px var(--wash); }
+.btn.sm { padding: 8px 14px; font-size: 12.5px; }
+
+.password-form { display: grid; gap: 6px; max-width: 380px; margin-top: 18px; }
+.password-form label { font: 650 12px/1.4 var(--sans); color: var(--muted); }
+.password-form label + input { margin-bottom: 6px; }
+.password-form input {
+  width: 100%; font-family: var(--sans); font-size: 14.5px;
+  padding: 10px 12px; border: 1px solid var(--rule); border-radius: var(--r);
+  background: var(--page); color: var(--ink);
+}
+.password-form input:focus { outline: none; border-color: var(--deep); box-shadow: 0 0 0 3px var(--wash); }
+.password-form button { justify-self: start; margin-top: 8px; }
+
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+
+.admin-team-list { display: grid; gap: 10px; }
+.admin-team-member { display: flex; align-items: center; justify-content: space-between; gap: 18px; padding: 16px 18px; border: 1px solid var(--rule); border-radius: 14px; background: var(--card); }
+.admin-team-member > div { display: grid; gap: 3px; min-width: 0; }
+.admin-team-member strong { font-size: 14.5px; }
+.admin-team-member a { color: var(--muted); font: 500 12.5px/1.4 var(--sans); overflow-wrap: anywhere; }
+.admin-role-badge { flex: none; padding: 5px 11px; border-radius: 999px; font: 750 9px/1 var(--sans); letter-spacing: .1em; text-transform: uppercase; }
+.admin-role-badge.admin { border: 1px solid color-mix(in srgb, var(--gold) 52%, var(--line)); background: var(--gold-wash); color: var(--deep); }
+.admin-role-badge.staff { border: 1px solid var(--rule); background: var(--panel); color: var(--muted); }
+
 .admin-registration-summary { display: flex; flex-wrap: wrap; gap: 9px; margin: -2px 0 16px; }
-.admin-registration-summary > span { display: flex; align-items: baseline; gap: 5px; padding: 8px 11px; border: 1px solid var(--rule); border-radius: 999px; background: var(--card); color: var(--muted); font: 650 10px/1 var(--sans); letter-spacing: .04em; text-transform: uppercase; }
+.admin-registration-summary > span,
+.admin-registration-summary > a { display: flex; align-items: baseline; gap: 5px; padding: 8px 11px; border: 1px solid var(--rule); border-radius: 999px; background: var(--card); color: var(--muted); font: 650 10px/1 var(--sans); letter-spacing: .04em; text-transform: uppercase; text-decoration: none; }
+.admin-registration-summary > a:hover { border-color: var(--deep); color: var(--ink); }
+.admin-registration-summary > a.is-active { border-color: var(--gold); background: var(--gold-wash); color: var(--deep); }
+.admin-registration-summary > a.is-active strong { color: var(--deep); }
+
+.admin-search { display: flex; align-items: center; gap: 8px; margin: 0 0 14px; flex-wrap: wrap; }
+.admin-search input {
+  flex: 1 1 260px; max-width: 360px; font-family: var(--sans); font-size: 13.5px;
+  padding: 8px 12px; border: 1px solid var(--rule); border-radius: var(--r);
+  background: var(--page); color: var(--ink);
+}
+.admin-search input:focus { outline: none; border-color: var(--deep); box-shadow: 0 0 0 3px var(--wash); }
+.admin-search-clear { color: var(--muted); font: 600 12.5px/1 var(--sans); text-decoration: underline; text-underline-offset: 3px; }
+.admin-search-clear:hover { color: var(--ink); }
+.admin-filter-note { margin: -4px 0 14px; color: var(--muted); font: 500 12.5px/1.5 var(--sans); }
 .admin-registration-summary strong { color: var(--ink); font-size: 13px; }
 .admin-registration-card { align-items: center; }
 .admin-registration-title { display: flex; flex-wrap: wrap; align-items: center; gap: 9px; }
@@ -1662,8 +1881,10 @@ a.card:hover::after { opacity: .9; }
   .hero-panel { padding: 18px; }
   .section.home-section { padding: 72px 0; }
   .section-lead { margin-bottom: 34px; }
+  .admin-money-summary { grid-template-columns: 1fr; }
   .capability-grid,
   .module-path-grid,
+  .intro-video-layout,
   .video-briefing-grid { grid-template-columns: 1fr; }
   .capability { min-height: 0; padding: 20px; }
   .path-card { min-height: 214px; }

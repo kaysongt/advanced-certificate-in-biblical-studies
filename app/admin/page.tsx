@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { redirect } from "next/navigation";
 
+import AdminNav from "@/components/AdminNav";
 import { currentStudent, isStaff } from "@/lib/auth";
 import { getCurriculum } from "@/lib/curriculum";
 import { db } from "@/lib/db";
@@ -13,12 +15,53 @@ import {
   activateEnrollment,
   gradeAssessment,
   moderateCommunityPost,
-  reviewScholarshipApplication,
+  resetStudentPassword,
+  setStudentRole,
 } from "./actions";
 
 export const metadata: Metadata = {
   title: "Staff operations",
   robots: { index: false, follow: false },
+};
+
+// The summary chips double as the filter control, so the list and the counts
+// are driven by one definition rather than drifting apart.
+const REGISTRATION_FILTERS = [
+  { key: "all", label: "Total" },
+  { key: "pending", label: "Awaiting payment" },
+  { key: "active", label: "Active" },
+  { key: "review", label: "Payment review" },
+  { key: "suspended", label: "Access suspended" },
+] as const;
+
+function matchesQuery(haystack: string[], needle: string): boolean {
+  if (!needle) return true;
+  const term = needle.toLowerCase();
+  return haystack.some((value) => value.toLowerCase().includes(term));
+}
+
+const roleMessages: Record<string, { tone: "good" | "warn" | "bad"; text: string }> = {
+  done: { tone: "good", text: "Access level updated. It applies the next time they load a page." },
+  self: {
+    tone: "warn",
+    text: "You cannot change your own access level. Ask the other administrator to do it.",
+  },
+  last: {
+    tone: "bad",
+    text: "That is the last administrator. Promote someone else first, or nobody can reach this page.",
+  },
+  nochange: { tone: "warn", text: "That account already has this access level." },
+  missing: { tone: "bad", text: "That account no longer exists." },
+  invalid: { tone: "bad", text: "Choose one of student, staff, or administrator." },
+};
+
+const resetMessages: Record<string, { tone: "good" | "warn" | "bad"; text: string }> = {
+  done: {
+    tone: "good",
+    text: "Password updated. Pass it to the student directly — nothing was emailed.",
+  },
+  invalid: { tone: "bad", text: "A new password needs at least 10 characters." },
+  missing: { tone: "bad", text: "That account no longer exists." },
 };
 
 const registrationDate = new Intl.DateTimeFormat("en-US", {
@@ -51,15 +94,29 @@ const paymentStatusLabels: Record<StripePaymentAttemptSummary["status"], string>
   disputed: "Disputed",
 };
 
-export default async function AdminPage() {
+export default async function AdminPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ reset?: string; role?: string; q?: string; status?: string }>;
+}) {
   const staff = await currentStudent();
   if (!staff || !isStaff(staff)) redirect("/");
 
-  const [registrations, scholarships, assessments, posts] = await Promise.all([
+  const isAdministrator = staff.role === "admin";
+  const { reset, role, q, status } = await searchParams;
+  const query = (q ?? "").trim();
+  const activeStatus = REGISTRATION_FILTERS.some((f) => f.key === status) ? status! : "all";
+  const resetMessage = reset ? resetMessages[reset] : null;
+  const roleMessage = role ? roleMessages[role] : null;
+
+  const [registrations, pendingScholarships, assessments, posts, team, students] =
+    await Promise.all([
     db.listEnrollments(),
-    db.listScholarshipApplications(),
+    db.countPendingScholarshipApplications(),
     db.listPendingAssessments(),
     db.listRecentCommunityPosts(),
+    db.listStaff(),
+    db.listStudents(),
   ]);
   const moduleNames = new Map(
     getCurriculum().modules.map((module) => [module.slug, module.short_title])
@@ -75,7 +132,50 @@ export default async function AdminPage() {
     suspended: registrations.filter((item) => Boolean(item.accessSuspendedAt)).length,
     stripeReview: [...paymentAttempts.values()].filter((attempt) => attempt.needsReview).length,
   };
-  const pendingScholarships = scholarships.filter((item) => item.status === "pending").length;
+
+  const visibleRegistrations = registrations.filter((enrollment) => {
+    const attempt = paymentAttempts.get(enrollment.id);
+    const statusOk =
+      activeStatus === "all" ||
+      (activeStatus === "pending" && enrollment.status === "pending") ||
+      (activeStatus === "active" && enrollment.status === "active" && !enrollment.accessSuspendedAt) ||
+      (activeStatus === "suspended" && Boolean(enrollment.accessSuspendedAt)) ||
+      (activeStatus === "review" && Boolean(attempt?.needsReview));
+    return (
+      statusOk &&
+      matchesQuery([enrollment.student.fullName, enrollment.student.email, enrollment.student.country], query)
+    );
+  });
+  const filtered = activeStatus !== "all" || query !== "";
+
+  // Money, which the card list alone never added up. It matters more now that a
+  // promotion code can clear a whole tuition: "active" no longer implies "paid",
+  // so collected, discounted, and outstanding are tracked apart.
+  const money = registrations.reduce(
+    (totals, enrollment) => {
+      const attempt = paymentAttempts.get(enrollment.id);
+      const listMinor = enrollment.amount * 100;
+      const discountMinor = attempt?.discountAmountMinor ?? 0;
+      if (enrollment.status === "active") {
+        totals.collectedMinor += Math.max(0, listMinor - discountMinor);
+        totals.discountedMinor += discountMinor;
+        if (discountMinor >= listMinor) totals.freeSeats += 1;
+      } else if (enrollment.status === "pending") {
+        totals.outstandingMinor += listMinor;
+      }
+      return totals;
+    },
+    { collectedMinor: 0, discountedMinor: 0, outstandingMinor: 0, freeSeats: 0 }
+  );
+
+  // Which codes are actually being used, and how many times.
+  const promotionUse = new Map<string, number>();
+  for (const enrollment of registrations) {
+    const code = paymentAttempts.get(enrollment.id)?.promotionCode;
+    if (code) promotionUse.set(code, (promotionUse.get(code) ?? 0) + 1);
+  }
+  const promotionRows = [...promotionUse.entries()].sort((a, b) => b[1] - a[1]);
+
 
   return (
     <main className="shell admin-shell">
@@ -88,121 +188,9 @@ export default async function AdminPage() {
         </p>
       </header>
 
-      <section className="admin-section admin-scholarship-section">
-        <div className="admin-section-head">
-          <div>
-            <h2>Scholarship applications</h2>
-            <p>Private financial-assistance requests, with pending applications shown first.</p>
-          </div>
-          <span>{pendingScholarships}</span>
-        </div>
-        {scholarships.length ? (
-          <div className="admin-list">
-            {scholarships.map((application) => (
-              <article className="admin-card admin-card-stack scholarship-review-card" key={application.id}>
-                <div className="scholarship-review-head">
-                  <div>
-                    <div className="admin-registration-title">
-                      <strong>{application.student.fullName}</strong>
-                      <span className={`registration-status ${application.status}`}>
-                        {application.status === "pending" ? "Awaiting review" : application.status}
-                      </span>
-                    </div>
-                    <p>
-                      <a href={`mailto:${application.student.email}`}>{application.student.email}</a>
-                      <span aria-hidden="true"> &middot; </span>
-                      {application.student.country}
-                    </p>
-                  </div>
-                  <dl className="scholarship-review-meta">
-                    <div>
-                      <dt>Program</dt>
-                      <dd>
-                        {application.enrollment.product === "advanced"
-                          ? "All five certificates"
-                          : moduleNames.get(application.enrollment.product) ?? application.enrollment.product}
-                      </dd>
-                    </div>
-                    <div>
-                      <dt>Tuition</dt>
-                      <dd>{tuition(application.enrollment.amount, application.enrollment.currency)}</dd>
-                    </div>
-                    <div>
-                      <dt>Can contribute</dt>
-                      <dd>{tuition(application.amountAbleToPay, application.enrollment.currency)}</dd>
-                    </div>
-                    <div>
-                      <dt>Submitted</dt>
-                      <dd>
-                        <time dateTime={application.createdAt}>
-                          {registrationDate.format(new Date(application.createdAt))}
-                        </time>
-                      </dd>
-                    </div>
-                  </dl>
-                </div>
+      <AdminNav pendingScholarshipCount={pendingScholarships} />
 
-                <div className="scholarship-review-responses">
-                  <div>
-                    <span>Financial need</span>
-                    <p>{application.financialNeed}</p>
-                  </div>
-                  <div>
-                    <span>Training goals</span>
-                    <p>{application.trainingGoals}</p>
-                  </div>
-                </div>
-
-                {application.status === "pending" ? (
-                  <form action={reviewScholarshipApplication} className="scholarship-review-form">
-                    <input type="hidden" name="applicationId" value={application.id} />
-                    <label>
-                      Private staff note (optional)
-                      <textarea
-                        name="adminNotes"
-                        rows={3}
-                        maxLength={2000}
-                        placeholder="Record the reason for the decision or any follow-up needed."
-                      />
-                    </label>
-                    <div className="scholarship-review-actions">
-                      {application.enrollment.status === "pending" ? (
-                        <button className="btn primary" type="submit" name="decision" value="approved">
-                          Approve and activate access
-                        </button>
-                      ) : (
-                        <span className="admin-scholarship-paid">
-                          Enrollment is already {application.enrollment.status}; approval is unavailable.
-                        </span>
-                      )}
-                      <button className="btn" type="submit" name="decision" value="declined">
-                        Decline application
-                      </button>
-                    </div>
-                    <p className="admin-form-note">
-                      Approval grants a full tuition scholarship for this enrollment. Private notes
-                      are visible only to staff.
-                    </p>
-                  </form>
-                ) : (
-                  <div className="scholarship-decision-record">
-                    <span>
-                      Reviewed {application.reviewedAt
-                        ? registrationDate.format(new Date(application.reviewedAt))
-                        : "by staff"}
-                    </span>
-                    <p>{application.adminNotes || "No private note was recorded."}</p>
-                  </div>
-                )}
-              </article>
-            ))}
-          </div>
-        ) : (
-          <p className="admin-empty">No scholarship application has been submitted.</p>
-        )}
-      </section>
-
-      <section className="admin-section">
+      <section className="admin-section" id="registrations" style={{ scrollMarginTop: 90 }}>
         <div className="admin-section-head">
           <div>
             <h2>Student registrations</h2>
@@ -210,26 +198,99 @@ export default async function AdminPage() {
           </div>
           <span>{registrations.length}</span>
         </div>
-        <div className="admin-registration-summary" aria-label="Registration totals">
-          <span>
-            <strong>{registrations.length}</strong> Total
-          </span>
-          <span>
-            <strong>{registrationCounts.pending}</strong> Awaiting payment
-          </span>
-          <span>
-            <strong>{registrationCounts.active}</strong> Active
-          </span>
-          <span>
-            <strong>{registrationCounts.stripeReview}</strong> Payment review
-          </span>
-          <span>
-            <strong>{registrationCounts.suspended}</strong> Access suspended
-          </span>
+        <div className="admin-money-summary" aria-label="Tuition totals">
+          <div>
+            <dt>Collected</dt>
+            <dd>{tuition(money.collectedMinor / 100, "USD")}</dd>
+            <small>Activated enrolments, after any discount</small>
+          </div>
+          <div>
+            <dt>Given as discount</dt>
+            <dd>{tuition(money.discountedMinor / 100, "USD")}</dd>
+            <small>
+              {money.freeSeats} {money.freeSeats === 1 ? "seat" : "seats"} fully free
+            </small>
+          </div>
+          <div>
+            <dt>Outstanding</dt>
+            <dd>{tuition(money.outstandingMinor / 100, "USD")}</dd>
+            <small>Reserved but not yet paid</small>
+          </div>
         </div>
-        {registrations.length ? (
+        {promotionRows.length ? (
+          <div className="admin-promo-usage" aria-label="Promotion code use">
+            <span className="admin-promo-label">Codes redeemed</span>
+            {promotionRows.map(([code, count]) => (
+              <span className="admin-promo-chip" key={code}>
+                <strong>{code}</strong> &times;{count}
+              </span>
+            ))}
+          </div>
+        ) : null}
+        <div className="admin-registration-summary" aria-label="Filter registrations">
+          {REGISTRATION_FILTERS.map((filter) => {
+            const count =
+              filter.key === "all"
+                ? registrations.length
+                : filter.key === "pending"
+                  ? registrationCounts.pending
+                  : filter.key === "active"
+                    ? registrationCounts.active
+                    : filter.key === "review"
+                      ? registrationCounts.stripeReview
+                      : registrationCounts.suspended;
+            const params = new URLSearchParams();
+            if (filter.key !== "all") params.set("status", filter.key);
+            if (query) params.set("q", query);
+            const href = `/admin${params.size ? `?${params}` : ""}#registrations`;
+            return (
+              <Link
+                key={filter.key}
+                href={href}
+                className={filter.key === activeStatus ? "is-active" : undefined}
+                aria-current={filter.key === activeStatus ? "true" : undefined}
+              >
+                <strong>{count}</strong> {filter.label}
+              </Link>
+            );
+          })}
+        </div>
+
+        <form className="admin-search" method="get" action="/admin" role="search">
+          {activeStatus !== "all" ? <input type="hidden" name="status" value={activeStatus} /> : null}
+          <label className="sr-only" htmlFor="registrant-search">
+            Search registrants by name, email, or country
+          </label>
+          <input
+            id="registrant-search"
+            name="q"
+            type="search"
+            defaultValue={query}
+            placeholder="Search name, email, or country"
+          />
+          <button type="submit" className="btn quiet sm">
+            Search
+          </button>
+          {filtered ? (
+            <Link href="/admin#registrations" className="admin-search-clear">
+              Clear
+            </Link>
+          ) : null}
+        </form>
+
+        {filtered ? (
+          <p className="admin-filter-note">
+            Showing {visibleRegistrations.length} of {registrations.length}
+            {query ? ` matching "${query}"` : ""}
+            {activeStatus !== "all"
+              ? ` in ${REGISTRATION_FILTERS.find((f) => f.key === activeStatus)?.label.toLowerCase()}`
+              : ""}
+            .
+          </p>
+        ) : null}
+        {visibleRegistrations.length ? (
           <div className="admin-list">
-            {registrations.map((enrollment) => {
+            {visibleRegistrations.map((enrollment) => {
               const paymentAttempt = paymentAttempts.get(enrollment.id);
               return (
               <article className="admin-card admin-registration-card" key={enrollment.id}>
@@ -339,7 +400,11 @@ export default async function AdminPage() {
               );
             })}
           </div>
-        ) : <p className="admin-empty">No student has registered yet.</p>}
+        ) : (
+          <p className="admin-empty">
+            {filtered ? "No registrant matches this filter." : "No student has registered yet."}
+          </p>
+        )}
       </section>
 
       <section className="admin-section">
@@ -400,6 +465,121 @@ export default async function AdminPage() {
             </article>
           ))}
         </div>
+      </section>
+
+      {/*
+        * Who can reach this page at all. Read from the student table rather
+        * than from enrolments, because an administrator created by
+        * `npm run admin:create` never enrols and would otherwise be invisible
+        * on the one screen meant to show who holds access.
+        */}
+      <section className="admin-section" id="students" style={{ scrollMarginTop: 90 }}>
+        <div className="admin-section-head">
+          <div>
+            <h2>Everyone enrolled</h2>
+            <p>
+              Every account on the course. Setting a password here replaces the old one
+              immediately — hand the new one to the student yourself.
+            </p>
+          </div>
+          <span>{students.length}</span>
+        </div>
+
+        {resetMessage ? (
+          <div className={`notice ${resetMessage.tone}`} role="status">
+            {resetMessage.text}
+          </div>
+        ) : null}
+
+        {roleMessage ? (
+          <div className={`notice ${roleMessage.tone}`} role="status">
+            {roleMessage.text}
+          </div>
+        ) : null}
+
+        {students.length ? (
+          <div className="admin-student-list">
+            {students.map((person) => (
+              <article className="admin-student-row" key={person.id}>
+                <div className="admin-student-identity">
+                  <strong>{person.fullName}</strong>
+                  <a href={`mailto:${person.email}`}>{person.email}</a>
+                  <span className="admin-student-meta">
+                    Joined {registrationDate.format(new Date(person.createdAt))}
+                  </span>
+                </div>
+                {isAdministrator && person.id !== staff.id ? (
+                  <form action={setStudentRole} className="admin-role-form">
+                    <input type="hidden" name="studentId" value={person.id} />
+                    <label className="sr-only" htmlFor={`role-${person.id}`}>
+                      Access level for {person.fullName}
+                    </label>
+                    <select id={`role-${person.id}`} name="role" defaultValue={person.role}>
+                      <option value="student">Student</option>
+                      <option value="staff">Staff</option>
+                      <option value="admin">Administrator</option>
+                    </select>
+                    <button type="submit" className="btn quiet sm">
+                      Save
+                    </button>
+                  </form>
+                ) : (
+                  <span className={`admin-role-badge ${person.role}`}>
+                    {person.id === staff.id ? "you" : person.role}
+                  </span>
+                )}
+                {isAdministrator ? (
+                  <form action={resetStudentPassword} className="admin-reset-form">
+                    <input type="hidden" name="studentId" value={person.id} />
+                    <label className="sr-only" htmlFor={`pw-${person.id}`}>
+                      New password for {person.fullName}
+                    </label>
+                    <input
+                      id={`pw-${person.id}`}
+                      name="newPassword"
+                      type="text"
+                      placeholder="New password (10+ characters)"
+                      minLength={10}
+                      maxLength={200}
+                      autoComplete="off"
+                      required
+                    />
+                    <button type="submit" className="btn quiet sm">
+                      Reset
+                    </button>
+                  </form>
+                ) : null}
+              </article>
+            ))}
+          </div>
+        ) : (
+          <p className="admin-empty">No accounts yet.</p>
+        )}
+      </section>
+
+      <section className="admin-section">
+        <div className="admin-section-head">
+          <div>
+            <h2>Team access</h2>
+            <p>Accounts that can open this page. Set access levels in the roster above.</p>
+          </div>
+          <span>{team.length}</span>
+        </div>
+        {team.length ? (
+          <div className="admin-team-list">
+            {team.map((member) => (
+              <article className="admin-team-member" key={member.id}>
+                <div>
+                  <strong>{member.fullName}</strong>
+                  <a href={`mailto:${member.email}`}>{member.email}</a>
+                </div>
+                <span className={`admin-role-badge ${member.role}`}>{member.role}</span>
+              </article>
+            ))}
+          </div>
+        ) : (
+          <p className="admin-empty">No staff or administrator account exists yet.</p>
+        )}
       </section>
     </main>
   );

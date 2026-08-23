@@ -4,12 +4,22 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 
-import { currentStudent, isStaff } from "@/lib/auth";
+import { currentStudent, hashPassword, isStaff } from "@/lib/auth";
 import { db } from "@/lib/db";
 
 async function staffMember() {
   const student = await currentStudent();
   if (!student || !isStaff(student)) redirect("/");
+  return student;
+}
+
+/**
+ * Stricter than staffMember(): resetting a password is account takeover, so it
+ * is limited to ADMIN and not extended to STAFF.
+ */
+async function administrator() {
+  const student = await currentStudent();
+  if (!student || student.role !== "admin") redirect("/");
   return student;
 }
 
@@ -48,6 +58,7 @@ export async function reviewScholarshipApplication(formData: FormData): Promise<
     adminNotes: input.adminNotes,
   });
   revalidatePath("/admin");
+  revalidatePath("/admin/scholarships");
   revalidatePath("/dashboard");
   revalidatePath("/scholarship");
 }
@@ -95,4 +106,65 @@ export async function moderateCommunityPost(formData: FormData): Promise<void> {
   });
   revalidatePath("/admin");
   revalidatePath("/community");
+}
+
+const roleChangeSchema = z.object({
+  studentId: z.string().uuid(),
+  role: z.enum(["student", "staff", "admin"]),
+});
+
+/**
+ * Promotes or demotes an account. Two locks, because this is the one action
+ * that can end with nobody able to reach /admin:
+ *
+ *  - you cannot change your own role, so an admin cannot demote themselves;
+ *  - the last remaining admin cannot be demoted by anyone.
+ */
+export async function setStudentRole(formData: FormData): Promise<void> {
+  const actor = await administrator();
+  const parsed = roleChangeSchema.safeParse({
+    studentId: formData.get("studentId"),
+    role: formData.get("role"),
+  });
+  if (!parsed.success) redirect("/admin?role=invalid#students");
+
+  if (parsed.data.studentId === actor.id) redirect("/admin?role=self#students");
+
+  const student = await db.getStudentById(parsed.data.studentId);
+  if (!student) redirect("/admin?role=missing#students");
+  if (student.role === parsed.data.role) redirect("/admin?role=nochange#students");
+
+  if (student.role === "admin" && parsed.data.role !== "admin") {
+    const admins = (await db.listStudents()).filter((person) => person.role === "admin");
+    if (admins.length <= 1) redirect("/admin?role=last#students");
+  }
+
+  await db.updateStudentRole(student.id, parsed.data.role);
+  revalidatePath("/admin");
+  redirect("/admin?role=done#students");
+}
+
+const passwordResetSchema = z.object({
+  studentId: z.string().uuid(),
+  newPassword: z.string().min(10, "Use at least 10 characters.").max(200),
+});
+
+/**
+ * Sets a new password for any student. The admin has to hand it to them out of
+ * band; nothing is emailed, and the old password is unrecoverable either way.
+ */
+export async function resetStudentPassword(formData: FormData): Promise<void> {
+  await administrator();
+  const parsed = passwordResetSchema.safeParse({
+    studentId: formData.get("studentId"),
+    newPassword: formData.get("newPassword"),
+  });
+  if (!parsed.success) redirect("/admin?reset=invalid#students");
+
+  const student = await db.getStudentById(parsed.data.studentId);
+  if (!student) redirect("/admin?reset=missing#students");
+
+  await db.updateStudentPassword(student.id, await hashPassword(parsed.data.newPassword));
+  revalidatePath("/admin");
+  redirect("/admin?reset=done#students");
 }

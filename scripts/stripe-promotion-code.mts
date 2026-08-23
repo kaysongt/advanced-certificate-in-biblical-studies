@@ -8,7 +8,7 @@
  *
  * Run with:
  *   STRIPE_SECRET_KEY=sk_test_... STRIPE_PRICE_ADVANCED=price_... \
- *   PROMO_CODE=SUMMERBLAST2026 PROMO_MAX_REDEMPTIONS=50 \
+ *   PROMO_CODE=ORDAINEDMINISTERS2026 PROMO_MAX_REDEMPTIONS=50 \
  *   PROMO_EXPIRES_ON=2026-12-31 npm run stripe:promo
  *
  * Both limits are required, because the code gives tuition away outright. Pass
@@ -34,7 +34,7 @@ const input = z
     PROMO_CODE: z
       .string()
       .regex(/^[A-Za-z0-9-]{4,40}$/, "Use 4-40 letters, digits, or dashes.")
-      .default("SUMMERBLAST2026")
+      .default("ORDAINEDMINISTERS2026")
       .transform((value) => value.toUpperCase()),
     // Required, not optional: a forgotten variable must never be the reason a
     // free-tuition code ends up uncapped. Opting out has to be spelled out.

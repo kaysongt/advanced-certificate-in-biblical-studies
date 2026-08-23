@@ -12,7 +12,11 @@ import { currentStudent, isStaff } from "@/lib/auth";
 export async function GET() {
   const student = await currentStudent();
   return NextResponse.json(
-    { signedIn: Boolean(student), staff: student ? isStaff(student) : false },
+    {
+      signedIn: Boolean(student),
+      staff: student ? isStaff(student) : false,
+      admin: student ? student.role === "admin" : false,
+    },
     { headers: { "Cache-Control": "no-store" } }
   );
 }

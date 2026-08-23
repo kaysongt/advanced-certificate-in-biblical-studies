@@ -18,6 +18,7 @@ import type {
   QuizAttempt,
   ScholarshipApplication,
   Student,
+  StudentRole,
 } from "./types";
 
 /** Development-only persistence used when DATABASE_URL is absent. */
@@ -66,6 +67,25 @@ async function write(data: Shape): Promise<void> {
 }
 
 const normalize = (email: string) => email.trim().toLowerCase();
+
+// The file adapter is development-only, but concurrent server actions can still
+// arrive in the same process. Serialize scholarship review read-modify-write
+// cycles so two staff decisions cannot both accept the same pending record.
+let scholarshipReviewLock: Promise<void> = Promise.resolve();
+
+async function withScholarshipReviewLock<T>(operation: () => Promise<T>): Promise<T> {
+  const previous = scholarshipReviewLock;
+  let release!: () => void;
+  scholarshipReviewLock = new Promise<void>((resolve) => {
+    release = resolve;
+  });
+  await previous;
+  try {
+    return await operation();
+  } finally {
+    release();
+  }
+}
 
 export const fileStore: DataStore = {
   async createStudent(input: NewStudent): Promise<Student> {
@@ -119,6 +139,27 @@ export const fileStore: DataStore = {
     return data.students.find((student) => student.id === id) ?? null;
   },
 
+  async listStudents(): Promise<Student[]> {
+    const data = await read();
+    return [...data.students].sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+  },
+
+  async updateStudentPassword(studentId: string, passwordHash: string): Promise<void> {
+    const data = await read();
+    const student = data.students.find((candidate) => candidate.id === studentId);
+    if (!student) return;
+    student.passwordHash = passwordHash;
+    await write(data);
+  },
+
+  async updateStudentRole(studentId: string, role: StudentRole): Promise<void> {
+    const data = await read();
+    const student = data.students.find((candidate) => candidate.id === studentId);
+    if (!student) return;
+    student.role = role;
+    await write(data);
+  },
+
   async createEnrollment(input: NewEnrollment): Promise<Enrollment> {
     const data = await read();
     const enrollment: Enrollment = {
@@ -155,6 +196,13 @@ export const fileStore: DataStore = {
     found.updatedAt = new Date().toISOString();
     await write(data);
     return found;
+  },
+
+  async listStaff(): Promise<Student[]> {
+    const data = await read();
+    return data.students
+      .filter((student) => student.role === "staff" || student.role === "admin")
+      .sort((a, b) => a.role.localeCompare(b.role) || a.fullName.localeCompare(b.fullName));
   },
 
   async listEnrollments(): Promise<(Enrollment & { student: Student })[]> {
@@ -245,35 +293,42 @@ export const fileStore: DataStore = {
       });
   },
 
-  async reviewScholarshipApplication(input) {
+  async countPendingScholarshipApplications() {
     const data = await read();
-    const application = data.scholarshipApplications.find(
-      (item) => item.id === input.applicationId && item.status === "pending"
-    );
-    const reviewer = data.students.find(
-      (item) => item.id === input.reviewerId && (item.role === "staff" || item.role === "admin")
-    );
-    if (!application || !reviewer) return null;
+    return data.scholarshipApplications.filter((item) => item.status === "pending").length;
+  },
 
-    const enrollment = data.enrollments.find((item) => item.id === application.enrollmentId);
-    if (input.decision === "approved") {
-      if (!enrollment || enrollment.status !== "pending") return null;
-      enrollment.status = "active";
-      enrollment.provider = "scholarship";
-      enrollment.providerRef = application.id;
-      enrollment.activatedAt = new Date().toISOString();
-      enrollment.accessSuspendedAt = null;
-      enrollment.updatedAt = new Date().toISOString();
-    }
+  async reviewScholarshipApplication(input) {
+    return withScholarshipReviewLock(async () => {
+      const data = await read();
+      const application = data.scholarshipApplications.find(
+        (item) => item.id === input.applicationId && item.status === "pending"
+      );
+      const reviewer = data.students.find(
+        (item) => item.id === input.reviewerId && (item.role === "staff" || item.role === "admin")
+      );
+      if (!application || !reviewer) return null;
 
-    const now = new Date().toISOString();
-    application.status = input.decision;
-    application.adminNotes = input.adminNotes.trim() || null;
-    application.reviewedById = reviewer.id;
-    application.reviewedAt = now;
-    application.updatedAt = now;
-    await write(data);
-    return application;
+      const enrollment = data.enrollments.find((item) => item.id === application.enrollmentId);
+      if (input.decision === "approved") {
+        if (!enrollment || enrollment.status !== "pending") return null;
+        enrollment.status = "active";
+        enrollment.provider = "scholarship";
+        enrollment.providerRef = application.id;
+        enrollment.activatedAt = new Date().toISOString();
+        enrollment.accessSuspendedAt = null;
+        enrollment.updatedAt = new Date().toISOString();
+      }
+
+      const now = new Date().toISOString();
+      application.status = input.decision;
+      application.adminNotes = input.adminNotes.trim() || null;
+      application.reviewedById = reviewer.id;
+      application.reviewedAt = now;
+      application.updatedAt = now;
+      await write(data);
+      return application;
+    });
   },
 
   async markLessonComplete(studentId: string, lessonId: string): Promise<void> {

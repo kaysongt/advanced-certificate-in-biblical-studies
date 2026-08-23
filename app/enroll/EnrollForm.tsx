@@ -31,9 +31,11 @@ type ModuleOption = { slug: string; title: string; available: boolean; availabil
 export default function EnrollForm({
   initialPlan,
   modules,
+  scholarshipIntent,
 }: {
   initialPlan: "certificate" | "advanced";
   modules: ModuleOption[];
+  scholarshipIntent: boolean;
 }) {
   const [state, action] = useActionState<FormState, FormData>(registerStudent, {});
   const [plan, setPlan] = useState(initialPlan);
@@ -42,6 +44,7 @@ export default function EnrollForm({
   const val = state.values ?? {};
   return (
     <form action={action}>
+      {scholarshipIntent ? <input type="hidden" name="scholarshipIntent" value="apply" /> : null}
       {state.error ? <div className="notice bad">{state.error}</div> : null}
 
       <div className="field">
@@ -164,7 +167,9 @@ export default function EnrollForm({
         {err.privacyAccepted ? <div className="msg">{err.privacyAccepted}</div> : null}
       </div>
 
-      <Submit label="Create my account" />
+      <Submit
+        label={scholarshipIntent ? "Create account and continue application" : "Create my account"}
+      />
 
       <p className="formfoot">
         Already enrolled? <Link href="/login">Sign in</Link>

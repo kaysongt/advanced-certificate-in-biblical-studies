@@ -13,11 +13,11 @@ export const metadata: Metadata = { title: "Enroll" };
 export default async function EnrollPage({
   searchParams,
 }: {
-  searchParams: Promise<{ plan?: string }>;
+  searchParams: Promise<{ plan?: string; scholarship?: string }>;
 }) {
   if (await currentStudent()) redirect("/dashboard");
 
-  const { plan } = await searchParams;
+  const { plan, scholarship } = await searchParams;
 
   const { program } = getCurriculum();
   const modules = getModuleStatuses().map((s) => ({
@@ -29,6 +29,7 @@ export default async function EnrollPage({
   const availableCount = modules.filter((m) => m.available).length;
   const firstReleaseDate = modules[0].availability;
   const initialPlan = plan === "certificate" ? "certificate" : "advanced";
+  const scholarshipIntent = scholarship === "apply";
   const stripeConfigured = isStripeCheckoutConfigured();
 
   return (
@@ -40,6 +41,14 @@ export default async function EnrollPage({
             Create your account for the {program.title}. Choose a single certificate or reserve
             your place in the full program.
           </p>
+
+          {scholarshipIntent ? (
+            <div className="notice good">
+              <strong>Your scholarship application starts here.</strong>{" "}
+              Choose the program you want and create your account. You will continue directly to
+              the private scholarship form before making any payment.
+            </div>
+          ) : null}
 
           <div className={stripeConfigured ? "notice good" : "notice warn"}>
             <strong>
@@ -58,7 +67,11 @@ export default async function EnrollPage({
             </div>
           ) : null}
 
-          <EnrollForm initialPlan={initialPlan} modules={modules} />
+          <EnrollForm
+            initialPlan={initialPlan}
+            modules={modules}
+            scholarshipIntent={scholarshipIntent}
+          />
         </div>
       </div>
     </main>

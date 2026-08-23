@@ -243,6 +243,22 @@ export const prismaStore: DataStore = {
     return student ? mapStudent(student) : null;
   },
 
+  async listStudents() {
+    const students = await prisma.student.findMany({ orderBy: { createdAt: "desc" } });
+    return students.map(mapStudent);
+  },
+
+  async updateStudentPassword(studentId, passwordHash) {
+    await prisma.student.update({ where: { id: studentId }, data: { passwordHash } });
+  },
+
+  async updateStudentRole(studentId, role) {
+    await prisma.student.update({
+      where: { id: studentId },
+      data: { role: roleToPrisma[role] },
+    });
+  },
+
   async createEnrollment(input) {
     return mapEnrollment(
       await prisma.enrollment.create({
@@ -281,6 +297,14 @@ export const prismaStore: DataStore = {
     });
     if (!updated.count) return null;
     return mapEnrollment(await prisma.enrollment.findUniqueOrThrow({ where: { id } }));
+  },
+
+  async listStaff() {
+    const students = await prisma.student.findMany({
+      where: { role: { in: [PrismaStudentRole.STAFF, PrismaStudentRole.ADMIN] } },
+      orderBy: [{ role: "asc" }, { fullName: "asc" }],
+    });
+    return students.map(mapStudent);
   },
 
   async listEnrollments() {
@@ -370,6 +394,12 @@ export const prismaStore: DataStore = {
       student: mapStudent(student),
       enrollment: mapEnrollment(enrollment),
     }));
+  },
+
+  async countPendingScholarshipApplications() {
+    return prisma.scholarshipApplication.count({
+      where: { status: PrismaScholarshipStatus.PENDING },
+    });
   },
 
   async reviewScholarshipApplication(input) {

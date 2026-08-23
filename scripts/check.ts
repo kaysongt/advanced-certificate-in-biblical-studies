@@ -11,6 +11,7 @@ import { StripePaymentStatus } from "@prisma/client";
 import Stripe from "stripe";
 
 import { hashPassword, verifyPassword } from "../lib/auth-core";
+import { isStaff } from "../lib/auth";
 import {
   entitlementRedirectPath,
   getModuleEnrollmentState,
@@ -37,6 +38,7 @@ import {
   getCurriculum,
   isModuleReleased,
 } from "../lib/curriculum";
+import { ADMIN_NAV_ITEMS, isAdminRouteActive } from "../lib/admin-navigation";
 import { isPrimaryRouteActive, PRIMARY_NAV_ITEMS } from "../lib/navigation";
 import { getStripeCatalogItem } from "../lib/payments/catalog";
 import { buildCheckoutSessionParams } from "../lib/payments/checkout-session";
@@ -87,17 +89,17 @@ async function main() {
         formatModuleReleaseDate(item),
       ]),
       [
-        ["Systematic Theology", "2026-09-01", "September 1, 2026"],
-        ["Biblical Foundations", "2026-11-01", "November 1, 2026"],
-        ["Old Testament Survey", "2027-01-01", "January 1, 2027"],
-        ["New Testament Survey", "2027-03-01", "March 1, 2027"],
-        ["Spiritual Formation", "2027-05-01", "May 1, 2027"],
+        ["Systematic Theology", "2026-10-01", "October 1, 2026"],
+        ["Biblical Foundations", "2026-12-01", "December 1, 2026"],
+        ["Old Testament Survey", "2027-02-01", "February 1, 2027"],
+        ["New Testament Survey", "2027-04-01", "April 1, 2027"],
+        ["Spiritual Formation", "2027-06-01", "June 1, 2027"],
       ]
     )
   );
-  check("Module I opens at midnight Chicago time on September 1", () => {
-    assert.equal(isModuleReleased(curriculum.modules[0], new Date("2026-09-01T04:59:59Z")), false);
-    assert.equal(isModuleReleased(curriculum.modules[0], new Date("2026-09-01T05:00:00Z")), true);
+  check("Module I opens at midnight Chicago time on October 1", () => {
+    assert.equal(isModuleReleased(curriculum.modules[0], new Date("2026-10-01T04:59:59Z")), false);
+    assert.equal(isModuleReleased(curriculum.modules[0], new Date("2026-10-01T05:00:00Z")), true);
   });
   check("all scheduled modules can be purchased before release", () =>
     assert.deepEqual(
@@ -113,6 +115,7 @@ async function main() {
       [
         ["Curriculum", "/curriculum"],
         ["Pricing", "/pricing"],
+        ["Scholarships", "/scholarship"],
         ["Community", "/community"],
         ["Glossary", "/glossary"],
       ]
@@ -123,6 +126,92 @@ async function main() {
   );
   check("community never activates the curriculum tab", () =>
     assert.equal(isPrimaryRouteActive("/community", "/curriculum"), false)
+  );
+  check("scholarship route activates the public scholarship tab", () =>
+    assert.equal(isPrimaryRouteActive("/scholarship", "/scholarship"), true)
+  );
+
+  console.log("\nprospective scholarship wiring");
+  const scholarshipPageSource = await fs.readFile(
+    path.join(process.cwd(), "app/scholarship/page.tsx"),
+    "utf8"
+  );
+  const enrollPageSource = await fs.readFile(
+    path.join(process.cwd(), "app/enroll/page.tsx"),
+    "utf8"
+  );
+  const enrollFormSource = await fs.readFile(
+    path.join(process.cwd(), "app/enroll/EnrollForm.tsx"),
+    "utf8"
+  );
+  const enrollActionsSource = await fs.readFile(
+    path.join(process.cwd(), "app/enroll/actions.ts"),
+    "utf8"
+  );
+  check("public scholarship page wires the prospect enrollment handoff", () => {
+    assert.ok(scholarshipPageSource.includes('href="/enroll?scholarship=apply"'));
+    assert.ok(scholarshipPageSource.includes('href="/login?next=%2Fscholarship"'));
+  });
+  check("enrollment carries scholarship intent back to the private form", () => {
+    assert.ok(enrollPageSource.includes('scholarship === "apply"'));
+    assert.ok(enrollFormSource.includes('name="scholarshipIntent" value="apply"'));
+    assert.ok(
+      enrollActionsSource.includes(
+        'redirect(scholarshipIntent === "apply" ? "/scholarship" : "/dashboard")'
+      )
+    );
+  });
+
+  console.log("\nadmin navigation");
+  check("admin tabs point to operations and scholarship applications", () =>
+    assert.deepEqual(
+      ADMIN_NAV_ITEMS.map((item) => [item.label, item.href]),
+      [
+        ["Operations", "/admin"],
+        ["Scholarship applications", "/admin/scholarships"],
+      ]
+    )
+  );
+  check("operations tab is only active on its own route, not a nested one", () => {
+    assert.equal(isAdminRouteActive("/admin", "/admin"), true);
+    assert.equal(isAdminRouteActive("/admin/scholarships", "/admin"), false);
+  });
+  check("scholarships tab stays active on nested scholarship routes", () => {
+    assert.equal(isAdminRouteActive("/admin/scholarships", "/admin/scholarships"), true);
+    assert.equal(isAdminRouteActive("/admin/scholarships/123", "/admin/scholarships"), true);
+    assert.equal(isAdminRouteActive("/admin", "/admin/scholarships"), false);
+  });
+
+  console.log("\nadmin route wiring");
+  const adminPageSource = await fs.readFile(
+    path.join(process.cwd(), "app/admin/page.tsx"),
+    "utf8"
+  );
+  const adminScholarshipsPageSource = await fs.readFile(
+    path.join(process.cwd(), "app/admin/scholarships/page.tsx"),
+    "utf8"
+  );
+  check("/admin source omits the direct private scholarship-list call", () =>
+    assert.ok(!adminPageSource.includes("listScholarshipApplications"))
+  );
+  check("/admin/scholarships source includes the scholarship-list call", () =>
+    assert.ok(adminScholarshipsPageSource.includes("listScholarshipApplications"))
+  );
+  const globalCssSource = await fs.readFile(
+    path.join(process.cwd(), "app/globals.css"),
+    "utf8"
+  );
+  check("the stylesheet includes the admin tab selectors", () => {
+    assert.match(globalCssSource, /\.admin-tabs\s*\{/);
+    assert.match(globalCssSource, /\.admin-tab\s*\{/);
+    assert.match(globalCssSource, /\.admin-tab-count\s*\{/);
+  });
+  const adminActionsSource = await fs.readFile(
+    path.join(process.cwd(), "app/admin/actions.ts"),
+    "utf8"
+  );
+  check("the review action wires revalidation for the dedicated route", () =>
+    assert.ok(adminActionsSource.includes('revalidatePath("/admin/scholarships")'))
   );
 
   console.log("\ncontent rendering");
@@ -197,7 +286,7 @@ async function main() {
     assert.equal(prelaunch.find((s) => s.course.slug === "st-101")!.available, false);
   });
   check("completed Module I content opens on its release date", () => {
-    const launch = getModuleStatuses(new Date("2026-09-01T12:00:00Z"));
+    const launch = getModuleStatuses(new Date("2026-10-01T12:00:00Z"));
     assert.equal(launch.find((s) => s.module.slug === module.slug)!.available, true);
   });
   const assessmentBank = getAssessmentBank(module, course);
@@ -650,6 +739,36 @@ async function main() {
   const byEmail = await db.getStudentByEmail("TEST@EXAMPLE.COM");
   check("lookup is case-insensitive", () => assert.equal(byEmail?.id, student.id));
 
+  // Password changes: self-service on /dashboard and admin reset on /admin both
+  // land on the same store call, so that is what gets covered here.
+  const replacement = await hashPassword("a different pass phrase");
+  await db.updateStudentPassword(student.id, replacement);
+  const afterChange = await db.getStudentById(student.id);
+  const newVerifies = await verifyPassword("a different pass phrase", afterChange!.passwordHash);
+  const oldVerifies = await verifyPassword("correct horse battery staple", afterChange!.passwordHash);
+  check("password change replaces the stored hash", () =>
+    assert.notEqual(afterChange?.passwordHash, hash)
+  );
+  check("the new password verifies", () => assert.ok(newVerifies));
+  check("the old password stops working", () => assert.equal(oldVerifies, false));
+  await db.updateStudentPassword(student.id, hash);
+
+  const everyone = await db.listStudents();
+  check("admin roster lists every account", () =>
+    assert.ok(everyone.some((person) => person.id === student.id))
+  );
+
+  await db.updateStudentRole(student.id, "staff");
+  const promoted = await db.getStudentById(student.id);
+  check("role change is persisted", () => assert.equal(promoted?.role, "staff"));
+  check("promotion grants staff access", () => assert.ok(isStaff(promoted!)));
+  await db.updateStudentRole(student.id, "admin");
+  const asAdmin = await db.getStudentById(student.id);
+  check("an admin can be created from the roster", () => assert.equal(asAdmin?.role, "admin"));
+  await db.updateStudentRole(student.id, "student");
+  const demoted = await db.getStudentById(student.id);
+  check("demotion removes staff access", () => assert.equal(isStaff(demoted!), false));
+
   check("enrollment starts pending", () => assert.equal(enrollment.status, "pending"));
   const pendingEnrollments = await db.listPendingEnrollments();
   check("staff queue includes pending enrollment", () =>
@@ -672,7 +791,7 @@ async function main() {
       "I plan to use the training to serve my church community with greater biblical clarity.",
     amountAbleToPay: 100,
   });
-  check("student can submit a scholarship application for a pending enrollment", () => {
+  check("newly registered prospect can submit a scholarship application", () => {
     assert.equal(scholarship?.status, "pending");
     assert.equal(scholarship?.amountAbleToPay, 100);
   });
@@ -763,6 +882,49 @@ async function main() {
     assert.equal(declinedScholarship?.status, "declined");
     assert.equal(stillPendingEnrollment?.status, "pending");
   });
+
+  const racedEnrollment = await db.createEnrollment({
+    studentId: student.id,
+    product: curriculum.modules[2].slug,
+    plan: "certificate",
+    status: "pending",
+    amount: 250,
+    currency: "USD",
+    provider: null,
+    providerRef: null,
+  });
+  const racedApplication = await db.createScholarshipApplication({
+    enrollmentId: racedEnrollment.id,
+    studentId: student.id,
+    financialNeed: "This request verifies that two staff decisions cannot both win concurrently.",
+    trainingGoals: "The course would support future church teaching and personal Bible study.",
+    amountAbleToPay: 50,
+  });
+  const racedReviews = await Promise.all([
+    db.reviewScholarshipApplication({
+      applicationId: racedApplication?.id ?? "",
+      reviewerId: grader.id,
+      decision: "approved",
+      adminNotes: "Concurrent approval attempt.",
+    }),
+    db.reviewScholarshipApplication({
+      applicationId: racedApplication?.id ?? "",
+      reviewerId: grader.id,
+      decision: "declined",
+      adminNotes: "Concurrent decline attempt.",
+    }),
+  ]);
+  const winningReviews = racedReviews.filter((result) => result !== null);
+  const storedRacedApplication = await db.getScholarshipApplicationForEnrollment(
+    racedEnrollment.id,
+    student.id
+  );
+  check("concurrent scholarship reviews produce exactly one winner", () =>
+    assert.equal(winningReviews.length, 1)
+  );
+  check("the stored scholarship decision matches the concurrent winner", () =>
+    assert.equal(storedRacedApplication?.status, winningReviews[0]?.status)
+  );
 
   await db.markLessonComplete(student.id, "st-101-1");
   await db.markLessonComplete(student.id, "st-101-1");

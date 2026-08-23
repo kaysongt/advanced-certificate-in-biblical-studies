@@ -10,7 +10,6 @@ import ScholarshipForm from "./ScholarshipForm";
 
 export const metadata: Metadata = {
   title: "Scholarship application",
-  robots: { index: false, follow: false },
 };
 
 const submittedDate = new Intl.DateTimeFormat("en-US", {
@@ -33,7 +32,39 @@ export default async function ScholarshipPage({
   searchParams: Promise<{ enrollment?: string }>;
 }) {
   const student = await currentStudent();
-  if (!student) redirect("/login?next=/dashboard");
+  if (!student) {
+    return (
+      <main className="shell scholarship-shell">
+        <section className="scholarship-intro scholarship-prospect-intro">
+          <div>
+            <div className="eyebrow">Access to biblical training</div>
+            <h1>Apply for a KTI scholarship</h1>
+            <p className="deck">
+              If tuition would keep you from enrolling, you can ask the KingsWord team to consider
+              you for a full tuition scholarship.
+            </p>
+            <div className="scholarship-prospect-actions">
+              <Link className="btn primary lg" href="/enroll?scholarship=apply">
+                Start a scholarship application
+              </Link>
+              <Link className="btn quiet lg" href="/login?next=%2Fscholarship">
+                Sign in to continue an application
+              </Link>
+            </div>
+          </div>
+          <aside className="scholarship-prospect-steps" aria-label="How scholarship applications work">
+            <span>How it works</span>
+            <ol>
+              <li>Create your student account and choose the program or certificate you want.</li>
+              <li>Tell us about your financial need and how you plan to use the training.</li>
+              <li>Authorized KTI staff review your request privately and record a decision.</li>
+            </ol>
+            <p>Applying does not require payment and does not guarantee an award.</p>
+          </aside>
+        </section>
+      </main>
+    );
+  }
 
   const { enrollment: requestedEnrollmentId } = await searchParams;
   const enrollments = await db.getEnrollmentsForStudent(student.id);

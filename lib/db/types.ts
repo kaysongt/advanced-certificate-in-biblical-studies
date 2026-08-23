@@ -161,11 +161,19 @@ export interface DataStore {
   ): Promise<{ student: Student; enrollment: Enrollment }>;
   getStudentByEmail(email: string): Promise<Student | null>;
   getStudentById(id: string): Promise<Student | null>;
+  /** Everyone with an account, newest first, for the admin roster. */
+  listStudents(): Promise<Student[]>;
+  /** Replaces a stored password hash. Callers hash before calling. */
+  updateStudentPassword(studentId: string, passwordHash: string): Promise<void>;
+  /** Changes what a student may reach. Guarded by callers, not here. */
+  updateStudentRole(studentId: string, role: StudentRole): Promise<void>;
 
   // enrollments
   createEnrollment(input: NewEnrollment): Promise<Enrollment>;
   getEnrollmentsForStudent(studentId: string): Promise<Enrollment[]>;
   activateEnrollment(id: string, providerRef: string, provider?: string): Promise<Enrollment | null>;
+  /** Everyone with staff or admin access, for the team roster on /admin. */
+  listStaff(): Promise<Student[]>;
   listEnrollments(): Promise<(Enrollment & { student: Student })[]>;
   listPendingEnrollments(): Promise<(Enrollment & { student: Student })[]>;
 
@@ -181,6 +189,7 @@ export interface DataStore {
   listScholarshipApplications(): Promise<
     (ScholarshipApplication & { student: Student; enrollment: Enrollment })[]
   >;
+  countPendingScholarshipApplications(): Promise<number>;
   reviewScholarshipApplication(input: {
     applicationId: string;
     reviewerId: string;

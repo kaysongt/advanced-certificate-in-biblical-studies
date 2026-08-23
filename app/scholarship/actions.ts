@@ -40,7 +40,7 @@ export async function submitScholarshipApplication(
   formData: FormData
 ): Promise<ScholarshipFormState> {
   const student = await currentStudent();
-  if (!student) redirect("/login?next=/dashboard");
+  if (!student) redirect("/login?next=/scholarship");
 
   const raw = {
     enrollmentId: String(formData.get("enrollmentId") ?? ""),
