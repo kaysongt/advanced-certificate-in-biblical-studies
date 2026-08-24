@@ -178,3 +178,19 @@ export const PRICING = {
   certificate: { amount: 250, currency: "USD", label: "$250" },
   advanced: { amount: 1000, currency: "USD", label: "$1,000" },
 } as const;
+
+/**
+ * Naira tuition, charged through Paystack to students in Nigeria.
+ *
+ * These are set by hand rather than converted from the dollar price: an FX
+ * lookup at checkout would move the price daily and put a third-party rate in
+ * the payment path. Revisit when the rate drifts.
+ *
+ * CONFIRM BEFORE GOING LIVE. Amounts are in whole naira; Paystack is called in
+ * kobo (x100). A zero here disables Paystack for that plan rather than
+ * charging something wrong.
+ */
+export const PRICING_NGN = {
+  certificate: { amount: 400_000, currency: "NGN", label: "₦400,000" },
+  advanced: { amount: 1_600_000, currency: "NGN", label: "₦1,600,000" },
+} as const;

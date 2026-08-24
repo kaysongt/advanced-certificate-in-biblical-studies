@@ -4,15 +4,18 @@ import { redirect } from "next/navigation";
 
 import { signOut } from "@/app/login/actions";
 import { changeOwnPassword } from "./actions";
+import PaystackCheckoutButton from "@/components/PaystackCheckoutButton";
 import StripeCheckoutButton from "@/components/StripeCheckoutButton";
 import { getModuleEnrollmentState } from "@/lib/access";
 import { currentStudent, isStaff } from "@/lib/auth";
+import { isPaystackAvailableFor, prefersPaystack } from "@/lib/payments/paystack";
 import { getModuleStatuses } from "@/lib/content";
 import { db } from "@/lib/db";
 import {
   formatModuleReleaseDate,
   getCurriculum,
   moduleReleaseLabel,
+  PRICING_NGN,
 } from "@/lib/curriculum";
 import { promotionCodesAllowed } from "@/lib/payments/promotions";
 import { isStripeCheckoutConfigured } from "@/lib/payments/stripe-client";
@@ -21,11 +24,26 @@ import {
   type StripePaymentAttemptSummary,
 } from "@/lib/payments/stripe-store";
 
-import { beginStripeCheckout } from "./actions";
+import { beginPaystackCheckout, beginStripeCheckout } from "./actions";
 
 export const metadata: Metadata = {
   title: "My studies",
   robots: { index: false, follow: false },
+};
+
+function nairaLabel(plan: "certificate" | "advanced"): string {
+  return plan === "advanced" ? PRICING_NGN.advanced.label : PRICING_NGN.certificate.label;
+}
+
+const paystackMessages: Record<string, { tone: "good" | "warn" | "bad"; text: string }> = {
+  unavailable: {
+    tone: "warn",
+    text: "Naira payment is not available yet. Use card checkout or the bank transfer details below.",
+  },
+  failed: {
+    tone: "bad",
+    text: "Paystack could not start that payment. Nothing was charged — please try again.",
+  },
 };
 
 const passwordMessages: Record<string, { tone: "good" | "warn" | "bad"; text: string }> = {
@@ -106,6 +124,9 @@ export default async function DashboardPage({
 
   const pending = enrollments.filter((e) => e.status === "pending");
   const stripeConfigured = isStripeCheckoutConfigured();
+  // Nigerian naira cards are what fail on USD card checkout, so those students
+  // are offered Paystack first, with Stripe still there as the second option.
+  const naira = prefersPaystack(student.country);
   const paymentAttempts = await listLatestStripePaymentAttempts(
     pending.map((enrollment) => enrollment.id)
   );
@@ -115,7 +136,7 @@ export default async function DashboardPage({
   const moduleNames = new Map(
     getCurriculum().modules.map((module) => [module.slug, module.short_title])
   );
-  const paymentMessage = payment ? paymentMessages[payment] : null;
+  const paymentMessage = payment ? (paymentMessages[payment] ?? paystackMessages[payment]) : null;
   const passwordMessage = password ? passwordMessages[password] : null;
   const paymentDetails = {
     accountName: process.env.PAYMENT_BANK_ACCOUNT_NAME?.trim(),
@@ -248,7 +269,9 @@ export default async function DashboardPage({
                 attempt?.needsReview ||
                 attempt?.status === "partially-refunded" ||
                 attempt?.status === "disputed";
-              const canOpenCheckout = stripeConfigured && !paymentInFlight && !staffReview;
+              const blocked = paymentInFlight || staffReview;
+              const canOpenCheckout = stripeConfigured && !blocked;
+              const canPayNaira = naira && isPaystackAvailableFor(enrollment.plan) && !blocked;
               const scholarship = scholarshipsByEnrollment.get(enrollment.id);
               return (
                 <article className="pending-enrollment" key={enrollment.id}>
@@ -275,10 +298,18 @@ export default async function DashboardPage({
                     ) : null}
                   </div>
                   <div className="pending-enrollment-actions">
+                    {canPayNaira ? (
+                      <form action={beginPaystackCheckout}>
+                        <input type="hidden" name="enrollmentId" value={enrollment.id} />
+                        <PaystackCheckoutButton
+                          label={nairaLabel(enrollment.plan)}
+                        />
+                      </form>
+                    ) : null}
                     {canOpenCheckout ? (
                       <form action={beginStripeCheckout}>
                         <input type="hidden" name="enrollmentId" value={enrollment.id} />
-                        <StripeCheckoutButton />
+                        <StripeCheckoutButton secondary={canPayNaira} />
                       </form>
                     ) : paymentInFlight ? (
                       <p className="payment-processing-note">

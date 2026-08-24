@@ -6,6 +6,7 @@ import { z } from "zod";
 import { currentStudent, hashPassword, verifyPassword } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { createCheckoutForEnrollment } from "@/lib/payments/create-checkout";
+import { createPaystackCheckout } from "@/lib/payments/create-paystack-checkout";
 
 const checkoutSchema = z.object({ enrollmentId: z.string().uuid() });
 
@@ -77,4 +78,35 @@ export async function changeOwnPassword(formData: FormData): Promise<void> {
 
   await db.updateStudentPassword(student.id, await hashPassword(parsed.data.newPassword));
   redirect("/dashboard?password=changed#password");
+}
+
+/**
+ * Naira checkout for students in Nigeria. Same guards as the Stripe path:
+ * the enrollment must belong to the signed-in student and still be pending.
+ */
+export async function beginPaystackCheckout(formData: FormData): Promise<void> {
+  const student = await currentStudent();
+  if (!student) redirect("/login");
+
+  const parsed = checkoutSchema.safeParse({ enrollmentId: formData.get("enrollmentId") });
+  if (!parsed.success) redirect("/dashboard?payment=invalid");
+
+  const enrollment = (await db.getEnrollmentsForStudent(student.id)).find(
+    (candidate) => candidate.id === parsed.data.enrollmentId
+  );
+  if (!enrollment || enrollment.status !== "pending") {
+    redirect("/dashboard?payment=invalid");
+  }
+
+  let destination: string;
+  try {
+    const result = await createPaystackCheckout({
+      studentId: student.id,
+      enrollment: { id: enrollment.id, plan: enrollment.plan },
+    });
+    destination = result.kind === "checkout" ? result.url : "/dashboard?payment=unavailable";
+  } catch {
+    destination = "/dashboard?payment=failed";
+  }
+  redirect(destination);
 }
