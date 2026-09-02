@@ -95,9 +95,10 @@ form or card data is rendered on the KingsWord site.
 
 ## 5a. Create the 100%-off promotion code
 
-The full program accepts a promotion code at Checkout, and that code takes **100% off** — a
-student who redeems it pays nothing. Single certificates accept no code at all, so the field is
-hidden on those Sessions. Create the code once per Stripe environment:
+The full program accepts a promotion code on the student dashboard, and that code takes **100%
+off**. The server validates it with Stripe and pre-applies it before Checkout opens, so Stripe
+shows a `$0` confirmation and does not collect card or bank details. Single certificates accept
+no code at all. Create the code once per Stripe environment:
 
 ```bash
 STRIPE_SECRET_KEY=sk_test_... \
@@ -129,12 +130,13 @@ webhook rejects any Session whose discount exceeds `FULL_PROGRAM_DISCOUNT_MINOR`
 the discount in the Stripe Dashboard alone will not activate access — that constant must be
 changed and deployed too.
 
-Because Checkout lets a student type any active code, **every promotion code created on this
-Stripe account must be restricted to a specific product**, the way `npm run stripe:promo`
-restricts this one. An unrestricted code created later in the Dashboard could be typed on the
-full program. The webhook still refuses to activate access for a discount over the approved
-ceiling, but that leaves a captured payment for staff to refund by hand — so restrict the
-coupon when you create it rather than relying on the ceiling.
+The regular full-program Checkout also retains Stripe's promotion-code field as a fallback.
+Therefore, **every promotion code created on this Stripe account must be restricted to a
+specific product**, the way `npm run stripe:promo` restricts this one. An unrestricted code
+created later in the Stripe Dashboard could be typed on the full program. The webhook still
+refuses to activate access for a discount over the approved ceiling, but that leaves a captured
+payment for staff to refund by hand, so restrict the coupon when you create it rather than
+relying on the ceiling.
 
 Stripe Tax may be switched on in the Dashboard without a deploy, so the webhook accepts a total
 raised by tax and checks the catalog price against the pre-discount subtotal instead. Shipping
@@ -146,9 +148,10 @@ integration currency, and puts the customer's local figure in `presentment_detai
 validation still passes.
 
 The code is not printed anywhere on the public site. Share it directly with the people meant to
-use it. Test it end to end before announcing it: apply the code at Checkout, confirm the total
-falls to $0, complete the Session, and confirm the webhook activates the enrollment and that
-`/admin` shows the promotion line on that registration.
+use it. Test it end to end before announcing it: enter the code on the student dashboard,
+confirm Stripe opens at `$0` without payment-method fields, complete the Session, and confirm
+the webhook activates the enrollment and `/admin` shows the promotion line on that
+registration.
 
 A $0 total is settled differently by Stripe: no PaymentIntent and no charge are created, and
 the Session reports `payment_status: no_payment_required` rather than `paid`. The webhook in

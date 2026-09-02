@@ -6,15 +6,29 @@ import { z } from "zod";
 import { currentStudent, hashPassword, verifyPassword } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { createCheckoutForEnrollment } from "@/lib/payments/create-checkout";
+import { PromotionCodeError } from "@/lib/payments/promotion-code";
 
-const checkoutSchema = z.object({ enrollmentId: z.string().uuid() });
+const checkoutSchema = z.object({
+  enrollmentId: z.string().uuid(),
+  promotionCode: z
+    .string()
+    .trim()
+    .regex(/^[A-Za-z0-9-]{4,40}$/)
+    .optional(),
+});
 
 export async function beginStripeCheckout(formData: FormData): Promise<void> {
   const student = await currentStudent();
   if (!student) redirect("/login");
 
-  const parsed = checkoutSchema.safeParse({ enrollmentId: formData.get("enrollmentId") });
-  if (!parsed.success) redirect("/dashboard?payment=invalid");
+  const rawPromotionCode = formData.get("promotionCode");
+  const parsed = checkoutSchema.safeParse({
+    enrollmentId: formData.get("enrollmentId"),
+    promotionCode: rawPromotionCode === null ? undefined : rawPromotionCode,
+  });
+  if (!parsed.success) {
+    redirect(`/dashboard?payment=${rawPromotionCode === null ? "invalid" : "promo-invalid"}`);
+  }
 
   const enrollment = (await db.getEnrollmentsForStudent(student.id)).find(
     (candidate) => candidate.id === parsed.data.enrollmentId
@@ -25,7 +39,11 @@ export async function beginStripeCheckout(formData: FormData): Promise<void> {
 
   let destination: string;
   try {
-    const result = await createCheckoutForEnrollment({ studentId: student.id, enrollment });
+    const result = await createCheckoutForEnrollment({
+      studentId: student.id,
+      enrollment,
+      promotionCode: parsed.data.promotionCode,
+    });
     destination =
       result.kind === "checkout" ? result.url : "/dashboard?payment=processing";
   } catch (error) {
@@ -33,7 +51,10 @@ export async function beginStripeCheckout(formData: FormData): Promise<void> {
       enrollmentId: enrollment.id,
       errorName: error instanceof Error ? error.name : "UnknownError",
     });
-    destination = "/dashboard?payment=unavailable";
+    destination =
+      error instanceof PromotionCodeError
+        ? "/dashboard?payment=promo-invalid#complete-payment"
+        : "/dashboard?payment=unavailable";
   }
 
   redirect(destination);

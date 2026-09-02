@@ -1557,8 +1557,22 @@ a.card:hover::after { opacity: .9; }
 .stripe-checkout-button span { font: 800 12px/1.1 var(--sans); letter-spacing: .02em; }
 .stripe-checkout-button small { font: 600 8.5px/1.2 var(--sans); opacity: .72; }
 .payment-processing-note { max-width: 245px; margin: 0; color: rgba(255, 255, 255, .72); font: 550 11px/1.55 var(--sans); }
-.promo-code-note { display: block; max-width: 420px; margin-top: 7px; color: rgba(255, 255, 255, .7); font: 550 11px/1.5 var(--sans); }
 .pending-enrollment-actions { display: grid; min-width: 220px; gap: 13px; justify-items: stretch; }
+.promo-redemption { display: grid; gap: 9px; padding: 14px; border: 1px solid rgba(239, 207, 131, .34); border-radius: 13px; background: rgba(3, 20, 39, .24); }
+.promo-redemption > strong { color: #f3d889; font: 750 10px/1.2 var(--sans); letter-spacing: .055em; text-transform: uppercase; }
+.promo-redemption > small { max-width: 32ch; color: rgba(255, 255, 255, .67); font: 550 9px/1.45 var(--sans); }
+.promo-code-form { display: grid; gap: 6px; }
+.promo-code-form label { color: rgba(255, 255, 255, .82); font: 650 9px/1.2 var(--sans); }
+.promo-code-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 7px; }
+.promo-code-row input { min-width: 0; height: 41px; padding: 0 11px; border: 1px solid rgba(255, 255, 255, .22); border-radius: 9px; outline: 0; background: rgba(2, 15, 31, .45); color: #fffaf1; font: 700 11px/1 var(--sans); letter-spacing: .035em; text-transform: uppercase; }
+.promo-code-row input::placeholder { color: rgba(255, 255, 255, .44); font-weight: 550; text-transform: none; }
+.promo-code-row input:focus { border-color: #efcf83; box-shadow: 0 0 0 3px rgba(239, 207, 131, .14); }
+.promo-code-submit { min-width: 86px; padding: 0 12px; border: 1px solid #efcf83; border-radius: 9px; background: transparent; color: #f6dda0; font: 750 10px/1 var(--sans); cursor: pointer; }
+.promo-code-submit:hover { background: rgba(239, 207, 131, .12); color: #fff0c6; }
+.promo-code-submit:disabled { cursor: wait; opacity: .62; }
+.payment-choice-divider { display: flex; align-items: center; gap: 8px; color: rgba(255, 255, 255, .53); font: 700 7px/1 var(--sans); letter-spacing: .1em; text-transform: uppercase; }
+.payment-choice-divider::before,
+.payment-choice-divider::after { content: ""; height: 1px; flex: 1; background: rgba(255, 255, 255, .14); }
 .scholarship-payment-option { display: grid; gap: 5px; padding-top: 12px; border-top: 1px solid rgba(255, 255, 255, .16); font-family: var(--sans); }
 .scholarship-payment-option span,
 .scholarship-payment-option strong { color: rgba(255, 255, 255, .68); font-size: 10px; line-height: 1.35; }
@@ -1616,6 +1630,8 @@ a.card:hover::after { opacity: .9; }
   .pending-enrollment form,
   .pending-enrollment-actions,
   .stripe-checkout-button { width: 100%; }
+  .promo-code-row { grid-template-columns: 1fr; }
+  .promo-code-submit { min-height: 41px; }
   .payment-details {
     grid-template-columns: 1fr;
   }

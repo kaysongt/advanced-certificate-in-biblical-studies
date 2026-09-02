@@ -2,18 +2,36 @@
 
 import { useFormStatus } from "react-dom";
 
-export default function StripeCheckoutButton() {
+export default function StripeCheckoutButton({
+  purpose = "payment",
+}: {
+  purpose?: "payment" | "promotion";
+}) {
   const { pending } = useFormStatus();
+  const promotion = purpose === "promotion";
   return (
     <button
       type="submit"
-      className="btn primary lg stripe-checkout-button"
+      className={promotion ? "promo-code-submit" : "btn primary lg stripe-checkout-button"}
       disabled={pending}
-      aria-label={pending ? "Opening secure Stripe Checkout" : "Pay securely with Stripe"}
+      aria-label={
+        pending
+          ? promotion
+            ? "Applying promotion code"
+            : "Opening secure Stripe Checkout"
+          : promotion
+            ? "Apply full-tuition promotion code"
+            : "Pay securely with Stripe"
+      }
     >
-      <span>{pending ? "Opening secure checkout…" : "Pay securely"}</span>
-      <small>{pending ? "Please wait" : "Card, wallet, or available local method"}</small>
+      {promotion ? (
+        pending ? "Checking…" : "Apply code"
+      ) : (
+        <>
+          <span>{pending ? "Opening secure checkout…" : "Pay securely"}</span>
+          <small>{pending ? "Please wait" : "Card, wallet, or available local method"}</small>
+        </>
+      )}
     </button>
   );
 }
-

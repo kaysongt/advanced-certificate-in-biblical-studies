@@ -41,7 +41,10 @@ import {
 import { ADMIN_NAV_ITEMS, isAdminRouteActive } from "../lib/admin-navigation";
 import { isPrimaryRouteActive, PRIMARY_NAV_ITEMS } from "../lib/navigation";
 import { getStripeCatalogItem } from "../lib/payments/catalog";
-import { buildCheckoutSessionParams } from "../lib/payments/checkout-session";
+import {
+  buildCheckoutSessionParams,
+  checkoutSessionHasPromotion,
+} from "../lib/payments/checkout-session";
 import {
   blocksLatePaymentActivation,
   refundPaymentStatus,
@@ -512,6 +515,50 @@ async function main() {
   check("the full program accepts a promotion code and a single certificate does not", () => {
     assert.equal(checkoutParams.allow_promotion_codes, true);
     assert.equal("allow_promotion_codes" in certificateCheckoutParams, false);
+  });
+  const noCostCheckoutParams = buildCheckoutSessionParams({
+    enrollmentId: "enrollment-check",
+    paymentAttemptId: "attempt-check",
+    catalogKey: "advanced",
+    customerEmail: "checkout-check@example.com",
+    priceId: "price_check",
+    appBaseUrl: "https://www.thekti.org",
+    promotionCodeId: "promo_full_tuition",
+  });
+  check("an entered full-tuition code is applied before Checkout opens", () => {
+    assert.deepEqual(noCostCheckoutParams.discounts, [
+      { promotion_code: "promo_full_tuition" },
+    ]);
+    assert.equal("allow_promotion_codes" in noCostCheckoutParams, false);
+  });
+  check("a promotion cannot be attached to a single certificate", () =>
+    assert.throws(() =>
+      buildCheckoutSessionParams({
+        enrollmentId: "enrollment-check",
+        paymentAttemptId: "attempt-check",
+        catalogKey: "certificate",
+        customerEmail: "checkout-check@example.com",
+        priceId: "price_check",
+        appBaseUrl: "https://www.thekti.org",
+        promotionCodeId: "promo_full_tuition",
+      })
+    )
+  );
+  check("an existing Session is reused only when it has the requested promotion", () => {
+    assert.equal(
+      checkoutSessionHasPromotion(
+        { discounts: [{ coupon: null, promotion_code: "promo_full_tuition" }] },
+        "promo_full_tuition"
+      ),
+      true
+    );
+    assert.equal(
+      checkoutSessionHasPromotion(
+        { discounts: [{ coupon: null, promotion_code: "promo_different" }] },
+        "promo_full_tuition"
+      ),
+      false
+    );
   });
   check("the promotion takes 100% off the full program", () => {
     // The ceiling must track the catalog price, or the webhook refuses the

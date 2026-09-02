@@ -3,7 +3,10 @@ import "server-only";
 import Stripe from "stripe";
 
 import { getStripeCatalogItem } from "@/lib/payments/catalog";
-import { buildCheckoutSessionParams } from "@/lib/payments/checkout-session";
+import {
+  buildCheckoutSessionParams,
+  checkoutSessionHasPromotion,
+} from "@/lib/payments/checkout-session";
 import {
   getStripeCheckoutConfiguration,
   getStripeClient,
@@ -13,6 +16,10 @@ import {
   prepareStripeCheckoutAttempt,
   releaseStripeCheckoutAttempt,
 } from "@/lib/payments/stripe-store";
+import {
+  PromotionCodeError,
+  resolveNoCostPromotion,
+} from "@/lib/payments/promotion-code";
 import { EnrollmentPlan, StripePaymentStatus } from "@prisma/client";
 
 export type CheckoutResult =
@@ -32,6 +39,7 @@ export async function createCheckoutForEnrollment(input: {
     amount: number;
     currency: string;
   };
+  promotionCode?: string;
 }): Promise<CheckoutResult> {
   const config = getStripeCheckoutConfiguration();
   const stripe = getStripeClient();
@@ -47,6 +55,22 @@ export async function createCheckoutForEnrollment(input: {
   ) {
     throw new Error("The configured Stripe Price does not match the enrollment catalog.");
   }
+
+  if (input.promotionCode && catalog.key !== "advanced") {
+    throw new PromotionCodeError();
+  }
+  const productId =
+    typeof stripePrice.product === "string" ? stripePrice.product : stripePrice.product.id;
+  const promotion = input.promotionCode
+    ? await resolveNoCostPromotion({
+        stripe,
+        code: input.promotionCode,
+        productId,
+        amountMinor: catalog.amountMinor,
+        currency: catalog.currency,
+        liveMode: config.mode === "live",
+      })
+    : null;
 
   // A terminal attempt releases its active key, so one retry can create a fresh Session.
   for (let attemptNumber = 0; attemptNumber < 2; attemptNumber += 1) {
@@ -65,7 +89,14 @@ export async function createCheckoutForEnrollment(input: {
           attempt.checkoutSessionId
         );
         if (existingSession.status === "open" && existingSession.url) {
-          return { kind: "checkout", url: existingSession.url };
+          if (!promotion || checkoutSessionHasPromotion(existingSession, promotion.id)) {
+            return { kind: "checkout", url: existingSession.url };
+          }
+
+          // Do not send a code holder back to an earlier full-price Session.
+          await stripe.checkout.sessions.expire(existingSession.id);
+          await releaseStripeCheckoutAttempt(attempt.id, StripePaymentStatus.EXPIRED);
+          continue;
         }
         if (existingSession.status === "complete") {
           return { kind: "dashboard", reason: "already-completed" };
@@ -84,17 +115,35 @@ export async function createCheckoutForEnrollment(input: {
       }
     }
 
-    const session = await stripe.checkout.sessions.create(
-      buildCheckoutSessionParams({
-        enrollmentId: enrollment.id,
-        paymentAttemptId: attempt.id,
-        catalogKey: catalog.key,
-        customerEmail: enrollment.student.email,
-        priceId,
-        appBaseUrl: config.appBaseUrl,
-      }),
-      { idempotencyKey: `kti-checkout:${attempt.id}` }
-    );
+    let session: Stripe.Checkout.Session;
+    try {
+      session = await stripe.checkout.sessions.create(
+        buildCheckoutSessionParams({
+          enrollmentId: enrollment.id,
+          paymentAttemptId: attempt.id,
+          catalogKey: catalog.key,
+          customerEmail: enrollment.student.email,
+          priceId,
+          appBaseUrl: config.appBaseUrl,
+          promotionCodeId: promotion?.id,
+        }),
+        { idempotencyKey: `kti-checkout:${attempt.id}` }
+      );
+    } catch (error) {
+      if (promotion && error instanceof Stripe.errors.StripeInvalidRequestError) {
+        await releaseStripeCheckoutAttempt(attempt.id, StripePaymentStatus.FAILED);
+        throw new PromotionCodeError();
+      }
+      throw error;
+    }
+
+    // This route promises a no-payment checkout. Refuse the redirect if Stripe
+    // did not actually reduce the order to zero for any reason.
+    if (promotion && session.amount_total !== 0) {
+      if (session.status === "open") await stripe.checkout.sessions.expire(session.id);
+      await releaseStripeCheckoutAttempt(attempt.id, StripePaymentStatus.FAILED);
+      throw new PromotionCodeError();
+    }
     if (!session.url) throw new Error("Stripe did not return a hosted Checkout URL.");
 
     await attachStripeCheckoutSession({

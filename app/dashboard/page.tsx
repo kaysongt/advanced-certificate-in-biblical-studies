@@ -45,7 +45,7 @@ const paymentMessages: Record<string, { tone: "good" | "warn" | "bad"; text: str
   },
   success: {
     tone: "good",
-    text: "Payment was submitted securely. Stripe is confirming it now; access updates automatically after the signed confirmation arrives.",
+    text: "Your enrollment was submitted securely. Stripe is confirming it now; access updates automatically after the signed confirmation arrives.",
   },
   processing: {
     tone: "warn",
@@ -56,6 +56,10 @@ const paymentMessages: Record<string, { tone: "good" | "warn" | "bad"; text: str
     text: "Checkout was cancelled and no new access was granted. You can resume secure payment below.",
   },
   invalid: { tone: "bad", text: "That enrollment could not be opened for payment." },
+  "promo-invalid": {
+    tone: "bad",
+    text: "That full-tuition promo code could not be applied. Check the spelling or ask KTI staff whether it is still active.",
+  },
   unavailable: {
     tone: "bad",
     text: "Secure card payment is temporarily unavailable. Please try again or use the bank-transfer option below.",
@@ -226,13 +230,16 @@ export default async function DashboardPage({
           <div className="payment-heading">
             <div>
               <div className="eyebrow">Enrollment reserved</div>
-              <h2 id="pending-payment-title">Complete your payment</h2>
+              <h2 id="pending-payment-title">Complete your enrollment</h2>
             </div>
             <span className="secure-payment-mark">
               {stripeConfigured ? "Secure checkout by Stripe" : "Bank transfer available"}
             </span>
           </div>
-          <p>Your account is ready. Choose secure card checkout or use the bank-transfer option.</p>
+          <p>
+            Your account is ready. Apply an approved full-tuition code, pay securely by card,
+            or use the bank-transfer option.
+          </p>
 
           {paymentMessage ? (
             <div className={`notice ${paymentMessage.tone}`} role="status">
@@ -267,14 +274,38 @@ export default async function DashboardPage({
                         {paymentStatusLabels[attempt.status]}
                       </span>
                     ) : null}
-                    {canOpenCheckout && promotionCodesAllowed(enrollment.plan) ? (
-                      <span className="promo-code-note">
-                        Have a promo code? Enter it on the Stripe checkout page to see your
-                        discount before you pay.
-                      </span>
-                    ) : null}
                   </div>
                   <div className="pending-enrollment-actions">
+                    {canOpenCheckout && promotionCodesAllowed(enrollment.plan) ? (
+                      <div className="promo-redemption">
+                        <strong>Full-tuition promo</strong>
+                        <form action={beginStripeCheckout} className="promo-code-form">
+                          <input type="hidden" name="enrollmentId" value={enrollment.id} />
+                          <label htmlFor={`promotionCode-${enrollment.id}`}>Promo code</label>
+                          <div className="promo-code-row">
+                            <input
+                              id={`promotionCode-${enrollment.id}`}
+                              name="promotionCode"
+                              type="text"
+                              inputMode="text"
+                              autoComplete="off"
+                              autoCapitalize="characters"
+                              spellCheck={false}
+                              minLength={4}
+                              maxLength={40}
+                              pattern="[A-Za-z0-9-]{4,40}"
+                              placeholder="Enter code"
+                              required
+                            />
+                            <StripeCheckoutButton purpose="promotion" />
+                          </div>
+                        </form>
+                        <small>A valid 100%-off code continues without card or bank details.</small>
+                      </div>
+                    ) : null}
+                    {canOpenCheckout && promotionCodesAllowed(enrollment.plan) ? (
+                      <div className="payment-choice-divider"><span>or pay tuition</span></div>
+                    ) : null}
                     {canOpenCheckout ? (
                       <form action={beginStripeCheckout}>
                         <input type="hidden" name="enrollmentId" value={enrollment.id} />

@@ -10,7 +10,12 @@ export function buildCheckoutSessionParams(input: {
   customerEmail: string;
   priceId: string;
   appBaseUrl: string;
+  promotionCodeId?: string;
 }): Stripe.Checkout.SessionCreateParams {
+  if (input.promotionCodeId && !promotionCodesAllowed(input.catalogKey)) {
+    throw new Error("Promotion codes are not available for this enrollment.");
+  }
+
   const metadata = {
     enrollmentId: input.enrollmentId,
     paymentAttemptId: input.paymentAttemptId,
@@ -22,9 +27,13 @@ export function buildCheckoutSessionParams(input: {
     client_reference_id: input.enrollmentId,
     customer_email: input.customerEmail,
     line_items: [{ price: input.priceId, quantity: 1 }],
-    // Only the full program carries an approved discount, so the code field is
-    // hidden on single certificates rather than rejected after it is typed.
-    ...(promotionCodesAllowed(input.catalogKey) ? { allow_promotion_codes: true } : {}),
+    // A code entered on the KTI dashboard is attached before Checkout opens.
+    // Stripe then renders a no-cost order instead of requesting payment details.
+    ...(input.promotionCodeId
+      ? { discounts: [{ promotion_code: input.promotionCodeId }] }
+      : promotionCodesAllowed(input.catalogKey)
+        ? { allow_promotion_codes: true }
+        : {}),
     metadata,
     payment_intent_data: { metadata },
     success_url: `${input.appBaseUrl}/dashboard?payment=success`,
@@ -32,4 +41,19 @@ export function buildCheckoutSessionParams(input: {
     expires_at: Math.floor(Date.now() / 1000) + 60 * 60,
     submit_type: "pay",
   };
+}
+
+export function checkoutSessionHasPromotion(
+  session: Pick<Stripe.Checkout.Session, "discounts">,
+  promotionCodeId: string
+): boolean {
+  return Boolean(
+    session.discounts?.some((discount) => {
+      const promotionCode = discount.promotion_code;
+      return (
+        promotionCode === promotionCodeId ||
+        (typeof promotionCode === "object" && promotionCode?.id === promotionCodeId)
+      );
+    })
+  );
 }
