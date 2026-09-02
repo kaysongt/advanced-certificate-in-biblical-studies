@@ -10,6 +10,7 @@ import {
   listLatestStripePaymentAttempts,
   type StripePaymentAttemptSummary,
 } from "@/lib/payments/stripe-store";
+import { listLatestPaymentReminders } from "@/lib/reminders/payment-reminder-store";
 
 import {
   activateEnrollment,
@@ -94,6 +95,19 @@ const paymentStatusLabels: Record<StripePaymentAttemptSummary["status"], string>
   disputed: "Disputed",
 };
 
+const reminderStatusLabels = {
+  sending: "Reminder queued",
+  sent: "Reminder sent",
+  failed: "Reminder delivery failed",
+} as const;
+
+const reminderMilestoneLabels: Record<string, string> = {
+  "21-days": "21-day reminder",
+  "7-days": "7-day reminder",
+  "1-day": "1-day reminder",
+  started: "Opening-day reminder",
+};
+
 export default async function AdminPage({
   searchParams,
 }: {
@@ -121,9 +135,11 @@ export default async function AdminPage({
   const moduleNames = new Map(
     getCurriculum().modules.map((module) => [module.slug, module.short_title])
   );
-  const paymentAttempts = await listLatestStripePaymentAttempts(
-    registrations.map((enrollment) => enrollment.id)
-  );
+  const enrollmentIds = registrations.map((enrollment) => enrollment.id);
+  const [paymentAttempts, paymentReminders] = await Promise.all([
+    listLatestStripePaymentAttempts(enrollmentIds),
+    listLatestPaymentReminders(enrollmentIds),
+  ]);
   const registrationCounts = {
     pending: registrations.filter((item) => item.status === "pending").length,
     active: registrations.filter(
@@ -292,6 +308,7 @@ export default async function AdminPage({
           <div className="admin-list">
             {visibleRegistrations.map((enrollment) => {
               const paymentAttempt = paymentAttempts.get(enrollment.id);
+              const paymentReminder = paymentReminders.get(enrollment.id);
               return (
               <article className="admin-card admin-registration-card" key={enrollment.id}>
                 <div className="admin-registration-person">
@@ -368,6 +385,19 @@ export default async function AdminPage({
                         {paymentAttempt.needsReview ? (
                           <small>{paymentAttempt.reviewReason ?? "Staff review required."}</small>
                         ) : null}
+                      </div>
+                    ) : null}
+                    {paymentReminder ? (
+                      <div className={`admin-reminder-state ${paymentReminder.status}`}>
+                        <span>{reminderStatusLabels[paymentReminder.status]}</span>
+                        <small>
+                          {reminderMilestoneLabels[paymentReminder.milestone] ?? paymentReminder.milestone}
+                          {paymentReminder.sentAt
+                            ? ` · ${registrationDate.format(new Date(paymentReminder.sentAt))}`
+                            : paymentReminder.status === "failed"
+                              ? ` · ${paymentReminder.attempts} attempts`
+                              : ""}
+                        </small>
                       </div>
                     ) : null}
                     <form action={activateEnrollment} className="admin-inline-form">

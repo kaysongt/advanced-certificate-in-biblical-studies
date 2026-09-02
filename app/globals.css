@@ -1547,6 +1547,12 @@ a.card:hover::after { opacity: .9; }
 .pending-enrollment-plan { display: block; margin-bottom: 8px; color: #e8c777; font: 750 8.5px/1 var(--sans); letter-spacing: .13em; text-transform: uppercase; }
 .pending-enrollment h3 { max-width: 420px; margin: 0 0 8px; color: #fffaf1; font-size: clamp(1.18rem, 2.2vw, 1.5rem); }
 .pending-enrollment > div > strong { display: inline-block; color: #fffaf1; font: 600 1rem/1 var(--sans); }
+.payment-access-reminder { display: grid; gap: 4px; max-width: 390px; margin-top: 17px; padding: 13px 14px; border: 1px solid rgba(239, 207, 131, .3); border-left: 3px solid #e8c777; border-radius: 11px; background: rgba(2, 18, 36, .3); }
+.payment-access-reminder > span { color: #e8c777; font: 750 8px/1 var(--sans); letter-spacing: .12em; text-transform: uppercase; }
+.payment-access-reminder > strong { color: #fffaf1; font: 700 11px/1.35 var(--sans); }
+.payment-access-reminder > small { color: rgba(255, 255, 255, .66); font: 500 9.5px/1.5 var(--sans); }
+.payment-access-reminder.has-started { border-color: rgba(255, 187, 140, .38); border-left-color: #efb27b; }
+.payment-access-reminder.has-started > span { color: #f3c497; }
 .payment-state { display: inline-block; margin-left: 9px; padding: 5px 7px; border: 1px solid rgba(255, 255, 255, .2); border-radius: 999px; color: rgba(255, 255, 255, .82); font: 700 7.5px/1 var(--sans); letter-spacing: .08em; text-transform: uppercase; vertical-align: 2px; }
 .payment-state.paid { border-color: rgba(121, 220, 178, .5); color: #a7ebce; }
 .payment-state.failed,
@@ -1910,6 +1916,12 @@ a.card:hover::after { opacity: .9; }
 .admin-stripe-state.review { border-color: var(--gold-line); background: var(--gold-wash); }
 .admin-stripe-state span { color: var(--deep); font: 750 9px/1.2 var(--sans); letter-spacing: .08em; text-transform: uppercase; }
 .admin-stripe-state small { color: var(--muted); font: 500 10px/1.45 var(--sans); }
+.admin-reminder-state { display: grid; gap: 4px; padding: 11px 13px; border: 1px solid var(--rule); border-radius: 10px; background: var(--page); }
+.admin-reminder-state span { color: var(--deep); font: 750 9px/1.2 var(--sans); letter-spacing: .08em; text-transform: uppercase; }
+.admin-reminder-state small { color: var(--muted); font: 500 10px/1.45 var(--sans); }
+.admin-reminder-state.sent { border-color: color-mix(in srgb, var(--ok) 45%, var(--rule)); background: var(--ok-wash); }
+.admin-reminder-state.failed { border-color: color-mix(in srgb, var(--no) 45%, var(--rule)); background: var(--no-wash); }
+.admin-reminder-state.failed span { color: var(--no); }
 .admin-grade-form { display: grid; grid-template-columns: 180px minmax(0, 1fr) auto; gap: 14px; align-items: end; margin-top: 18px; }
 .admin-shell label { display: grid; gap: 7px; color: var(--muted); font: 650 10px/1.3 var(--sans); letter-spacing: .06em; text-transform: uppercase; }
 .admin-check { display: flex !important; align-items: center; gap: 7px !important; white-space: nowrap; }

@@ -20,6 +20,7 @@ import {
   listLatestStripePaymentAttempts,
   type StripePaymentAttemptSummary,
 } from "@/lib/payments/stripe-store";
+import { getPaymentReminderTiming } from "@/lib/reminders/payment-reminder-policy";
 
 import { beginStripeCheckout } from "./actions";
 
@@ -238,7 +239,7 @@ export default async function DashboardPage({
           </div>
           <p>
             Your account is ready. Apply an approved full-tuition code, pay securely by card,
-            or use the bank-transfer option.
+            or use the bank-transfer option. Tuition must be confirmed before class access opens.
           </p>
 
           {paymentMessage ? (
@@ -257,6 +258,7 @@ export default async function DashboardPage({
                 attempt?.status === "disputed";
               const canOpenCheckout = stripeConfigured && !paymentInFlight && !staffReview;
               const scholarship = scholarshipsByEnrollment.get(enrollment.id);
+              const paymentTiming = getPaymentReminderTiming(enrollment);
               return (
                 <article className="pending-enrollment" key={enrollment.id}>
                   <div>
@@ -273,6 +275,24 @@ export default async function DashboardPage({
                       <span className={`payment-state ${attempt.status}`}>
                         {paymentStatusLabels[attempt.status]}
                       </span>
+                    ) : null}
+                    {paymentTiming ? (
+                      <div
+                        className={`payment-access-reminder${
+                          paymentTiming.daysUntilStart <= 0 ? " has-started" : ""
+                        }`}
+                      >
+                        <span>Class access</span>
+                        <strong>
+                          {paymentTiming.daysUntilStart <= 0
+                            ? `Opened ${paymentTiming.startDateLabel}`
+                            : `Pay before ${paymentTiming.startDateLabel}`}
+                        </strong>
+                        <small>
+                          Registration reserves your place. Lessons unlock only after payment,
+                          an approved scholarship, or a valid full-tuition code is confirmed.
+                        </small>
+                      </div>
                     ) : null}
                   </div>
                   <div className="pending-enrollment-actions">

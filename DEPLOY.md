@@ -35,6 +35,10 @@ Set these in Vercel for Production and Preview:
 | `STRIPE_WEBHOOK_SECRET` | For online payment | Verifies signed events at `/api/stripe/webhook` |
 | `STRIPE_PRICE_CERTIFICATE` | For online payment | Stripe Price ID for the $250 certificate |
 | `STRIPE_PRICE_ADVANCED` | For online payment | Stripe Price ID for the $1,000 program |
+| `RESEND_API_KEY` | For reminders | Server-only Resend credential for transactional email |
+| `CRON_SECRET` | For reminders | Protects `/api/cron/payment-reminders`; Vercel sends it automatically |
+| `PAYMENT_REMINDER_FROM` | For reminders | Verified sender, normally `KingsWord Training Institute <reminders@thekti.org>` |
+| `PAYMENT_REMINDER_REPLY_TO` | Optional | Address that receives student replies; defaults to the curriculum contact |
 
 Generate the session secret with:
 
@@ -43,6 +47,9 @@ node -e "console.log(require('crypto').randomBytes(48).toString('base64url'))"
 ```
 
 Use a different secret in production from any local value. Rotating it signs everyone out.
+
+Generate `CRON_SECRET` the same way and store it only in Vercel. It should be different from
+`SESSION_SECRET`.
 
 ## 3. Create the first administrator
 
@@ -169,6 +176,32 @@ the moment the offer ends.
 The application uses `https://www.thekti.org` as its canonical fallback. Keep both
 `thekti.org` and `www.thekti.org` attached in Vercel, with the apex domain redirecting to
 `www.thekti.org`. Set `NEXT_PUBLIC_SITE_URL=https://www.thekti.org` in production and preview.
+
+## 6a. Enable payment reminder email
+
+Unpaid registration reserves a place but does not grant class access. The dashboard states this
+immediately, and Vercel runs a protected reminder job every day at 15:00 UTC. Pending students
+receive at most one email at each relevant milestone: 21 days before class, 7 days before, 1 day
+before, and once when class has started. The job excludes active enrollments, valid full-tuition
+code redemptions, pending or approved scholarship applications, and payments being processed or
+reviewed. Each milestone is stored in PostgreSQL so a repeated Cron request does not resend it.
+
+1. Create or connect a Resend account in the Vercel Marketplace.
+2. Add `thekti.org` as a sending domain in Resend and add every DNS record Resend provides. Since
+   the domain is registered with Vercel, add those records under Domains > `thekti.org` > DNS.
+3. Wait until Resend marks the domain verified.
+4. Create a sending API key and store it as `RESEND_API_KEY` in Vercel Production.
+5. Set `PAYMENT_REMINDER_FROM` to
+   `KingsWord Training Institute <reminders@thekti.org>` and optionally set
+   `PAYMENT_REMINDER_REPLY_TO=kti@kingsword.org`.
+6. Generate and store `CRON_SECRET`, then redeploy. Never visit or share the Cron route with the
+   secret in a URL; Vercel supplies it in the `Authorization` header.
+7. Confirm the Cron appears under the project's Cron Jobs page and inspect its first execution in
+   Vercel Logs. The route reports aggregate counts only and never returns student details.
+
+The email link opens `/dashboard#complete-payment`, and the scholarship link opens the application
+for the exact enrollment. Resend is transactional infrastructure here, not a marketing list; these
+access notices do not replace a separate launch marketing plan.
 
 ## 7. Test the real enrollment path
 

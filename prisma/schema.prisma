@@ -54,6 +54,12 @@ enum ScholarshipStatus {
   DECLINED
 }
 
+enum PaymentReminderStatus {
+  SENDING
+  SENT
+  FAILED
+}
+
 model Student {
   id                      String                   @id @default(uuid())
   email                   String                   @unique
@@ -92,10 +98,28 @@ model Enrollment {
   student                Student                 @relation(fields: [studentId], references: [id], onDelete: Cascade)
   stripePaymentAttempts  StripePaymentAttempt[]
   scholarshipApplication ScholarshipApplication?
+  paymentReminders       PaymentReminder[]
 
   @@unique([provider, providerRef])
   @@index([studentId])
   @@index([status, createdAt])
+}
+
+model PaymentReminder {
+  id                String                @id @default(uuid())
+  enrollmentId      String
+  milestone         String
+  status            PaymentReminderStatus @default(SENDING)
+  attempts          Int                   @default(1)
+  providerMessageId String?
+  sentAt            DateTime?
+  lastError         String?
+  createdAt         DateTime              @default(now())
+  updatedAt         DateTime              @updatedAt
+  enrollment        Enrollment            @relation(fields: [enrollmentId], references: [id], onDelete: Cascade)
+
+  @@unique([enrollmentId, milestone])
+  @@index([status, updatedAt])
 }
 
 model ScholarshipApplication {

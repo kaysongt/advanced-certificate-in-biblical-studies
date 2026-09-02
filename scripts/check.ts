@@ -57,6 +57,14 @@ import {
 } from "../lib/payments/promotions";
 import { sessionAmountIssues } from "../lib/payments/session-amounts";
 import { STRIPE_API_VERSION } from "../lib/payments/stripe-version";
+import { buildPaymentReminderEmail } from "../lib/reminders/payment-reminder-email";
+import {
+  calendarDaysUntil,
+  currentProgramDate,
+  getPaymentReminderTiming,
+  selectPaymentReminderMilestone,
+  shouldSuppressPaymentReminder,
+} from "../lib/reminders/payment-reminder-policy";
 
 let passed = 0;
 function check(name: string, fn: () => void) {
@@ -109,6 +117,174 @@ async function main() {
       getPurchasableModules().map((item) => item.slug),
       curriculum.modules.map((item) => item.slug)
     )
+  );
+
+  console.log("\npayment reminders");
+  check("program calendar dates follow Chicago rather than server UTC", () => {
+    assert.equal(currentProgramDate(new Date("2026-10-01T04:59:59Z")), "2026-09-30");
+    assert.equal(currentProgramDate(new Date("2026-10-01T05:00:00Z")), "2026-10-01");
+  });
+  check("calendar-day arithmetic is independent of daylight-saving hours", () => {
+    assert.equal(calendarDaysUntil("2026-11-08", "2026-11-01"), 7);
+  });
+  check("reminder milestones select the most relevant due window", () => {
+    assert.equal(selectPaymentReminderMilestone(22), null);
+    assert.equal(selectPaymentReminderMilestone(21), "21-days");
+    assert.equal(selectPaymentReminderMilestone(8), "21-days");
+    assert.equal(selectPaymentReminderMilestone(7), "7-days");
+    assert.equal(selectPaymentReminderMilestone(2), "7-days");
+    assert.equal(selectPaymentReminderMilestone(1), "1-day");
+    assert.equal(selectPaymentReminderMilestone(0), "started");
+    assert.equal(selectPaymentReminderMilestone(-4), "started");
+  });
+  const advancedReminderTiming = getPaymentReminderTiming(
+    { plan: "advanced", product: "advanced" },
+    new Date("2026-09-10T15:00:00Z")
+  );
+  check("full-program reminders use the first module opening", () => {
+    assert.equal(advancedReminderTiming?.startDate, "2026-10-01");
+    assert.equal(advancedReminderTiming?.milestone, "21-days");
+    assert.equal(advancedReminderTiming?.offeringTitle, curriculum.program.title);
+  });
+  const moduleReminderTiming = getPaymentReminderTiming(
+    { plan: "certificate", product: curriculum.modules[1].slug },
+    new Date("2026-11-24T16:00:00Z")
+  );
+  check("single-certificate reminders use that module's opening", () => {
+    assert.equal(moduleReminderTiming?.startDate, "2026-12-01");
+    assert.equal(moduleReminderTiming?.milestone, "7-days");
+    assert.equal(moduleReminderTiming?.offeringTitle, "Biblical Foundations");
+  });
+  check("scholarships, settled codes, processing payments, and fresh checkout are suppressed", () => {
+    const oldOpenAttempt = {
+      status: "OPEN",
+      needsReview: false,
+      promotionCode: null,
+      discountAmountMinor: 0,
+      expectedAmountMinor: 100_000,
+      updatedAt: new Date("2026-09-10T10:00:00Z"),
+    };
+    const now = new Date("2026-09-10T15:00:00Z");
+    assert.equal(
+      shouldSuppressPaymentReminder({
+        scholarshipStatus: "PENDING",
+        latestAttempt: null,
+        now,
+      }),
+      true
+    );
+    assert.equal(
+      shouldSuppressPaymentReminder({
+        scholarshipStatus: "DECLINED",
+        latestAttempt: null,
+        now,
+      }),
+      false
+    );
+    assert.equal(
+      shouldSuppressPaymentReminder({
+        scholarshipStatus: null,
+        latestAttempt: { ...oldOpenAttempt, status: "PROCESSING" },
+        now,
+      }),
+      true
+    );
+    assert.equal(
+      shouldSuppressPaymentReminder({
+        scholarshipStatus: null,
+        latestAttempt: { ...oldOpenAttempt, promotionCode: "ORDAINEDMINISTERS2026" },
+        now,
+      }),
+      true
+    );
+    assert.equal(
+      shouldSuppressPaymentReminder({
+        scholarshipStatus: null,
+        latestAttempt: {
+          ...oldOpenAttempt,
+          discountAmountMinor: oldOpenAttempt.expectedAmountMinor,
+        },
+        now,
+      }),
+      true
+    );
+    assert.equal(
+      shouldSuppressPaymentReminder({
+        scholarshipStatus: null,
+        latestAttempt: { ...oldOpenAttempt, updatedAt: new Date("2026-09-10T14:30:00Z") },
+        now,
+      }),
+      true
+    );
+    assert.equal(
+      shouldSuppressPaymentReminder({
+        scholarshipStatus: null,
+        latestAttempt: oldOpenAttempt,
+        now,
+      }),
+      false
+    );
+  });
+  check("the reminder email states the access rule and escapes HTML", () => {
+    assert.ok(advancedReminderTiming?.milestone);
+    const email = buildPaymentReminderEmail({
+      fullName: "<Kay> Student",
+      amount: 1000,
+      currency: "USD",
+      timing: {
+        ...advancedReminderTiming!,
+        milestone: advancedReminderTiming!.milestone!,
+      },
+      dashboardUrl: "https://www.thekti.org/dashboard#complete-payment",
+      scholarshipUrl: "https://www.thekti.org/scholarship?enrollment=example",
+    });
+    assert.match(email.subject, /starts in 21 days/i);
+    assert.match(email.text, /did not unlock|lessons unlock/i);
+    assert.match(email.text, /\$1,000/);
+    assert.ok(email.html.includes("&lt;Kay&gt;"));
+    assert.ok(!email.html.includes("Hello <Kay>"));
+  });
+  check("late registrants are told the exact remaining time, not the milestone band", () => {
+    const timing = getPaymentReminderTiming(
+      { plan: "advanced", product: "advanced" },
+      new Date("2026-09-21T15:00:00Z")
+    );
+    assert.equal(timing?.milestone, "21-days");
+    const email = buildPaymentReminderEmail({
+      fullName: "Test Student",
+      amount: 1000,
+      currency: "USD",
+      timing: { ...timing!, milestone: timing!.milestone! },
+      dashboardUrl: "https://www.thekti.org/dashboard#complete-payment",
+      scholarshipUrl: "https://www.thekti.org/scholarship?enrollment=example",
+    });
+    assert.match(email.subject, /starts in 10 days/i);
+    assert.doesNotMatch(email.subject, /starts in 21 days/i);
+  });
+
+  const reminderRouteSource = await fs.readFile(
+    path.join(process.cwd(), "app/api/cron/payment-reminders/route.ts"),
+    "utf8"
+  );
+  const reminderSchemaSource = await fs.readFile(
+    path.join(process.cwd(), "prisma/schema.prisma"),
+    "utf8"
+  );
+  const vercelConfiguration = JSON.parse(
+    await fs.readFile(path.join(process.cwd(), "vercel.json"), "utf8")
+  ) as { crons?: { path: string; schedule: string }[] };
+  check("the daily reminder job is registered with Vercel", () =>
+    assert.deepEqual(vercelConfiguration.crons, [
+      { path: "/api/cron/payment-reminders", schedule: "0 15 * * *" },
+    ])
+  );
+  check("the reminder route requires Vercel's bearer secret", () => {
+    assert.ok(reminderRouteSource.includes("CRON_SECRET"));
+    assert.ok(reminderRouteSource.includes('request.headers.get("authorization")'));
+    assert.ok(reminderRouteSource.includes("timingSafeEqual"));
+  });
+  check("reminder milestones are unique per enrollment in PostgreSQL", () =>
+    assert.ok(reminderSchemaSource.includes("@@unique([enrollmentId, milestone])"))
   );
 
   console.log("\nnavigation");
@@ -235,6 +411,10 @@ async function main() {
   check("/admin/scholarships source includes the scholarship-list call", () =>
     assert.ok(adminScholarshipsPageSource.includes("listScholarshipApplications"))
   );
+  check("staff operations shows the latest payment reminder state", () => {
+    assert.ok(adminPageSource.includes("listLatestPaymentReminders"));
+    assert.ok(adminPageSource.includes("Reminder delivery failed"));
+  });
   const globalCssSource = await fs.readFile(
     path.join(process.cwd(), "app/globals.css"),
     "utf8"
@@ -243,6 +423,7 @@ async function main() {
     assert.match(globalCssSource, /\.admin-tabs\s*\{/);
     assert.match(globalCssSource, /\.admin-tab\s*\{/);
     assert.match(globalCssSource, /\.admin-tab-count\s*\{/);
+    assert.match(globalCssSource, /\.admin-reminder-state\s*\{/);
   });
   const adminActionsSource = await fs.readFile(
     path.join(process.cwd(), "app/admin/actions.ts"),
