@@ -6,6 +6,7 @@ import AdminNav from "@/components/AdminNav";
 import { currentStudent, isStaff } from "@/lib/auth";
 import { getCurriculum } from "@/lib/curriculum";
 import { db } from "@/lib/db";
+import { staffLoginPath, STAFF_ACCESS_REQUIRED_PATH } from "@/lib/login-redirect";
 import {
   listLatestStripePaymentAttempts,
   type StripePaymentAttemptSummary,
@@ -114,7 +115,8 @@ export default async function AdminPage({
   searchParams: Promise<{ reset?: string; role?: string; q?: string; status?: string }>;
 }) {
   const staff = await currentStudent();
-  if (!staff || !isStaff(staff)) redirect("/");
+  if (!staff) redirect(staffLoginPath("/admin"));
+  if (!isStaff(staff)) redirect(STAFF_ACCESS_REQUIRED_PATH);
 
   const isAdministrator = staff.role === "admin";
   const { reset, role, q, status } = await searchParams;

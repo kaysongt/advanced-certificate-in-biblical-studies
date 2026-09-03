@@ -71,6 +71,13 @@ const paymentMessages: Record<string, { tone: "good" | "warn" | "bad"; text: str
   },
 };
 
+const accessMessages: Record<string, { tone: "good" | "warn" | "bad"; text: string }> = {
+  "staff-required": {
+    tone: "bad",
+    text: "This account does not have Staff Operations access. Ask an administrator to assign it the Staff or Administrator role.",
+  },
+};
+
 const paymentStatusLabels: Record<StripePaymentAttemptSummary["status"], string> = {
   created: "Starting checkout",
   open: "Checkout ready",
@@ -94,12 +101,12 @@ function tuition(amount: number, currency: string): string {
 export default async function DashboardPage({
   searchParams,
 }: {
-  searchParams: Promise<{ payment?: string; password?: string }>;
+  searchParams: Promise<{ access?: string; payment?: string; password?: string }>;
 }) {
   const student = await currentStudent();
   if (!student) redirect("/login");
 
-  const { payment, password } = await searchParams;
+  const { access, payment, password } = await searchParams;
   const { program, grading } = getCurriculum();
   const [enrollments, progress, engagement, scholarshipApplications] = await Promise.all([
     db.getEnrollmentsForStudent(student.id),
@@ -122,6 +129,7 @@ export default async function DashboardPage({
   );
   const paymentMessage = payment ? paymentMessages[payment] : null;
   const passwordMessage = password ? passwordMessages[password] : null;
+  const accessMessage = access ? accessMessages[access] : null;
   const paymentDetails = {
     accountName: process.env.PAYMENT_BANK_ACCOUNT_NAME?.trim(),
     bankName: process.env.PAYMENT_BANK_NAME?.trim(),
@@ -157,6 +165,12 @@ export default async function DashboardPage({
               : "Your studies start here."}
         </p>
       </div>
+
+      {accessMessage ? (
+        <div className={`notice ${accessMessage.tone}`} role="alert">
+          {accessMessage.text}
+        </div>
+      ) : null}
 
       {isStaff(student) ? (
         <Link href="/admin" className="staff-entry">

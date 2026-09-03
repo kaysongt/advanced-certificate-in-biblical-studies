@@ -6,10 +6,12 @@ import { z } from "zod";
 
 import { currentStudent, hashPassword, isStaff } from "@/lib/auth";
 import { db } from "@/lib/db";
+import { staffLoginPath, STAFF_ACCESS_REQUIRED_PATH } from "@/lib/login-redirect";
 
-async function staffMember() {
+async function staffMember(returnTo = "/admin") {
   const student = await currentStudent();
-  if (!student || !isStaff(student)) redirect("/");
+  if (!student) redirect(staffLoginPath(returnTo));
+  if (!isStaff(student)) redirect(STAFF_ACCESS_REQUIRED_PATH);
   return student;
 }
 
@@ -19,7 +21,8 @@ async function staffMember() {
  */
 async function administrator() {
   const student = await currentStudent();
-  if (!student || student.role !== "admin") redirect("/");
+  if (!student) redirect(staffLoginPath("/admin"));
+  if (student.role !== "admin") redirect(STAFF_ACCESS_REQUIRED_PATH);
   return student;
 }
 
@@ -45,7 +48,7 @@ const scholarshipReviewSchema = z.object({
 });
 
 export async function reviewScholarshipApplication(formData: FormData): Promise<void> {
-  const reviewer = await staffMember();
+  const reviewer = await staffMember("/admin/scholarships");
   const input = scholarshipReviewSchema.parse({
     applicationId: formData.get("applicationId"),
     decision: formData.get("decision"),

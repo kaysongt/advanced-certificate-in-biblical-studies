@@ -13,6 +13,12 @@ import Stripe from "stripe";
 import { hashPassword, verifyPassword } from "../lib/auth-core";
 import { isStaff } from "../lib/auth";
 import {
+  postLoginPath,
+  safeReturnPath,
+  STAFF_ACCESS_REQUIRED_PATH,
+  staffLoginPath,
+} from "../lib/login-redirect";
+import {
   entitlementRedirectPath,
   getModuleEnrollmentState,
   hasActiveAccess,
@@ -411,6 +417,25 @@ async function main() {
   check("/admin/scholarships source includes the scholarship-list call", () =>
     assert.ok(adminScholarshipsPageSource.includes("listScholarshipApplications"))
   );
+  check("logged-out staff routes preserve their destination through sign-in", () => {
+    assert.equal(staffLoginPath("/admin"), "/login?next=%2Fadmin");
+    assert.equal(
+      staffLoginPath("/admin/scholarships"),
+      "/login?next=%2Fadmin%2Fscholarships"
+    );
+    assert.ok(adminPageSource.includes('staffLoginPath("/admin")'));
+    assert.ok(adminScholarshipsPageSource.includes('staffLoginPath("/admin/scholarships")'));
+  });
+  check("only staff roles can return to Staff Operations after sign-in", () => {
+    assert.equal(postLoginPath("staff", "/admin/scholarships"), "/admin/scholarships");
+    assert.equal(postLoginPath("admin", "/admin"), "/admin");
+    assert.equal(postLoginPath("student", "/admin"), STAFF_ACCESS_REQUIRED_PATH);
+  });
+  check("post-login redirects reject external destinations", () => {
+    assert.equal(safeReturnPath("https://example.com"), "/dashboard");
+    assert.equal(safeReturnPath("//example.com"), "/dashboard");
+    assert.equal(safeReturnPath("/\\example.com"), "/dashboard");
+  });
   check("staff operations shows the latest payment reminder state", () => {
     assert.ok(adminPageSource.includes("listLatestPaymentReminders"));
     assert.ok(adminPageSource.includes("Reminder delivery failed"));

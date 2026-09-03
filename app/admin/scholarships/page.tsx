@@ -5,6 +5,7 @@ import AdminNav from "@/components/AdminNav";
 import { currentStudent, isStaff } from "@/lib/auth";
 import { getCurriculum } from "@/lib/curriculum";
 import { db } from "@/lib/db";
+import { staffLoginPath, STAFF_ACCESS_REQUIRED_PATH } from "@/lib/login-redirect";
 
 import { reviewScholarshipApplication } from "../actions";
 
@@ -33,7 +34,8 @@ function tuition(amount: number, currency: string): string {
 
 export default async function AdminScholarshipsPage() {
   const staff = await currentStudent();
-  if (!staff || !isStaff(staff)) redirect("/");
+  if (!staff) redirect(staffLoginPath("/admin/scholarships"));
+  if (!isStaff(staff)) redirect(STAFF_ACCESS_REQUIRED_PATH);
 
   const scholarships = await db.listScholarshipApplications();
   const moduleNames = new Map(
