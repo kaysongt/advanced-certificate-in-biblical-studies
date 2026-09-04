@@ -312,17 +312,17 @@ export default function HomePage() {
               <div className="faculty-profile-photo">
                 <Image
                   src="/assets/faculty/dr-john-oyeniran.jpg"
-                  alt="Dr. John Oyeniran"
+                  alt="Pastor John Oyeniran"
                   fill
                   sizes="(max-width: 700px) calc(100vw - 36px), (max-width: 1040px) 300px, 19vw"
                 />
               </div>
               <div className="faculty-profile-body">
                 <span className="faculty-role">Bible Scholar, Pastor, Teacher &amp; Lecturer</span>
-                <h3>Dr. John Oyeniran</h3>
+                <h3>Pastor John Oyeniran</h3>
                 <p>
-                  Dr. John Oyeniran is a Bible scholar, pastor, teacher, and lecturer with a PhD
-                  in Biblical Studies. He is passionate about biblical interpretation, sound
+                  Pastor John Oyeniran is a Bible scholar, pastor, teacher, and lecturer with a
+                  PhD in Biblical Studies. He is passionate about biblical interpretation, sound
                   doctrine, and theological education.
                 </p>
                 <p>

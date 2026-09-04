@@ -325,7 +325,7 @@ async function main() {
   const normalizedHomePageSource = homePageSource.replace(/\s+/g, " ");
   const facultyNames = [
     "Dr. Kay Ijisesan",
-    "Dr. John Oyeniran",
+    "Pastor John Oyeniran",
     "Rev. Victor Adeyemi",
     "Rev. Tokunbo Adejuwon",
     "Pastor Bukky Manufor",
@@ -336,8 +336,10 @@ async function main() {
     assert.ok(homePageSource.includes('id="faculty"'));
     for (const name of facultyNames) assert.ok(homePageSource.includes(name), name);
   });
-  check("Dr. John has the supplied portrait and approved biography", () => {
+  check("Pastor John has the supplied portrait and approved biography", () => {
     assert.ok(homePageSource.includes('src="/assets/faculty/dr-john-oyeniran.jpg"'));
+    assert.ok(homePageSource.includes('alt="Pastor John Oyeniran"'));
+    assert.ok(!homePageSource.includes("Dr. John Oyeniran"));
     assert.ok(normalizedHomePageSource.includes("Global School of Biblical Interpretation"));
   });
   check("Rev. Victor has the supplied portrait", () => {
@@ -356,7 +358,7 @@ async function main() {
   const johnPortrait = await fs.stat(
     path.join(process.cwd(), "public/assets/faculty/dr-john-oyeniran.jpg")
   );
-  check("Dr. John's portrait asset is present", () => {
+  check("Pastor John's portrait asset is present", () => {
     assert.ok(johnPortrait.size > 100_000);
   });
   const victorPortrait = await fs.stat(
