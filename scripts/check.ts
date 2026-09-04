@@ -340,6 +340,10 @@ async function main() {
     assert.ok(homePageSource.includes('src="/assets/faculty/dr-john-oyeniran.jpg"'));
     assert.ok(normalizedHomePageSource.includes("Global School of Biblical Interpretation"));
   });
+  check("Rev. Victor has the supplied portrait", () => {
+    assert.ok(homePageSource.includes('src: "/assets/faculty/rev-victor-adeyemi.jpg"'));
+    assert.ok(homePageSource.includes('alt: "Rev. Victor Adeyemi"'));
+  });
   check("faculty styling includes feature and roster layouts", () => {
     assert.match(homeStylesSource, /\.faculty-feature-grid\s*\{/);
     assert.match(homeStylesSource, /\.faculty-roster-grid\s*\{/);
@@ -349,6 +353,12 @@ async function main() {
   );
   check("Dr. John's portrait asset is present", () => {
     assert.ok(johnPortrait.size > 100_000);
+  });
+  const victorPortrait = await fs.stat(
+    path.join(process.cwd(), "public/assets/faculty/rev-victor-adeyemi.jpg")
+  );
+  check("Rev. Victor's portrait asset is present", () => {
+    assert.ok(victorPortrait.size > 50_000);
   });
 
   console.log("\nprospective scholarship wiring");

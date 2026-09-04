@@ -28,13 +28,29 @@ const STUDY_STEPS = [
   },
 ];
 
-const FACULTY_ROSTER = [
-  { name: "Rev. Victor Adeyemi", initials: "VA" },
+type FacultyRosterMember = {
+  name: string;
+  initials: string;
+  portrait?: {
+    src: string;
+    alt: string;
+  };
+};
+
+const FACULTY_ROSTER: readonly FacultyRosterMember[] = [
+  {
+    name: "Rev. Victor Adeyemi",
+    initials: "VA",
+    portrait: {
+      src: "/assets/faculty/rev-victor-adeyemi.jpg",
+      alt: "Rev. Victor Adeyemi",
+    },
+  },
   { name: "Rev. Tokunbo Adejuwon", initials: "TA" },
   { name: "Pst. Buki Manufor", initials: "BM" },
   { name: "Pst. Achese Opuda", initials: "AO" },
   { name: "Dr. Sam Ekundayo", initials: "SE" },
-] as const;
+];
 
 export default function HomePage() {
   const { program, grading } = getCurriculum();
@@ -321,7 +337,20 @@ export default function HomePage() {
                 <article className="faculty-roster-card" key={faculty.name}>
                   <div className="faculty-roster-top">
                     <span className="faculty-roster-index">{String(index + 3).padStart(2, "0")}</span>
-                    <span className="faculty-initials" aria-hidden="true">{faculty.initials}</span>
+                    {faculty.portrait ? (
+                      <div className="faculty-roster-portrait">
+                        <Image
+                          src={faculty.portrait.src}
+                          alt={faculty.portrait.alt}
+                          fill
+                          sizes="64px"
+                        />
+                      </div>
+                    ) : (
+                      <span className="faculty-initials" aria-hidden="true">
+                        {faculty.initials}
+                      </span>
+                    )}
                   </div>
                   <h3>{faculty.name}</h3>
                   <span className="faculty-roster-role">Faculty member</span>

@@ -1429,8 +1429,8 @@ a.card:hover::after { opacity: .9; }
 .faculty-roster-index { color: var(--gold); font: 750 9px/1 var(--sans); letter-spacing: .11em; }
 .faculty-initials {
   display: grid;
-  width: 38px;
-  height: 38px;
+  width: 64px;
+  height: 64px;
   place-items: center;
   border: 1px solid var(--gold-line);
   border-radius: 50%;
@@ -1439,6 +1439,23 @@ a.card:hover::after { opacity: .9; }
   font: 750 9px/1 var(--sans);
   letter-spacing: .05em;
 }
+.faculty-roster-portrait {
+  position: relative;
+  width: 64px;
+  height: 64px;
+  overflow: hidden;
+  border: 1px solid var(--gold-line);
+  border-radius: 50%;
+  background: #16283e;
+  box-shadow: 0 8px 20px rgba(10, 29, 51, .16);
+}
+.faculty-roster-portrait img {
+  object-fit: cover;
+  object-position: 50% 22%;
+  filter: contrast(1.02) saturate(.94);
+  transition: transform .5s cubic-bezier(.22, 1, .36, 1);
+}
+.faculty-roster-card:hover .faculty-roster-portrait img { transform: scale(1.06); }
 .faculty-roster-card h3 { margin: 28px 0 8px; color: var(--ink); font: 600 1.15rem/1.18 var(--serif); }
 .faculty-roster-role { color: var(--faint); font: 700 8.5px/1.2 var(--sans); letter-spacing: .11em; text-transform: uppercase; }
 
