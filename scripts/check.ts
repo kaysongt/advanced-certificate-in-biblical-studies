@@ -355,6 +355,17 @@ async function main() {
     assert.match(homeStylesSource, /\.faculty-feature-grid\s*\{/);
     assert.match(homeStylesSource, /\.faculty-roster-grid\s*\{/);
   });
+  check("Dr. Kay's profile uses the latest supplied portrait", () => {
+    assert.ok(
+      homePageSource.includes('src="/assets/faculty/dr-kay-ijisesan-green.jpg"')
+    );
+  });
+  const kayPortrait = await fs.stat(
+    path.join(process.cwd(), "public/assets/faculty/dr-kay-ijisesan-green.jpg")
+  );
+  check("Dr. Kay's supplied portrait asset is present", () => {
+    assert.ok(kayPortrait.size > 100_000);
+  });
   const johnPortrait = await fs.stat(
     path.join(process.cwd(), "public/assets/faculty/dr-john-oyeniran.jpg")
   );

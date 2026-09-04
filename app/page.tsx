@@ -289,7 +289,7 @@ export default function HomePage() {
             <article className="faculty-profile faculty-profile-kay">
               <div className="faculty-profile-photo">
                 <Image
-                  src="/assets/dr-kay-ijisesan.jpg"
+                  src="/assets/faculty/dr-kay-ijisesan-green.jpg"
                   alt="Dr. Kay Ijisesan, Founder and President of KingsWord Training Institute"
                   fill
                   sizes="(max-width: 700px) calc(100vw - 36px), (max-width: 1040px) 300px, 19vw"

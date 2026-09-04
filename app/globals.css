@@ -2023,7 +2023,7 @@ a.card:hover::after { opacity: .9; }
   .path-card h3 { margin-top: 23px; }
   .faculty-profile { grid-template-columns: 1fr; min-height: 0; border-radius: 19px; }
   .faculty-profile-photo { min-height: 0; aspect-ratio: 4 / 3; }
-  .faculty-profile-kay .faculty-profile-photo img { object-position: 50% 50%; }
+  .faculty-profile-kay .faculty-profile-photo img { object-position: 50% 20%; }
   .faculty-profile-john .faculty-profile-photo img { object-position: 50% 25%; }
   .faculty-profile-body { padding: 25px 22px 27px; }
   .faculty-motto { margin-top: 25px; }
