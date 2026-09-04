@@ -329,7 +329,7 @@ async function main() {
     "Rev. Victor Adeyemi",
     "Rev. Tokunbo Adejuwon",
     "Pastor Bukky Manufor",
-    "Pst. Achese Opuda",
+    "Pastor Achase Opuda",
     "Dr. Sam Ekundayo",
   ];
   check("homepage includes the seven-member faculty section", () => {
@@ -350,6 +350,11 @@ async function main() {
     assert.ok(homePageSource.includes('src: "/assets/faculty/pastor-bukky-manufor.jpg"'));
     assert.ok(homePageSource.includes('alt: "Pastor Bukky Manufor"'));
     assert.ok(!homePageSource.includes("Pst. Buki Manufor"));
+  });
+  check("Pastor Achase has the supplied portrait and corrected name", () => {
+    assert.ok(homePageSource.includes('src: "/assets/faculty/pastor-achase-opuda.jpg"'));
+    assert.ok(homePageSource.includes('alt: "Pastor Achase Opuda"'));
+    assert.ok(!homePageSource.includes("Pst. Achese Opuda"));
   });
   check("faculty styling includes feature and roster layouts", () => {
     assert.match(homeStylesSource, /\.faculty-feature-grid\s*\{/);
@@ -383,6 +388,12 @@ async function main() {
   );
   check("Pastor Bukky's portrait asset is present", () => {
     assert.ok(bukkyPortrait.size > 50_000);
+  });
+  const achasePortrait = await fs.stat(
+    path.join(process.cwd(), "public/assets/faculty/pastor-achase-opuda.jpg")
+  );
+  check("Pastor Achase's portrait asset is present", () => {
+    assert.ok(achasePortrait.size > 50_000);
   });
 
   console.log("\nprospective scholarship wiring");

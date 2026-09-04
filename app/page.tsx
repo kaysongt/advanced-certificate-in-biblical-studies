@@ -57,7 +57,15 @@ const FACULTY_ROSTER: readonly FacultyRosterMember[] = [
       className: "faculty-roster-portrait-bukky",
     },
   },
-  { name: "Pst. Achese Opuda", initials: "AO" },
+  {
+    name: "Pastor Achase Opuda",
+    initials: "AO",
+    portrait: {
+      src: "/assets/faculty/pastor-achase-opuda.jpg",
+      alt: "Pastor Achase Opuda",
+      className: "faculty-roster-portrait-achase",
+    },
+  },
   { name: "Dr. Sam Ekundayo", initials: "SE" },
 ];
 
