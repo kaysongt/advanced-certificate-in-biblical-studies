@@ -1456,6 +1456,12 @@ a.card:hover::after { opacity: .9; }
   transition: transform .5s cubic-bezier(.22, 1, .36, 1);
 }
 .faculty-roster-card:hover .faculty-roster-portrait img { transform: scale(1.06); }
+.faculty-roster-portrait-bukky img {
+  object-position: 50% 8%;
+  transform: scale(2.8);
+  transform-origin: 50% 15%;
+}
+.faculty-roster-card:hover .faculty-roster-portrait-bukky img { transform: scale(2.92); }
 .faculty-roster-card h3 { margin: 28px 0 8px; color: var(--ink); font: 600 1.15rem/1.18 var(--serif); }
 .faculty-roster-role { color: var(--faint); font: 700 8.5px/1.2 var(--sans); letter-spacing: .11em; text-transform: uppercase; }
 

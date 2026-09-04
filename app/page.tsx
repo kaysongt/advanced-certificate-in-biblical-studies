@@ -34,6 +34,7 @@ type FacultyRosterMember = {
   portrait?: {
     src: string;
     alt: string;
+    className?: string;
   };
 };
 
@@ -47,7 +48,15 @@ const FACULTY_ROSTER: readonly FacultyRosterMember[] = [
     },
   },
   { name: "Rev. Tokunbo Adejuwon", initials: "TA" },
-  { name: "Pst. Buki Manufor", initials: "BM" },
+  {
+    name: "Pastor Bukky Manufor",
+    initials: "BM",
+    portrait: {
+      src: "/assets/faculty/pastor-bukky-manufor.jpg",
+      alt: "Pastor Bukky Manufor",
+      className: "faculty-roster-portrait-bukky",
+    },
+  },
   { name: "Pst. Achese Opuda", initials: "AO" },
   { name: "Dr. Sam Ekundayo", initials: "SE" },
 ];
@@ -338,7 +347,11 @@ export default function HomePage() {
                   <div className="faculty-roster-top">
                     <span className="faculty-roster-index">{String(index + 3).padStart(2, "0")}</span>
                     {faculty.portrait ? (
-                      <div className="faculty-roster-portrait">
+                      <div
+                        className={`faculty-roster-portrait${
+                          faculty.portrait.className ? ` ${faculty.portrait.className}` : ""
+                        }`}
+                      >
                         <Image
                           src={faculty.portrait.src}
                           alt={faculty.portrait.alt}
