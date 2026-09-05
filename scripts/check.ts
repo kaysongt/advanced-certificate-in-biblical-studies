@@ -335,6 +335,11 @@ async function main() {
   check("homepage includes the seven-member faculty section", () => {
     assert.ok(homePageSource.includes('id="faculty"'));
     for (const name of facultyNames) assert.ok(homePageSource.includes(name), name);
+    assert.ok(
+      !homePageSource.includes(
+        "Additional faculty portraits and biographies will be published as they are provided."
+      )
+    );
   });
   check("Pastor John has the supplied portrait and approved biography", () => {
     assert.ok(homePageSource.includes('src="/assets/faculty/dr-john-oyeniran.jpg"'));

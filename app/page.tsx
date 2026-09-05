@@ -355,7 +355,6 @@ export default function HomePage() {
           <div className="faculty-roster">
             <div className="faculty-roster-heading">
               <span>Also serving on faculty</span>
-              <p>Additional faculty portraits and biographies will be published as they are provided.</p>
             </div>
             <div className="faculty-roster-grid">
               {FACULTY_ROSTER.map((faculty, index) => (

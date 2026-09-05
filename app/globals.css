@@ -1414,7 +1414,6 @@ a.card:hover::after { opacity: .9; }
 .faculty-roster { margin-top: 52px; padding-top: 26px; border-top: 1px solid var(--rule); }
 .faculty-roster-heading { display: flex; align-items: baseline; justify-content: space-between; gap: 28px; margin-bottom: 20px; }
 .faculty-roster-heading > span { color: var(--ink-2); font: 650 1.15rem/1.3 var(--serif); }
-.faculty-roster-heading p { max-width: 520px; margin: 0; color: var(--faint); font: 500 11px/1.55 var(--sans); text-align: right; }
 .faculty-roster-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px; }
 .faculty-roster-card {
   min-height: 176px;
@@ -2040,7 +2039,6 @@ a.card:hover::after { opacity: .9; }
   .faculty-profile-body { padding: 25px 22px 27px; }
   .faculty-motto { margin-top: 25px; }
   .faculty-roster-heading { align-items: flex-start; flex-direction: column; gap: 7px; }
-  .faculty-roster-heading p { text-align: left; }
   .faculty-roster-grid { grid-template-columns: 1fr; }
   .faculty-roster-card { min-height: 142px; }
   .price { padding: 29px 23px 25px; }
