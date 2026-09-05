@@ -66,7 +66,15 @@ const FACULTY_ROSTER: readonly FacultyRosterMember[] = [
       className: "faculty-roster-portrait-achase",
     },
   },
-  { name: "Dr. Sam Ekundayo", initials: "SE" },
+  {
+    name: "Dr. Sam Ekundayo",
+    initials: "SE",
+    portrait: {
+      src: "/assets/faculty/dr-sam-ekundayo.jpg",
+      alt: "Dr. Sam Ekundayo",
+      className: "faculty-roster-portrait-sam",
+    },
+  },
 ];
 
 export default function HomePage() {

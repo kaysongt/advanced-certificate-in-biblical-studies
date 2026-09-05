@@ -356,6 +356,10 @@ async function main() {
     assert.ok(homePageSource.includes('alt: "Pastor Achase Opuda"'));
     assert.ok(!homePageSource.includes("Pst. Achese Opuda"));
   });
+  check("Dr. Sam has the supplied portrait", () => {
+    assert.ok(homePageSource.includes('src: "/assets/faculty/dr-sam-ekundayo.jpg"'));
+    assert.ok(homePageSource.includes('alt: "Dr. Sam Ekundayo"'));
+  });
   check("faculty styling includes feature and roster layouts", () => {
     assert.match(homeStylesSource, /\.faculty-feature-grid\s*\{/);
     assert.match(homeStylesSource, /\.faculty-roster-grid\s*\{/);
@@ -394,6 +398,12 @@ async function main() {
   );
   check("Pastor Achase's portrait asset is present", () => {
     assert.ok(achasePortrait.size > 50_000);
+  });
+  const samPortrait = await fs.stat(
+    path.join(process.cwd(), "public/assets/faculty/dr-sam-ekundayo.jpg")
+  );
+  check("Dr. Sam's portrait asset is present", () => {
+    assert.ok(samPortrait.size > 50_000);
   });
 
   console.log("\nprospective scholarship wiring");
