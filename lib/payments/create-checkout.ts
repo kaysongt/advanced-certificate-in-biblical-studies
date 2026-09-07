@@ -6,6 +6,7 @@ import { getStripeCatalogItem } from "@/lib/payments/catalog";
 import {
   buildCheckoutSessionParams,
   checkoutSessionHasPromotion,
+  checkoutSessionSuppressesLink,
 } from "@/lib/payments/checkout-session";
 import {
   getStripeCheckoutConfiguration,
@@ -89,6 +90,11 @@ export async function createCheckoutForEnrollment(input: {
           attempt.checkoutSessionId
         );
         if (existingSession.status === "open" && existingSession.url) {
+          if (!checkoutSessionSuppressesLink(existingSession)) {
+            await stripe.checkout.sessions.expire(existingSession.id);
+            await releaseStripeCheckoutAttempt(attempt.id, StripePaymentStatus.EXPIRED);
+            continue;
+          }
           if (!promotion || checkoutSessionHasPromotion(existingSession, promotion.id)) {
             return { kind: "checkout", url: existingSession.url };
           }

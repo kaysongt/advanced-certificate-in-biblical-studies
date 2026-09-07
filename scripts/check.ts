@@ -50,6 +50,7 @@ import { getStripeCatalogItem } from "../lib/payments/catalog";
 import {
   buildCheckoutSessionParams,
   checkoutSessionHasPromotion,
+  checkoutSessionSuppressesLink,
 } from "../lib/payments/checkout-session";
 import {
   blocksLatePaymentActivation,
@@ -769,6 +770,14 @@ async function main() {
     assert.equal("custom_text" in checkoutParams, false);
     assert.equal(checkoutParams.customer_email, "checkout-check@example.com");
     assert.equal(checkoutParams.success_url, "https://www.thekti.org/dashboard?payment=success");
+  });
+  check("Checkout suppresses Stripe Link's saved consumer identity", () => {
+    assert.deepEqual(checkoutParams.wallet_options, { link: { display: "never" } });
+    assert.equal(
+      checkoutSessionSuppressesLink({ wallet_options: checkoutParams.wallet_options }),
+      true
+    );
+    assert.equal(checkoutSessionSuppressesLink({ wallet_options: null }), false);
   });
   const certificateCheckoutParams = buildCheckoutSessionParams({
     enrollmentId: "enrollment-check",

@@ -27,6 +27,9 @@ export function buildCheckoutSessionParams(input: {
     client_reference_id: input.enrollmentId,
     customer_email: input.customerEmail,
     line_items: [{ price: input.priceId, quantity: 1 }],
+    // Link can surface a phone number saved on a separate Stripe consumer account.
+    // KTI does not collect phone numbers, so use ordinary Checkout payment methods.
+    wallet_options: { link: { display: "never" } },
     // A code entered on the KTI dashboard is attached before Checkout opens.
     // Stripe then renders a no-cost order instead of requesting payment details.
     ...(input.promotionCodeId
@@ -41,6 +44,12 @@ export function buildCheckoutSessionParams(input: {
     expires_at: Math.floor(Date.now() / 1000) + 60 * 60,
     submit_type: "pay",
   };
+}
+
+export function checkoutSessionSuppressesLink(
+  session: Pick<Stripe.Checkout.Session, "wallet_options">
+): boolean {
+  return session.wallet_options?.link?.display === "never";
 }
 
 export function checkoutSessionHasPromotion(
