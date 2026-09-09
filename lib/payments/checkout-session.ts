@@ -1,3 +1,4 @@
+import { createHash } from "node:crypto";
 import Stripe from "stripe";
 
 import { promotionCodesAllowed } from "@/lib/payments/promotions";
@@ -27,9 +28,7 @@ export function buildCheckoutSessionParams(input: {
     client_reference_id: input.enrollmentId,
     customer_email: input.customerEmail,
     line_items: [{ price: input.priceId, quantity: 1 }],
-    // Link can surface a phone number saved on a separate Stripe consumer account.
-    // KTI does not collect phone numbers, so use ordinary Checkout payment methods.
-    wallet_options: { link: { display: "never" } },
+    // Managed Payments controls wallets; suppressing Link rejects the whole Session.
     // A code entered on the KTI dashboard is attached before Checkout opens.
     // Stripe then renders a no-cost order instead of requesting payment details.
     ...(input.promotionCodeId
@@ -41,15 +40,19 @@ export function buildCheckoutSessionParams(input: {
     payment_intent_data: { metadata },
     success_url: `${input.appBaseUrl}/dashboard?payment=success`,
     cancel_url: `${input.appBaseUrl}/dashboard?payment=cancelled`,
-    expires_at: Math.floor(Date.now() / 1000) + 60 * 60,
+    // Use Stripe's default expiry so retries do not change request parameters.
     submit_type: "pay",
   };
 }
 
-export function checkoutSessionSuppressesLink(
-  session: Pick<Stripe.Checkout.Session, "wallet_options">
-): boolean {
-  return session.wallet_options?.link?.display === "never";
+export function checkoutSessionIdempotencyKey(
+  attemptId: string,
+  params: Stripe.Checkout.SessionCreateParams
+): string {
+  // Separate changed promo/configuration requests from earlier rejected requests.
+  // Identical retries (including after a network timeout) retain the same key.
+  const fingerprint = createHash("sha256").update(JSON.stringify(params)).digest("hex");
+  return `kti-checkout:v2:${attemptId}:${fingerprint}`;
 }
 
 export function checkoutSessionHasPromotion(

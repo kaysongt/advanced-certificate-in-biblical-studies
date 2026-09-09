@@ -6,7 +6,7 @@ import { getStripeCatalogItem } from "@/lib/payments/catalog";
 import {
   buildCheckoutSessionParams,
   checkoutSessionHasPromotion,
-  checkoutSessionSuppressesLink,
+  checkoutSessionIdempotencyKey,
 } from "@/lib/payments/checkout-session";
 import {
   getStripeCheckoutConfiguration,
@@ -90,11 +90,6 @@ export async function createCheckoutForEnrollment(input: {
           attempt.checkoutSessionId
         );
         if (existingSession.status === "open" && existingSession.url) {
-          if (!checkoutSessionSuppressesLink(existingSession)) {
-            await stripe.checkout.sessions.expire(existingSession.id);
-            await releaseStripeCheckoutAttempt(attempt.id, StripePaymentStatus.EXPIRED);
-            continue;
-          }
           if (!promotion || checkoutSessionHasPromotion(existingSession, promotion.id)) {
             return { kind: "checkout", url: existingSession.url };
           }
@@ -123,22 +118,25 @@ export async function createCheckoutForEnrollment(input: {
 
     let session: Stripe.Checkout.Session;
     try {
+      const params = buildCheckoutSessionParams({
+        enrollmentId: enrollment.id,
+        paymentAttemptId: attempt.id,
+        catalogKey: catalog.key,
+        customerEmail: enrollment.student.email,
+        priceId,
+        appBaseUrl: config.appBaseUrl,
+        promotionCodeId: promotion?.id,
+      });
       session = await stripe.checkout.sessions.create(
-        buildCheckoutSessionParams({
-          enrollmentId: enrollment.id,
-          paymentAttemptId: attempt.id,
-          catalogKey: catalog.key,
-          customerEmail: enrollment.student.email,
-          priceId,
-          appBaseUrl: config.appBaseUrl,
-          promotionCodeId: promotion?.id,
-        }),
-        { idempotencyKey: `kti-checkout:${attempt.id}` }
+        params,
+        { idempotencyKey: checkoutSessionIdempotencyKey(attempt.id, params) }
       );
     } catch (error) {
-      if (promotion && error instanceof Stripe.errors.StripeInvalidRequestError) {
+      if (error instanceof Stripe.errors.StripeInvalidRequestError) {
         await releaseStripeCheckoutAttempt(attempt.id, StripePaymentStatus.FAILED);
-        throw new PromotionCodeError();
+        if (promotion && error.param?.startsWith("discounts")) {
+          throw new PromotionCodeError();
+        }
       }
       throw error;
     }

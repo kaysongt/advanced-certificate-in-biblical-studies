@@ -50,7 +50,7 @@ import { getStripeCatalogItem } from "../lib/payments/catalog";
 import {
   buildCheckoutSessionParams,
   checkoutSessionHasPromotion,
-  checkoutSessionSuppressesLink,
+  checkoutSessionIdempotencyKey,
 } from "../lib/payments/checkout-session";
 import {
   blocksLatePaymentActivation,
@@ -768,16 +768,17 @@ async function main() {
   });
   check("Checkout remains compatible with Stripe Managed Payments", () => {
     assert.equal("custom_text" in checkoutParams, false);
+    assert.equal("wallet_options" in checkoutParams, false);
+    assert.equal("managed_payments" in checkoutParams, false);
     assert.equal(checkoutParams.customer_email, "checkout-check@example.com");
     assert.equal(checkoutParams.success_url, "https://www.thekti.org/dashboard?payment=success");
   });
-  check("Checkout suppresses Stripe Link's saved consumer identity", () => {
-    assert.deepEqual(checkoutParams.wallet_options, { link: { display: "never" } });
-    assert.equal(
-      checkoutSessionSuppressesLink({ wallet_options: checkoutParams.wallet_options }),
-      true
-    );
-    assert.equal(checkoutSessionSuppressesLink({ wallet_options: null }), false);
+  check("Checkout retries do not change expiry or reuse a legacy rejected key", () => {
+    assert.equal("expires_at" in checkoutParams, false);
+    const key = checkoutSessionIdempotencyKey("attempt-check", checkoutParams);
+    assert.notEqual(key, "kti-checkout:attempt-check");
+    assert.equal(key, checkoutSessionIdempotencyKey("attempt-check", JSON.parse(JSON.stringify(checkoutParams))));
+    assert.notEqual(key, checkoutSessionIdempotencyKey("another-attempt", checkoutParams));
   });
   const certificateCheckoutParams = buildCheckoutSessionParams({
     enrollmentId: "enrollment-check",
@@ -801,6 +802,10 @@ async function main() {
     promotionCodeId: "promo_full_tuition",
   });
   check("an entered full-tuition code is applied before Checkout opens", () => {
+    assert.notEqual(
+      checkoutSessionIdempotencyKey("attempt-check", checkoutParams),
+      checkoutSessionIdempotencyKey("attempt-check", noCostCheckoutParams)
+    );
     assert.deepEqual(noCostCheckoutParams.discounts, [
       { promotion_code: "promo_full_tuition" },
     ]);
