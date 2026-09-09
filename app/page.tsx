@@ -306,6 +306,7 @@ export default function HomePage() {
               <div className="faculty-profile-photo">
                 <Image
                   src="/assets/faculty/dr-kay-ijisesan-green.jpg"
+                  unoptimized
                   alt="Dr. Kay Ijisesan, Founder and President of KingsWord Training Institute"
                   fill
                   sizes="(max-width: 700px) calc(100vw - 36px), (max-width: 1040px) 300px, 19vw"
@@ -328,6 +329,7 @@ export default function HomePage() {
               <div className="faculty-profile-photo">
                 <Image
                   src="/assets/faculty/dr-john-oyeniran.jpg"
+                  unoptimized
                   alt="Pastor John Oyeniran"
                   fill
                   sizes="(max-width: 700px) calc(100vw - 36px), (max-width: 1040px) 300px, 19vw"
@@ -369,6 +371,8 @@ export default function HomePage() {
                       >
                         <Image
                           src={faculty.portrait.src}
+                          // Preserve source detail when CSS zooms into these portraits.
+                          unoptimized
                           alt={faculty.portrait.alt}
                           fill
                           sizes="64px"
