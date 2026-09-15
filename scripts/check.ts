@@ -1077,19 +1077,21 @@ async function main() {
   console.log("  ok  wrong password rejected");
 
   console.log("\nstorage");
-  // Exercise the dev adapter against a scratch file, then clean up.
+  // Preserve the entire local data directory, not just store.json: exports and
+  // other user files may live alongside the development database.
+  if (process.env.DATABASE_URL) throw new Error("Run storage checks without DATABASE_URL; tests must never write to production.");
   const dataDir = path.join(process.cwd(), ".data");
   const scratchDir = await fs.mkdtemp(path.join(os.tmpdir(), "kti-check-"));
-  const backup = path.join(scratchDir, "store.json.bak");
+  const backup = path.join(scratchDir, "original-data");
   const live = path.join(dataDir, "store.json");
   let hadExisting = false;
   try {
-    await fs.copyFile(live, backup);
+    await fs.rename(dataDir, backup);
     hadExisting = true;
-  } catch {
-    /* nothing to preserve */
+  } catch (err) {
+    if ((err as NodeJS.ErrnoException).code !== "ENOENT") throw err;
   }
-  await fs.rm(live, { force: true });
+  try {
 
   const { db } = await import("../lib/db");
   const registered = await db.createStudentWithEnrollment(
@@ -1401,9 +1403,9 @@ async function main() {
     assert.ok(caught instanceof StorageUnavailableError, `got ${caught}`)
   );
 
-  if (hadExisting) {
-    await fs.mkdir(dataDir, { recursive: true });
-    await fs.rename(backup, live);
+  } finally {
+    await fs.rm(dataDir, { recursive: true, force: true });
+    if (hadExisting) await fs.rename(backup, dataDir);
   }
   await fs.rm(scratchDir, { recursive: true, force: true });
 
