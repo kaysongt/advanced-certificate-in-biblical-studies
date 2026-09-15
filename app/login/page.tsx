@@ -23,7 +23,7 @@ export default async function LoginPage({
   const staffSignIn = isStaffOperationsPath(next);
 
   return (
-    <main className="shell">
+    <main className="shell" id="main-content" tabIndex={-1}>
       <div className="authwrap">
         <div className="authcard">
           <h1>{staffSignIn ? "Staff sign in" : "Sign in"}</h1>

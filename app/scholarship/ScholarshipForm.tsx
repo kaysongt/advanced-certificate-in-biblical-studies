@@ -35,7 +35,7 @@ export default function ScholarshipForm({
   return (
     <form action={action} className="scholarship-form">
       <input type="hidden" name="enrollmentId" value={enrollmentId} />
-      {state.error ? <div className="notice bad">{state.error}</div> : null}
+      {state.error ? <div className="notice bad" role="alert">{state.error}</div> : null}
 
       <div className={`field${errors.financialNeed ? " err" : ""}`}>
         <label htmlFor="financialNeed">Tell us about your financial need</label>

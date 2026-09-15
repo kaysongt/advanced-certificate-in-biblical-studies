@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 /**
  * Renders a topic's teaching material and wires up its quiz.
@@ -22,6 +22,9 @@ export type QuizResult = { correct: number; total: number; pct: number } | null;
 
 export default function LessonBody({ html, passMark, assessment = false, onScored }: Props) {
   const ref = useRef<HTMLDivElement>(null);
+  // Quiz buttons are enhanced in-place. Keep the HTML prop stable so rendering
+  // the scorecard does not replace those buttons and discard their listeners.
+  const markup = useMemo(() => ({ __html: html }), [html]);
   const [result, setResult] = useState<QuizResult>(null);
 
   const report = useCallback(
@@ -119,7 +122,7 @@ export default function LessonBody({ html, passMark, assessment = false, onScore
 
   return (
     <>
-      <div className="prose lesson-prose" ref={ref} dangerouslySetInnerHTML={{ __html: html }} />
+      <div className="prose lesson-prose" ref={ref} dangerouslySetInnerHTML={markup} />
       {result ? (
         <div className={`scorecard${assessment ? "" : result.pct >= passMark ? " pass" : " fail"}`}>
           <div className="pct">{result.pct}%</div>

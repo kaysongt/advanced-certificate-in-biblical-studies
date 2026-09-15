@@ -4,7 +4,7 @@ import { notFound, redirect } from "next/navigation";
 
 import TopicReader from "@/components/TopicReader";
 import { entitlementRedirectPath, hasActiveAccess } from "@/lib/access";
-import { currentStudent } from "@/lib/auth";
+import { currentStudent, isStaff } from "@/lib/auth";
 import { getCourseStatuses, getLesson, getLessonRows } from "@/lib/content";
 import { findCourse, getCurriculum, lessonId } from "@/lib/curriculum";
 import { db } from "@/lib/db";
@@ -28,8 +28,10 @@ export default async function TopicPage({ params }: Props) {
   if (!found || !Number.isInteger(index)) notFound();
   const { module, course } = found;
 
+  const student = await currentStudent();
+  const staffPreview = student ? isStaff(student) : false;
   const available = getCourseStatuses().some(
-    (status) => status.course.slug === course.slug && status.available
+    (status) => status.course.slug === course.slug && status.complete && (status.available || staffPreview)
   );
   if (!available) redirect(`/curriculum/${module.slug}`);
 
@@ -38,12 +40,11 @@ export default async function TopicPage({ params }: Props) {
   if (!row) notFound();
 
   // Study material is for enrolled students only.
-  const student = await currentStudent();
   if (!student) redirect(`/login?next=/courses/${slug}/${index}`);
 
   const enrollments = await db.getEnrollmentsForStudent(student.id);
   const entitled = hasActiveAccess(enrollments, module.slug);
-  if (!entitled) redirect(entitlementRedirectPath(enrollments));
+  if (!entitled && !staffPreview) redirect(entitlementRedirectPath(enrollments));
 
   const { grading } = getCurriculum();
   const lesson = getLesson(module, course, index);
@@ -54,7 +55,7 @@ export default async function TopicPage({ params }: Props) {
   const nextRow = rows.find((r) => r.n === index + 1) ?? null;
 
   // Sequential gating: you may not skip ahead past an unfinished topic.
-  if (grading.must_pass_to_advance && prevRow && !done.has(prevRow.id)) {
+  if (!staffPreview && grading.must_pass_to_advance && prevRow && !done.has(prevRow.id)) {
     redirect(`/courses/${slug}/${prevRow.n}`);
   }
 
@@ -62,7 +63,7 @@ export default async function TopicPage({ params }: Props) {
   const chapter = row.reading;
 
   return (
-    <main className="shell">
+    <main className="shell" id="main-content" tabIndex={-1}>
       <div className="topicwrap">
       <div className="breadcrumb">
         <Link href={`/curriculum/${module.slug}`}>{module.short_title}</Link>
@@ -76,7 +77,7 @@ export default async function TopicPage({ params }: Props) {
         {rows.map((r) => {
           const isDone = done.has(r.id);
           const locked =
-            grading.must_pass_to_advance && r.n > 1 && !done.has(rows[r.n - 2].id);
+            !staffPreview && grading.must_pass_to_advance && r.n > 1 && !done.has(rows[r.n - 2].id);
           if (r.n === index) {
             return (
               <span className="cur" key={r.id}>
@@ -108,6 +109,7 @@ export default async function TopicPage({ params }: Props) {
       </header>
 
       <TopicReader
+        preview={staffPreview}
         html={lesson.html}
         courseSlug={course.slug}
         lessonId={lessonId(course.slug, index)}

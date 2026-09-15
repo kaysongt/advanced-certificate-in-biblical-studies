@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 
 /**
@@ -13,11 +14,12 @@ import { useEffect, useState } from "react";
  * prerenderable. See app/api/session/route.ts.
  */
 export default function AuthNav() {
+  const pathname = usePathname();
   const [session, setSession] = useState({ signedIn: false, staff: false, admin: false });
 
   useEffect(() => {
     let cancelled = false;
-    fetch("/api/session")
+    fetch("/api/session", { cache: "no-store" })
       .then((r) => r.json())
       .then((d) => {
         if (!cancelled) {
@@ -34,7 +36,7 @@ export default function AuthNav() {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [pathname]);
 
   if (session.signedIn) {
     return (

@@ -90,7 +90,7 @@ export default function HomePage() {
   }).format(fullProgramSavings);
 
   return (
-    <main className="marketing-home">
+    <main className="marketing-home" id="main-content" tabIndex={-1}>
       <section className="hero home-hero">
         <div className="hero-glow" aria-hidden="true" />
         <div className="wide hero-grid">

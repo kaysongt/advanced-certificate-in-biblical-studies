@@ -20,7 +20,7 @@ export default async function CommunityPage() {
     : { posts: 0, credits: 0 };
 
   return (
-    <main className="shell">
+    <main className="shell" id="main-content" tabIndex={-1}>
       <div className="community-shell">
         <header className="community-index-head">
           <div>

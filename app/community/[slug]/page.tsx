@@ -39,7 +39,7 @@ export default async function CommunityModulePage({ params }: Props) {
   });
 
   return (
-    <main className="shell">
+    <main className="shell" id="main-content" tabIndex={-1}>
       <div className="community-shell">
         <div className="breadcrumb">
           <Link href="/community">Community</Link>

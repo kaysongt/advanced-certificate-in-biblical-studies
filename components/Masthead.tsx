@@ -22,7 +22,7 @@ export default function Masthead() {
             <span className="kw">KingsWord</span> Training Institute
           </span>
         </Link>
-        <nav className="mastnav">
+        <nav className="mastnav" aria-label="Main navigation">
           <PrimaryNav />
           <AuthNav />
           <ThemeToggle />

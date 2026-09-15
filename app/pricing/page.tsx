@@ -10,7 +10,7 @@ export default function PricingPage() {
   const { program, grading } = getCurriculum();
 
   return (
-    <main className="shell">
+    <main className="shell" id="main-content" tabIndex={-1}>
       <div className="pagehead">
         <div className="eyebrow">Tuition</div>
         <h1>Enrollment options</h1>

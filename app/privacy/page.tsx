@@ -7,7 +7,7 @@ export const metadata: Metadata = {
 
 export default function PrivacyPage() {
   return (
-    <main className="shell">
+    <main className="shell" id="main-content" tabIndex={-1}>
       <div className="pagehead">
         <div className="eyebrow">Your information</div>
         <h1>Privacy notice</h1>

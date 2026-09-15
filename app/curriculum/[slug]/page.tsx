@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 
 import { getCourseStatuses, getModuleDoc } from "@/lib/content";
 import { getModule, moduleReleaseLabel } from "@/lib/curriculum";
+import { currentStudent, isStaff } from "@/lib/auth";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -22,6 +23,8 @@ export default async function ModulePage({ params }: Props) {
   if (!module) notFound();
 
   const doc = getModuleDoc(module);
+  const actor = await currentStudent();
+  const staffPreview = actor ? isStaff(actor) : false;
   const statuses = getCourseStatuses().filter((s) => s.module.slug === module.slug);
   const moduleAvailable = statuses.length > 0 && statuses.every((status) => status.available);
   const lessons = module.courses.length * module.lessons_per_course;
@@ -41,7 +44,7 @@ export default async function ModulePage({ params }: Props) {
   ];
 
   return (
-    <main className="shell">
+    <main className="shell" id="main-content" tabIndex={-1}>
       <div className="breadcrumb">
         <Link href="/curriculum">Curriculum</Link>
         <span className="sep">/</span>
@@ -65,7 +68,7 @@ export default async function ModulePage({ params }: Props) {
 
       <h2>Courses</h2>
       <div className="stack">
-        {statuses.map(({ course, available }) => {
+        {statuses.map(({ course, available, complete }) => {
           const contents = (
             <>
               <span className="code">{course.code}</span>
@@ -75,13 +78,13 @@ export default async function ModulePage({ params }: Props) {
               </span>
               <span className="meta">
                 <span className={`avail ${available ? "now" : "soon"}`}>
-                  {available ? "Ready" : moduleReleaseLabel(module)}
+                  {available ? "Ready" : staffPreview && complete ? "Staff preview" : moduleReleaseLabel(module)}
                 </span>
               </span>
             </>
           );
 
-          return available ? (
+          return available || (staffPreview && complete) ? (
             <Link className="row" href={`/courses/${course.slug}`} key={course.slug}>
               {contents}
             </Link>
@@ -141,13 +144,14 @@ export default async function ModulePage({ params }: Props) {
         </div>
       </section>
 
-      <h2>Module assignment</h2>
+      <h2>Module guide</h2>
       <p className="deck" style={{ maxWidth: "62ch" }}>
-        One assignment for the whole module, submitted after all {module.courses.length}{" "}
-        courses are complete.
+        Learning outcomes, reading requirements, and assessment guidance for this certificate.
       </p>
 
-      <div className="prose" dangerouslySetInnerHTML={{ __html: doc.html }} />
+      {doc.ready ? <div className="prose" dangerouslySetInnerHTML={{ __html: doc.html }} /> : (
+        <div className="notice">The detailed study guide is being prepared by the Institute. {moduleReleaseLabel(module)}. Course materials will appear here when they are ready.</div>
+      )}
 
       <div style={{ marginTop: 36 }}>
         <Link

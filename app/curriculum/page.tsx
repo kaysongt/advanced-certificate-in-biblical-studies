@@ -12,7 +12,7 @@ export default function CurriculumPage() {
   const statuses = getModuleStatuses();
 
   return (
-    <main className="shell">
+    <main className="shell" id="main-content" tabIndex={-1}>
       <div className="pagehead">
         <div className="eyebrow">The program</div>
         <h1>Curriculum</h1>

@@ -42,6 +42,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <script dangerouslySetInnerHTML={{ __html: THEME_BOOT }} />
       </head>
       <body>
+        <a className="skip-link" href="#main-content">Skip to main content</a>
         <Masthead />
         {children}
         <SiteFooter />

@@ -55,7 +55,7 @@ export default async function AdminSettings({
   };
   const result = role ?? reset;
   return (
-    <main className="shell admin-shell">
+    <main className="shell admin-shell" id="main-content" tabIndex={-1}>
       <header className="pagehead">
         <div className="eyebrow">KingsWord administration</div>
         <h1>Admin settings</h1>

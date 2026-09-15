@@ -21,7 +21,7 @@ export default function LoginForm({ next }: { next: string }) {
   return (
     <form action={action}>
       <input type="hidden" name="next" value={next} />
-      {state.error ? <div className="notice bad">{state.error}</div> : null}
+      {state.error ? <div className="notice bad" role="alert">{state.error}</div> : null}
 
       <div className="field">
         <label htmlFor="email">Email address</label>
@@ -31,12 +31,16 @@ export default function LoginForm({ next }: { next: string }) {
           type="email"
           defaultValue={state.email ?? ""}
           autoComplete="email"
+          autoCapitalize="none"
+          spellCheck={false}
+          maxLength={254}
+          required
         />
       </div>
 
       <div className="field">
         <label htmlFor="password">Password</label>
-        <input id="password" name="password" type="password" autoComplete="current-password" />
+        <input id="password" name="password" type="password" autoComplete="current-password" maxLength={200} required />
       </div>
 
       <Submit />

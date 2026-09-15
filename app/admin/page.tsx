@@ -196,7 +196,7 @@ export default async function AdminPage({
 
 
   return (
-    <main className="shell admin-shell">
+    <main className="shell admin-shell" id="main-content" tabIndex={-1}>
       <header className="pagehead">
         <div className="eyebrow">KingsWord team</div>
         <h1>Staff operations</h1>

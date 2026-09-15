@@ -34,7 +34,7 @@ export default async function ScholarshipPage({
   const student = await currentStudent();
   if (!student) {
     return (
-      <main className="shell scholarship-shell">
+      <main className="shell scholarship-shell" id="main-content" tabIndex={-1}>
         <section className="scholarship-intro scholarship-prospect-intro">
           <div>
             <div className="eyebrow">Access to biblical training</div>
@@ -88,7 +88,7 @@ export default async function ScholarshipPage({
       : moduleNames.get(enrollment.product) ?? enrollment.product;
 
   return (
-    <main className="shell scholarship-shell">
+    <main className="shell scholarship-shell" id="main-content" tabIndex={-1}>
       <section className="scholarship-intro">
         <div>
           <div className="eyebrow">Access to biblical training</div>

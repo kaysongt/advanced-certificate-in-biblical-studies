@@ -215,6 +215,7 @@ export interface DataStore {
     answers: unknown;
   }): Promise<QuizAttempt>;
   hasPassingTopicAttempt(studentId: string, lessonId: string): Promise<boolean>;
+  getLatestAssessmentQuestionIds(studentId: string, courseSlug: string): Promise<string[]>;
   createAssessmentSubmission(input: {
     studentId: string;
     courseSlug: string;

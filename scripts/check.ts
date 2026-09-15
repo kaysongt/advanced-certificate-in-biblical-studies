@@ -47,6 +47,8 @@ import {
 import { ADMIN_NAV_ITEMS, isAdminRouteActive } from "../lib/admin-navigation";
 import { csvCell, scholarshipCsv } from "../lib/admin-export";
 import { adminSettingsRedirect } from "../lib/admin-settings";
+import { issueAssessmentAttempt, verifyAssessmentAttempt } from "../lib/assessment-attempt";
+import { prioritizeFreshQuestions } from "../lib/assessment-selection";
 import { isPrimaryRouteActive, PRIMARY_NAV_ITEMS } from "../lib/navigation";
 import { getStripeCatalogItem } from "../lib/payments/catalog";
 import {
@@ -467,6 +469,24 @@ async function main() {
   });
 
   console.log("\nadmin route wiring");
+  check("assessment tokens bind the exact questions, course, and student", () => {
+    const ids = Array.from({ length: 20 }, (_, i) => `question-${i}`);
+    const token = issueAssessmentAttempt("student-a", "st-101", ids);
+    assert.equal(verifyAssessmentAttempt(token, "student-a", "st-101", ids), true);
+    assert.equal(verifyAssessmentAttempt(token, "student-b", "st-101", ids), false);
+    assert.equal(verifyAssessmentAttempt(token, "student-a", "st-102", ids), false);
+    assert.equal(verifyAssessmentAttempt(token, "student-a", "st-101", ids.slice(0, 1)), false);
+    assert.equal(verifyAssessmentAttempt(token, "student-a", "st-101", [...ids].reverse()), false);
+    assert.equal(verifyAssessmentAttempt(`x${token}`, "student-a", "st-101", ids), false);
+  });
+  check("retakes exclude the previous questions when the bank has room", () => {
+    const bank = Array.from({ length: 60 }, (_, i) => ({ id: `q-${i}` }));
+    const previous = bank.slice(0, 20).map(q => q.id);
+    const next = prioritizeFreshQuestions(bank, previous, 20);
+    assert.equal(next.length, 20);
+    assert.ok(next.every(q => !previous.includes(q.id)));
+    assert.equal(prioritizeFreshQuestions(bank.slice(0, 10), previous, 20).length, 10);
+  });
   check("CSV exports escape quotes, newlines, and formula injection", () => {
     assert.equal(csvCell('Name "quoted"'), '"Name ""quoted"""');
     assert.equal(csvCell("=SUM(A1)"), '"\'=SUM(A1)"');
@@ -1336,6 +1356,29 @@ async function main() {
     sectionATotal: 20,
     sectionAPoints: 36,
   });
+  check("published module guide does not repeat the page-level heading", () => {
+    assert.equal(moduleDoc.ready, true);
+    assert.ok(!moduleDoc.html.includes("<h1"));
+    assert.ok(moduleDoc.html.includes("Module Learning Outcomes"));
+  });
+  check("unfinished module guides do not expose authoring placeholders or draft links", () => {
+    for (const upcoming of getCurriculum().modules.slice(1)) {
+      const guide = getModuleDoc(upcoming);
+      assert.equal(guide.ready, false);
+      assert.equal(guide.html, "");
+    }
+  });
+  await db.createQuizAttempt({
+    studentId: student.id, courseSlug: "st-101", lessonId: null,
+    kind: "course-assessment", correct: 1, total: 2, scorePct: 50, passed: false,
+    answers: [{ questionId: "question-one", answer: "A" }, { questionId: "question-two", answer: "B" }],
+  });
+  const previousQuestionIds = await db.getLatestAssessmentQuestionIds(student.id, "st-101");
+  check("retakes recover the last submitted question IDs, excluding topic quizzes", () =>
+    assert.deepEqual(previousQuestionIds, ["question-one", "question-two"])
+  );
+  const otherCourseQuestionIds = await db.getLatestAssessmentQuestionIds(student.id, "st-102");
+  check("retake history is scoped to the course", () => assert.deepEqual(otherCourseQuestionIds, []));
   await db.submitAssessmentWrittenWork(
     assessment.id,
     student.id,
@@ -1345,6 +1388,8 @@ async function main() {
   check("written assessment enters the staff grading queue", () =>
     assert.equal(pendingAssessments[0]?.id, assessment.id)
   );
+  const overwritten = await db.submitAssessmentWrittenWork(assessment.id, student.id, "Replacement text");
+  check("submitted written work cannot be overwritten", () => assert.equal(overwritten, null));
   const graded = await db.gradeAssessment({
     id: assessment.id,
     graderId: grader.id,

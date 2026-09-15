@@ -6,6 +6,7 @@ import { NextResponse } from "next/server";
 import { hashPassword, startSession } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { StorageUnavailableError } from "@/lib/db/types";
+import { safeReturnPath } from "@/lib/login-redirect";
 
 /**
  * Dev-only door into the student experience, skipping registration and
@@ -20,7 +21,7 @@ import { StorageUnavailableError } from "@/lib/db/types";
  * it's built for production, full stop.
  */
 export async function GET(request: Request) {
-  if (process.env.NODE_ENV === "production") {
+  if (process.env.NODE_ENV === "production" || process.env.DATABASE_URL) {
     return new NextResponse("Not found", { status: 404 });
   }
 
@@ -29,11 +30,7 @@ export async function GET(request: Request) {
   const staffPreview = search.get("as") === "staff";
   const paymentPreview = search.get("payment") === "pending";
   // Only allow relative in-app paths — never redirect off-site from this route.
-  const destination = requested && requested.startsWith("/")
-    ? requested
-    : staffPreview
-      ? "/admin"
-      : "/dashboard";
+  const destination = safeReturnPath(requested, staffPreview ? "/admin" : "/dashboard");
 
   const email = staffPreview
     ? "staff-preview@kingsword.test"

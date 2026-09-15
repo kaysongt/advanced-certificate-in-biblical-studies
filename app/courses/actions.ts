@@ -11,7 +11,7 @@ import {
   isModuleReleased,
   lessonId as makeLessonId,
 } from "@/lib/curriculum";
-import { getLessonQuizQuestions } from "@/lib/content";
+import { getLessonQuizQuestions, getLessonRows } from "@/lib/content";
 import { db } from "@/lib/db";
 import { StorageUnavailableError } from "@/lib/db/types";
 
@@ -19,7 +19,7 @@ export async function setTopicComplete(
   courseSlug: string,
   lessonId: string,
   complete: boolean,
-  path: string
+  path: string,
 ): Promise<boolean> {
   const student = await currentStudent();
   if (!student) return false;
@@ -34,13 +34,30 @@ export async function setTopicComplete(
     return false;
   }
   if (!isModuleReleased(found.module)) return false;
+  const rows = getLessonRows(found.module, found.course);
+  if (!rows.some((row) => row.id === lessonId)) return false;
 
   const enrollments = await db.getEnrollmentsForStudent(student.id);
   if (!hasActiveAccess(enrollments, found.module.slug)) return false;
 
   if (complete) {
-    const questions = getLessonQuizQuestions(found.module, found.course, topicNumber);
-    if (questions.length && !(await db.hasPassingTopicAttempt(student.id, lessonId))) return false;
+    if (getCurriculum().grading.must_pass_to_advance) {
+      const done = new Set(
+        (await db.getProgress(student.id)).map((item) => item.lessonId),
+      );
+      if (rows.some((row) => row.n < topicNumber && !done.has(row.id)))
+        return false;
+    }
+    const questions = getLessonQuizQuestions(
+      found.module,
+      found.course,
+      topicNumber,
+    );
+    if (
+      questions.length &&
+      !(await db.hasPassingTopicAttempt(student.id, lessonId))
+    )
+      return false;
   }
 
   try {
@@ -75,36 +92,116 @@ export type TopicAttemptResult = {
 export async function recordTopicQuizAttempt(
   courseSlug: string,
   lessonId: string,
-  answers: number[]
+  answers: number[],
 ): Promise<TopicAttemptResult> {
-  const parsed = topicAttemptSchema.safeParse({ courseSlug, lessonId, answers });
-  if (!parsed.success) return { passed: false, pct: 0, correct: 0, total: 0, error: "Invalid attempt." };
+  const parsed = topicAttemptSchema.safeParse({
+    courseSlug,
+    lessonId,
+    answers,
+  });
+  if (!parsed.success)
+    return {
+      passed: false,
+      pct: 0,
+      correct: 0,
+      total: 0,
+      error: "Invalid attempt.",
+    };
 
   const student = await currentStudent();
-  if (!student) return { passed: false, pct: 0, correct: 0, total: 0, error: "Sign in again." };
+  if (!student)
+    return {
+      passed: false,
+      pct: 0,
+      correct: 0,
+      total: 0,
+      error: "Sign in again.",
+    };
 
   const found = findCourse(parsed.data.courseSlug);
-  const topicNumber = Number(parsed.data.lessonId.slice(parsed.data.courseSlug.length + 1));
-  if (!found || makeLessonId(parsed.data.courseSlug, topicNumber) !== parsed.data.lessonId) {
-    return { passed: false, pct: 0, correct: 0, total: 0, error: "Topic not found." };
+  const topicNumber = Number(
+    parsed.data.lessonId.slice(parsed.data.courseSlug.length + 1),
+  );
+  if (
+    !found ||
+    makeLessonId(parsed.data.courseSlug, topicNumber) !== parsed.data.lessonId
+  ) {
+    return {
+      passed: false,
+      pct: 0,
+      correct: 0,
+      total: 0,
+      error: "Topic not found.",
+    };
   }
   if (!isModuleReleased(found.module)) {
-    return { passed: false, pct: 0, correct: 0, total: 0, error: "This module has not opened yet." };
+    return {
+      passed: false,
+      pct: 0,
+      correct: 0,
+      total: 0,
+      error: "This module has not opened yet.",
+    };
+  }
+
+  const rows = getLessonRows(found.module, found.course);
+  if (
+    !Number.isInteger(topicNumber) ||
+    !rows.some((row) => row.id === parsed.data.lessonId)
+  ) {
+    return {
+      passed: false,
+      pct: 0,
+      correct: 0,
+      total: 0,
+      error: "Topic not found.",
+    };
   }
 
   const enrollments = await db.getEnrollmentsForStudent(student.id);
   if (!hasActiveAccess(enrollments, found.module.slug)) {
-    return { passed: false, pct: 0, correct: 0, total: 0, error: "Active enrollment required." };
+    return {
+      passed: false,
+      pct: 0,
+      correct: 0,
+      total: 0,
+      error: "Active enrollment required.",
+    };
   }
 
-  const questions = getLessonQuizQuestions(found.module, found.course, topicNumber);
+  const questions = getLessonQuizQuestions(
+    found.module,
+    found.course,
+    topicNumber,
+  );
+  if (getCurriculum().grading.must_pass_to_advance) {
+    const done = new Set(
+      (await db.getProgress(student.id)).map((item) => item.lessonId),
+    );
+    if (rows.some((row) => row.n < topicNumber && !done.has(row.id))) {
+      return {
+        passed: false,
+        pct: 0,
+        correct: 0,
+        total: questions.length,
+        error: "Complete the earlier topics first.",
+      };
+    }
+  }
   if (!questions.length || questions.length !== parsed.data.answers.length) {
-    return { passed: false, pct: 0, correct: 0, total: questions.length, error: "Incomplete attempt." };
+    return {
+      passed: false,
+      pct: 0,
+      correct: 0,
+      total: questions.length,
+      error: "Incomplete attempt.",
+    };
   }
 
   const correct = questions.reduce(
-    (total, question, index) => total + (question.options[parsed.data.answers[index]]?.correct ? 1 : 0),
-    0
+    (total, question, index) =>
+      total + (question.options[parsed.data.answers[index]]?.correct ? 1 : 0),
+    0,
   );
   const pct = Math.round((correct / questions.length) * 100);
   const passMark = getCurriculum().grading.pass_mark;

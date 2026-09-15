@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 
-import { currentStudent } from "@/lib/auth";
+import { currentStudent, isStaff } from "@/lib/auth";
 import { entitlementRedirectPath, hasActiveAccess } from "@/lib/access";
 import { getCourseAudio, getCourseDoc, getCourseStatuses, getLessonRows } from "@/lib/content";
 import { findCourse, getCurriculum } from "@/lib/curriculum";
@@ -22,17 +22,18 @@ export default async function CoursePage({ params }: Props) {
   if (!found) notFound();
   const { module, course } = found;
 
+  const student = await currentStudent();
+  const staffPreview = student ? isStaff(student) : false;
   const available = getCourseStatuses().some(
-    (status) => status.course.slug === course.slug && status.available
+    (status) => status.course.slug === course.slug && status.complete && (status.available || staffPreview)
   );
   if (!available) redirect(`/curriculum/${module.slug}`);
 
-  const student = await currentStudent();
   if (!student) redirect(`/login?next=/courses/${slug}`);
 
   const enrollments = await db.getEnrollmentsForStudent(student.id);
   const entitled = hasActiveAccess(enrollments, module.slug);
-  if (!entitled) redirect(entitlementRedirectPath(enrollments));
+  if (!entitled && !staffPreview) redirect(entitlementRedirectPath(enrollments));
 
   const { grading } = getCurriculum();
   const rows = getLessonRows(module, course);
@@ -44,7 +45,7 @@ export default async function CoursePage({ params }: Props) {
   const allDone = completed === rows.length;
 
   return (
-    <main className="shell">
+    <main className="shell" id="main-content" tabIndex={-1}>
       <div className="breadcrumb">
         <Link href={`/curriculum/${module.slug}`}>{module.short_title}</Link>
         <span className="sep">/</span>
@@ -52,6 +53,7 @@ export default async function CoursePage({ params }: Props) {
       </div>
 
       <header className="topichead">
+        {staffPreview ? <div className="notice">Staff preview · explore course material without changing student progress or release dates.</div> : null}
         <h1>{course.title}</h1>
         <p className="deck">{course.subtitle}</p>
         <div className="pillrow">
@@ -134,7 +136,7 @@ export default async function CoursePage({ params }: Props) {
       <div className="stack">
         {rows.map((r, i) => {
           const isDone = done.has(r.id);
-          const locked = grading.must_pass_to_advance && i > 0 && !done.has(rows[i - 1].id);
+          const locked = !staffPreview && grading.must_pass_to_advance && i > 0 && !done.has(rows[i - 1].id);
           const body = (
             <>
               <span className="code">{String(r.n).padStart(2, "0")}</span>
@@ -158,7 +160,7 @@ export default async function CoursePage({ params }: Props) {
           );
         })}
 
-        {allDone ? <Link className="row" href={`/courses/${course.slug}/assessment`}>
+        {allDone || staffPreview ? <Link className="row" href={`/courses/${course.slug}/assessment`}>
           <span className="code">&mdash;</span>
           <span className="body">
             <span className="t">Course Assessment</span>

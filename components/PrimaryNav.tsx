@@ -10,6 +10,7 @@ export default function PrimaryNav() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const menu = useRef<HTMLDivElement>(null);
+  const trigger = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     if (!open) return;
@@ -19,7 +20,7 @@ export default function PrimaryNav() {
     }
 
     function closeFromEscape(event: KeyboardEvent) {
-      if (event.key === "Escape") setOpen(false);
+      if (event.key === "Escape") { setOpen(false); trigger.current?.focus(); }
     }
 
     document.addEventListener("pointerdown", closeFromOutside);
@@ -49,6 +50,7 @@ export default function PrimaryNav() {
       <div className="mobile-primary-nav" ref={menu}>
         <button
           className="mobile-nav-trigger"
+          ref={trigger}
           type="button"
           aria-expanded={open}
           aria-controls="mobile-primary-menu"

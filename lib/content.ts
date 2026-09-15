@@ -210,9 +210,15 @@ export function getCourseAudio(courseSlug: string): CourseAudio | null {
 
 export function getModuleDoc(module: Module) {
   const doc = readDoc(module.slug, "module.md");
+  const body = stripSections(doc.body, ["What Students Gain", "Instructor Notes"]);
+  const ready = !!body.trim() && !body.includes(TODO);
+  // The page already provides the title and catalog summary. Start the guide
+  // at its first section, and keep unfinished authoring notes out of the UI.
+  const firstSection = body.search(/^## /m);
   return {
     ...doc,
-    html: mdToHtml(stripSections(doc.body, ["What Students Gain", "Instructor Notes"])),
+    ready,
+    html: ready ? mdToHtml(firstSection >= 0 ? body.slice(firstSection) : body) : "",
   };
 }
 

@@ -45,7 +45,7 @@ export default function EnrollForm({
   return (
     <form action={action}>
       {scholarshipIntent ? <input type="hidden" name="scholarshipIntent" value="apply" /> : null}
-      {state.error ? <div className="notice bad">{state.error}</div> : null}
+      {state.error ? <div className="notice bad" role="alert">{state.error}</div> : null}
 
       <div className="field">
         <label htmlFor="plan">What are you enrolling in?</label>

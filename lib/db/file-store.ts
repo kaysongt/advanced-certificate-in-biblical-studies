@@ -367,6 +367,12 @@ export const fileStore: DataStore = {
     return attempt;
   },
 
+  async getLatestAssessmentQuestionIds(studentId, courseSlug) {
+    const data = await read();
+    const attempt = [...data.quizAttempts].reverse().find(item => item.studentId === studentId && item.courseSlug === courseSlug && item.kind === "course-assessment") as (QuizAttempt & { answers?: { questionId?: unknown }[] }) | undefined;
+    return Array.isArray(attempt?.answers) ? attempt.answers.flatMap(answer => typeof answer?.questionId === "string" ? [answer.questionId] : []) : [];
+  },
+
   async hasPassingTopicAttempt(studentId: string, lessonId: string): Promise<boolean> {
     const data = await read();
     return data.quizAttempts.some(
@@ -402,7 +408,7 @@ export const fileStore: DataStore = {
   async submitAssessmentWrittenWork(id, studentId, response) {
     const data = await read();
     const submission = data.assessmentSubmissions.find(
-      (item) => item.id === id && item.studentId === studentId
+      (item) => item.id === id && item.studentId === studentId && item.status === "in-progress"
     );
     if (!submission) return null;
     submission.writtenResponse = response;

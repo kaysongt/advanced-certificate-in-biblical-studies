@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 
 import { getIndexes } from "@/lib/content";
 
@@ -41,7 +42,7 @@ export default function GlossaryPage() {
   const letters = [...groups.keys()].sort();
 
   return (
-    <main className="shell">
+    <main className="shell" id="main-content" tabIndex={-1}>
       <div className="pagehead">
         <div className="eyebrow">Reference</div>
         <h1>Glossary</h1>
@@ -55,13 +56,13 @@ export default function GlossaryPage() {
         <p className="deck">No terms have been published yet.</p>
       ) : (
         <>
-          <div className="alpha">
+          <nav className="alpha" aria-label="Glossary letters">
             {letters.map((l) => (
               <a href={`#l-${l}`} key={l}>
                 {l}
               </a>
             ))}
-          </div>
+          </nav>
 
           {letters.map((letter) => (
             <div className="gloss-group" id={`l-${letter}`} key={letter}>
@@ -79,7 +80,7 @@ export default function GlossaryPage() {
                         {entry.sources.slice(0, 3).map((s, i) => (
                           <span key={s.href}>
                             {i > 0 ? " · " : ""}
-                            {s.title}
+                            <Link href={s.href}>{s.title}</Link>
                           </span>
                         ))}
                       </div>

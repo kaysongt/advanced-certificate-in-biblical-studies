@@ -8,8 +8,15 @@ import { currentStudent } from "@/lib/auth";
 import { getAssessmentBank, getLessonRows } from "@/lib/content";
 import { findCourse, getCurriculum, isModuleReleased } from "@/lib/curriculum";
 import { db } from "@/lib/db";
+import {
+  ASSESSMENT_SIZE,
+  verifyAssessmentAttempt,
+} from "@/lib/assessment-attempt";
 
-const answerSchema = z.object({ questionId: z.string().min(1).max(120), answer: z.string().max(2000) });
+const answerSchema = z.object({
+  questionId: z.string().min(1).max(120),
+  answer: z.string().max(2000),
+});
 const attemptSchema = z.object({
   courseSlug: z.string().min(1).max(40),
   answers: z.array(answerSchema).min(1).max(100),
@@ -26,39 +33,155 @@ export type AssessmentAttemptResult = {
 
 export async function submitAssessmentSectionA(
   courseSlug: string,
-  answers: { questionId: string; answer: string }[]
+  answers: { questionId: string; answer: string }[],
+  attemptToken: string,
 ): Promise<AssessmentAttemptResult> {
   const parsed = attemptSchema.safeParse({ courseSlug, answers });
-  if (!parsed.success) return { correct: 0, total: 0, pct: 0, sectionAPoints: 0, error: "Invalid attempt." };
-  if (new Set(parsed.data.answers.map((answer) => answer.questionId)).size !== parsed.data.answers.length) {
-    return { correct: 0, total: 0, pct: 0, sectionAPoints: 0, error: "Duplicate questions are not allowed." };
+  if (!parsed.success)
+    return {
+      correct: 0,
+      total: 0,
+      pct: 0,
+      sectionAPoints: 0,
+      error: "Invalid attempt.",
+    };
+  if (
+    new Set(parsed.data.answers.map((answer) => answer.questionId)).size !==
+    parsed.data.answers.length
+  ) {
+    return {
+      correct: 0,
+      total: 0,
+      pct: 0,
+      sectionAPoints: 0,
+      error: "Duplicate questions are not allowed.",
+    };
   }
 
   const student = await currentStudent();
-  if (!student) return { correct: 0, total: 0, pct: 0, sectionAPoints: 0, error: "Sign in again." };
+  if (!student)
+    return {
+      correct: 0,
+      total: 0,
+      pct: 0,
+      sectionAPoints: 0,
+      error: "Sign in again.",
+    };
   const found = findCourse(parsed.data.courseSlug);
-  if (!found) return { correct: 0, total: 0, pct: 0, sectionAPoints: 0, error: "Course not found." };
+  if (!found)
+    return {
+      correct: 0,
+      total: 0,
+      pct: 0,
+      sectionAPoints: 0,
+      error: "Course not found.",
+    };
   if (!isModuleReleased(found.module)) {
-    return { correct: 0, total: 0, pct: 0, sectionAPoints: 0, error: "This module has not opened yet." };
+    return {
+      correct: 0,
+      total: 0,
+      pct: 0,
+      sectionAPoints: 0,
+      error: "This module has not opened yet.",
+    };
   }
 
   const enrollments = await db.getEnrollmentsForStudent(student.id);
   if (!hasActiveAccess(enrollments, found.module.slug)) {
-    return { correct: 0, total: 0, pct: 0, sectionAPoints: 0, error: "Active enrollment required." };
+    return {
+      correct: 0,
+      total: 0,
+      pct: 0,
+      sectionAPoints: 0,
+      error: "Active enrollment required.",
+    };
   }
-  const progress = new Set((await db.getProgress(student.id)).map((item) => item.lessonId));
-  if (!getLessonRows(found.module, found.course).every((row) => progress.has(row.id))) {
-    return { correct: 0, total: 0, pct: 0, sectionAPoints: 0, error: "Complete every topic first." };
+  const progress = new Set(
+    (await db.getProgress(student.id)).map((item) => item.lessonId),
+  );
+  if (
+    !getLessonRows(found.module, found.course).every((row) =>
+      progress.has(row.id),
+    )
+  ) {
+    return {
+      correct: 0,
+      total: 0,
+      pct: 0,
+      sectionAPoints: 0,
+      error: "Complete every topic first.",
+    };
   }
 
-  const bank = new Map(getAssessmentBank(found.module, found.course).map((question) => [question.id, question]));
+  const bank = new Map(
+    getAssessmentBank(found.module, found.course).map((question) => [
+      question.id,
+      question,
+    ]),
+  );
+  if (
+    parsed.data.answers.length !== Math.min(ASSESSMENT_SIZE, bank.size) ||
+    typeof attemptToken !== "string" ||
+    !verifyAssessmentAttempt(
+      attemptToken,
+      student.id,
+      found.course.slug,
+      parsed.data.answers.map((answer) => answer.questionId),
+    )
+  ) {
+    return {
+      correct: 0,
+      total: 0,
+      pct: 0,
+      sectionAPoints: 0,
+      error:
+        "This attempt is incomplete or has expired. Refresh the page for a fresh assessment.",
+    };
+  }
+  const existing = await db.getLatestAssessmentSubmission(
+    student.id,
+    found.course.slug,
+  );
+  if (existing?.status === "in-progress") {
+    return {
+      submissionId: existing.id,
+      correct: existing.sectionACorrect,
+      total: existing.sectionATotal,
+      pct: Math.round(
+        (existing.sectionACorrect / existing.sectionATotal) * 100,
+      ),
+      sectionAPoints: existing.sectionAPoints,
+    };
+  }
+  if (
+    existing?.status === "pending-review" ||
+    (existing?.status === "graded" &&
+      (existing.totalScore ?? 0) >= getCurriculum().grading.pass_mark)
+  ) {
+    return {
+      correct: 0,
+      total: 0,
+      pct: 0,
+      sectionAPoints: 0,
+      error:
+        "Your assessment is already submitted or passed. Refresh to see its status.",
+    };
+  }
   let correct = 0;
   for (const answer of parsed.data.answers) {
     const question = bank.get(answer.questionId);
     if (!question) {
-      return { correct: 0, total: 0, pct: 0, sectionAPoints: 0, error: "Assessment bank changed. Start again." };
+      return {
+        correct: 0,
+        total: 0,
+        pct: 0,
+        sectionAPoints: 0,
+        error: "Assessment bank changed. Start again.",
+      };
     }
-    const selected = question.options.find((option) => option.text === answer.answer);
+    const selected = question.options.find(
+      (option) => option.text === answer.answer,
+    );
     if (selected?.correct) correct += 1;
   }
 
@@ -96,20 +219,28 @@ export type WrittenSubmissionResult = { success: boolean; error?: string };
 
 export async function submitWrittenAssessment(
   submissionId: string,
-  response: string
+  response: string,
 ): Promise<WrittenSubmissionResult> {
   const parsed = writtenSchema.safeParse({ submissionId, response });
   if (!parsed.success) {
-    return { success: false, error: "Write at least 100 characters and include every required response." };
+    return {
+      success: false,
+      error:
+        "Write at least 100 characters and include every required response.",
+    };
   }
   const student = await currentStudent();
   if (!student) return { success: false, error: "Sign in again." };
   const submission = await db.submitAssessmentWrittenWork(
     parsed.data.submissionId,
     student.id,
-    parsed.data.response
+    parsed.data.response,
   );
-  if (!submission) return { success: false, error: "This attempt can no longer be submitted." };
+  if (!submission)
+    return {
+      success: false,
+      error: "This attempt can no longer be submitted.",
+    };
   revalidatePath(`/courses/${submission.courseSlug}/assessment`);
   revalidatePath("/admin");
   return { success: true };

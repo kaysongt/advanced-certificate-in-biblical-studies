@@ -153,7 +153,7 @@ export default async function DashboardPage({
   const awaitingFirstModule = Boolean(nextOpening) && openNow.length === 0;
 
   return (
-    <main className="shell">
+    <main className="shell" id="main-content" tabIndex={-1}>
       <div className="pagehead">
         <div className="eyebrow">{program.institute}</div>
         <h1>Welcome, {student.fullName.split(" ")[0]}</h1>

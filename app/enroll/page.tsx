@@ -33,7 +33,7 @@ export default async function EnrollPage({
   const stripeConfigured = isStripeCheckoutConfigured();
 
   return (
-    <main className="shell">
+    <main className="shell" id="main-content" tabIndex={-1}>
       <div className="authwrap">
         <div className="authcard">
           <h1>Enroll</h1>
@@ -54,17 +54,15 @@ export default async function EnrollPage({
             <strong>
               {stripeConfigured ? "Secure online payment follows registration." : "Direct payment instructions follow registration."}
             </strong>{" "}
-            Your account and enrollment are created first, then held as pending until payment is
-            securely confirmed. Bank transfer remains available. Questions can be sent to{" "}
-            <a href={`mailto:${program.contact.email}`}>{program.contact.email}</a>.
+            {scholarshipIntent ? "You can apply for financial assistance before paying." : "Create your account first, then choose card payment or bank transfer. Registration alone does not unlock classes."}
           </div>
 
           {availableCount < program.total_certificates ? (
-            <div className="notice">
+            <p className="enrollment-schedule">
               {availableCount > 0
                 ? `${availableCount} of ${program.total_certificates} certificates are ready to study today. The rest unlock according to the published release schedule.`
-                : `Enrollment is open now for individual certificates and the full program. The first certificate opens ${firstReleaseDate}, and each certificate unlocks on its published date.`}
-            </div>
+                : `Classes begin ${firstReleaseDate}. You may enroll now; each certificate unlocks on its published date.`}
+            </p>
           ) : null}
 
           <EnrollForm

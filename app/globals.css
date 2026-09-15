@@ -2098,6 +2098,51 @@ a.admin-overview-card:hover { border-color: var(--gold); box-shadow: 0 8px 24px 
   .admin-account-controls { width: 100%; }
 }
 
+/* Shared usability refinements: readable forms, reliable surfaces, and touch targets. */
+:root { --line: var(--rule); --panel: var(--card); --panel-strong: var(--card); --shadow-sm: 0 8px 26px rgba(15, 36, 63, .07); }
+.skip-link { position: fixed; z-index: 100; left: 16px; top: 12px; transform: translateY(-180%); padding: 12px 18px; border: 2px solid var(--gold); border-radius: 8px; background: var(--card); color: var(--ink); font: 650 15px/1.4 var(--sans); }
+.skip-link:focus { transform: translateY(0); }
+main[tabindex="-1"]:focus { outline: none; }
+.recovery-page { min-height: 60vh; padding-top: clamp(64px, 10vw, 120px); padding-bottom: 80px; }
+.recovery-page h1 { max-width: 17ch; font-size: clamp(2.25rem, 6vw, 4rem); line-height: 1.08; letter-spacing: -.035em; }
+.recovery-page .deck { max-width: 55ch; }
+.recovery-actions { display: flex; gap: 12px; flex-wrap: wrap; margin: 28px 0; }
+.loading-skeleton { height: 130px; max-width: 660px; border-radius: 16px; background: linear-gradient(110deg, var(--wash), var(--card)); border: 1px solid var(--rule); }
+.enrollment-schedule { padding: 0 0 20px; margin: 20px 0; border-bottom: 1px solid var(--rule); color: var(--muted); font: 500 14px/1.65 var(--sans); }
+.field label, .field .consent-row { font-size: 14px; }
+.field .hint, .field .msg, .formfoot, .gloss-src { font-size: 13px; line-height: 1.6; }
+.field .hint, .gloss-src { color: var(--muted); }
+.field input:not([type="checkbox"]), .field select, .field textarea,
+.admin-shell input:not([type="hidden"]), .admin-shell select, .admin-shell textarea,
+.password-form input, .community-composer textarea { font-size: 16px; min-height: 46px; }
+.btn { min-height: 44px; }
+.admin-form-note { font-size: 13px !important; line-height: 1.6; color: var(--muted) !important; }
+.admin-search-form > div > input, .admin-search-form select { border: 1px solid var(--rule); border-radius: 9px; padding: 10px 12px; background: var(--card); color: var(--ink); }
+.pending-enrollment-plan, .secure-payment-mark, .payment-access-reminder > span, .payment-state,
+.payment-choice-divider, .payment-divider { font-size: 12px; line-height: 1.4; }
+.payment-access-reminder > strong, .promo-redemption > strong, .promo-code-form label { font-size: 14px; line-height: 1.5; }
+.payment-access-reminder > small, .promo-redemption > small, .stripe-checkout-button small,
+.scholarship-payment-option span, .scholarship-payment-option strong, .payment-processing-note { font-size: 13px; line-height: 1.6; }
+.promo-code-row input { height: 46px; font-size: 16px; }
+.promo-code-submit { min-height: 46px; font-size: 14px; }
+.stripe-checkout-button span, .scholarship-payment-option a { font-size: 15px; line-height: 1.5; }
+.payment-state { margin: 5px 0 0 8px; vertical-align: middle; }
+.pending-enrollment-actions { min-width: 0; width: min(100%, 280px); flex-shrink: 0; }
+.alpha { flex-wrap: wrap; }
+.alpha a { min-width: 40px; min-height: 44px; display: inline-flex; align-items: center; justify-content: center; }
+.gloss-group { scroll-margin-top: 90px; }
+@media (max-width: 720px) {
+  .pending-enrollment-actions { width: 100%; }
+  .authcard { padding: 26px 22px; }
+  .masthead .inner { gap: 10px; padding-inline: 16px; }
+  .mastnav a, .mobile-nav-trigger { min-height: 44px; display: inline-flex; align-items: center; justify-content: center; font-size: 12px; }
+  .mastnav a.primary-nav-link { display: none; }
+  .themetoggle.theme-switch { min-width: 40px; min-height: 44px; }
+  .hero-stats dd { font-size: 10px; letter-spacing: .04em; }
+  .payment-heading { flex-wrap: wrap; }
+  .recovery-actions > .btn { width: 100%; text-align: center; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; transition-duration: .01ms !important; }
 }

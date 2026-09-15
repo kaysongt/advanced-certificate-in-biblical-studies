@@ -500,6 +500,15 @@ export const prismaStore: DataStore = {
     );
   },
 
+  async getLatestAssessmentQuestionIds(studentId, courseSlug) {
+    const attempt = await prisma.quizAttempt.findFirst({
+      where: { studentId, courseSlug, kind: PrismaQuizKind.COURSE_ASSESSMENT },
+      orderBy: { createdAt: "desc" }, select: { answers: true },
+    });
+    if (!Array.isArray(attempt?.answers)) return [];
+    return attempt.answers.flatMap(answer => answer && typeof answer === "object" && !Array.isArray(answer) && typeof answer.questionId === "string" ? [answer.questionId] : []);
+  },
+
   async hasPassingTopicAttempt(studentId, lessonId) {
     return Boolean(
       await prisma.quizAttempt.findFirst({
