@@ -6,6 +6,7 @@ import { z } from "zod";
 
 import { currentStudent, hashPassword, isStaff } from "@/lib/auth";
 import { db } from "@/lib/db";
+import { adminSettingsRedirect } from "@/lib/admin-settings";
 import { staffLoginPath, STAFF_ACCESS_REQUIRED_PATH } from "@/lib/login-redirect";
 
 async function staffMember(returnTo = "/admin") {
@@ -129,22 +130,23 @@ export async function setStudentRole(formData: FormData): Promise<void> {
     studentId: formData.get("studentId"),
     role: formData.get("role"),
   });
-  if (!parsed.success) redirect("/admin?role=invalid#students");
+  if (!parsed.success) redirect(adminSettingsRedirect(formData, "role", "invalid"));
 
-  if (parsed.data.studentId === actor.id) redirect("/admin?role=self#students");
+  if (parsed.data.studentId === actor.id) redirect(adminSettingsRedirect(formData, "role", "self"));
 
   const student = await db.getStudentById(parsed.data.studentId);
-  if (!student) redirect("/admin?role=missing#students");
-  if (student.role === parsed.data.role) redirect("/admin?role=nochange#students");
+  if (!student) redirect(adminSettingsRedirect(formData, "role", "missing"));
+  if (student.role === parsed.data.role) redirect(adminSettingsRedirect(formData, "role", "nochange"));
 
   if (student.role === "admin" && parsed.data.role !== "admin") {
     const admins = (await db.listStudents()).filter((person) => person.role === "admin");
-    if (admins.length <= 1) redirect("/admin?role=last#students");
+    if (admins.length <= 1) redirect(adminSettingsRedirect(formData, "role", "last"));
   }
 
   await db.updateStudentRole(student.id, parsed.data.role);
   revalidatePath("/admin");
-  redirect("/admin?role=done#students");
+  revalidatePath("/admin/settings");
+  redirect(adminSettingsRedirect(formData, "role", "done"));
 }
 
 const passwordResetSchema = z.object({
@@ -162,12 +164,13 @@ export async function resetStudentPassword(formData: FormData): Promise<void> {
     studentId: formData.get("studentId"),
     newPassword: formData.get("newPassword"),
   });
-  if (!parsed.success) redirect("/admin?reset=invalid#students");
+  if (!parsed.success) redirect(adminSettingsRedirect(formData, "reset", "invalid"));
 
   const student = await db.getStudentById(parsed.data.studentId);
-  if (!student) redirect("/admin?reset=missing#students");
+  if (!student) redirect(adminSettingsRedirect(formData, "reset", "missing"));
 
   await db.updateStudentPassword(student.id, await hashPassword(parsed.data.newPassword));
   revalidatePath("/admin");
-  redirect("/admin?reset=done#students");
+  revalidatePath("/admin/settings");
+  redirect(adminSettingsRedirect(formData, "reset", "done"));
 }

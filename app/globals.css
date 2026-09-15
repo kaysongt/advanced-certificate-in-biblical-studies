@@ -2070,6 +2070,34 @@ a.card:hover::after { opacity: .9; }
   .scholarship-form-actions .btn { width: 100%; text-align: center; }
 }
 
+.admin-overview-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; margin: 24px 0 36px; }
+.admin-overview-card { display: flex; flex-direction: column; gap: 10px; padding: 24px; border: 1px solid var(--rule); border-radius: 16px; background: var(--card); min-width: 0; color: inherit; text-decoration: none; }
+.admin-overview-card > span { font-size: 12px; text-transform: uppercase; letter-spacing: .09em; font-weight: 700; color: var(--muted); }
+.admin-overview-card > strong { font-family: var(--serif); font-size: clamp(24px, 3vw, 34px); line-height: 1.2; }
+.admin-overview-card p { margin: 0; overflow-wrap: anywhere; }
+.admin-overview-card small { color: var(--muted); line-height: 1.6; }
+a.admin-overview-card:hover { border-color: var(--gold); box-shadow: 0 8px 24px #122c4510; }
+.admin-search-form { display: grid; gap: 10px; margin: 20px 0; }
+.admin-search-form > label { font-weight: 700; }
+.admin-search-form > div { display: flex; align-items: flex-end; gap: 12px; flex-wrap: wrap; }
+.admin-search-form input { flex: 1 1 260px; min-width: 0; }
+.admin-search-form label:has(select) { display: grid; gap: 6px; font-size: 13px; }
+.admin-account-controls { display: grid; gap: 14px; min-width: 0; }
+.admin-pagination { display: flex; align-items: center; justify-content: center; gap: 16px; margin-top: 24px; flex-wrap: wrap; font-size: 14px; }
+.admin-account-controls details { border-top: 1px solid var(--rule); padding-top: 12px; }
+.admin-account-controls summary { cursor: pointer; font-size: 13px; font-weight: 600; }
+.admin-account-controls details form { margin-top: 12px; flex-wrap: wrap; }
+.admin-account-controls small { flex-basis: 100%; color: var(--muted); }
+.admin-student-identity { overflow-wrap: anywhere; min-width: 0; }
+@media (max-width: 720px) {
+  .admin-overview-grid { grid-template-columns: 1fr; gap: 12px; }
+  .admin-overview-card { padding: 20px; }
+  .admin-search-form > div { align-items: stretch; }
+  .admin-search-form input { flex-basis: 100%; }
+  .admin-search-form label:has(select) { width: 100%; }
+  .admin-account-controls { width: 100%; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; transition-duration: .01ms !important; }
 }

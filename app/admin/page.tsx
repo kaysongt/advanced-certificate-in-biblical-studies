@@ -173,7 +173,7 @@ export default async function AdminPage({
     (totals, enrollment) => {
       const attempt = paymentAttempts.get(enrollment.id);
       const listMinor = enrollment.amount * 100;
-      const discountMinor = attempt?.discountAmountMinor ?? 0;
+      const discountMinor = enrollment.provider === "scholarship" ? listMinor : Math.min(listMinor, attempt?.discountAmountMinor ?? 0);
       if (enrollment.status === "active") {
         totals.collectedMinor += Math.max(0, listMinor - discountMinor);
         totals.discountedMinor += discountMinor;
@@ -190,7 +190,7 @@ export default async function AdminPage({
   const promotionUse = new Map<string, number>();
   for (const enrollment of registrations) {
     const code = paymentAttempts.get(enrollment.id)?.promotionCode;
-    if (code) promotionUse.set(code, (promotionUse.get(code) ?? 0) + 1);
+    if (code && enrollment.status === "active") promotionUse.set(code, (promotionUse.get(code) ?? 0) + 1);
   }
   const promotionRows = [...promotionUse.entries()].sort((a, b) => b[1] - a[1]);
 
@@ -208,6 +208,12 @@ export default async function AdminPage({
 
       <AdminNav pendingScholarshipCount={pendingScholarships} />
 
+      <div className="admin-overview-grid">
+        <Link className="admin-overview-card" href="/admin/scholarships?status=pending"><span>Scholarships to review</span><strong>{pendingScholarships}</strong><small>Review financial assistance →</small></Link>
+        <Link className="admin-overview-card" href="#assessments"><span>Academic operations</span><strong>Assessment review</strong><small>Grade submitted work →</small></Link>
+        <Link className="admin-overview-card" href="/admin/settings"><span>People & permissions</span><strong>Admin settings</strong><small>Find accounts and manage access →</small></Link>
+      </div>
+
       <section className="admin-section" id="registrations" style={{ scrollMarginTop: 90 }}>
         <div className="admin-section-head">
           <div>
@@ -218,12 +224,12 @@ export default async function AdminPage({
         </div>
         <div className="admin-money-summary" aria-label="Tuition totals">
           <div>
-            <dt>Collected</dt>
+            <dt>Activated tuition value</dt>
             <dd>{tuition(money.collectedMinor / 100, "USD")}</dd>
-            <small>Activated enrolments, after any discount</small>
+            <small>After scholarships and discounts; not a bank reconciliation</small>
           </div>
           <div>
-            <dt>Given as discount</dt>
+            <dt>Scholarships & discounts</dt>
             <dd>{tuition(money.discountedMinor / 100, "USD")}</dd>
             <small>
               {money.freeSeats} {money.freeSeats === 1 ? "seat" : "seats"} fully free
@@ -441,7 +447,7 @@ export default async function AdminPage({
 
       <section className="admin-section">
         <div className="admin-section-head">
-          <h2>Assessments awaiting review</h2>
+          <h2 id="assessments" style={{ scrollMarginTop: 90 }}>Assessments awaiting review</h2>
           <span>{assessments.length}</span>
         </div>
         {assessments.length ? (

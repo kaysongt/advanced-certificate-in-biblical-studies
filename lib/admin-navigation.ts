@@ -1,6 +1,7 @@
 export const ADMIN_NAV_ITEMS = [
   { href: "/admin", label: "Operations" },
   { href: "/admin/scholarships", label: "Scholarship applications" },
+  { href: "/admin/settings", label: "Admin settings" },
 ] as const;
 
 export function isAdminRouteActive(pathname: string, href: string): boolean {

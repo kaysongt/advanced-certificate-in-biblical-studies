@@ -45,6 +45,8 @@ import {
   isModuleReleased,
 } from "../lib/curriculum";
 import { ADMIN_NAV_ITEMS, isAdminRouteActive } from "../lib/admin-navigation";
+import { csvCell, scholarshipCsv } from "../lib/admin-export";
+import { adminSettingsRedirect } from "../lib/admin-settings";
 import { isPrimaryRouteActive, PRIMARY_NAV_ITEMS } from "../lib/navigation";
 import { getStripeCatalogItem } from "../lib/payments/catalog";
 import {
@@ -450,6 +452,7 @@ async function main() {
       [
         ["Operations", "/admin"],
         ["Scholarship applications", "/admin/scholarships"],
+        ["Admin settings", "/admin/settings"],
       ]
     )
   );
@@ -464,6 +467,21 @@ async function main() {
   });
 
   console.log("\nadmin route wiring");
+  check("CSV exports escape quotes, newlines, and formula injection", () => {
+    assert.equal(csvCell('Name "quoted"'), '"Name ""quoted"""');
+    assert.equal(csvCell("=SUM(A1)"), '"\'=SUM(A1)"');
+    assert.equal(csvCell("\t+123"), '"\'\t+123"');
+    assert.equal(csvCell("line\nbreak"), '"line\nbreak"');
+    assert.equal(csvCell(null), '""');
+    assert.ok(scholarshipCsv([]).startsWith("\uFEFF"));
+  });
+  check("privileged redirects only accept known admin pages", () => {
+    const data = new FormData();
+    data.set("returnTo", "https://example.com");
+    assert.equal(adminSettingsRedirect(data, "role", "done"), "/admin?role=done#students");
+    data.set("returnTo", "/admin/settings");
+    assert.equal(adminSettingsRedirect(data, "reset", "invalid"), "/admin/settings?reset=invalid");
+  });
   const adminPageSource = await fs.readFile(
     path.join(process.cwd(), "app/admin/page.tsx"),
     "utf8"

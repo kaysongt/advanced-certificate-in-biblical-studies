@@ -1,11 +1,15 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import AdminNav from "@/components/AdminNav";
 import { currentStudent, isStaff } from "@/lib/auth";
 import { getCurriculum } from "@/lib/curriculum";
 import { db } from "@/lib/db";
-import { staffLoginPath, STAFF_ACCESS_REQUIRED_PATH } from "@/lib/login-redirect";
+import {
+  staffLoginPath,
+  STAFF_ACCESS_REQUIRED_PATH,
+} from "@/lib/login-redirect";
 
 import { reviewScholarshipApplication } from "../actions";
 
@@ -32,51 +36,140 @@ function tuition(amount: number, currency: string): string {
   }).format(amount);
 }
 
-export default async function AdminScholarshipsPage() {
+export default async function AdminScholarshipsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ q?: string; status?: string; page?: string }>;
+}) {
   const staff = await currentStudent();
   if (!staff) redirect(staffLoginPath("/admin/scholarships"));
   if (!isStaff(staff)) redirect(STAFF_ACCESS_REQUIRED_PATH);
 
   const scholarships = await db.listScholarshipApplications();
-  const moduleNames = new Map(
-    getCurriculum().modules.map((module) => [module.slug, module.short_title])
+  const { q = "", status = "all", page: pageQuery } = await searchParams;
+  const term = q.trim().toLowerCase();
+  const selectedStatus = ["pending", "approved", "declined"].includes(status)
+    ? status
+    : "all";
+  const visible = scholarships.filter(
+    (item) =>
+      (selectedStatus === "all" || item.status === selectedStatus) &&
+      `${item.student.fullName} ${item.student.email} ${item.student.country}`
+        .toLowerCase()
+        .includes(term),
   );
-  const pendingScholarships = scholarships.filter((item) => item.status === "pending").length;
+  const moduleNames = new Map(
+    getCurriculum().modules.map((module) => [module.slug, module.short_title]),
+  );
+  const pendingScholarships = scholarships.filter(
+    (item) => item.status === "pending",
+  ).length;
+  const pages = Math.max(1, Math.ceil(visible.length / 10));
+  const page = Math.min(pages, Math.max(1, Math.floor(Number(pageQuery) || 1)));
+  const pageApplications = visible.slice((page - 1) * 10, page * 10);
+  const pageUrl = (value: number) =>
+    `/admin/scholarships?${new URLSearchParams({ q, status: selectedStatus, page: String(value) })}`;
 
   return (
     <main className="shell admin-shell">
       <header className="pagehead">
         <div className="eyebrow">KingsWord team</div>
-        <h1>Staff operations</h1>
+        <h1>Scholarship applications</h1>
         <p className="deck">
-          Review scholarship requests and activate access for approved applicants.
+          Review scholarship requests and activate access for approved
+          applicants.
         </p>
       </header>
 
       <AdminNav pendingScholarshipCount={pendingScholarships} />
 
+      <div className="admin-overview-grid">
+        {(["pending", "approved", "declined"] as const).map((value) => (
+          <Link
+            className="admin-overview-card"
+            href={`/admin/scholarships?status=${value}`}
+            key={value}
+          >
+            <span>
+              {value === "pending"
+                ? "Awaiting review"
+                : value === "approved"
+                  ? "Approved"
+                  : "Declined"}
+            </span>
+            <strong>
+              {scholarships.filter((item) => item.status === value).length}
+            </strong>
+            <small>View applications →</small>
+          </Link>
+        ))}
+      </div>
+
       <section className="admin-section admin-scholarship-section">
         <div className="admin-section-head">
           <div>
             <h2>Scholarship applications</h2>
-            <p>Private financial-assistance requests, with pending applications shown first.</p>
+            <p>
+              Private financial-assistance requests, with pending applications
+              shown first.
+            </p>
           </div>
-          <span>{pendingScholarships}</span>
+          <a className="btn" href="/admin/scholarships/export">
+            Download all applicants (CSV)
+          </a>
         </div>
-        {scholarships.length ? (
+        <form className="admin-search-form" method="get">
+          <label htmlFor="scholarship-search">Find an applicant</label>
+          <div>
+            <input
+              id="scholarship-search"
+              name="q"
+              defaultValue={q}
+              placeholder="Name, email, or country"
+            />
+            <label>
+              Status
+              <select name="status" defaultValue={selectedStatus}>
+                <option value="all">All applications</option>
+                <option value="pending">Awaiting review</option>
+                <option value="approved">Approved</option>
+                <option value="declined">Declined</option>
+              </select>
+            </label>
+            <button className="btn primary">Search</button>
+            <Link className="btn" href="/admin/scholarships">
+              Clear
+            </Link>
+          </div>
+        </form>
+        <p className="admin-form-note">
+          {visible.length} matching applications of {scholarships.length} total;
+          up to 10 per page. Exports contain private financial information and
+          staff notes; share only with authorized KTI leaders.
+        </p>
+        {visible.length ? (
           <div className="admin-list">
-            {scholarships.map((application) => (
-              <article className="admin-card admin-card-stack scholarship-review-card" key={application.id}>
+            {pageApplications.map((application) => (
+              <article
+                className="admin-card admin-card-stack scholarship-review-card"
+                key={application.id}
+              >
                 <div className="scholarship-review-head">
                   <div>
                     <div className="admin-registration-title">
                       <strong>{application.student.fullName}</strong>
-                      <span className={`registration-status ${application.status}`}>
-                        {application.status === "pending" ? "Awaiting review" : application.status}
+                      <span
+                        className={`registration-status ${application.status}`}
+                      >
+                        {application.status === "pending"
+                          ? "Awaiting review"
+                          : application.status}
                       </span>
                     </div>
                     <p>
-                      <a href={`mailto:${application.student.email}`}>{application.student.email}</a>
+                      <a href={`mailto:${application.student.email}`}>
+                        {application.student.email}
+                      </a>
                       <span aria-hidden="true"> &middot; </span>
                       {application.student.country}
                     </p>
@@ -87,22 +180,35 @@ export default async function AdminScholarshipsPage() {
                       <dd>
                         {application.enrollment.product === "advanced"
                           ? "All five certificates"
-                          : moduleNames.get(application.enrollment.product) ?? application.enrollment.product}
+                          : (moduleNames.get(application.enrollment.product) ??
+                            application.enrollment.product)}
                       </dd>
                     </div>
                     <div>
                       <dt>Tuition</dt>
-                      <dd>{tuition(application.enrollment.amount, application.enrollment.currency)}</dd>
+                      <dd>
+                        {tuition(
+                          application.enrollment.amount,
+                          application.enrollment.currency,
+                        )}
+                      </dd>
                     </div>
                     <div>
                       <dt>Can contribute</dt>
-                      <dd>{tuition(application.amountAbleToPay, application.enrollment.currency)}</dd>
+                      <dd>
+                        {tuition(
+                          application.amountAbleToPay,
+                          application.enrollment.currency,
+                        )}
+                      </dd>
                     </div>
                     <div>
                       <dt>Submitted</dt>
                       <dd>
                         <time dateTime={application.createdAt}>
-                          {registrationDate.format(new Date(application.createdAt))}
+                          {registrationDate.format(
+                            new Date(application.createdAt),
+                          )}
                         </time>
                       </dd>
                     </div>
@@ -121,8 +227,15 @@ export default async function AdminScholarshipsPage() {
                 </div>
 
                 {application.status === "pending" ? (
-                  <form action={reviewScholarshipApplication} className="scholarship-review-form">
-                    <input type="hidden" name="applicationId" value={application.id} />
+                  <form
+                    action={reviewScholarshipApplication}
+                    className="scholarship-review-form"
+                  >
+                    <input
+                      type="hidden"
+                      name="applicationId"
+                      value={application.id}
+                    />
                     <label>
                       Private staff note (optional)
                       <textarea
@@ -134,39 +247,77 @@ export default async function AdminScholarshipsPage() {
                     </label>
                     <div className="scholarship-review-actions">
                       {application.enrollment.status === "pending" ? (
-                        <button className="btn primary" type="submit" name="decision" value="approved">
+                        <button
+                          className="btn primary"
+                          type="submit"
+                          name="decision"
+                          value="approved"
+                        >
                           Approve and activate access
                         </button>
                       ) : (
                         <span className="admin-scholarship-paid">
-                          Enrollment is already {application.enrollment.status}; approval is unavailable.
+                          Enrollment is already {application.enrollment.status};
+                          approval is unavailable.
                         </span>
                       )}
-                      <button className="btn" type="submit" name="decision" value="declined">
+                      <button
+                        className="btn"
+                        type="submit"
+                        name="decision"
+                        value="declined"
+                      >
                         Decline application
                       </button>
                     </div>
                     <p className="admin-form-note">
-                      Approval grants a full tuition scholarship for this enrollment. Private notes
-                      are visible only to staff.
+                      Approval grants a full tuition scholarship for this
+                      enrollment. Private notes are visible only to staff.
                     </p>
                   </form>
                 ) : (
                   <div className="scholarship-decision-record">
                     <span>
-                      Reviewed {application.reviewedAt
-                        ? registrationDate.format(new Date(application.reviewedAt))
+                      Reviewed{" "}
+                      {application.reviewedAt
+                        ? registrationDate.format(
+                            new Date(application.reviewedAt),
+                          )
                         : "by staff"}
                     </span>
-                    <p>{application.adminNotes || "No private note was recorded."}</p>
+                    <p>
+                      {application.adminNotes ||
+                        "No private note was recorded."}
+                    </p>
                   </div>
                 )}
               </article>
             ))}
           </div>
         ) : (
-          <p className="admin-empty">No scholarship application has been submitted.</p>
+          <p className="admin-empty">
+            {scholarships.length
+              ? "No applications match these filters."
+              : "No scholarship application has been submitted."}
+          </p>
         )}
+        {pages > 1 ? (
+          <nav className="admin-pagination" aria-label="Application pages">
+            {page > 1 ? (
+              <Link className="btn" href={pageUrl(page - 1)}>
+                Previous
+              </Link>
+            ) : null}
+            <span>
+              Page {page} of {pages}
+            </span>
+            {page < pages ? (
+              <Link className="btn" href={pageUrl(page + 1)}>
+                Next
+              </Link>
+            ) : null}
+          </nav>
+        ) : null}
       </section>
     </main>
   );
