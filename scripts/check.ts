@@ -334,7 +334,7 @@ async function main() {
     "Rev. Victor Adeyemi",
     "Rev. Tokunbo Adejuwon",
     "Pastor Bukky Manufor",
-    "Pastor Achase Opuda",
+    "Pastor Achese Opuda",
     "Dr. Sam Ekundayo",
   ];
   check("homepage includes the seven-member faculty section", () => {
@@ -361,10 +361,10 @@ async function main() {
     assert.ok(homePageSource.includes('alt: "Pastor Bukky Manufor"'));
     assert.ok(!homePageSource.includes("Pst. Buki Manufor"));
   });
-  check("Pastor Achase has the supplied portrait and corrected name", () => {
+  check("Pastor Achese has the supplied portrait and corrected name", () => {
     assert.ok(homePageSource.includes('src: "/assets/faculty/pastor-achase-opuda.jpg"'));
-    assert.ok(homePageSource.includes('alt: "Pastor Achase Opuda"'));
-    assert.ok(!homePageSource.includes("Pst. Achese Opuda"));
+    assert.ok(homePageSource.includes('alt: "Pastor Achese Opuda"'));
+    assert.ok(!homePageSource.includes("Achase Opuda"));
   });
   check("Dr. Sam has the supplied portrait", () => {
     assert.ok(homePageSource.includes('src: "/assets/faculty/dr-sam-ekundayo.jpg"'));
@@ -403,11 +403,11 @@ async function main() {
   check("Pastor Bukky's portrait asset is present", () => {
     assert.ok(bukkyPortrait.size > 50_000);
   });
-  const achasePortrait = await fs.stat(
+  const achesePortrait = await fs.stat(
     path.join(process.cwd(), "public/assets/faculty/pastor-achase-opuda.jpg")
   );
-  check("Pastor Achase's portrait asset is present", () => {
-    assert.ok(achasePortrait.size > 50_000);
+  check("Pastor Achese's portrait asset is present", () => {
+    assert.ok(achesePortrait.size > 50_000);
   });
   const samPortrait = await fs.stat(
     path.join(process.cwd(), "public/assets/faculty/dr-sam-ekundayo.jpg")
