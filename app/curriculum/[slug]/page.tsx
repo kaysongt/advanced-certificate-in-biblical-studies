@@ -66,6 +66,13 @@ export default async function ModulePage({ params }: Props) {
         </div>
       </div>
 
+      {staffPreview ? (
+        <div className="notice">
+          <strong>Staff preview</strong> · Select any completed course below to review all its
+          topics and assessment. Student release dates still apply to student accounts.
+          Courses in preparation will become previewable once their content is complete.
+        </div>
+      ) : null}
       <h2>Courses</h2>
       <div className="stack">
         {statuses.map(({ course, available, complete }) => {
@@ -78,7 +85,7 @@ export default async function ModulePage({ params }: Props) {
               </span>
               <span className="meta">
                 <span className={`avail ${available ? "now" : "soon"}`}>
-                  {available ? "Ready" : staffPreview && complete ? "Staff preview" : moduleReleaseLabel(module)}
+                  {staffPreview ? complete ? "Staff preview" : "Content in preparation" : available ? "Ready" : moduleReleaseLabel(module)}
                 </span>
               </span>
             </>
@@ -153,14 +160,14 @@ export default async function ModulePage({ params }: Props) {
         <div className="notice">The detailed study guide is being prepared by the Institute. {moduleReleaseLabel(module)}. Course materials will appear here when they are ready.</div>
       )}
 
-      <div style={{ marginTop: 36 }}>
+      {!staffPreview ? <div style={{ marginTop: 36 }}>
         <Link
           href={moduleAvailable ? "/enroll?plan=certificate" : "/enroll?plan=advanced"}
           className="btn primary lg"
         >
           {moduleAvailable ? "Enroll in this certificate" : "Reserve the full program"}
         </Link>
-      </div>
+      </div> : null}
     </main>
   );
 }

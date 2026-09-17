@@ -448,11 +448,21 @@ async function main() {
   });
 
   console.log("\nadmin navigation");
+  const dashboardSource = await fs.readFile(path.join(process.cwd(), "app/dashboard/page.tsx"), "utf8");
+  const curriculumSource = await fs.readFile(path.join(process.cwd(), "app/curriculum/page.tsx"), "utf8");
+  check("staff have a program preview entry point independent of enrollment and release", () => {
+    assert.ok(dashboardSource.includes("const staffPreview = isStaff(student)"));
+    assert.ok(dashboardSource.includes("{staffPreview ? ("));
+    assert.ok(dashboardSource.includes("Preview courses →"));
+    assert.ok(curriculumSource.includes("const staffPreview = actor ? isStaff(actor) : false"));
+    assert.ok(curriculumSource.includes("Staff preview access"));
+  });
   check("admin tabs point to operations and scholarship applications", () =>
     assert.deepEqual(
       ADMIN_NAV_ITEMS.map((item) => [item.label, item.href]),
       [
         ["Operations", "/admin"],
+        ["Preview program", "/curriculum"],
         ["Scholarship applications", "/admin/scholarships"],
         ["Admin settings", "/admin/settings"],
       ]

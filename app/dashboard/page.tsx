@@ -105,6 +105,7 @@ export default async function DashboardPage({
 }) {
   const student = await currentStudent();
   if (!student) redirect("/login");
+  const staffPreview = isStaff(student);
 
   const { access, payment, password } = await searchParams;
   const { program, grading } = getCurriculum();
@@ -418,18 +419,27 @@ export default async function DashboardPage({
       ) : null}
 
       <h2>Your program</h2>
+      {staffPreview ? (
+        <div className="notice">
+          <strong>Preview the program before launch.</strong> Your staff access lets you review
+          completed course content without payment or waiting for student release dates.
+          Previewing does not record grades or student progress.
+        </div>
+      ) : null}
       <div className="cards five">
-        {statuses.map(({ module, available }) => {
+        {statuses.map(({ module, available, coursesComplete }) => {
           const enrollmentState = getModuleEnrollmentState(enrollments, module.slug);
           const unlocked = enrollmentState === "active";
           const statusClass =
-            unlocked && available
+            (staffPreview && coursesComplete > 0) || (unlocked && available)
               ? "now"
               : enrollmentState === "pending"
                 ? "reserved"
                 : "soon";
           const statusLabel =
-            enrollmentState === "none"
+            staffPreview
+              ? coursesComplete > 0 ? "Staff preview" : "Content in preparation"
+              : enrollmentState === "none"
               ? "Not included"
               : enrollmentState === "pending"
                 ? "Included"
@@ -452,7 +462,11 @@ export default async function DashboardPage({
               <span className="t">{module.short_title}</span>
               <p>{module.catalog_blurb}</p>
               <span className="foot">
-                {unlocked && available ? (
+                {staffPreview ? (
+                  <Link href={`/curriculum/${module.slug}`}>
+                    {coursesComplete > 0 ? "Preview courses →" : "View module overview →"}
+                  </Link>
+                ) : unlocked && available ? (
                   <Link href={`/curriculum/${module.slug}`}>Start studying →</Link>
                 ) : unlocked ? (
                   moduleReleaseLabel(module)
