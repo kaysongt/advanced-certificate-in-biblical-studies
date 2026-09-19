@@ -14,9 +14,9 @@ export const metadata: Metadata = {
 export default async function LoginPage({
   searchParams,
 }: {
-  searchParams: Promise<{ next?: string }>;
+  searchParams: Promise<{ next?: string; reset?: string }>;
 }) {
-  const requested = (await searchParams).next;
+  const { next: requested, reset } = await searchParams;
   const next = safeReturnPath(requested);
   const student = await currentStudent();
   if (student) redirect(postLoginPath(student.role, next));
@@ -32,6 +32,7 @@ export default async function LoginPage({
               ? "Use a Staff or Administrator account to continue to Staff Operations."
               : "Continue your studies where you left off."}
           </p>
+          {reset === "success" ? <div className="notice good" role="status">Your password has been updated. Previous sessions have been signed out. Sign in with your new password.</div> : null}
           <LoginForm next={next} />
           {process.env.NODE_ENV !== "production" ? (
             <p className="formfoot">

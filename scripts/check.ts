@@ -10,7 +10,8 @@ import path from "node:path";
 import { StripePaymentStatus } from "@prisma/client";
 import Stripe from "stripe";
 
-import { hashPassword, verifyPassword } from "../lib/auth-core";
+import { hashPassword, verifyPassword, parseSession, serialiseSession } from "../lib/auth-core";
+import { issuePasswordResetToken, verifyPasswordResetToken, resetTokenStudentId, RESET_LIFETIME_MS, resetRateKey, buildPasswordResetEmail } from "../lib/password-reset-core";
 import { isStaff } from "../lib/auth";
 import {
   postLoginPath,
@@ -1163,6 +1164,46 @@ async function main() {
   );
   check("the new password verifies", () => assert.ok(newVerifies));
   check("the old password stops working", () => assert.equal(oldVerifies, false));
+  const token = issuePasswordResetToken(student.id, replacement);
+  check("reset links authorize only the matching account and password version", () => {
+    assert.ok(verifyPasswordResetToken(token, student.id, replacement));
+    assert.equal(verifyPasswordResetToken(token, student.id, hash), false);
+    assert.equal(verifyPasswordResetToken(token, "other-account", replacement), false);
+    assert.equal(verifyPasswordResetToken(`${token.slice(0, -1)}${token.endsWith("a") ? "b" : "a"}`, student.id, replacement), false);
+  });
+  check("reset links expire after thirty minutes and reject malformed values", () => {
+    assert.equal(resetTokenStudentId(token, Date.now() + RESET_LIFETIME_MS), null);
+    for (const malformed of ["", "abc", ".".repeat(500), token.replace(/\.\d{13}\./, ".NaN.")]) assert.equal(resetTokenStudentId(malformed), null);
+    assert.notEqual(token, issuePasswordResetToken(student.id, replacement));
+  });
+  const resetRace = await Promise.all([
+    db.compareAndSetStudentPassword(student.id, replacement, hash),
+    db.compareAndSetStudentPassword(student.id, replacement, hash),
+  ]);
+  check("concurrent reset redemptions succeed exactly once", () => assert.equal(resetRace.filter(Boolean).length, 1));
+  const afterReset = await db.getStudentById(student.id);
+  check("reset invalidates used links without changing the account role", () => {
+    assert.equal(verifyPasswordResetToken(token, student.id, afterReset!.passwordHash), false);
+    assert.equal(afterReset!.role, student.role);
+  });
+  const session = serialiseSession(student.id);
+  check("password changes revoke old sessions and preserve newer sessions", () => {
+    assert.equal(parseSession(session, new Date(Date.now() + 1).toISOString()), null);
+    assert.equal(parseSession(session, new Date(Date.now() - 1000).toISOString()), student.id);
+    assert.equal(parseSession(session), student.id);
+  });
+  const rateNow = new Date();
+  const rateKey = resetRateKey("test", student.email);
+  const allowed = await Promise.all(Array.from({ length: 5 }, () => db.takeAuthRateLimit(rateKey, 3, 60_000, rateNow)));
+  check("reset request limits enforce a shared cap under concurrency", () => assert.equal(allowed.filter(Boolean).length, 3));
+  const freshWindow = await db.takeAuthRateLimit(rateKey, 3, 60_000, new Date(rateNow.getTime() + 60_000));
+  check("request limits recover after the time window", () => assert.equal(freshWindow, true));
+  check("recovery email provides expiry and safely escapes the link", () => {
+    const email = buildPasswordResetEmail('https://www.thekti.org/reset-password?token=x&test="value"');
+    assert.ok(email.text.includes("30 minutes"));
+    assert.ok(email.html.includes("&amp;test=&quot;value&quot;"));
+    assert.ok(!email.html.includes('test="value"'));
+  });
   await db.updateStudentPassword(student.id, hash);
 
   const everyone = await db.listStudents();

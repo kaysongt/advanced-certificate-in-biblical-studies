@@ -29,7 +29,9 @@ export async function currentStudent(): Promise<Student | null> {
   if (!raw) return null;
   const studentId = parseSession(raw);
   if (!studentId) return null;
-  return db.getStudentById(studentId);
+  const student = await db.getStudentById(studentId);
+  if (!student || !parseSession(raw, student.passwordChangedAt)) return null;
+  return student;
 }
 
 export function isStaff(student: Student): boolean {

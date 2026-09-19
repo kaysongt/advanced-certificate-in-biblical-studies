@@ -540,8 +540,8 @@ export default async function DashboardPage({
       <section className="panel" id="password" style={{ marginTop: 44, scrollMarginTop: 90 }}>
         <h2>Change your password</h2>
         <p>
-          Choose something only you know, at least 10 characters. You will stay signed in on this
-          device after the change.
+          Choose something only you know, at least 10 characters. You will be asked to sign in
+          again after the change, and previous sessions will be signed out.
         </p>
 
         {passwordMessage ? (

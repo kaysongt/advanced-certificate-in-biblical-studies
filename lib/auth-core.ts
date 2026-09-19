@@ -57,7 +57,7 @@ export function serialiseSession(studentId: string): string {
 }
 
 /** Returns the student id if the cookie is authentic and unexpired, else null. */
-export function parseSession(raw: string): string | null {
+export function parseSession(raw: string, passwordChangedAt?: string | null): string | null {
   const parts = raw.split(".");
   if (parts.length !== 3) return null;
   const [studentId, expires, mac] = parts;
@@ -65,6 +65,9 @@ export function parseSession(raw: string): string | null {
   const a = Buffer.from(mac);
   const b = Buffer.from(expected);
   if (a.length !== b.length || !timingSafeEqual(a, b)) return null;
-  if (Number(expires) < Date.now()) return null;
+  const expiry = Number(expires);
+  if (!Number.isFinite(expiry) || expiry < Date.now()) return null;
+  const issuedAt = expiry - MAX_AGE * 1000;
+  if (passwordChangedAt && issuedAt <= new Date(passwordChangedAt).getTime()) return null;
   return studentId;
 }

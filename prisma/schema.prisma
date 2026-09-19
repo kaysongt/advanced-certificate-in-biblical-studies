@@ -60,12 +60,21 @@ enum PaymentReminderStatus {
   FAILED
 }
 
+model AuthRateLimit {
+  key         String   @id
+  windowStart DateTime
+  attempts    Int      @default(1)
+
+  @@index([windowStart])
+}
+
 model Student {
   id                      String                   @id @default(uuid())
   email                   String                   @unique
   fullName                String
   country                 String
   passwordHash            String
+  passwordChangedAt       DateTime?
   role                    StudentRole              @default(STUDENT)
   createdAt               DateTime                 @default(now())
   enrollments             Enrollment[]

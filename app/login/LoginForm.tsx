@@ -44,6 +44,7 @@ export default function LoginForm({ next }: { next: string }) {
       </div>
 
       <Submit />
+      <p className="formfoot"><Link href="/forgot-password">Forgot password?</Link></p>
 
       <p className="formfoot">
         Not enrolled yet? <Link href="/enroll">Enroll in the program</Link>

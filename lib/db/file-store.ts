@@ -36,6 +36,7 @@ type Shape = {
   assessmentSubmissions: AssessmentSubmission[];
   communityPosts: StoredCommunityPost[];
   scholarshipApplications: ScholarshipApplication[];
+  authRateLimits: Record<string, { windowStart: number; attempts: number }>;
 };
 
 const FILE = path.join(process.cwd(), ".data", "store.json");
@@ -47,6 +48,7 @@ const EMPTY: Shape = {
   assessmentSubmissions: [],
   communityPosts: [],
   scholarshipApplications: [],
+  authRateLimits: {},
 };
 
 async function read(): Promise<Shape> {
@@ -145,11 +147,39 @@ export const fileStore: DataStore = {
   },
 
   async updateStudentPassword(studentId: string, passwordHash: string): Promise<void> {
-    const data = await read();
-    const student = data.students.find((candidate) => candidate.id === studentId);
-    if (!student) return;
-    student.passwordHash = passwordHash;
-    await write(data);
+    await withScholarshipReviewLock(async () => {
+      const data = await read();
+      const student = data.students.find((candidate) => candidate.id === studentId);
+      if (!student) return;
+      student.passwordHash = passwordHash;
+      student.passwordChangedAt = new Date().toISOString();
+      await write(data);
+    });
+  },
+
+  async compareAndSetStudentPassword(studentId, expectedHash, passwordHash) {
+    return withScholarshipReviewLock(async () => {
+      const data = await read();
+      const student = data.students.find((candidate) => candidate.id === studentId);
+      if (!student || student.passwordHash !== expectedHash) return false;
+      student.passwordHash = passwordHash;
+      student.passwordChangedAt = new Date().toISOString();
+      await write(data);
+      return true;
+    });
+  },
+
+  async takeAuthRateLimit(key, limit, windowMs, now = new Date()) {
+    return withScholarshipReviewLock(async () => {
+      const data = await read();
+      data.authRateLimits = Object.fromEntries(Object.entries(data.authRateLimits).filter(([, value]) => value.windowStart >= now.getTime() - 86_400_000));
+      let bucket = data.authRateLimits[key];
+      if (!bucket || bucket.windowStart <= now.getTime() - windowMs) bucket = { windowStart: now.getTime(), attempts: 0 };
+      bucket.attempts = Math.min(bucket.attempts + 1, limit + 1);
+      data.authRateLimits[key] = bucket;
+      await write(data);
+      return bucket.attempts <= limit;
+    });
   },
 
   async updateStudentRole(studentId: string, role: StudentRole): Promise<void> {

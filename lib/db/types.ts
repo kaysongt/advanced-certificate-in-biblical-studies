@@ -21,6 +21,7 @@ export type Student = {
   country: string;
   /** scrypt hash — see lib/auth.ts. Never leaves the server. */
   passwordHash: string;
+  passwordChangedAt?: string | null;
   role: StudentRole;
   createdAt: string;
 };
@@ -165,6 +166,8 @@ export interface DataStore {
   listStudents(): Promise<Student[]>;
   /** Replaces a stored password hash. Callers hash before calling. */
   updateStudentPassword(studentId: string, passwordHash: string): Promise<void>;
+  compareAndSetStudentPassword(studentId: string, expectedHash: string, passwordHash: string): Promise<boolean>;
+  takeAuthRateLimit(key: string, limit: number, windowMs: number, now?: Date): Promise<boolean>;
   /** Changes what a student may reach. Guarded by callers, not here. */
   updateStudentRole(studentId: string, role: StudentRole): Promise<void>;
 

@@ -96,6 +96,7 @@ export async function changeOwnPassword(formData: FormData): Promise<void> {
     redirect("/dashboard?password=same#password");
   }
 
-  await db.updateStudentPassword(student.id, await hashPassword(parsed.data.newPassword));
-  redirect("/dashboard?password=changed#password");
+  const updated = await db.compareAndSetStudentPassword(student.id, student.passwordHash, await hashPassword(parsed.data.newPassword));
+  if (!updated) redirect("/login");
+  redirect("/login?reset=success");
 }

@@ -92,6 +92,7 @@ function mapStudent(student: PrismaStudent): Student {
     fullName: student.fullName,
     country: student.country,
     passwordHash: student.passwordHash,
+    passwordChangedAt: student.passwordChangedAt?.toISOString() ?? null,
     role: roleFromPrisma[student.role],
     createdAt: student.createdAt.toISOString(),
   };
@@ -249,7 +250,28 @@ export const prismaStore: DataStore = {
   },
 
   async updateStudentPassword(studentId, passwordHash) {
-    await prisma.student.update({ where: { id: studentId }, data: { passwordHash } });
+    await prisma.student.update({ where: { id: studentId }, data: { passwordHash, passwordChangedAt: new Date() } });
+  },
+
+  async compareAndSetStudentPassword(studentId, expectedHash, passwordHash) {
+    const result = await prisma.student.updateMany({
+      where: { id: studentId, passwordHash: expectedHash },
+      data: { passwordHash, passwordChangedAt: new Date() },
+    });
+    return result.count === 1;
+  },
+
+  async takeAuthRateLimit(key, limit, windowMs, now = new Date()) {
+    const cutoff = new Date(now.getTime() - windowMs);
+    const rows = await prisma.$queryRaw<{ attempts: number }[]>`
+      INSERT INTO "AuthRateLimit" ("key", "windowStart", "attempts") VALUES (${key}, ${now}, 1)
+      ON CONFLICT ("key") DO UPDATE SET
+        "attempts" = CASE WHEN "AuthRateLimit"."windowStart" <= ${cutoff} THEN 1 ELSE LEAST("AuthRateLimit"."attempts" + 1, ${limit + 1}) END,
+        "windowStart" = CASE WHEN "AuthRateLimit"."windowStart" <= ${cutoff} THEN ${now} ELSE "AuthRateLimit"."windowStart" END
+      RETURNING "attempts"`;
+    // Retain only recent, pseudonymous counters, never raw email/IP addresses.
+    await prisma.authRateLimit.deleteMany({ where: { windowStart: { lt: new Date(now.getTime() - 86_400_000) } } });
+    return rows[0].attempts <= limit;
   },
 
   async updateStudentRole(studentId, role) {
