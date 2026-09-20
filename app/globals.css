@@ -1838,6 +1838,11 @@ a.card:hover::after { opacity: .9; }
 .admin-section { margin-top: 44px; }
 .admin-section-head { display: flex; align-items: center; justify-content: space-between; gap: 18px; margin-bottom: 16px; }
 .admin-section-head h2 { margin: 0; padding: 0; border: 0; }
+.admin-export-head { flex-wrap: wrap; }
+.admin-export-head > .btn { flex-shrink: 0; }
+@media (max-width: 640px) {
+  .admin-export-head > .btn { width: 100%; text-align: center; }
+}
 .admin-section-head p { margin: 5px 0 0; color: var(--muted); font: 400 12px/1.5 var(--sans); }
 .admin-section-head > span { display: grid; width: 34px; height: 34px; place-items: center; border-radius: 50%; background: var(--gold-wash); color: var(--gold); font: 700 12px/1 var(--sans); }
 .admin-list { display: grid; gap: 12px; }

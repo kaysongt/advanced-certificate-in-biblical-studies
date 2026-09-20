@@ -46,7 +46,7 @@ import {
   isModuleReleased,
 } from "../lib/curriculum";
 import { ADMIN_NAV_ITEMS, isAdminRouteActive } from "../lib/admin-navigation";
-import { csvCell, scholarshipCsv } from "../lib/admin-export";
+import { csvCell, scholarshipCsv, registrationsCsv } from "../lib/admin-export";
 import { adminSettingsRedirect } from "../lib/admin-settings";
 import { issueAssessmentAttempt, verifyAssessmentAttempt } from "../lib/assessment-attempt";
 import { prioritizeFreshQuestions } from "../lib/assessment-selection";
@@ -512,6 +512,41 @@ async function main() {
     assert.equal(adminSettingsRedirect(data, "role", "done"), "/admin?role=done#students");
     data.set("returnTo", "/admin/settings");
     assert.equal(adminSettingsRedirect(data, "reset", "invalid"), "/admin/settings?reset=invalid");
+  });
+  check("registration export includes every account once, including accounts without enrollment", () => {
+    const people = Array.from({ length: 31 }, (_, i) => ({
+      id: `export-${i}`, fullName: `Person ${i}`, email: `export-${i}@example.test`,
+      country: "Nigeria", role: "student" as const, createdAt: "2026-09-20T12:00:00.000Z",
+      passwordHash: "SECRET-HASH-MUST-NOT-EXPORT",
+    }));
+    const csv = registrationsCsv(people, []);
+    assert.equal(csv.split("\r\n").length, 32);
+    assert.equal(csv.match(/No enrollment/g)?.length, 31);
+    assert.ok(csv.includes('"export-30@example.test"'));
+    assert.ok(!csv.includes("SECRET-HASH"));
+    assert.ok(csv.startsWith("\uFEFF"));
+    assert.equal(registrationsCsv([], []).split("\r\n").length, 1);
+  });
+  check("registration export groups multiple plans and distinguishes suspended access", () => {
+    const person = { id: "export-person", fullName: '=HYPERLINK("bad")', email: "test@example.test", country: "Côte d’Ivoire", role: "admin" as const, createdAt: "2026-09-20T12:00:00.000Z" };
+    const enrollment = { id: "export-enrollment", studentId: person.id, product: "advanced", plan: "advanced" as const, status: "active" as const, amount: 1000, currency: "USD", provider: "scholarship", providerRef: "SECRET-PROVIDER-REF", activatedAt: person.createdAt, accessSuspendedAt: null, createdAt: person.createdAt, updatedAt: person.createdAt };
+    const csv = registrationsCsv([person], [enrollment, { ...enrollment, id: "other-plan", product: "module-2", provider: null, status: "pending", accessSuspendedAt: person.createdAt }], new Map([["advanced", "Full program"]]));
+    assert.equal(csv.split("\r\n").length, 2);
+    assert.ok(csv.includes(csvCell(person.fullName)));
+    assert.ok(csv.includes('"2"'));
+    assert.ok(csv.includes("Full program / active / scholarship"));
+    assert.ok(csv.includes("module-2 / pending (access suspended) / Not recorded"));
+    assert.ok(csv.includes("Côte d’Ivoire"));
+    assert.ok(!csv.includes("SECRET-PROVIDER-REF"));
+  });
+  const registrationsExportSource = await fs.readFile(path.join(process.cwd(), "app/admin/registrations/export/route.ts"), "utf8");
+  check("registration export checks staff access before reading the complete roster", () => {
+    assert.ok(registrationsExportSource.indexOf("if (!isStaff(actor))") < registrationsExportSource.indexOf("db.listStudents()"));
+    assert.match(registrationsExportSource, /status: 401/);
+    assert.match(registrationsExportSource, /status: 403/);
+    assert.match(registrationsExportSource, /private, no-store/);
+    assert.match(registrationsExportSource, /attachment; filename=/);
+    assert.ok(!registrationsExportSource.includes("searchParams"));
   });
   const adminPageSource = await fs.readFile(
     path.join(process.cwd(), "app/admin/page.tsx"),

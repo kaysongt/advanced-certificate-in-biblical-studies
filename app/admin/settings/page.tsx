@@ -108,7 +108,7 @@ export default async function AdminSettings({
         </section>
       </div>
       <section className="admin-section">
-        <div className="admin-section-head">
+        <div className="admin-section-head admin-export-head">
           <div>
             <h2>Accounts & permissions</h2>
             <p>
@@ -116,7 +116,9 @@ export default async function AdminSettings({
               registrations. Administrators also manage roles and passwords.
             </p>
           </div>
-          <span>{people.filter((p) => p.role === "admin").length} admins</span>
+          <a className="btn" href="/admin/registrations/export">
+            Download all registrations (CSV)
+          </a>
         </div>
         {result && messages[result] ? (
           <p
@@ -144,6 +146,7 @@ export default async function AdminSettings({
         <p className="admin-form-note">
           {visible.length} matching accounts of {people.length} total; up to 25
           per page. Role changes take effect on the next page load.
+          {" "}The CSV download includes all accounts, not just these search results.
         </p>
         <div className="admin-student-list">
           {pagePeople.map((p) => (

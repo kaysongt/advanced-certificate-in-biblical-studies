@@ -215,13 +215,20 @@ export default async function AdminPage({
       </div>
 
       <section className="admin-section" id="registrations" style={{ scrollMarginTop: 90 }}>
-        <div className="admin-section-head">
+        <div className="admin-section-head admin-export-head">
           <div>
             <h2>Student registrations</h2>
             <p>Everyone who has registered through the website, newest first.</p>
           </div>
-          <span>{registrations.length}</span>
+          <a className="btn" href="/admin/registrations/export">
+            Download all registrations (CSV)
+          </a>
         </div>
+        <p className="admin-form-note">
+          Export all {students.length} accounts, including unpaid registrations and accounts without an enrollment.
+          One row per person, regardless of the filters below. Opens in Excel or Google Sheets.
+          Enrollment status does not necessarily mean tuition has been paid.
+        </p>
         <div className="admin-money-summary" aria-label="Tuition totals">
           <div>
             <dt>Activated tuition value</dt>

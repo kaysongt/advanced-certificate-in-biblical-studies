@@ -7,6 +7,38 @@ export function csvCell(value: unknown): string {
   return `"${text.replace(/"/g, '""')}"`;
 }
 
+/** One row per account, including people with no enrollment or multiple plans. */
+export function registrationsCsv(
+  students: Pick<Student, "id" | "fullName" | "email" | "country" | "role" | "createdAt">[],
+  enrollments: Enrollment[],
+  programNames: ReadonlyMap<string, string> = new Map(),
+): string {
+  const byStudent = new Map<string, Enrollment[]>();
+  for (const enrollment of enrollments) {
+    const items = byStudent.get(enrollment.studentId) ?? [];
+    items.push(enrollment);
+    byStudent.set(enrollment.studentId, items);
+  }
+  const rows: unknown[][] = [[
+    "Account ID", "Name", "Email", "Country", "Role", "Registered (UTC)",
+    "Enrollment count", "Enrollments (program / status / source)",
+  ]];
+  for (const student of students) {
+    const items = byStudent.get(student.id) ?? [];
+    rows.push([
+      student.id, student.fullName, student.email, student.country, student.role,
+      student.createdAt, items.length,
+      items.length ? items.map((item) => {
+        const program = programNames.get(item.product) ?? item.product;
+        const status = item.accessSuspendedAt ? `${item.status} (access suspended)` : item.status;
+        return `${program} / ${status} / ${item.provider || "Not recorded"}`;
+      }).join("\n") : "No enrollment",
+    ]);
+  }
+  // Explicit allowlist above deliberately excludes password hashes and provider references.
+  return "\uFEFF" + rows.map((row) => row.map(csvCell).join(",")).join("\r\n");
+}
+
 export function scholarshipCsv(
   applications: (ScholarshipApplication & {
     student: Student;
