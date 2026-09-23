@@ -47,6 +47,7 @@ import {
 } from "../lib/curriculum";
 import { ADMIN_NAV_ITEMS, isAdminRouteActive } from "../lib/admin-navigation";
 import { csvCell, scholarshipCsv, registrationsCsv } from "../lib/admin-export";
+import { classifyRegistrations, registrationGroup, paymentEvidenceLabel, MINISTER_CODE, type RegistrationPayment } from "../lib/registration-groups";
 import { adminSettingsRedirect } from "../lib/admin-settings";
 import { issueAssessmentAttempt, verifyAssessmentAttempt } from "../lib/assessment-attempt";
 import { prioritizeFreshQuestions } from "../lib/assessment-selection";
@@ -463,6 +464,7 @@ async function main() {
       ADMIN_NAV_ITEMS.map((item) => [item.label, item.href]),
       [
         ["Operations", "/admin"],
+        ["Registration groups", "/admin/registrations"],
         ["Preview program", "/curriculum"],
         ["Scholarship applications", "/admin/scholarships"],
         ["Admin settings", "/admin/settings"],
@@ -541,12 +543,68 @@ async function main() {
   });
   const registrationsExportSource = await fs.readFile(path.join(process.cwd(), "app/admin/registrations/export/route.ts"), "utf8");
   check("registration export checks staff access before reading the complete roster", () => {
-    assert.ok(registrationsExportSource.indexOf("if (!isStaff(actor))") < registrationsExportSource.indexOf("db.listStudents()"));
+    assert.ok(registrationsExportSource.indexOf("if (!isStaff(actor))") < registrationsExportSource.indexOf("await loadRegistrationReport()"));
     assert.match(registrationsExportSource, /status: 401/);
     assert.match(registrationsExportSource, /status: 403/);
     assert.match(registrationsExportSource, /private, no-store/);
     assert.match(registrationsExportSource, /attachment; filename=/);
-    assert.ok(!registrationsExportSource.includes("searchParams"));
+    assert.ok(registrationsExportSource.includes('searchParams.get("group")'));
+    assert.ok(!registrationsExportSource.includes('searchParams.get("q")'));
+    assert.match(registrationsExportSource, /status: 400/);
+  });
+  const groupEnrollment = { id: "group-e", studentId: "group-s", product: "advanced", plan: "advanced" as const, status: "pending" as const, amount: 1000, currency: "USD", provider: null, providerRef: null, activatedAt: null, accessSuspendedAt: null, createdAt: "2026-09-01T12:00:00.000Z", updatedAt: "2026-09-01T12:00:00.000Z" };
+  const groupAttempt: RegistrationPayment = { enrollmentId: groupEnrollment.id, status: "open", promotionCode: null, discountAmountMinor: 0, paidAmountMinor: 0, refundedAmountMinor: 0, currency: "usd", needsReview: false, updatedAt: "2026-09-01T12:00:00.000Z" };
+  const classifyOne = (scholarships: Parameters<typeof classifyRegistrations>[2] = [], attempts: RegistrationPayment[] = []) => classifyRegistrations([{ id: "group-s" }], [groupEnrollment], scholarships, attempts).get("group-s")!;
+  check("registration groups keep unpaid accounts in others until activity is recorded", () => {
+    assert.equal(classifyOne().group, "others");
+    for (const status of ["created", "open", "failed", "expired", "processing", "paid", "refunded", "disputed"]) {
+      assert.equal(classifyOne([], [{ ...groupAttempt, status }]).group, "payment");
+    }
+    assert.equal(registrationGroup("minister-code"), "minister-code");
+    assert.equal(registrationGroup("made-up-group"), null);
+  });
+  check("all scholarship statuses take priority while retaining code and payment overlap", () => {
+    for (const status of ["pending", "approved", "declined"] as const) {
+      const result = classifyOne([{ studentId: "group-s", status }], [{ ...groupAttempt, status: "paid", paidAmountMinor: 10000, promotionCode: MINISTER_CODE }]);
+      assert.equal(result.group, "scholarship");
+      assert.equal(result.scholarshipStatuses, status);
+      assert.equal(result.ministerCodeRecorded, true);
+      assert.equal(result.paymentActivity, true);
+    }
+  });
+  check("historic minister-code use survives later checkout retries and zero-cost is not paid", () => {
+    const codeAttempt = { ...groupAttempt, promotionCode: ` ${MINISTER_CODE.toLowerCase()} `, discountAmountMinor: 100000, status: "paid" };
+    const result = classifyOne([], [codeAttempt, { ...groupAttempt, updatedAt: "2026-09-02T12:00:00.000Z", status: "failed" }]);
+    assert.equal(result.group, "minister-code");
+    assert.equal(result.checkoutCount, 2);
+    assert.match(result.ministerCodeStatus, /Completed without payment/);
+    assert.equal(classifyOne([], [codeAttempt]).paymentActivity, false);
+    assert.equal(classifyOne([], [{ ...codeAttempt, promotionCode: "ANOTHER-CODE" }]).ministerCodeRecorded, false);
+  });
+  check("grouping does not infer payment from active access and retains manual verification caveat", () => {
+    const active = { ...groupEnrollment, status: "active" as const };
+    assert.equal(classifyRegistrations([{ id: "group-s" }], [active], [], []).get("group-s")!.group, "others");
+    const manual = classifyRegistrations([{ id: "group-s" }], [{ ...active, provider: "manual" }], [], []).get("group-s")!;
+    assert.equal(manual.group, "payment");
+    assert.match(manual.paymentDetails, /verify receipt/);
+    assert.match(paymentEvidenceLabel({ ...groupAttempt, status: "refunded", paidAmountMinor: 100000, refundedAmountMinor: 100000, needsReview: true }), /Refunded; received USD 1000.00; refunded USD 1000.00; staff review required/);
+  });
+  check("grouping joins each person's multiple enrollments without leaking others' activity", () => {
+    const result = classifyRegistrations([{ id: "group-s" }, { id: "other-s" }, { id: "no-enrollment" }], [groupEnrollment, { ...groupEnrollment, id: "second-e" }, { ...groupEnrollment, id: "other-e", studentId: "other-s" }], [], [{ ...groupAttempt, enrollmentId: "second-e", promotionCode: MINISTER_CODE }, { ...groupAttempt, enrollmentId: "other-e" }, { ...groupAttempt, enrollmentId: "orphan-e", promotionCode: MINISTER_CODE }]);
+    assert.equal(result.size, 3);
+    assert.equal(result.get("group-s")!.group, "minister-code");
+    assert.equal(result.get("other-s")!.group, "payment");
+    assert.equal(result.get("other-s")!.ministerCodeRecorded, false);
+    assert.equal(result.get("no-enrollment")!.group, "others");
+  });
+  check("registration CSV includes grouping evidence and escapes payment history formulas", () => {
+    const student = { id: "group-s", fullName: "Test Person", email: "test@example.test", country: "Nigeria", role: "student" as const, createdAt: groupEnrollment.createdAt };
+    const details = classifyOne();
+    const csv = registrationsCsv([student], [groupEnrollment], new Map(), new Map([[student.id, { ...details, paymentDetails: "=HYPERLINK(\"bad\")" }]]));
+    assert.ok(csv.includes('"Registration group"'));
+    assert.ok(csv.includes('"Others"'));
+    assert.ok(csv.includes(csvCell('=HYPERLINK("bad")')));
+    assert.ok(!csv.includes("Not classified"));
   });
   const adminPageSource = await fs.readFile(
     path.join(process.cwd(), "app/admin/page.tsx"),
@@ -1294,6 +1352,10 @@ async function main() {
     assert.equal(duplicateScholarship?.id, scholarship?.id)
   );
   const scholarshipQueue = await db.listScholarshipApplications();
+  const registrationScholarships = await db.listRegistrationScholarships();
+  check("registration grouping reads only scholarship owner and status, not private essays", () => {
+    assert.deepEqual(registrationScholarships, [{ studentId: student.id, status: "pending" }]);
+  });
   check("staff scholarship queue includes applicant and enrollment", () => {
     assert.equal(scholarshipQueue[0]?.student.email, student.email);
     assert.equal(scholarshipQueue[0]?.enrollment.id, enrollment.id);

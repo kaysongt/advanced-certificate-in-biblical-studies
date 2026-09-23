@@ -147,6 +147,7 @@ export default async function AdminSettings({
           {visible.length} matching accounts of {people.length} total; up to 25
           per page. Role changes take effect on the next page load.
           {" "}The CSV download includes all accounts, not just these search results.
+          {" "}<Link href="/admin/registrations">View registration groups →</Link>
         </p>
         <div className="admin-student-list">
           {pagePeople.map((p) => (

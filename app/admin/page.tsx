@@ -228,6 +228,7 @@ export default async function AdminPage({
           Export all {students.length} accounts, including unpaid registrations and accounts without an enrollment.
           One row per person, regardless of the filters below. Opens in Excel or Google Sheets.
           Enrollment status does not necessarily mean tuition has been paid.
+          {" "}<Link href="/admin/registrations">View registration groups →</Link>
         </p>
         <div className="admin-money-summary" aria-label="Tuition totals">
           <div>

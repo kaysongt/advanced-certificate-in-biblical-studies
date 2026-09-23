@@ -193,6 +193,7 @@ export interface DataStore {
     (ScholarshipApplication & { student: Student; enrollment: Enrollment })[]
   >;
   countPendingScholarshipApplications(): Promise<number>;
+  listRegistrationScholarships(): Promise<Pick<ScholarshipApplication, "studentId" | "status">[]>;
   reviewScholarshipApplication(input: {
     applicationId: string;
     reviewerId: string;

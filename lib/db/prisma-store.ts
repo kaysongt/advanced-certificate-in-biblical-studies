@@ -531,6 +531,11 @@ export const prismaStore: DataStore = {
     return attempt.answers.flatMap(answer => answer && typeof answer === "object" && !Array.isArray(answer) && typeof answer.questionId === "string" ? [answer.questionId] : []);
   },
 
+  async listRegistrationScholarships() {
+    const applications = await prisma.scholarshipApplication.findMany({ select: { studentId: true, status: true } });
+    return applications.map(({ studentId, status }) => ({ studentId, status: scholarshipStatusFromPrisma[status] }));
+  },
+
   async hasPassingTopicAttempt(studentId, lessonId) {
     return Boolean(
       await prisma.quizAttempt.findFirst({

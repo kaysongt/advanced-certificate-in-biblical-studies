@@ -1,4 +1,5 @@
 import type { Enrollment, ScholarshipApplication, Student } from "./db/types";
+import { registrationGroupLabel, type RegistrationEvidence } from "./registration-groups";
 
 // Applicant-authored text must never execute as an Excel formula.
 export function csvCell(value: unknown): string {
@@ -12,6 +13,7 @@ export function registrationsCsv(
   students: Pick<Student, "id" | "fullName" | "email" | "country" | "role" | "createdAt">[],
   enrollments: Enrollment[],
   programNames: ReadonlyMap<string, string> = new Map(),
+  evidence?: ReadonlyMap<string, RegistrationEvidence>,
 ): string {
   const byStudent = new Map<string, Enrollment[]>();
   for (const enrollment of enrollments) {
@@ -22,9 +24,12 @@ export function registrationsCsv(
   const rows: unknown[][] = [[
     "Account ID", "Name", "Email", "Country", "Role", "Registered (UTC)",
     "Enrollment count", "Enrollments (program / status / source)",
+    "Registration group", "Scholarship application status", "Minister code recorded",
+    "Minister code status", "Checkout attempts", "Payment activity recorded", "Payment / checkout history",
   ]];
   for (const student of students) {
     const items = byStudent.get(student.id) ?? [];
+    const details = evidence?.get(student.id);
     rows.push([
       student.id, student.fullName, student.email, student.country, student.role,
       student.createdAt, items.length,
@@ -33,6 +38,12 @@ export function registrationsCsv(
         const status = item.accessSuspendedAt ? `${item.status} (access suspended)` : item.status;
         return `${program} / ${status} / ${item.provider || "Not recorded"}`;
       }).join("\n") : "No enrollment",
+      details ? registrationGroupLabel(details.group) : "Not classified",
+      details?.scholarshipStatuses ?? "Not checked",
+      details ? details.ministerCodeRecorded ? "Yes" : "No" : "Not checked",
+      details?.ministerCodeStatus ?? "Not checked", details?.checkoutCount ?? "",
+      details ? details.paymentActivity ? "Yes" : "No" : "Not checked",
+      details?.paymentDetails ?? "Not checked",
     ]);
   }
   // Explicit allowlist above deliberately excludes password hashes and provider references.

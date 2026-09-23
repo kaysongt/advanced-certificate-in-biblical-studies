@@ -403,6 +403,11 @@ export const fileStore: DataStore = {
     return Array.isArray(attempt?.answers) ? attempt.answers.flatMap(answer => typeof answer?.questionId === "string" ? [answer.questionId] : []) : [];
   },
 
+  async listRegistrationScholarships() {
+    const data = await read();
+    return data.scholarshipApplications.map(({ studentId, status }) => ({ studentId, status }));
+  },
+
   async hasPassingTopicAttempt(studentId: string, lessonId: string): Promise<boolean> {
     const data = await read();
     return data.quizAttempts.some(

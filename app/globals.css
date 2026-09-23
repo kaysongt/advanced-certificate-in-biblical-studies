@@ -1840,6 +1840,11 @@ a.card:hover::after { opacity: .9; }
 .admin-section-head h2 { margin: 0; padding: 0; border: 0; }
 .admin-export-head { flex-wrap: wrap; }
 .admin-export-head > .btn { flex-shrink: 0; }
+.registration-group-method { margin: 16px 0 24px; color: var(--muted); font: 400 13px/1.6 var(--sans); }
+.registration-group-method summary, .registration-group-person summary { cursor: pointer; }
+.registration-group-person { overflow-wrap: anywhere; }
+.registration-group-person details { margin-top: 12px; font: 400 13px/1.6 var(--sans); }
+.registration-payment-history { white-space: pre-line; }
 @media (max-width: 640px) {
   .admin-export-head > .btn { width: 100%; text-align: center; }
 }
