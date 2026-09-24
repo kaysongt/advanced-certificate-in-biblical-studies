@@ -2,10 +2,11 @@ import type { Enrollment, ScholarshipApplication } from "./db/types";
 
 export const MINISTER_CODE = "ORDAINEDMINISTERS2026";
 export const REGISTRATION_GROUPS = [
+  { key: "ministers", label: "Ordained ministers" },
   { key: "scholarship", label: "Scholarship applicants" },
-  { key: "minister-code", label: "ORDAINEDMINISTERS2026 code" },
-  { key: "payment", label: "Paid or attempted payment" },
-  { key: "others", label: "Others" },
+  { key: "paid", label: "Confirmed paid" },
+  { key: "payment-pending", label: "Payment attempted / pending" },
+  { key: "not-started", label: "Not started payment" },
 ] as const;
 export type RegistrationGroup = (typeof REGISTRATION_GROUPS)[number]["key"];
 export type RegistrationScholarship = Pick<ScholarshipApplication, "studentId" | "status">;
@@ -28,6 +29,8 @@ export type RegistrationEvidence = {
   checkoutCount: number;
   paymentActivity: boolean;
   paymentDetails: string;
+  groupReason: string;
+  communicationNote: string;
 };
 export function registrationGroup(value: string | null | undefined): RegistrationGroup | null {
   return REGISTRATION_GROUPS.find((group) => group.key === value)?.key ?? null;
@@ -83,12 +86,33 @@ export function classifyRegistrations(
     const ownEnrollments = enrollmentsByStudent.get(student.id) ?? [];
     const manual = ownEnrollments.filter((e) => e.provider === "manual" && (e.activatedAt || e.status === "active"));
     const legacy = ownEnrollments.filter((e) => e.provider === "stripe" && !history.some((a) => a.enrollmentId === e.id));
-    const paymentActivity = history.some((a) => a.paidAmountMinor > 0 || !a.promotionCode || a.discountAmountMinor === 0) || manual.length > 0 || legacy.length > 0;
-    // Primary-group precedence follows the team's requested order. Independent
-    // evidence columns retain overlaps instead of hiding later activity.
-    const group: RegistrationGroup = applications?.size ? "scholarship" : codeHistory.length ? "minister-code" : paymentActivity ? "payment" : "others";
+    const paymentActivity = history.length > 0 || manual.length > 0 || legacy.length > 0;
+    const ministerWaiver = ownEnrollments.some((e) => e.provider === "minister-waiver" && e.status === "active" && !e.accessSuspendedAt);
+    const completedMinisterCode = codeHistory.some((a) => a.status === "paid" && a.paidAmountMinor === 0 && a.discountAmountMinor > 0 && !a.needsReview && ownEnrollments.some((e) => e.id === a.enrollmentId && e.status === "active" && !e.accessSuspendedAt));
+    const confirmedPayment = history.some((a) => a.status === "paid" && a.paidAmountMinor > 0 && a.refundedAmountMinor === 0 && !a.needsReview);
+    const paymentReview = history.some((a) => a.needsReview || ["refunded", "partially-refunded", "disputed"].includes(a.status)) || ownEnrollments.some((e) => e.accessSuspendedAt);
+    // Exactly one outreach group per registered account. Historical overlaps are
+    // evidence only, never extra recipients in another group's export.
+    const group: RegistrationGroup = ministerWaiver || completedMinisterCode ? "ministers"
+      : applications?.size ? "scholarship"
+      : confirmedPayment && !paymentReview ? "paid"
+      : paymentActivity ? "payment-pending" : "not-started";
+    const groupReason = group === "ministers" ? ministerWaiver ? "Verified minister tuition waiver" : "Completed, validated minister-code enrollment"
+      : group === "scholarship" ? "Scholarship application on record; minister priority checked first"
+      : group === "paid" ? "Positive completed Stripe payment with no refund, dispute or review flag"
+      : group === "payment-pending" ? "Checkout/payment activity without confirmed payment clearance"
+      : "No recorded checkout or payment activity";
+    const communicationNote = group === "ministers" ? "Minister welcome only; exclude from tuition-payment and scholarship-fee requests."
+      : group === "scholarship" ? "Scholarship communication only; check the decision before claiming an award or requesting any commitment fee."
+      : group === "paid" ? "Payment acknowledgement; do not send a pending-payment reminder."
+      : paymentReview || manual.length || legacy.length || ownEnrollments.some((e) => e.status === "active") || codeHistory.length
+        ? "HOLD: staff must reconcile access, code or payment evidence before requesting payment."
+        : group === "payment-pending" ? "Payment follow-up; check for a newer payment before sending."
+        : "Registration follow-up; no payment attempt is recorded. Check account role before outreach.";
     return [student.id, {
       group,
+      groupReason,
+      communicationNote,
       scholarshipStatuses: applications ? [...applications].sort().join(", ") : "No application recorded",
       ministerCodeRecorded: codeHistory.length > 0,
       ministerCodeStatus: codeHistory.length ? [...new Set(codeHistory.map(paymentEvidenceLabel))].join("; ") : "Not recorded",

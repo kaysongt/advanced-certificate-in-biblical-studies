@@ -26,6 +26,7 @@ export function registrationsCsv(
     "Enrollment count", "Enrollments (program / status / source)",
     "Registration group", "Scholarship application status", "Minister code recorded",
     "Minister code status", "Checkout attempts", "Payment activity recorded", "Payment / checkout history",
+    "Group assignment reason", "Communication guidance",
   ]];
   for (const student of students) {
     const items = byStudent.get(student.id) ?? [];
@@ -44,6 +45,7 @@ export function registrationsCsv(
       details?.ministerCodeStatus ?? "Not checked", details?.checkoutCount ?? "",
       details ? details.paymentActivity ? "Yes" : "No" : "Not checked",
       details?.paymentDetails ?? "Not checked",
+      details?.groupReason ?? "Not checked", details?.communicationNote ?? "Not checked",
     ]);
   }
   // Explicit allowlist above deliberately excludes password hashes and provider references.

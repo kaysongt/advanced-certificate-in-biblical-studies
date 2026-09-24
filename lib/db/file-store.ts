@@ -39,7 +39,11 @@ type Shape = {
   authRateLimits: Record<string, { windowStart: number; attempts: number }>;
 };
 
-const FILE = path.join(process.cwd(), ".data", "store.json");
+function storeFile(): string {
+  // Test runs must never rename or overwrite the user's local data/exports.
+  if (process.env.NODE_ENV === "test" && process.env.KTI_TEST_STORE_PATH) return path.resolve(process.env.KTI_TEST_STORE_PATH);
+  return path.join(process.cwd(), ".data", "store.json");
+}
 const EMPTY: Shape = {
   students: [],
   enrollments: [],
@@ -53,7 +57,8 @@ const EMPTY: Shape = {
 
 async function read(): Promise<Shape> {
   try {
-    return { ...EMPTY, ...JSON.parse(await fs.readFile(FILE, "utf8")) };
+    // Runtime development/test data must never be bundled into a deployment.
+    return { ...EMPTY, ...JSON.parse(await fs.readFile(/* turbopackIgnore: true */ storeFile(), "utf8")) };
   } catch {
     return { ...EMPTY };
   }
@@ -61,8 +66,9 @@ async function read(): Promise<Shape> {
 
 async function write(data: Shape): Promise<void> {
   try {
-    await fs.mkdir(path.dirname(FILE), { recursive: true });
-    await fs.writeFile(FILE, JSON.stringify(data, null, 2), "utf8");
+    const file = storeFile();
+    await fs.mkdir(path.dirname(file), { recursive: true });
+    await fs.writeFile(file, JSON.stringify(data, null, 2), "utf8");
   } catch (error) {
     throw new StorageUnavailableError(error);
   }

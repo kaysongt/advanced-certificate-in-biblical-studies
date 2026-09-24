@@ -575,56 +575,80 @@ async function main() {
   const groupEnrollment = { id: "group-e", studentId: "group-s", product: "advanced", plan: "advanced" as const, status: "pending" as const, amount: 1000, currency: "USD", provider: null, providerRef: null, activatedAt: null, accessSuspendedAt: null, createdAt: "2026-09-01T12:00:00.000Z", updatedAt: "2026-09-01T12:00:00.000Z" };
   const groupAttempt: RegistrationPayment = { enrollmentId: groupEnrollment.id, status: "open", promotionCode: null, discountAmountMinor: 0, paidAmountMinor: 0, refundedAmountMinor: 0, currency: "usd", needsReview: false, updatedAt: "2026-09-01T12:00:00.000Z" };
   const classifyOne = (scholarships: Parameters<typeof classifyRegistrations>[2] = [], attempts: RegistrationPayment[] = []) => classifyRegistrations([{ id: "group-s" }], [groupEnrollment], scholarships, attempts).get("group-s")!;
-  check("registration groups keep unpaid accounts in others until activity is recorded", () => {
-    assert.equal(classifyOne().group, "others");
+  check("registration groups separate no-attempt accounts from all unconfirmed payment activity", () => {
+    assert.equal(classifyOne().group, "not-started");
     for (const status of ["created", "open", "failed", "expired", "processing", "paid", "refunded", "disputed"]) {
-      assert.equal(classifyOne([], [{ ...groupAttempt, status }]).group, "payment");
+      assert.equal(classifyOne([], [{ ...groupAttempt, status }]).group, "payment-pending");
     }
-    assert.equal(registrationGroup("minister-code"), "minister-code");
+    assert.equal(registrationGroup("ministers"), "ministers");
     assert.equal(registrationGroup("made-up-group"), null);
   });
-  check("all scholarship statuses take priority while retaining code and payment overlap", () => {
+  check("scholarships supersede payments but not verified minister waivers", () => {
     for (const status of ["pending", "approved", "declined"] as const) {
       const result = classifyOne([{ studentId: "group-s", status }], [{ ...groupAttempt, status: "paid", paidAmountMinor: 10000, promotionCode: MINISTER_CODE }]);
       assert.equal(result.group, "scholarship");
       assert.equal(result.scholarshipStatuses, status);
       assert.equal(result.ministerCodeRecorded, true);
       assert.equal(result.paymentActivity, true);
+      const waived = classifyRegistrations([{id:"group-s"}], [{...groupEnrollment,provider:"minister-waiver",status:"active"}], [{studentId:"group-s",status}], [groupAttempt]).get("group-s")!;
+      assert.equal(waived.group, "ministers");
+      assert.equal(waived.scholarshipStatuses, status);
     }
   });
   check("historic minister-code use survives later checkout retries and zero-cost is not paid", () => {
     const codeAttempt = { ...groupAttempt, promotionCode: ` ${MINISTER_CODE.toLowerCase()} `, discountAmountMinor: 100000, status: "paid" };
-    const result = classifyOne([], [codeAttempt, { ...groupAttempt, updatedAt: "2026-09-02T12:00:00.000Z", status: "failed" }]);
-    assert.equal(result.group, "minister-code");
+    const result = classifyRegistrations([{id:"group-s"}], [{...groupEnrollment,status:"active"}], [], [codeAttempt, { ...groupAttempt, updatedAt: "2026-09-02T12:00:00.000Z", status: "failed" }]).get("group-s")!;
+    assert.equal(result.group, "ministers");
     assert.equal(result.checkoutCount, 2);
     assert.match(result.ministerCodeStatus, /Completed without payment/);
-    assert.equal(classifyOne([], [codeAttempt]).paymentActivity, false);
+    assert.equal(classifyOne([], [codeAttempt]).group, "payment-pending");
     assert.equal(classifyOne([], [{ ...codeAttempt, promotionCode: "ANOTHER-CODE" }]).ministerCodeRecorded, false);
   });
   check("grouping does not infer payment from active access and retains manual verification caveat", () => {
     const active = { ...groupEnrollment, status: "active" as const };
-    assert.equal(classifyRegistrations([{ id: "group-s" }], [active], [], []).get("group-s")!.group, "others");
+    assert.equal(classifyRegistrations([{ id: "group-s" }], [active], [], []).get("group-s")!.group, "not-started");
     const manual = classifyRegistrations([{ id: "group-s" }], [{ ...active, provider: "manual" }], [], []).get("group-s")!;
-    assert.equal(manual.group, "payment");
+    assert.equal(manual.group, "payment-pending");
+    assert.match(manual.communicationNote, /HOLD/);
     assert.match(manual.paymentDetails, /verify receipt/);
     assert.match(paymentEvidenceLabel({ ...groupAttempt, status: "refunded", paidAmountMinor: 100000, refundedAmountMinor: 100000, needsReview: true }), /Refunded; received USD 1000.00; refunded USD 1000.00; staff review required/);
   });
   check("grouping joins each person's multiple enrollments without leaking others' activity", () => {
     const result = classifyRegistrations([{ id: "group-s" }, { id: "other-s" }, { id: "no-enrollment" }], [groupEnrollment, { ...groupEnrollment, id: "second-e" }, { ...groupEnrollment, id: "other-e", studentId: "other-s" }], [], [{ ...groupAttempt, enrollmentId: "second-e", promotionCode: MINISTER_CODE }, { ...groupAttempt, enrollmentId: "other-e" }, { ...groupAttempt, enrollmentId: "orphan-e", promotionCode: MINISTER_CODE }]);
     assert.equal(result.size, 3);
-    assert.equal(result.get("group-s")!.group, "minister-code");
-    assert.equal(result.get("other-s")!.group, "payment");
+    assert.equal(result.get("group-s")!.group, "payment-pending");
+    assert.equal(result.get("other-s")!.group, "payment-pending");
     assert.equal(result.get("other-s")!.ministerCodeRecorded, false);
-    assert.equal(result.get("no-enrollment")!.group, "others");
+    assert.equal(result.get("no-enrollment")!.group, "not-started");
   });
   check("registration CSV includes grouping evidence and escapes payment history formulas", () => {
     const student = { id: "group-s", fullName: "Test Person", email: "test@example.test", country: "Nigeria", role: "student" as const, createdAt: groupEnrollment.createdAt };
     const details = classifyOne();
     const csv = registrationsCsv([student], [groupEnrollment], new Map(), new Map([[student.id, { ...details, paymentDetails: "=HYPERLINK(\"bad\")" }]]));
     assert.ok(csv.includes('"Registration group"'));
-    assert.ok(csv.includes('"Others"'));
+    assert.ok(csv.includes('"Not started payment"'));
+    assert.ok(csv.includes('"Communication guidance"'));
     assert.ok(csv.includes(csvCell('=HYPERLINK("bad")')));
     assert.ok(!csv.includes("Not classified"));
+  });
+  check("confirmed payment excludes refunds, disputes, review flags and zero-cost completions", () => {
+    const paid = {...groupAttempt,status:"paid",paidAmountMinor:100000};
+    assert.equal(classifyOne([], [paid]).group, "paid");
+    for (const change of [{needsReview:true},{refundedAmountMinor:1},{paidAmountMinor:0},{status:"disputed"},{status:"partially-refunded"}]) {
+      assert.equal(classifyOne([], [{...paid,...change}]).group, "payment-pending");
+    }
+    assert.equal(classifyOne([], [paid,{...groupAttempt,needsReview:true}]).group,"payment-pending");
+  });
+  check("minister-first grouping produces a complete disjoint partition without changing input", () => {
+    const students = Array.from({length:5},(_,i)=>({id:`partition-${i}`}));
+    const enrollments = students.map((s,i)=>({...groupEnrollment,id:`e-${i}`,studentId:s.id,...(i===0?{status:"active" as const,provider:"minister-waiver"}:{} )}));
+    const scholarships = students.slice(0,2).map(s=>({studentId:s.id,status:"pending" as const}));
+    const attempts = students.slice(0,4).map((_,i)=>({...groupAttempt,enrollmentId:`e-${i}`,...(i===2?{status:"paid",paidAmountMinor:100000}:{})}));
+    const before = JSON.stringify({students,enrollments,scholarships,attempts});
+    const result = classifyRegistrations(students,enrollments,scholarships,attempts);
+    assert.deepEqual([...result.values()].map(r=>r.group),["ministers","scholarship","paid","payment-pending","not-started"]);
+    assert.equal(result.size,students.length);
+    assert.equal(JSON.stringify({students,enrollments,scholarships,attempts}),before);
   });
   const adminPageSource = await fs.readFile(
     path.join(process.cwd(), "app/admin/page.tsx"),
@@ -1230,20 +1254,16 @@ async function main() {
   console.log("  ok  wrong password rejected");
 
   console.log("\nstorage");
-  // Preserve the entire local data directory, not just store.json: exports and
-  // other user files may live alongside the development database.
+  // Use isolated scratch storage: open PDF viewers may lock the real .data
+  // directory on Windows, and test fixtures must never touch user exports.
   if (process.env.DATABASE_URL) throw new Error("Run storage checks without DATABASE_URL; tests must never write to production.");
-  const dataDir = path.join(process.cwd(), ".data");
   const scratchDir = await fs.mkdtemp(path.join(os.tmpdir(), "kti-check-"));
-  const backup = path.join(scratchDir, "original-data");
+  const dataDir = path.join(scratchDir, "data");
   const live = path.join(dataDir, "store.json");
-  let hadExisting = false;
-  try {
-    await fs.rename(dataDir, backup);
-    hadExisting = true;
-  } catch (err) {
-    if ((err as NodeJS.ErrnoException).code !== "ENOENT") throw err;
-  }
+  assert.ok(path.resolve(dataDir).startsWith(path.resolve(scratchDir) + path.sep));
+  const previousNodeEnv = process.env.NODE_ENV;
+  const previousTestPath = process.env.KTI_TEST_STORE_PATH;
+  Object.assign(process.env, { NODE_ENV: "test", KTI_TEST_STORE_PATH: live });
   try {
 
   const { db } = await import("../lib/db");
@@ -1637,7 +1657,10 @@ async function main() {
 
   } finally {
     await fs.rm(dataDir, { recursive: true, force: true });
-    if (hadExisting) await fs.rename(backup, dataDir);
+    if (previousNodeEnv === undefined) Reflect.deleteProperty(process.env, "NODE_ENV");
+    else Object.assign(process.env, { NODE_ENV: previousNodeEnv });
+    if (previousTestPath === undefined) delete process.env.KTI_TEST_STORE_PATH;
+    else process.env.KTI_TEST_STORE_PATH = previousTestPath;
   }
   await fs.rm(scratchDir, { recursive: true, force: true });
 

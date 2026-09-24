@@ -30,7 +30,7 @@ export default async function RegistrationGroupsPage({ searchParams }: {
     <header className="pagehead">
       <div className="eyebrow">KingsWord administration</div>
       <h1>Registration groups</h1>
-      <p className="deck">Find scholarship applicants, minister-code users, payment activity, and other registered accounts.</p>
+      <p className="deck">Five non-overlapping groups for clear, consistent communication. Each registered account appears in exactly one group.</p>
     </header>
     <AdminNav pendingScholarshipCount={pendingScholarships} />
     <section className="admin-section">
@@ -44,10 +44,11 @@ export default async function RegistrationGroupsPage({ searchParams }: {
           <strong>{students.filter((student) => evidence.get(student.id)!.group === group.key).length}</strong> {group.label}
         </Link>)}
       </nav>
-      <p className="admin-form-note">When categories overlap, the order is scholarship → minister code → payment activity → others. Details and exports retain all recorded activity. Scholarship applicants include pending, approved, and declined applications.</p>
+      <p className="admin-form-note">Priority: ordained ministers → scholarship applicants → confirmed paid → payment attempted / pending → not started payment. Minister and scholarship accounts are excluded from the remaining groups. Payment history is preserved, not deleted.</p>
       <details className="registration-group-method"><summary>How payment and code records are interpreted</summary>
         <p>Checkout started, open, failed, or expired does not mean money was received. A completed zero-cost checkout is not a payment. Refunds, disputes, and manual activations are identified separately.</p>
-        <p>Groups use all stored checkout attempts. Code usage appears only when the exact code is recorded; rejected or unrecorded code entries cannot be inferred. “Others” includes accounts with no matching recorded activity, including staff accounts.</p>
+        <p>Minister membership requires an active verified waiver or a validated, completed minister-code enrollment. Entering a code alone does not prove eligibility. Confirmed paid requires a positive completed payment with no refund, dispute or review flag. Manual activations require receipt verification.</p>
+        <p>Scholarship applicants include pending, approved, and declined applications; an application is not an award. Review communication guidance before sending: some accounts are on hold for reconciliation. These groups do not send emails automatically. Staff/admin accounts retain their role labels.</p>
       </details>
       <form className="admin-search-form" method="get">
         {selectedGroup ? <input type="hidden" name="group" value={selectedGroup} /> : null}
@@ -67,6 +68,8 @@ export default async function RegistrationGroupsPage({ searchParams }: {
           return <article key={student.id} className="admin-card admin-card-stack registration-group-person">
             <div className="admin-student-identity"><strong>{student.fullName}</strong><a href={`mailto:${student.email}`}>{student.email}</a><span className="admin-student-meta">{student.country} · {student.role} · Registered {student.createdAt.slice(0, 10)} (UTC)</span></div>
             <p><strong>{registrationGroupLabel(details.group)}</strong></p>
+            <p>{details.groupReason}</p>
+            <p><strong>Communication:</strong> {details.communicationNote}</p>
             <p>Scholarship: {details.scholarshipStatuses}</p>
             <p>Minister code: {details.ministerCodeStatus}</p>
             <details><summary>Payment / checkout history ({details.checkoutCount} checkouts)</summary><p className="registration-payment-history">{details.paymentDetails}</p></details>
