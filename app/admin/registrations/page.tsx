@@ -18,7 +18,7 @@ export default async function RegistrationGroupsPage({ searchParams }: {
   const params = await searchParams;
   const selectedGroup = registrationGroup(params.group);
   const query = (params.q ?? "").trim();
-  const { students, evidence, pendingScholarships } = await loadRegistrationReport();
+  const { students, evidence, pendingScholarships, excludedInternalAccounts } = await loadRegistrationReport();
   const grouped = selectedGroup ? students.filter((student) => evidence.get(student.id)!.group === selectedGroup) : students;
   const visible = grouped.filter((student) => `${student.fullName} ${student.email} ${student.country}`.toLowerCase().includes(query.toLowerCase()));
   const pages = Math.max(1, Math.ceil(visible.length / 25));
@@ -35,7 +35,7 @@ export default async function RegistrationGroupsPage({ searchParams }: {
     <AdminNav pendingScholarshipCount={pendingScholarships} />
     <section className="admin-section">
       <div className="admin-section-head admin-export-head">
-        <div><h2>All registered accounts</h2><p>{students.length} people. One primary group per person.</p></div>
+        <div><h2>Registered people</h2><p>{students.length} accounts. One primary group per person.</p></div>
         <a className="btn" href="/admin/registrations/export">Download all registrations (CSV)</a>
       </div>
       <nav className="admin-registration-summary" aria-label="Registration groups">
@@ -45,6 +45,7 @@ export default async function RegistrationGroupsPage({ searchParams }: {
         </Link>)}
       </nav>
       <p className="admin-form-note">Priority: ordained ministers → scholarship applicants → confirmed paid → payment attempted / pending → not started payment. Minister and scholarship accounts are excluded from the remaining groups. Payment history is preserved, not deleted.</p>
+      {excludedInternalAccounts ? <p className="notice warn">{excludedInternalAccounts} internal/test accounts with reserved email domains are excluded from these groups, payment totals and CSV mailing lists. Their database records are preserved.</p> : null}
       <details className="registration-group-method"><summary>How payment and code records are interpreted</summary>
         <p>Checkout started, open, failed, or expired does not mean money was received. A completed zero-cost checkout is not a payment. Refunds, disputes, and manual activations are identified separately.</p>
         <p>Minister membership requires an active verified waiver or a validated, completed minister-code enrollment. Entering a code alone does not prove eligibility. Confirmed paid requires a positive completed payment with no refund, dispute or review flag. Manual activations require receipt verification.</p>

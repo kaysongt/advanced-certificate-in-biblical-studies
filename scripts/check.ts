@@ -48,7 +48,7 @@ import {
 } from "../lib/curriculum";
 import { ADMIN_NAV_ITEMS, isAdminRouteActive } from "../lib/admin-navigation";
 import { csvCell, scholarshipCsv, registrationsCsv } from "../lib/admin-export";
-import { classifyRegistrations, registrationGroup, paymentEvidenceLabel, MINISTER_CODE, type RegistrationPayment } from "../lib/registration-groups";
+import { classifyRegistrations, isInternalRegistration, registrationGroup, paymentEvidenceLabel, MINISTER_CODE, type RegistrationPayment } from "../lib/registration-groups";
 import { adminSettingsRedirect } from "../lib/admin-settings";
 import { issueAssessmentAttempt, verifyAssessmentAttempt } from "../lib/assessment-attempt";
 import { prioritizeFreshQuestions } from "../lib/assessment-selection";
@@ -575,6 +575,10 @@ async function main() {
   const groupEnrollment = { id: "group-e", studentId: "group-s", product: "advanced", plan: "advanced" as const, status: "pending" as const, amount: 1000, currency: "USD", provider: null, providerRef: null, activatedAt: null, accessSuspendedAt: null, createdAt: "2026-09-01T12:00:00.000Z", updatedAt: "2026-09-01T12:00:00.000Z" };
   const groupAttempt: RegistrationPayment = { enrollmentId: groupEnrollment.id, status: "open", promotionCode: null, discountAmountMinor: 0, paidAmountMinor: 0, refundedAmountMinor: 0, currency: "usd", needsReview: false, updatedAt: "2026-09-01T12:00:00.000Z" };
   const classifyOne = (scholarships: Parameters<typeof classifyRegistrations>[2] = [], attempts: RegistrationPayment[] = []) => classifyRegistrations([{ id: "group-s" }], [groupEnrollment], scholarships, attempts).get("group-s")!;
+  check("internal test addresses are excluded without excluding real staff or students", () => {
+    for (const email of ["stripe-smoke@example.com","test@example.net","test@example.org","test@kti.test","test@kti.invalid"]) assert.equal(isInternalRegistration({email}),true);
+    for (const email of ["person@gmail.com","staff@kingsword.org","testperson@yahoo.com"]) assert.equal(isInternalRegistration({email}),false);
+  });
   check("registration groups separate no-attempt accounts from all unconfirmed payment activity", () => {
     assert.equal(classifyOne().group, "not-started");
     for (const status of ["created", "open", "failed", "expired", "processing", "paid", "refunded", "disputed"]) {

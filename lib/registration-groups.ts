@@ -1,6 +1,11 @@
 import type { Enrollment, ScholarshipApplication } from "./db/types";
 
 export const MINISTER_CODE = "ORDAINEDMINISTERS2026";
+/** Reserved documentation/test addresses are retained in the database, never mailed. */
+export function isInternalRegistration(student: { email: string }): boolean {
+  const domain = student.email.trim().toLowerCase().split("@")[1] ?? "";
+  return ["example.com", "example.net", "example.org", "localhost"].includes(domain) || domain.endsWith(".test") || domain.endsWith(".invalid");
+}
 export const REGISTRATION_GROUPS = [
   { key: "ministers", label: "Ordained ministers" },
   { key: "scholarship", label: "Scholarship applicants" },
