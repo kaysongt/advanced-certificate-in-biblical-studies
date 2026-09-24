@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 
 import TopicReader from "@/components/TopicReader";
+import LessonDiscussion from "@/components/LessonDiscussion";
 import { entitlementRedirectPath, hasActiveAccess } from "@/lib/access";
 import { currentStudent, isStaff } from "@/lib/auth";
 import { getCourseStatuses, getLesson, getLessonRows } from "@/lib/content";
@@ -125,6 +126,7 @@ export default async function TopicPage({ params }: Props) {
             : { href: `/courses/${slug}/assessment`, title: "Course assessment" }
         }
       />
+      <LessonDiscussion moduleSlug={module.slug} lessonId={row.id} title={row.title} />
       </div>
     </main>
   );

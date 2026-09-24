@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { findDiscussionLesson } from "@/lib/discussion-target";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 
@@ -102,7 +103,7 @@ export async function moderateCommunityPost(formData: FormData): Promise<void> {
     engagementCredits: formData.get("engagementCredits"),
     hidden: formData.get("hidden") ?? "no",
   });
-  await db.moderateCommunityPost({
+  const post = await db.moderateCommunityPost({
     postId: input.postId,
     moderatorId: moderator.id,
     engagementCredits: input.engagementCredits,
@@ -110,6 +111,11 @@ export async function moderateCommunityPost(formData: FormData): Promise<void> {
   });
   revalidatePath("/admin");
   revalidatePath("/community");
+  if (post) {
+    revalidatePath(`/community/${post.moduleSlug}`);
+    const target = post.lessonId ? findDiscussionLesson(post.moduleSlug, post.lessonId) : null;
+    if (target) revalidatePath(`/courses/${target.course.slug}/${target.row.n}`);
+  }
 }
 
 const roleChangeSchema = z.object({

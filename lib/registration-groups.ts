@@ -95,6 +95,7 @@ export function classifyRegistrations(
       checkoutCount: history.length,
       paymentActivity,
       paymentDetails: [
+        ...ownEnrollments.filter((e) => e.provider === "minister-waiver").map((e) => `Minister tuition waiver (${e.status}${e.accessSuspendedAt ? "; access suspended" : ""}); no cash payment implied`),
         ...history.map((a) => `${a.updatedAt}: ${paymentEvidenceLabel(a)}${a.promotionCode ? `; code ${a.promotionCode}` : ""}`),
         ...manual.map((e) => `Manual activation (${e.status}); verify receipt with KTI`),
         ...legacy.map((e) => `Stripe enrollment (${e.status}); payment history unavailable`),

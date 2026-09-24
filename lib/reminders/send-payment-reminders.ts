@@ -133,6 +133,7 @@ export async function sendDuePaymentReminders(
   const candidates = await prisma.enrollment.findMany({
     where: {
       status: EnrollmentStatus.PENDING,
+      student: { enrollments: { none: { provider: "minister-waiver", product: "advanced", status: EnrollmentStatus.ACTIVE, accessSuspendedAt: null } } },
       OR: [
         { scholarshipApplication: { is: null } },
         {
@@ -213,6 +214,7 @@ export async function sendDuePaymentReminders(
     where: {
       id: { in: claims.map((claim) => claim.enrollmentId) },
       status: EnrollmentStatus.PENDING,
+      student: { enrollments: { none: { provider: "minister-waiver", product: "advanced", status: EnrollmentStatus.ACTIVE, accessSuspendedAt: null } } },
     },
     include: {
       student: true,

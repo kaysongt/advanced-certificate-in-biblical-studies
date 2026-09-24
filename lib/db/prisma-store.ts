@@ -155,6 +155,7 @@ function mapCommunityPost(post: PrismaCommunityPost): CommunityPost {
   return {
     id: post.id,
     moduleSlug: post.moduleSlug,
+    lessonId: post.lessonId,
     studentId: post.studentId,
     body: post.body,
     engagementCredits: post.engagementCredits,
@@ -342,7 +343,10 @@ export const prismaStore: DataStore = {
 
   async listPendingEnrollments() {
     const enrollments = await prisma.enrollment.findMany({
-      where: { status: PrismaEnrollmentStatus.PENDING },
+      where: {
+        status: PrismaEnrollmentStatus.PENDING,
+        student: { enrollments: { none: { provider: "minister-waiver", product: "advanced", status: PrismaEnrollmentStatus.ACTIVE, accessSuspendedAt: null } } },
+      },
       include: { student: true },
       orderBy: { createdAt: "asc" },
     });
@@ -600,10 +604,11 @@ export const prismaStore: DataStore = {
     return mapCommunityPost(await prisma.communityPost.create({ data: input }));
   },
 
-  async getCommunityPosts(moduleSlug) {
+  async getCommunityPosts(moduleSlug, lessonId = null) {
     const posts = await prisma.communityPost.findMany({
-      where: { moduleSlug, hiddenAt: null },
+      where: { moduleSlug, lessonId, hiddenAt: null },
       orderBy: { createdAt: "desc" },
+      take: 50,
     });
     return posts.map(mapCommunityPost);
   },

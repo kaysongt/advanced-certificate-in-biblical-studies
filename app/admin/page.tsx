@@ -6,10 +6,10 @@ import AdminNav from "@/components/AdminNav";
 import { currentStudent, isStaff } from "@/lib/auth";
 import { getCurriculum } from "@/lib/curriculum";
 import { db } from "@/lib/db";
+import { paymentEvidenceLabel } from "@/lib/registration-groups";
 import { staffLoginPath, STAFF_ACCESS_REQUIRED_PATH } from "@/lib/login-redirect";
 import {
   listLatestStripePaymentAttempts,
-  type StripePaymentAttemptSummary,
 } from "@/lib/payments/stripe-store";
 import { listLatestPaymentReminders } from "@/lib/reminders/payment-reminder-store";
 
@@ -83,18 +83,6 @@ function tuition(amount: number, currency: string): string {
     maximumFractionDigits: 0,
   }).format(amount);
 }
-
-const paymentStatusLabels: Record<StripePaymentAttemptSummary["status"], string> = {
-  created: "Checkout starting",
-  open: "Checkout open",
-  processing: "Payment processing",
-  paid: "Stripe paid",
-  failed: "Payment failed",
-  expired: "Checkout expired",
-  "partially-refunded": "Partial refund",
-  refunded: "Refunded",
-  disputed: "Disputed",
-};
 
 const reminderStatusLabels = {
   sending: "Reminder queued",
@@ -387,7 +375,7 @@ export default async function AdminPage({
                       <dt>Online payment</dt>
                       <dd>
                         {paymentAttempt
-                          ? paymentStatusLabels[paymentAttempt.status]
+                          ? paymentEvidenceLabel({ ...paymentAttempt, currency: enrollment.currency })
                           : "No Stripe attempt"}
                       </dd>
                     </div>
@@ -397,7 +385,7 @@ export default async function AdminPage({
                   <div className="admin-payment-column">
                     {paymentAttempt ? (
                       <div className={`admin-stripe-state${paymentAttempt.needsReview ? " review" : ""}`}>
-                        <span>{paymentStatusLabels[paymentAttempt.status]}</span>
+                        <span>{paymentEvidenceLabel({ ...paymentAttempt, currency: enrollment.currency })}</span>
                         {paymentAttempt.needsReview ? (
                           <small>{paymentAttempt.reviewReason ?? "Staff review required."}</small>
                         ) : null}
@@ -434,7 +422,7 @@ export default async function AdminPage({
                     {enrollment.provider ? <small>Recorded via {enrollment.provider}</small> : null}
                     {paymentAttempt ? (
                       <small>
-                        Stripe: {paymentStatusLabels[paymentAttempt.status]}
+                        Stripe: {paymentEvidenceLabel({ ...paymentAttempt, currency: enrollment.currency })}
                         {paymentAttempt.needsReview
                           ? ` · ${paymentAttempt.reviewReason ?? "Staff review required."}`
                           : ""}
@@ -495,7 +483,7 @@ export default async function AdminPage({
             <article className="admin-card" key={post.id}>
               <div>
                 <strong>{post.student.fullName}</strong>
-                <p>{post.moduleSlug} · {post.body}</p>
+                <p>{post.moduleSlug}{post.lessonId ? ` · Lesson ${post.lessonId}` : " · General discussion"} · {post.body}</p>
               </div>
               <form action={moderateCommunityPost} className="admin-inline-form">
                 <input type="hidden" name="postId" value={post.id} />

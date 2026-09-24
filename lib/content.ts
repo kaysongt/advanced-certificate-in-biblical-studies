@@ -72,7 +72,7 @@ export type LessonRow = {
 export function getLessonRows(module: Module, course: Course): LessonRow[] {
   const rows: LessonRow[] = [];
   for (let n = 1; n <= module.lessons_per_course; n++) {
-    const { meta } = readDoc(module.slug, course.slug, lessonFile(n));
+    const { meta, body } = readDoc(module.slug, course.slug, lessonFile(n));
     const todos = countTodos(module.slug, course.slug, lessonFile(n));
     rows.push({
       n,
@@ -81,7 +81,7 @@ export function getLessonRows(module: Module, course: Course): LessonRow[] {
       duration: meta.duration ?? "1 hr",
       id: lessonId(course.slug, n),
       todos,
-      written: todos === 0,
+      written: todos === 0 && Boolean(body.trim()),
     });
   }
   return rows;
@@ -267,7 +267,9 @@ export function getCourseStatuses(now = new Date()): CourseStatus[] {
         countTodos(module.slug, course.slug, "course.md") +
         countTodos(module.slug, course.slug, "assessment.md");
       const todos = rows.reduce((sum, r) => sum + r.todos, 0) + extra;
-      const complete = todos === 0;
+      const complete = todos === 0 && rows.every((row) => row.written)
+        && Boolean(readDoc(module.slug, course.slug, "course.md").body.trim())
+        && Boolean(readDoc(module.slug, course.slug, "assessment.md").body.trim());
       const released = isModuleReleased(module, now);
       out.push({
         course,
@@ -300,7 +302,8 @@ export function getModuleStatuses(now = new Date()): ModuleStatus[] {
     const mine = statuses.filter((s) => s.module.slug === module.slug);
     const todos =
       mine.reduce((sum, s) => sum + s.todos, 0) + countTodos(module.slug, "module.md");
-    const complete = todos === 0;
+    const complete = todos === 0 && mine.every((course) => course.complete)
+      && Boolean(readDoc(module.slug, "module.md").body.trim());
     const released = isModuleReleased(module, now);
     return {
       module,

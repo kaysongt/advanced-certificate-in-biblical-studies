@@ -4,7 +4,7 @@ import { notFound, redirect } from "next/navigation";
 
 import CommunityComposer from "@/components/CommunityComposer";
 import { entitlementRedirectPath, hasActiveAccess } from "@/lib/access";
-import { currentStudent } from "@/lib/auth";
+import { currentStudent, isStaff } from "@/lib/auth";
 import { getModule } from "@/lib/curriculum";
 import { db } from "@/lib/db";
 
@@ -25,7 +25,7 @@ export default async function CommunityModulePage({ params }: Props) {
   if (!student) redirect(`/login?next=/community/${module.slug}`);
 
   const enrollments = await db.getEnrollmentsForStudent(student.id);
-  if (!hasActiveAccess(enrollments, module.slug)) redirect(entitlementRedirectPath(enrollments));
+  if (!isStaff(student) && !hasActiveAccess(enrollments, module.slug)) redirect(entitlementRedirectPath(enrollments));
 
   const [posts, engagement] = await Promise.all([
     db.getCommunityPosts(module.slug),
@@ -70,6 +70,7 @@ export default async function CommunityModulePage({ params }: Props) {
         </div>
 
         <CommunityComposer moduleSlug={module.slug} />
+        <p className="notice">Looking for a lesson conversation? Open a lesson and use “Discuss this lesson” at the bottom. <Link href={`/curriculum/${module.slug}`}>Choose a lesson →</Link></p>
 
         <section className="community-feed" aria-labelledby="community-feed-title">
           <div className="community-feed-head">

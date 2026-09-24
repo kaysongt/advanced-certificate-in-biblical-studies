@@ -2156,3 +2156,6 @@ main[tabindex="-1"]:focus { outline: none; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; transition-duration: .01ms !important; }
 }
+.lesson-discussion { margin-top: 3rem; padding-top: 2rem; border-top: 1px solid var(--line, #d7dce3); scroll-margin-top: 6rem; }
+.lesson-discussion .community-post > div { min-width: 0; }
+.lesson-discussion .community-post p { white-space: pre-wrap; overflow-wrap: anywhere; }

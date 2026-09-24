@@ -75,6 +75,8 @@ export type ProgressRecord = {
 export type CommunityPost = {
   id: string;
   moduleSlug: string;
+  /** Null/absent is the general module conversation, not a lesson. */
+  lessonId?: string | null;
   studentId: string;
   body: string;
   /** Tracked separately from assessment marks for instructor extra-credit review. */
@@ -239,7 +241,7 @@ export interface DataStore {
 
   // community engagement
   createCommunityPost(input: NewCommunityPost): Promise<CommunityPost>;
-  getCommunityPosts(moduleSlug: string): Promise<CommunityPost[]>;
+  getCommunityPosts(moduleSlug: string, lessonId?: string | null): Promise<CommunityPost[]>;
   getCommunityEngagement(studentId: string): Promise<CommunityEngagement>;
   moderateCommunityPost(input: {
     postId: string;

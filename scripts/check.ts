@@ -23,6 +23,7 @@ import {
   entitlementRedirectPath,
   getModuleEnrollmentState,
   hasActiveAccess,
+  hasMinisterWaiver,
   mustPayBeforeStudying,
 } from "../lib/access";
 import {
@@ -51,6 +52,7 @@ import { classifyRegistrations, registrationGroup, paymentEvidenceLabel, MINISTE
 import { adminSettingsRedirect } from "../lib/admin-settings";
 import { issueAssessmentAttempt, verifyAssessmentAttempt } from "../lib/assessment-attempt";
 import { prioritizeFreshQuestions } from "../lib/assessment-selection";
+import { findDiscussionLesson } from "../lib/discussion-target";
 import { isPrimaryRouteActive, PRIMARY_NAV_ITEMS } from "../lib/navigation";
 import { getStripeCatalogItem } from "../lib/payments/catalog";
 import {
@@ -133,6 +135,24 @@ async function main() {
   );
 
   console.log("\npayment reminders");
+  for (const course of curriculum.modules[0].courses) {
+    check(`${course.slug}: full fresh retake stays within its own question bank`, () => {
+      const bank = getAssessmentBank(curriculum.modules[0], course);
+      assert.ok(bank.length >= 40, `${bank.length} questions cannot support two disjoint 20-question attempts`);
+      assert.equal(new Set(bank.map((q) => q.id)).size, bank.length);
+      const first = prioritizeFreshQuestions(bank, [], 20);
+      const retake = prioritizeFreshQuestions([...bank].reverse(), first.map((q) => q.id), 20);
+      assert.equal(retake.length, 20);
+      assert.ok(retake.every((q) => bank.includes(q) && !first.some((previous) => previous.id === q.id)));
+      assert.ok(bank.every((q) => q.options.filter((o) => o.correct).length === 1));
+    });
+  }
+  check("lesson discussions reject cross-module, unfinished, and nonexistent lessons", () => {
+    assert.equal(findDiscussionLesson(curriculum.modules[0].slug, "st-101-1")?.row.n, 1);
+    assert.equal(findDiscussionLesson(curriculum.modules[1].slug, "st-101-1"), null);
+    assert.equal(findDiscussionLesson(curriculum.modules[1].slug, "bf-201-1"), null);
+    assert.equal(findDiscussionLesson(curriculum.modules[0].slug, "st-101-99"), null);
+  });
   check("program calendar dates follow Chicago rather than server UTC", () => {
     assert.equal(currentProgramDate(new Date("2026-10-01T04:59:59Z")), "2026-09-30");
     assert.equal(currentProgramDate(new Date("2026-10-01T05:00:00Z")), "2026-10-01");
@@ -775,6 +795,15 @@ async function main() {
     createdAt: new Date(0).toISOString(),
     updatedAt: new Date(0).toISOString(),
   };
+  check("minister waiver requires active full-program unsuspended grant", () => {
+    const waiver = { ...enrollmentBase, provider: "minister-waiver", amount: 0, status: "active" as const };
+    assert.equal(hasMinisterWaiver([waiver]), true);
+    assert.equal(hasMinisterWaiver([{ ...waiver, status: "pending" }]), false);
+    assert.equal(hasMinisterWaiver([{ ...waiver, accessSuspendedAt: new Date().toISOString() }]), false);
+    assert.equal(hasMinisterWaiver([{ ...waiver, product: module.slug }]), false);
+    assert.equal(hasMinisterWaiver([{ ...waiver, provider: "stripe" }]), false);
+    assert.equal(mustPayBeforeStudying([waiver, { ...enrollmentBase, status: "pending" }]), false);
+  });
   check("pending enrollment does not grant access", () =>
     assert.equal(hasActiveAccess([{ ...enrollmentBase, status: "pending" }], module.slug), false)
   );
@@ -1570,6 +1599,16 @@ async function main() {
   check("staff-awarded engagement credits are tracked separately", () =>
     assert.deepEqual(engagement, { posts: 1, credits: 2 })
   );
+
+  const lessonPost = await db.createCommunityPost({ moduleSlug: module.slug, lessonId: "st-101-1", studentId: student.id, body: "A question for this particular lesson only." });
+  await db.createCommunityPost({ moduleSlug: module.slug, lessonId: "st-101-2", studentId: student.id, body: "A different question for lesson two." });
+  check("lesson discussions persist separately from general and neighboring lesson conversations", () => assert.equal(lessonPost.lessonId, "st-101-1"));
+  assert.equal((await db.getCommunityPosts(module.slug)).length, 1);
+  assert.deepEqual((await db.getCommunityPosts(module.slug, "st-101-1")).map((post) => post.id), [lessonPost.id]);
+  assert.equal((await db.getCommunityPosts("02-biblical-foundations", "st-101-1")).length, 0);
+  await db.moderateCommunityPost({ postId: lessonPost.id, moderatorId: grader.id, hidden: true, engagementCredits: 0 });
+  check("staff moderation hides a lesson contribution from the student feed", () => assert.ok(lessonPost.id));
+  assert.equal((await db.getCommunityPosts(module.slug, "st-101-1")).length, 0);
 
   await fs.rm(live, { force: true });
 

@@ -69,8 +69,19 @@ export default async function CoursePage({ params }: Props) {
       {course.textbook ? (
         <div className="notice">
           <strong>Course material:</strong> {course.textbook}
+          <p>Read the assigned chapters alongside the lesson notes. For your student manual or book copy, contact <a href="mailto:kti@kingsword.org">kti@kingsword.org</a>.</p>
         </div>
       ) : null}
+      <section className="notice" aria-labelledby="course-start-title">
+        <h2 id="course-start-title">How to work through this course</h2>
+        <ol>
+          <li>Read each topic and complete its quiz at {grading.pass_mark}% or above.</li>
+          <li>Select “Mark complete” to save progress and unlock the next topic.</li>
+          <li>Use “Discuss this lesson” to ask questions and reflect with the group.</li>
+          <li>After all topics, submit the randomized assessment and your written responses. Your instructor grades the written work.</li>
+        </ol>
+        <p>If your final assessment result is below {grading.pass_mark}%, return for a fresh attempt from this course’s question bank.</p>
+      </section>
 
       {/*
         * These clips arrive in portrait, square, and landscape, so the frame

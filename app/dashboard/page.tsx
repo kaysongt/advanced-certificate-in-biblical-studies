@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 import { signOut } from "@/app/login/actions";
 import { changeOwnPassword } from "./actions";
 import StripeCheckoutButton from "@/components/StripeCheckoutButton";
-import { getModuleEnrollmentState } from "@/lib/access";
+import { getModuleEnrollmentState, hasMinisterWaiver } from "@/lib/access";
 import { currentStudent, isStaff } from "@/lib/auth";
 import { getModuleStatuses } from "@/lib/content";
 import { db } from "@/lib/db";
@@ -117,7 +117,8 @@ export default async function DashboardPage({
   ]);
   const statuses = getModuleStatuses();
 
-  const pending = enrollments.filter((e) => e.status === "pending");
+  const ministerWaiver = hasMinisterWaiver(enrollments);
+  const pending = ministerWaiver ? [] : enrollments.filter((e) => e.status === "pending");
   const stripeConfigured = isStripeCheckoutConfigured();
   const paymentAttempts = await listLatestStripePaymentAttempts(
     pending.map((enrollment) => enrollment.id)
@@ -128,7 +129,7 @@ export default async function DashboardPage({
   const moduleNames = new Map(
     getCurriculum().modules.map((module) => [module.slug, module.short_title])
   );
-  const paymentMessage = payment ? paymentMessages[payment] : null;
+  const paymentMessage = ministerWaiver ? { tone: "good", text: "Your ordained-minister tuition waiver is active for the full program. No tuition payment is required. Please do not use any older checkout links; contact kti@kingsword.org if you have already paid." } : payment ? paymentMessages[payment] : null;
   const passwordMessage = password ? passwordMessages[password] : null;
   const accessMessage = access ? accessMessages[access] : null;
   const paymentDetails = {
@@ -207,7 +208,7 @@ export default async function DashboardPage({
             </h2>
             <p>
               {awaitingFirstModule
-                ? `Your access is already paid and reserved. Module ${nextOpening?.module.numeral} unlocks on release day and appears here automatically — watch the orientation below in the meantime.`
+                ? `Your enrollment is active and your place is reserved. Module ${nextOpening?.module.numeral} unlocks on release day and appears here automatically — watch the orientation below in the meantime.`
                 : `A short orientation from the Institute on what the ${program.title} covers and how to get the most from it.`}
             </p>
             {program.welcome_video?.speaker ? (

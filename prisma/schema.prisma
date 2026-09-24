@@ -233,6 +233,7 @@ model AssessmentSubmission {
 model CommunityPost {
   id                String    @id @default(uuid())
   moduleSlug        String
+  lessonId          String?
   studentId         String
   body              String
   engagementCredits Int       @default(0)
@@ -243,6 +244,7 @@ model CommunityPost {
   moderatedBy       Student?  @relation("CommunityModerator", fields: [moderatedById], references: [id], onDelete: SetNull)
 
   @@index([moduleSlug, createdAt])
+  @@index([moduleSlug, lessonId, createdAt])
   @@index([studentId])
 }
 

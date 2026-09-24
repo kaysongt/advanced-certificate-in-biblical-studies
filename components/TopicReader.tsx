@@ -115,6 +115,9 @@ export default function TopicReader({
         </div>
       ) : null}
       <LessonBody html={html} passMark={passMark} onScored={handleScored} />
+      <div className="notice">
+        Have a question or insight? <a href="#discussion">Join this lesson’s discussion</a> before you move on.
+      </div>
 
       {verification ? (
         <div className={`notice${passed ? "" : " bad"}`} aria-live="polite">

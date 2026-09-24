@@ -247,9 +247,10 @@ export const fileStore: DataStore = {
 
   async listPendingEnrollments(): Promise<(Enrollment & { student: Student })[]> {
     const data = await read();
+    const waivedStudents = new Set(data.enrollments.filter((e) => e.provider === "minister-waiver" && e.product === "advanced" && e.status === "active" && !e.accessSuspendedAt).map((e) => e.studentId));
     return data.enrollments.flatMap((enrollment) => {
       const student = data.students.find((candidate) => candidate.id === enrollment.studentId);
-      return enrollment.status === "pending" && student ? [{ ...enrollment, student }] : [];
+      return enrollment.status === "pending" && student && !waivedStudents.has(student.id) ? [{ ...enrollment, student }] : [];
     });
   },
 
@@ -501,11 +502,12 @@ export const fileStore: DataStore = {
     return post;
   },
 
-  async getCommunityPosts(moduleSlug: string): Promise<CommunityPost[]> {
+  async getCommunityPosts(moduleSlug: string, lessonId: string | null = null): Promise<CommunityPost[]> {
     const data = await read();
     return data.communityPosts
-      .filter((post) => post.moduleSlug === moduleSlug && !post.hiddenAt)
-      .sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+      .filter((post) => post.moduleSlug === moduleSlug && (post.lessonId ?? null) === lessonId && !post.hiddenAt)
+      .sort((a, b) => b.createdAt.localeCompare(a.createdAt))
+      .slice(0, 50);
   },
 
   async getCommunityEngagement(studentId: string): Promise<CommunityEngagement> {

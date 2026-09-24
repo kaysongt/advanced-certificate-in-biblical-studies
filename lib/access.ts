@@ -2,6 +2,11 @@ import type { Enrollment } from "./db/types";
 
 export type ModuleEnrollmentState = "active" | "pending" | "suspended" | "none";
 
+/** Waivers are access grants, not evidence of a cash payment. */
+export function hasMinisterWaiver(enrollments: Enrollment[]): boolean {
+  return enrollments.some((e) => e.provider === "minister-waiver" && e.product === "advanced" && e.status === "active" && !e.accessSuspendedAt);
+}
+
 function enrollmentCoversModule(enrollment: Enrollment, moduleSlug: string): boolean {
   return enrollment.product === "advanced" || enrollment.product === moduleSlug;
 }

@@ -267,7 +267,7 @@ export default function AssessmentQuiz({
       {existingSubmission?.status === "graded" ? (
         <div className="notice bad">
           Previous result: {existingSubmission.totalScore}%.{" "}
-          {existingSubmission.feedback} Start a fresh attempt below.
+          {existingSubmission.feedback} Start a fresh attempt below. Questions are drawn from this course’s bank, prioritizing questions not used in your previous attempt.
         </div>
       ) : null}
       {result?.submissionId ? (
