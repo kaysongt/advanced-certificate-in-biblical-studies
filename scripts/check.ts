@@ -47,6 +47,7 @@ import {
   isModuleReleased,
 } from "../lib/curriculum";
 import { ADMIN_NAV_ITEMS, isAdminRouteActive } from "../lib/admin-navigation";
+import { getCourseBook } from "../lib/course-materials";
 import { csvCell, scholarshipCsv, registrationsCsv } from "../lib/admin-export";
 import { classifyRegistrations, isInternalRegistration, registrationGroup, paymentEvidenceLabel, MINISTER_CODE, type RegistrationPayment } from "../lib/registration-groups";
 import { adminSettingsRedirect } from "../lib/admin-settings";
@@ -792,6 +793,29 @@ async function main() {
     assert.ok(assessmentBank.every((question) => question.options.filter((option) => option.correct).length === 1))
   );
   const audio = getCourseAudio(course.slug);
+  check("all 32 courses have distinct matched book downloads", () => {
+    const courses = getCurriculum().modules.flatMap((item) => item.courses);
+    const urls = courses.map((item) => {
+      const book = getCourseBook(item.slug);
+      assert.ok(book, item.slug);
+      assert.ok(book.title.trim());
+      assert.equal(new URL(book.downloadUrl).protocol, "https:");
+      return book.downloadUrl;
+    });
+    assert.equal(urls.length, 32);
+    assert.equal(new Set(urls).size, 32);
+  });
+  check("Life On Point exports its own source document as PDF", () => {
+    assert.match(getCourseBook("sf-506")!.title, /LIFE ON POINT/);
+    assert.match(getCourseBook("sf-506")!.downloadUrl, /\/export\?format=pdf$/);
+    assert.match(getCourseBook("bf-202")!.title, /HOW TO STUDY/);
+    assert.match(getCourseBook("bf-206")!.title, /COMMON ERRORS/);
+  });
+  check("unknown courses do not inherit a book or another module's audio", () => {
+    assert.equal(getCourseBook("unknown"), null);
+    assert.equal(getCourseBook("__proto__"), null);
+    assert.equal(getCourseAudio("bf-201"), null);
+  });
   check("st-101 audiobook is mapped chapter by chapter", () =>
     assert.ok(audio && audio.tracks.length >= 10, `${audio?.tracks.length ?? 0} recordings`)
   );

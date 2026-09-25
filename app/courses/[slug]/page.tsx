@@ -7,6 +7,7 @@ import { entitlementRedirectPath, hasActiveAccess } from "@/lib/access";
 import { getCourseAudio, getCourseDoc, getCourseStatuses, getLessonRows } from "@/lib/content";
 import { findCourse, getCurriculum } from "@/lib/curriculum";
 import { db } from "@/lib/db";
+import { CourseBook } from "@/components/CourseBook";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -66,12 +67,7 @@ export default async function CoursePage({ params }: Props) {
         </div>
       </header>
 
-      {course.textbook ? (
-        <div className="notice">
-          <strong>Course material:</strong> {course.textbook}
-          <p>Read the assigned chapters alongside the lesson notes. For your student manual or book copy, contact <a href="mailto:kti@kingsword.org">kti@kingsword.org</a>.</p>
-        </div>
-      ) : null}
+      <CourseBook slug={course.slug} />
       <section className="notice" aria-labelledby="course-start-title">
         <h2 id="course-start-title">How to work through this course</h2>
         <ol>
@@ -141,7 +137,7 @@ export default async function CoursePage({ params }: Props) {
             </a>
           </details>
         </section>
-      ) : null}
+      ) : <p className="notice">An audiobook has not yet been supplied for this course. The textbook is available above.</p>}
 
       <h2>Topics</h2>
       <div className="stack">

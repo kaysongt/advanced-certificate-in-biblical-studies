@@ -2,9 +2,12 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import { getCourseStatuses, getModuleDoc } from "@/lib/content";
-import { getModule, moduleReleaseLabel } from "@/lib/curriculum";
+import { getCourseAudio, getCourseStatuses, getModuleDoc } from "@/lib/content";
+import { getModule, isModuleReleased, moduleReleaseLabel } from "@/lib/curriculum";
 import { currentStudent, isStaff } from "@/lib/auth";
+import { hasActiveAccess } from "@/lib/access";
+import { db } from "@/lib/db";
+import { CourseBook } from "@/components/CourseBook";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -25,6 +28,8 @@ export default async function ModulePage({ params }: Props) {
   const doc = getModuleDoc(module);
   const actor = await currentStudent();
   const staffPreview = actor ? isStaff(actor) : false;
+  const enrollments = actor && !staffPreview ? await db.getEnrollmentsForStudent(actor.id) : [];
+  const canReadMaterials = staffPreview || (isModuleReleased(module) && hasActiveAccess(enrollments, module.slug));
   const statuses = getCourseStatuses().filter((s) => s.module.slug === module.slug);
   const moduleAvailable = statuses.length > 0 && statuses.every((status) => status.available);
   const lessons = module.courses.length * module.lessons_per_course;
@@ -102,6 +107,25 @@ export default async function ModulePage({ params }: Props) {
           );
         })}
       </div>
+
+      <section aria-labelledby="module-materials-title" style={{ marginTop: 36 }}>
+        <div className="eyebrow">Your study library</div>
+        <h2 id="module-materials-title">Books &amp; audiobooks</h2>
+        <p>Each book is matched to its course. Downloads open in Google Drive; if your browser previews a PDF, use its download button to save a copy.</p>
+        {canReadMaterials ? module.courses.map((course) => {
+          const audio = getCourseAudio(course.slug);
+          return <details className="notice" key={course.slug}>
+            <summary><strong>{course.code} · {course.title}</strong></summary>
+            <CourseBook slug={course.slug} />
+            {audio ? <p><a className="btn quiet" href={audio.folderUrl} target="_blank" rel="noopener noreferrer">Listen to audiobook ({audio.tracks.length} recordings)</a></p>
+              : <p>Audiobook not yet supplied for this course.</p>}
+          </details>;
+        }) : <div className="notice">
+          Books and recordings are available to enrolled students when this module opens. {moduleReleaseLabel(module)}.
+          {!actor ? <p><Link href={`/login?next=/curriculum/${module.slug}`}>Sign in to access your materials</Link></p> : null}
+        </div>}
+        <p>Having trouble opening a file? Contact <a href="mailto:kti@kingsword.org">kti@kingsword.org</a> with the course code.</p>
+      </section>
 
       <section className="module-community">
         <div>
