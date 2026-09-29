@@ -4,7 +4,8 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 
 import { mustPayBeforeStudying } from "@/lib/access";
-import { endSession, isStaff, startSession, verifyPassword } from "@/lib/auth";
+import { endSession, startSession, verifyPassword } from "@/lib/auth";
+import { canPreviewCourses } from "@/lib/course-preview";
 import { db } from "@/lib/db";
 import { postLoginPath, STAFF_ACCESS_REQUIRED_PATH } from "@/lib/login-redirect";
 import { isStripeCheckoutConfigured } from "@/lib/payments/stripe-client";
@@ -42,7 +43,7 @@ export async function signIn(_previous: LoginState, formData: FormData): Promise
   // Students who registered before checkout was live owe tuition. Send them
   // straight to payment instead of wherever they were heading — but only once
   // they can actually pay, so a missing Stripe configuration never strands them.
-  if (!isStaff(student) && isStripeCheckoutConfigured()) {
+  if (!canPreviewCourses(student) && isStripeCheckoutConfigured()) {
     const enrollments = await db.getEnrollmentsForStudent(student.id);
     if (mustPayBeforeStudying(enrollments)) redirect("/dashboard?payment=required");
   }

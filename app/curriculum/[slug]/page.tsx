@@ -4,7 +4,8 @@ import { notFound } from "next/navigation";
 
 import { getCourseAudio, getCourseStatuses, getModuleDoc } from "@/lib/content";
 import { getModule, isModuleReleased, moduleReleaseLabel } from "@/lib/curriculum";
-import { currentStudent, isStaff } from "@/lib/auth";
+import { currentStudent } from "@/lib/auth";
+import { canPreviewCourses } from "@/lib/course-preview";
 import { hasActiveAccess } from "@/lib/access";
 import { db } from "@/lib/db";
 import { CourseBook } from "@/components/CourseBook";
@@ -27,7 +28,7 @@ export default async function ModulePage({ params }: Props) {
 
   const doc = getModuleDoc(module);
   const actor = await currentStudent();
-  const staffPreview = actor ? isStaff(actor) : false;
+  const staffPreview = actor ? canPreviewCourses(actor) : false;
   const enrollments = actor && !staffPreview ? await db.getEnrollmentsForStudent(actor.id) : [];
   const canReadMaterials = staffPreview || (isModuleReleased(module) && hasActiveAccess(enrollments, module.slug));
   const statuses = getCourseStatuses().filter((s) => s.module.slug === module.slug);
@@ -73,7 +74,7 @@ export default async function ModulePage({ params }: Props) {
 
       {staffPreview ? (
         <div className="notice">
-          <strong>Staff preview</strong> · Select any completed course below to review all its
+          <strong>Course preview</strong> · Select any completed course below to review all its
           topics and assessment. Student release dates still apply to student accounts.
           Courses in preparation will become previewable once their content is complete.
         </div>
@@ -90,7 +91,7 @@ export default async function ModulePage({ params }: Props) {
               </span>
               <span className="meta">
                 <span className={`avail ${available ? "now" : "soon"}`}>
-                  {staffPreview ? complete ? "Staff preview" : "Content in preparation" : available ? "Ready" : moduleReleaseLabel(module)}
+                  {staffPreview ? complete ? "Course preview" : "Content in preparation" : available ? "Ready" : moduleReleaseLabel(module)}
                 </span>
               </span>
             </>

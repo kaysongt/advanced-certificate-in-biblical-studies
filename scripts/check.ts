@@ -13,6 +13,7 @@ import Stripe from "stripe";
 import { hashPassword, verifyPassword, parseSession, serialiseSession } from "../lib/auth-core";
 import { issuePasswordResetToken, verifyPasswordResetToken, resetTokenStudentId, RESET_LIFETIME_MS, resetRateKey, buildPasswordResetEmail } from "../lib/password-reset-core";
 import { isStaff } from "../lib/auth";
+import { canPreviewCourses } from "../lib/course-preview";
 import {
   postLoginPath,
   safeReturnPath,
@@ -474,11 +475,29 @@ async function main() {
   const dashboardSource = await fs.readFile(path.join(process.cwd(), "app/dashboard/page.tsx"), "utf8");
   const curriculumSource = await fs.readFile(path.join(process.cwd(), "app/curriculum/page.tsx"), "utf8");
   check("staff have a program preview entry point independent of enrollment and release", () => {
-    assert.ok(dashboardSource.includes("const staffPreview = isStaff(student)"));
+    assert.ok(dashboardSource.includes("const staffPreview = canPreviewCourses(student)"));
     assert.ok(dashboardSource.includes("{staffPreview ? ("));
     assert.ok(dashboardSource.includes("Preview courses →"));
-    assert.ok(curriculumSource.includes("const staffPreview = actor ? isStaff(actor) : false"));
-    assert.ok(curriculumSource.includes("Staff preview access"));
+    assert.ok(curriculumSource.includes("const staffPreview = actor ? canPreviewCourses(actor) : false"));
+    assert.ok(curriculumSource.includes("Course preview access"));
+  });
+  check("course reviewers use exact account IDs without changing staff permissions", () => {
+    const reviewer = { id: "reviewer-1", role: "student" as const };
+    assert.equal(canPreviewCourses(reviewer, " reviewer-1,reviewer-2 "), true);
+    assert.equal(canPreviewCourses(reviewer, "reviewer-10"), false);
+    assert.equal(canPreviewCourses(reviewer, ""), false);
+    assert.equal(canPreviewCourses({ id: "", role: "student" }, ""), false);
+    assert.equal(canPreviewCourses({ id: "staff-1", role: "staff" }, ""), true);
+    assert.equal(canPreviewCourses({ id: "admin-1", role: "admin" }, ""), true);
+    assert.ok(dashboardSource.includes("{isStaff(student) ? ("));
+  });
+  const topicActionsSource = await fs.readFile(path.join(process.cwd(), "app/courses/actions.ts"), "utf8");
+  const assessmentActionsSource = await fs.readFile(path.join(process.cwd(), "app/courses/[slug]/assessment/actions.ts"), "utf8");
+  check("preview writes are rejected server-side for lessons and both assessment sections", () => {
+    assert.equal((topicActionsSource.match(/canPreviewCourses\(student\)/g) ?? []).length, 2);
+    assert.equal((assessmentActionsSource.match(/canPreviewCourses\(student\)/g) ?? []).length, 2);
+    assert.ok(topicActionsSource.indexOf("canPreviewCourses(student)") < topicActionsSource.indexOf("await db.markLessonComplete"));
+    assert.ok(assessmentActionsSource.indexOf("canPreviewCourses(student)") < assessmentActionsSource.indexOf("await db.createQuizAttempt"));
   });
   check("admin tabs point to operations and scholarship applications", () =>
     assert.deepEqual(

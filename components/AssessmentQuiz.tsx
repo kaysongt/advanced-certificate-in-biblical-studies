@@ -260,7 +260,7 @@ export default function AssessmentQuiz({
     <>
       {preview ? (
         <div className="notice">
-          Staff preview · review the assessment below. No scores or student
+          Course preview · review the assessment below. No scores or student
           submissions are recorded in preview mode.
         </div>
       ) : null}

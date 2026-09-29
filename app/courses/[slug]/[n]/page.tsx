@@ -5,7 +5,8 @@ import { notFound, redirect } from "next/navigation";
 import TopicReader from "@/components/TopicReader";
 import LessonDiscussion from "@/components/LessonDiscussion";
 import { entitlementRedirectPath, hasActiveAccess } from "@/lib/access";
-import { currentStudent, isStaff } from "@/lib/auth";
+import { currentStudent } from "@/lib/auth";
+import { canPreviewCourses } from "@/lib/course-preview";
 import { getCourseStatuses, getLesson, getLessonRows } from "@/lib/content";
 import { findCourse, getCurriculum, lessonId } from "@/lib/curriculum";
 import { db } from "@/lib/db";
@@ -30,7 +31,7 @@ export default async function TopicPage({ params }: Props) {
   const { module, course } = found;
 
   const student = await currentStudent();
-  const staffPreview = student ? isStaff(student) : false;
+  const staffPreview = student ? canPreviewCourses(student) : false;
   const available = getCourseStatuses().some(
     (status) => status.course.slug === course.slug && status.complete && (status.available || staffPreview)
   );
@@ -126,7 +127,9 @@ export default async function TopicPage({ params }: Props) {
             : { href: `/courses/${slug}/assessment`, title: "Course assessment" }
         }
       />
-      <LessonDiscussion moduleSlug={module.slug} lessonId={row.id} title={row.title} />
+      {staffPreview ? (
+        <div className="notice" id="discussion">Lesson discussions are available in student mode. Preview does not post contributions or award credits.</div>
+      ) : <LessonDiscussion moduleSlug={module.slug} lessonId={row.id} title={row.title} />}
       </div>
     </main>
   );

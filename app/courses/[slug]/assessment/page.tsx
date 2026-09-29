@@ -5,7 +5,8 @@ import { randomInt } from "node:crypto";
 
 import AssessmentQuiz from "@/components/AssessmentQuiz";
 import { entitlementRedirectPath, hasActiveAccess } from "@/lib/access";
-import { currentStudent, isStaff } from "@/lib/auth";
+import { currentStudent } from "@/lib/auth";
+import { canPreviewCourses } from "@/lib/course-preview";
 import {
   getAssessmentBank,
   getAssessmentDoc,
@@ -36,7 +37,7 @@ export default async function AssessmentPage({ params }: Props) {
   const { module, course } = found;
 
   const student = await currentStudent();
-  const staffPreview = student ? isStaff(student) : false;
+  const staffPreview = student ? canPreviewCourses(student) : false;
   const available = getCourseStatuses().some(
     (status) =>
       status.course.slug === course.slug &&

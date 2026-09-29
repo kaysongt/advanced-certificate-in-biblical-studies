@@ -7,6 +7,7 @@ import { changeOwnPassword } from "./actions";
 import StripeCheckoutButton from "@/components/StripeCheckoutButton";
 import { getModuleEnrollmentState, hasMinisterWaiver } from "@/lib/access";
 import { currentStudent, isStaff } from "@/lib/auth";
+import { canPreviewCourses } from "@/lib/course-preview";
 import { getModuleStatuses } from "@/lib/content";
 import { db } from "@/lib/db";
 import {
@@ -105,7 +106,7 @@ export default async function DashboardPage({
 }) {
   const student = await currentStudent();
   if (!student) redirect("/login");
-  const staffPreview = isStaff(student);
+  const staffPreview = canPreviewCourses(student);
 
   const { access, payment, password } = await searchParams;
   const { program, grading } = getCurriculum();
@@ -238,7 +239,7 @@ export default async function DashboardPage({
         </section>
       ) : null}
 
-      {pending.length ? (
+      {pending.length && !staffPreview ? (
         <section
           id="complete-payment"
           className="pending-payment"
@@ -422,7 +423,7 @@ export default async function DashboardPage({
       <h2>Your program</h2>
       {staffPreview ? (
         <div className="notice">
-          <strong>Preview the program before launch.</strong> Your staff access lets you review
+          <strong>Preview the program before launch.</strong> Your preview access lets you review
           completed course content without payment or waiting for student release dates.
           Previewing does not record grades or student progress.
         </div>
@@ -439,7 +440,7 @@ export default async function DashboardPage({
                 : "soon";
           const statusLabel =
             staffPreview
-              ? coursesComplete > 0 ? "Staff preview" : "Content in preparation"
+              ? coursesComplete > 0 ? "Course preview" : "Content in preparation"
               : enrollmentState === "none"
               ? "Not included"
               : enrollmentState === "pending"

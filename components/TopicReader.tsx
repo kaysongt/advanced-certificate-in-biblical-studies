@@ -110,7 +110,7 @@ export default function TopicReader({
     <>
       {preview ? (
         <div className="notice">
-          Staff preview · explore topics and practice quizzes without recording
+          Course preview · explore topics and practice quizzes without recording
           student progress.
         </div>
       ) : null}

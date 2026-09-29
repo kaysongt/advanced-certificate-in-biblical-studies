@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 
-import { currentStudent, isStaff } from "@/lib/auth";
+import { currentStudent } from "@/lib/auth";
+import { canPreviewCourses } from "@/lib/course-preview";
 import { entitlementRedirectPath, hasActiveAccess } from "@/lib/access";
 import { getCourseAudio, getCourseDoc, getCourseStatuses, getLessonRows } from "@/lib/content";
 import { findCourse, getCurriculum } from "@/lib/curriculum";
@@ -24,7 +25,7 @@ export default async function CoursePage({ params }: Props) {
   const { module, course } = found;
 
   const student = await currentStudent();
-  const staffPreview = student ? isStaff(student) : false;
+  const staffPreview = student ? canPreviewCourses(student) : false;
   const available = getCourseStatuses().some(
     (status) => status.course.slug === course.slug && status.complete && (status.available || staffPreview)
   );
@@ -54,7 +55,7 @@ export default async function CoursePage({ params }: Props) {
       </div>
 
       <header className="topichead">
-        {staffPreview ? <div className="notice">Staff preview · explore course material without changing student progress or release dates.</div> : null}
+        {staffPreview ? <div className="notice">Course preview · explore course material without changing student progress or release dates.</div> : null}
         <h1>{course.title}</h1>
         <p className="deck">{course.subtitle}</p>
         <div className="pillrow">
