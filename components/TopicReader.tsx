@@ -148,7 +148,7 @@ export default function TopicReader({
         <p>You have <strong>5 minutes</strong> from selecting Start. Answer all questions before time expires and score at least <strong>{passMark}%</strong>. Time running out automatically fails the attempt. A failed or timed-out attempt requires a <strong>1-hour cooldown</strong>. Refreshing or leaving does not pause the timer.</p>
         {timer ? <>
           <QuizCountdown key={timer.id} {...timer} onExpire={() => { setTimer(null); setPassed(false); setRetryAt(timer.deadline + 60 * 60 * 1000); setVerification("Time is up. This attempt failed. Wait one hour before starting again."); }} />
-          <LessonBody key={timer.id} html={sections.quiz} passMark={passMark} onScored={handleScored} />
+          <LessonBody key={`questions-${timer.id}`} html={sections.quiz} passMark={passMark} onScored={handleScored} />
           {unsavedAnswers ? <button type="button" className="btn" disabled={scorePending} onClick={() => handleScored(0, 0, 0, unsavedAnswers)}>Retry saving result</button> : null}
         </> : !complete && !passed ? <button className="btn primary" type="button" disabled={starting || scorePending || !hasQuiz} onClick={startQuiz}>{starting ? "Starting…" : "Start / resume lesson quiz"}</button> : null}
         {retryAt ? <p className="notice bad" role="status">Next attempt available: {formatQuizRetryTime(retryAt)}.</p> : null}
