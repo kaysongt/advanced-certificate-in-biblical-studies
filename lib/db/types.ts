@@ -209,6 +209,10 @@ export interface DataStore {
   getProgress(studentId: string): Promise<ProgressRecord[]>;
 
   // quiz and course assessment records
+  beginTimedQuiz(input: import("../timed-quiz").BeginQuizInput): Promise<import("../timed-quiz").BeginQuizResult>;
+  getLatestTimedQuiz(studentId: string, courseSlug: string, lessonId: string | null): Promise<import("../timed-quiz").TimedQuiz | null>;
+  getTimedQuiz(id: string, studentId: string): Promise<import("../timed-quiz").TimedQuiz | null>;
+  finishTimedQuiz(input: { id: string; studentId: string; correct: number; total: number; scorePct: number; passed: boolean; answers: unknown; sectionAPoints?: number }): Promise<{ status: "saved" | "expired" | "used"; submissionId?: string }>;
   createQuizAttempt(input: {
     studentId: string;
     courseSlug: string;

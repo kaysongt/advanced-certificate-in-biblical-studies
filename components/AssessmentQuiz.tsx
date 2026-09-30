@@ -11,6 +11,9 @@ import {
   submitWrittenAssessment,
   type AssessmentAttemptResult,
 } from "@/app/courses/[slug]/assessment/actions";
+import { startTimedQuiz } from "@/app/courses/timer-actions";
+import { formatQuizRetryTime, type RunningQuiz } from "@/lib/timed-quiz";
+import QuizCountdown from "./QuizCountdown";
 
 export type PublicAssessmentQuestion = {
   id: string;
@@ -38,9 +41,11 @@ function emptyDraft() {
 function WrittenAssessment({
   submissionId,
   writtenHtml,
+  courseSlug,
 }: {
   submissionId: string;
   writtenHtml: string;
+  courseSlug: string;
 }) {
   const storageKey = `kti.assessment-draft.v1.${submissionId}`;
   const savedDraft = useSyncExternalStore(
@@ -83,7 +88,7 @@ function WrittenAssessment({
     if (pending || submitted || response.trim().length < 100) return;
     startTransition(async () => {
       try {
-        const result = await submitWrittenAssessment(submissionId, response);
+        const result = await submitWrittenAssessment(submissionId, response, courseSlug);
         if (result.success) {
           setSubmitted(true);
           try {
@@ -201,6 +206,18 @@ export default function AssessmentQuiz({
   );
   const [error, setError] = useState("");
   const [submitting, startSubmitting] = useTransition();
+  const [timer, setTimer] = useState<RunningQuiz | null>(null);
+  const [retryAt, setRetryAt] = useState<number | null>(null);
+  const [starting, startStarting] = useTransition();
+  function startQuiz() {
+    startStarting(async () => {
+      try {
+        const response = await startTimedQuiz(courseSlug, null, attempt.map((q) => q.id), attemptToken);
+        if (response.id && response.deadline && response.serverNow) { setTimer({ id: response.id, deadline: response.deadline, serverNow: response.serverNow }); setError(""); setRetryAt(null); }
+        else { setError(response.error ?? "Unable to start assessment."); setRetryAt(response.retryAt ?? null); }
+      } catch { setError("Could not start the assessment. Check your connection and try again."); }
+    });
+  }
   if (existingSubmission?.status === "pending-review")
     return (
       <div className="notice" role="status">
@@ -229,7 +246,7 @@ export default function AssessmentQuiz({
   const answered = Object.keys(answers).length;
   const ready = attempt.length > 0 && answered === attempt.length;
   function submit() {
-    if (!ready || result || submitting || preview) return;
+    if (!ready || result || submitting || preview || !timer) return;
     setError("");
     startSubmitting(async () => {
       try {
@@ -240,9 +257,10 @@ export default function AssessmentQuiz({
             answer: answers[question.id],
           })),
           attemptToken,
+          timer.id,
         );
-        if (response.error) setError(response.error);
-        else setResult(response);
+        if (response.error) { setError(response.error); setRetryAt(response.retryAt ?? null); }
+        else { setResult(response); setTimer(null); }
       } catch {
         setError(
           "We couldn’t save your answers. Check your connection and try again; your selections are still here.",
@@ -264,6 +282,13 @@ export default function AssessmentQuiz({
           submissions are recorded in preview mode.
         </div>
       ) : null}
+      {!preview && !result?.submissionId ? <div className="notice">
+        <strong>20 questions · 15 minutes · 24 hours between new attempts.</strong>
+        <p>The timer starts when you select Start. Answer all questions and select “Submit Section A” before time runs out. An expired attempt automatically fails. Refreshing or leaving does not pause the timer. Written sections are not timed.</p>
+        {!timer ? <button type="button" className="btn primary" disabled={starting} onClick={startQuiz}>{starting ? "Starting…" : "Start / resume course assessment"}</button> : <QuizCountdown key={timer.id} {...timer} onExpire={() => { setRetryAt(timer.deadline - 15 * 60 * 1000 + 24 * 60 * 60 * 1000); setTimer(null); setError("Time is up. This attempt failed. Wait until your next available attempt."); }} />}
+        {retryAt ? <p role="status">Next attempt available: {formatQuizRetryTime(retryAt)}.</p> : null}
+        {error && !timer ? <p className="notice bad" role="alert">{error}</p> : null}
+      </div> : null}
       {existingSubmission?.status === "graded" ? (
         <div className="notice bad">
           Previous result: {existingSubmission.totalScore}%.{" "}
@@ -294,7 +319,7 @@ export default function AssessmentQuiz({
             <strong>Final pass mark: {passMark}%.</strong> Section A contributes
             40 points. Complete every question before submitting.
           </div>
-          {attempt.map((question, questionIndex) => (
+          {(preview || timer) ? attempt.map((question, questionIndex) => (
             <div className="q" key={question.id}>
               <p className="stem">
                 <span className="n">{questionIndex + 1}</span>
@@ -327,12 +352,12 @@ export default function AssessmentQuiz({
                 ))}
               </div>
             </div>
-          ))}
+          )) : <p>Questions appear when you start or resume your timed attempt.</p>}
           <footer>
             <button
               type="button"
               className="btn primary"
-              disabled={!ready || submitting || preview}
+              disabled={!ready || submitting || preview || !timer}
               onClick={submit}
             >
               {preview
@@ -363,6 +388,7 @@ export default function AssessmentQuiz({
         </section>
       ) : result?.submissionId ? (
         <WrittenAssessment
+          courseSlug={courseSlug}
           key={result.submissionId}
           submissionId={result.submissionId}
           writtenHtml={writtenHtml}

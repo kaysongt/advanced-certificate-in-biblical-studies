@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
-import { hasActiveAccess } from "@/lib/access";
+import { hasStudyAccess } from "@/lib/access";
 import { currentStudent } from "@/lib/auth";
 import { getCurriculum } from "@/lib/curriculum";
 import { db } from "@/lib/db";
@@ -13,7 +13,7 @@ export default async function CommunityPage() {
   const { program, modules } = getCurriculum();
   const enrollments = student ? await db.getEnrollmentsForStudent(student.id) : [];
   const groups = student
-    ? modules.filter((module) => hasActiveAccess(enrollments, module.slug))
+    ? modules.filter((module) => hasStudyAccess(student, enrollments, module.slug))
     : [];
   const engagement = student
     ? await db.getCommunityEngagement(student.id)

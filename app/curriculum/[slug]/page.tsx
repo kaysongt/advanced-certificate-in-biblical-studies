@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import LaunchAccessNotice from "@/components/LaunchAccessNotice";
 import { notFound } from "next/navigation";
 
 import { getCourseAudio, getCourseStatuses, getModuleDoc } from "@/lib/content";
 import { getModule, isModuleReleased, moduleReleaseLabel } from "@/lib/curriculum";
 import { currentStudent } from "@/lib/auth";
 import { canPreviewCourses } from "@/lib/course-preview";
-import { hasActiveAccess } from "@/lib/access";
+import { hasStudyAccess } from "@/lib/access";
 import { db } from "@/lib/db";
 import { CourseBook } from "@/components/CourseBook";
 
@@ -30,7 +31,7 @@ export default async function ModulePage({ params }: Props) {
   const actor = await currentStudent();
   const staffPreview = actor ? canPreviewCourses(actor) : false;
   const enrollments = actor && !staffPreview ? await db.getEnrollmentsForStudent(actor.id) : [];
-  const canReadMaterials = staffPreview || (isModuleReleased(module) && hasActiveAccess(enrollments, module.slug));
+  const canReadMaterials = staffPreview || (isModuleReleased(module) && hasStudyAccess(actor, enrollments, module.slug));
   const statuses = getCourseStatuses().filter((s) => s.module.slug === module.slug);
   const moduleAvailable = statuses.length > 0 && statuses.every((status) => status.available);
   const lessons = module.courses.length * module.lessons_per_course;
@@ -79,6 +80,8 @@ export default async function ModulePage({ params }: Props) {
           Courses in preparation will become previewable once their content is complete.
         </div>
       ) : null}
+      <LaunchAccessNotice signedIn={Boolean(actor)} />
+      {!staffPreview && !canReadMaterials ? <p className="notice">{moduleReleaseLabel(module)}. {module.number === 1 ? "Sign in with your registered account to start at the opening time." : "Access requires a cleared enrollment covering this module. Complete payment or contact KTI about your approved scholarship or minister waiver."}</p> : null}
       <h2>Courses</h2>
       <div className="stack">
         {statuses.map(({ course, available, complete }) => {

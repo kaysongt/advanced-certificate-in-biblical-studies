@@ -3,7 +3,8 @@
 import { redirect } from "next/navigation";
 import { z } from "zod";
 
-import { mustPayBeforeStudying } from "@/lib/access";
+import { hasStudyAccess, mustPayBeforeStudying } from "@/lib/access";
+import { getCurriculum } from "@/lib/curriculum";
 import { endSession, startSession, verifyPassword } from "@/lib/auth";
 import { canPreviewCourses } from "@/lib/course-preview";
 import { db } from "@/lib/db";
@@ -45,7 +46,7 @@ export async function signIn(_previous: LoginState, formData: FormData): Promise
   // they can actually pay, so a missing Stripe configuration never strands them.
   if (!canPreviewCourses(student) && isStripeCheckoutConfigured()) {
     const enrollments = await db.getEnrollmentsForStudent(student.id);
-    if (mustPayBeforeStudying(enrollments)) redirect("/dashboard?payment=required");
+    if (!hasStudyAccess(student, enrollments, getCurriculum().modules[0].slug) && mustPayBeforeStudying(enrollments)) redirect("/dashboard?payment=required");
   }
   redirect(next);
 }

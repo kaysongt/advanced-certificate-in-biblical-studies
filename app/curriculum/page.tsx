@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import LaunchAccessNotice from "@/components/LaunchAccessNotice";
 
 import { getModuleStatuses } from "@/lib/content";
 import { currentStudent } from "@/lib/auth";
@@ -34,6 +35,7 @@ export default async function CurriculumPage() {
         </div>
       ) : null}
 
+      <LaunchAccessNotice signedIn={Boolean(actor)} />
       <div className="cards">
         {statuses.map(({ module, available, coursesComplete }) => (
           <Link className="card" href={`/curriculum/${module.slug}`} key={module.slug}>

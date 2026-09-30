@@ -9,6 +9,7 @@ import {
 } from "@prisma/client";
 
 import { prisma } from "./prisma";
+import { readQuizTimer, quizTimeExpired, quizRetryAt, LESSON_QUIZ_MS, COURSE_QUIZ_MS } from "../timed-quiz";
 import type {
   AssessmentStatus,
   AssessmentSubmission,
@@ -508,6 +509,59 @@ export const prismaStore: DataStore = {
     }));
   },
 
+  async beginTimedQuiz(input) {
+    return prisma.$transaction(async (tx) => {
+      // Serialize starts for this account, including requests from multiple tabs.
+      await tx.$queryRaw`SELECT id FROM "Student" WHERE id = ${input.studentId} FOR UPDATE`;
+      const previous = await tx.quizAttempt.findFirst({ where: { studentId: input.studentId, courseSlug: input.courseSlug, lessonId: input.lessonId, answers: { path: ["timer", "deadline"], gt: 0 } }, orderBy: { createdAt: "desc" } });
+      const previousTimer = readQuizTimer(previous?.answers);
+      if (previous && previousTimer) {
+        const attempt = { id: previous.id, studentId: input.studentId, courseSlug: input.courseSlug, lessonId: input.lessonId, timer: previousTimer, passed: previous.passed, startedAt: previous.createdAt.getTime() };
+        if (previousTimer.state === "started" && !quizTimeExpired(previousTimer.deadline)) return { attempt, retryAt: null };
+        if (Date.now() < quizRetryAt(attempt)) return { attempt: null, retryAt: quizRetryAt(attempt) };
+      }
+      const timer = { deadline: Date.now() + (input.lessonId ? LESSON_QUIZ_MS : COURSE_QUIZ_MS), state: "started" as const, questionIds: input.questionIds };
+      const row = await tx.quizAttempt.create({ data: { studentId: input.studentId, courseSlug: input.courseSlug, lessonId: input.lessonId, kind: input.lessonId ? PrismaQuizKind.TOPIC : PrismaQuizKind.COURSE_ASSESSMENT, total: input.total, correct: 0, scorePct: 0, passed: false, answers: jsonValue({ timer }) } });
+      return { attempt: { id: row.id, studentId: input.studentId, courseSlug: input.courseSlug, lessonId: input.lessonId, timer, passed: false, startedAt: row.createdAt.getTime() }, retryAt: null };
+    });
+  },
+
+  async getLatestTimedQuiz(studentId, courseSlug, lessonId) {
+    const attempt = await prisma.quizAttempt.findFirst({
+      where: { studentId, courseSlug, lessonId, answers: { path: ["timer", "deadline"], gt: 0 } },
+      orderBy: { createdAt: "desc" },
+    });
+    const timer = readQuizTimer(attempt?.answers);
+    return attempt && timer ? { id: attempt.id, studentId, courseSlug, lessonId, timer, passed: attempt.passed, startedAt: attempt.createdAt.getTime() } : null;
+  },
+
+  async getTimedQuiz(id, studentId) {
+    const attempt = await prisma.quizAttempt.findFirst({ where: { id, studentId } });
+    const timer = readQuizTimer(attempt?.answers);
+    return attempt && timer ? { id, studentId, courseSlug: attempt.courseSlug, lessonId: attempt.lessonId, timer, passed: attempt.passed, startedAt: attempt.createdAt.getTime() } : null;
+  },
+
+  async finishTimedQuiz(input) {
+    return prisma.$transaction(async (tx) => {
+      const attempt = await tx.quizAttempt.findFirst({ where: { id: input.id, studentId: input.studentId } });
+      const timer = readQuizTimer(attempt?.answers);
+      if (!attempt || !timer || timer.state !== "started") return { status: "used" };
+      const expired = quizTimeExpired(timer.deadline);
+      const updated = await tx.quizAttempt.updateMany({
+        where: { id: input.id, studentId: input.studentId, answers: { path: ["timer", "state"], equals: "started" } },
+        data: {
+          correct: expired ? 0 : input.correct, total: input.total,
+          scorePct: expired ? 0 : input.scorePct, passed: !expired && input.passed,
+          answers: jsonValue({ timer: { ...timer, state: "submitted", finishedAt: expired ? timer.deadline : Date.now() }, responses: input.answers, expired }),
+        },
+      });
+      if (!updated.count) return { status: "used" };
+      if (expired) return { status: "expired" };
+      const submission = input.sectionAPoints === undefined ? null : await tx.assessmentSubmission.create({ data: { studentId: input.studentId, courseSlug: attempt.courseSlug, sectionACorrect: input.correct, sectionATotal: input.total, sectionAPoints: input.sectionAPoints } });
+      return { status: "saved", submissionId: submission?.id };
+    });
+  },
+
   async createQuizAttempt(input) {
     return mapQuizAttempt(
       await prisma.quizAttempt.create({
@@ -531,6 +585,8 @@ export const prismaStore: DataStore = {
       where: { studentId, courseSlug, kind: PrismaQuizKind.COURSE_ASSESSMENT },
       orderBy: { createdAt: "desc" }, select: { answers: true },
     });
+    const timer = readQuizTimer(attempt?.answers);
+    if (timer) return timer.questionIds;
     if (!Array.isArray(attempt?.answers)) return [];
     return attempt.answers.flatMap(answer => answer && typeof answer === "object" && !Array.isArray(answer) && typeof answer.questionId === "string" ? [answer.questionId] : []);
   },

@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { meetsPassMark } from "@/lib/learning-progress";
 
 /**
  * Renders a topic's teaching material and wires up its quiz.
@@ -56,7 +57,7 @@ export default function LessonBody({ html, passMark, assessment = false, onScore
         if (scoreEl) scoreEl.textContent = `${answered} of ${total} answered`;
         if (answered === total && verdictEl) {
           const pct = Math.round((correct / total) * 100);
-          const passed = pct >= passMark;
+          const passed = meetsPassMark(correct, total, passMark);
           verdictEl.textContent = assessment
             ? `${correct} of ${total} correct (${pct}%). Section A complete; Sections B and C are instructor-marked.`
             : `${correct} of ${total} correct (${pct}%). ` +
@@ -124,7 +125,7 @@ export default function LessonBody({ html, passMark, assessment = false, onScore
     <>
       <div className="prose lesson-prose" ref={ref} dangerouslySetInnerHTML={markup} />
       {result ? (
-        <div className={`scorecard${assessment ? "" : result.pct >= passMark ? " pass" : " fail"}`}>
+        <div className={`scorecard${assessment ? "" : meetsPassMark(result.correct, result.total, passMark) ? " pass" : " fail"}`}>
           <div className="pct">{result.pct}%</div>
           <div className="detail">
             <strong>
@@ -133,8 +134,8 @@ export default function LessonBody({ html, passMark, assessment = false, onScore
             <span>
               {assessment
                 ? "Section A is complete. Your instructor will combine it with Sections B and C for your final result."
-                : result.pct >= passMark
-                ? "You have passed this topic. You can move on."
+                : meetsPassMark(result.correct, result.total, passMark)
+                ? "Quiz passed. Wait for verification, then select Mark complete to unlock the next lesson."
                 : `Pass mark is ${passMark}%. Retake the quiz before moving on.`}
             </span>
           </div>

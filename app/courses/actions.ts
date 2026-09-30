@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
-import { hasActiveAccess } from "@/lib/access";
+import { hasStudyAccess } from "@/lib/access";
 import { currentStudent } from "@/lib/auth";
 import { canPreviewCourses } from "@/lib/course-preview";
 import {
@@ -15,6 +15,8 @@ import {
 import { getLessonQuizQuestions, getLessonRows } from "@/lib/content";
 import { db } from "@/lib/db";
 import { StorageUnavailableError } from "@/lib/db/types";
+import { meetsPassMark } from "@/lib/learning-progress";
+import { quizTimeExpired, quizRetryAt } from "@/lib/timed-quiz";
 
 export async function setTopicComplete(
   courseSlug: string,
@@ -39,7 +41,7 @@ export async function setTopicComplete(
   if (!rows.some((row) => row.id === lessonId)) return false;
 
   const enrollments = await db.getEnrollmentsForStudent(student.id);
-  if (!hasActiveAccess(enrollments, found.module.slug)) return false;
+  if (!hasStudyAccess(student, enrollments, found.module.slug)) return false;
 
   if (complete) {
     if (getCurriculum().grading.must_pass_to_advance) {
@@ -54,10 +56,7 @@ export async function setTopicComplete(
       found.course,
       topicNumber,
     );
-    if (
-      questions.length &&
-      !(await db.hasPassingTopicAttempt(student.id, lessonId))
-    )
+    if (!questions.length || !(await db.hasPassingTopicAttempt(student.id, lessonId)))
       return false;
   }
 
@@ -88,12 +87,14 @@ export type TopicAttemptResult = {
   correct: number;
   total: number;
   error?: string;
+  retryAt?: number;
 };
 
 export async function recordTopicQuizAttempt(
   courseSlug: string,
   lessonId: string,
   answers: number[],
+  timedAttemptId: string,
 ): Promise<TopicAttemptResult> {
   const parsed = topicAttemptSchema.safeParse({
     courseSlug,
@@ -163,7 +164,7 @@ export async function recordTopicQuizAttempt(
   }
 
   const enrollments = await db.getEnrollmentsForStudent(student.id);
-  if (!hasActiveAccess(enrollments, found.module.slug)) {
+  if (!hasStudyAccess(student, enrollments, found.module.slug)) {
     return {
       passed: false,
       pct: 0,
@@ -209,19 +210,22 @@ export async function recordTopicQuizAttempt(
   );
   const pct = Math.round((correct / questions.length) * 100);
   const passMark = getCurriculum().grading.pass_mark;
-  const passed = pct >= passMark;
+  const passed = meetsPassMark(correct, questions.length, passMark);
 
-  await db.createQuizAttempt({
+  const timed = typeof timedAttemptId === "string" ? await db.getTimedQuiz(timedAttemptId, student.id) : null;
+  if (!timed || timed.courseSlug !== courseSlug || timed.lessonId !== lessonId || timed.timer.state !== "started")
+    return { passed: false, pct: 0, correct: 0, total: questions.length, error: "Start a new quiz attempt before submitting." };
+  if (quizTimeExpired(timed.timer.deadline))
+    return { passed: false, pct: 0, correct: 0, total: questions.length, error: "Time is up. This attempt failed. Wait one hour before trying again.", retryAt: quizRetryAt(timed) };
+  const saved = await db.finishTimedQuiz({
+    id: timed.id,
     studentId: student.id,
-    courseSlug: parsed.data.courseSlug,
-    lessonId: parsed.data.lessonId,
-    kind: "topic",
     correct,
     total: questions.length,
     scorePct: pct,
     passed,
     answers: parsed.data.answers,
   });
-
-  return { passed, pct, correct, total: questions.length };
+  if (saved.status !== "saved") return { passed: false, pct: 0, correct: 0, total: questions.length, error: saved.status === "expired" ? "Time is up. This attempt failed. Wait one hour before trying again." : "This attempt has already been submitted." };
+  return { passed, pct, correct, total: questions.length, retryAt: passed ? undefined : Date.now() + 60 * 60 * 1000 };
 }

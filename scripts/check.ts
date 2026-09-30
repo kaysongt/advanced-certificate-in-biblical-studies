@@ -14,6 +14,8 @@ import { hashPassword, verifyPassword, parseSession, serialiseSession } from "..
 import { issuePasswordResetToken, verifyPasswordResetToken, resetTokenStudentId, RESET_LIFETIME_MS, resetRateKey, buildPasswordResetEmail } from "../lib/password-reset-core";
 import { isStaff } from "../lib/auth";
 import { canPreviewCourses } from "../lib/course-preview";
+import { earlierLessonsComplete, meetsPassMark } from "../lib/learning-progress";
+import { LESSON_QUIZ_MS, COURSE_QUIZ_MS, quizTimeExpired, quizRetryAt } from "../lib/timed-quiz";
 import {
   postLoginPath,
   safeReturnPath,
@@ -24,6 +26,7 @@ import {
   entitlementRedirectPath,
   getModuleEnrollmentState,
   hasActiveAccess,
+  hasStudyAccess,
   hasMinisterWaiver,
   mustPayBeforeStudying,
 } from "../lib/access";
@@ -125,9 +128,10 @@ async function main() {
       ]
     )
   );
-  check("Module I opens at midnight Chicago time on October 1", () => {
-    assert.equal(isModuleReleased(curriculum.modules[0], new Date("2026-10-01T04:59:59Z")), false);
-    assert.equal(isModuleReleased(curriculum.modules[0], new Date("2026-10-01T05:00:00Z")), true);
+  check("Module I opens at noon WAT on October 1, not midnight or Chicago midnight", () => {
+    assert.equal(isModuleReleased(curriculum.modules[0], new Date("2026-10-01T05:00:00Z")), false);
+    assert.equal(isModuleReleased(curriculum.modules[0], new Date("2026-10-01T10:59:59Z")), false);
+    assert.equal(isModuleReleased(curriculum.modules[0], new Date("2026-10-01T11:00:00Z")), true);
   });
   check("all scheduled modules can be purchased before release", () =>
     assert.deepEqual(
@@ -155,9 +159,9 @@ async function main() {
     assert.equal(findDiscussionLesson(curriculum.modules[1].slug, "bf-201-1"), null);
     assert.equal(findDiscussionLesson(curriculum.modules[0].slug, "st-101-99"), null);
   });
-  check("program calendar dates follow Chicago rather than server UTC", () => {
-    assert.equal(currentProgramDate(new Date("2026-10-01T04:59:59Z")), "2026-09-30");
-    assert.equal(currentProgramDate(new Date("2026-10-01T05:00:00Z")), "2026-10-01");
+  check("program calendar dates follow Nigeria rather than server UTC", () => {
+    assert.equal(currentProgramDate(new Date("2026-09-30T22:59:59Z")), "2026-09-30");
+    assert.equal(currentProgramDate(new Date("2026-09-30T23:00:00Z")), "2026-10-01");
   });
   check("calendar-day arithmetic is independent of daylight-saving hours", () => {
     assert.equal(calendarDaysUntil("2026-11-08", "2026-11-01"), 7);
@@ -174,10 +178,10 @@ async function main() {
   });
   const advancedReminderTiming = getPaymentReminderTiming(
     { plan: "advanced", product: "advanced" },
-    new Date("2026-09-10T15:00:00Z")
+    new Date("2026-11-10T15:00:00Z")
   );
-  check("full-program reminders use the first module opening", () => {
-    assert.equal(advancedReminderTiming?.startDate, "2026-10-01");
+  check("full-program reminders use Module 2, not the free launch module", () => {
+    assert.equal(advancedReminderTiming?.startDate, "2026-12-01");
     assert.equal(advancedReminderTiming?.milestone, "21-days");
     assert.equal(advancedReminderTiming?.offeringTitle, curriculum.program.title);
   });
@@ -273,8 +277,8 @@ async function main() {
       dashboardUrl: "https://www.thekti.org/dashboard#complete-payment",
       scholarshipUrl: "https://www.thekti.org/scholarship?enrollment=example",
     });
-    assert.match(email.subject, /starts in 21 days/i);
-    assert.match(email.text, /did not unlock|lessons unlock/i);
+    assert.match(email.subject, /due in 21 days/i);
+    assert.match(email.text, /Module 1 is available to all registered students/i);
     assert.match(email.text, /\$1,000/);
     assert.ok(email.html.includes("&lt;Kay&gt;"));
     assert.ok(!email.html.includes("Hello <Kay>"));
@@ -282,7 +286,7 @@ async function main() {
   check("late registrants are told the exact remaining time, not the milestone band", () => {
     const timing = getPaymentReminderTiming(
       { plan: "advanced", product: "advanced" },
-      new Date("2026-09-21T15:00:00Z")
+      new Date("2026-11-21T15:00:00Z")
     );
     assert.equal(timing?.milestone, "21-days");
     const email = buildPaymentReminderEmail({
@@ -293,8 +297,8 @@ async function main() {
       dashboardUrl: "https://www.thekti.org/dashboard#complete-payment",
       scholarshipUrl: "https://www.thekti.org/scholarship?enrollment=example",
     });
-    assert.match(email.subject, /starts in 10 days/i);
-    assert.doesNotMatch(email.subject, /starts in 21 days/i);
+    assert.match(email.subject, /due in 10 days/i);
+    assert.doesNotMatch(email.subject, /due in 21 days/i);
   });
 
   const reminderRouteSource = await fs.readFile(
@@ -483,7 +487,8 @@ async function main() {
   });
   check("course reviewers use exact account IDs without changing staff permissions", () => {
     const reviewer = { id: "reviewer-1", role: "student" as const };
-    assert.equal(canPreviewCourses(reviewer, " reviewer-1,reviewer-2 "), true);
+    assert.equal(canPreviewCourses(reviewer, " reviewer-1,reviewer-2 ", new Date("2026-09-30T12:00:00Z")), true);
+    assert.equal(canPreviewCourses(reviewer, "reviewer-1", new Date("2026-10-01T11:00:00Z")), false);
     assert.equal(canPreviewCourses(reviewer, "reviewer-10"), false);
     assert.equal(canPreviewCourses(reviewer, ""), false);
     assert.equal(canPreviewCourses({ id: "", role: "student" }, ""), false);
@@ -497,7 +502,7 @@ async function main() {
     assert.equal((topicActionsSource.match(/canPreviewCourses\(student\)/g) ?? []).length, 2);
     assert.equal((assessmentActionsSource.match(/canPreviewCourses\(student\)/g) ?? []).length, 2);
     assert.ok(topicActionsSource.indexOf("canPreviewCourses(student)") < topicActionsSource.indexOf("await db.markLessonComplete"));
-    assert.ok(assessmentActionsSource.indexOf("canPreviewCourses(student)") < assessmentActionsSource.indexOf("await db.createQuizAttempt"));
+    assert.ok(assessmentActionsSource.indexOf("canPreviewCourses(student)") < assessmentActionsSource.indexOf("await db.finishTimedQuiz"));
   });
   check("admin tabs point to operations and scholarship applications", () =>
     assert.deepEqual(
@@ -961,6 +966,45 @@ async function main() {
   check("students with nothing pending are still offered enrollment", () =>
     assert.equal(entitlementRedirectPath([{ ...enrollmentBase, status: "refunded" }]), "/enroll")
   );
+
+  check("registered students receive only Module 1 launch access without payment mutation", () => {
+    const pending = [{ ...enrollmentBase, status: "pending" as const }];
+    const before = JSON.stringify(pending);
+    const visitor = { id: "registered" };
+    const launch = new Date("2026-10-01T11:00:00Z");
+    assert.equal(hasStudyAccess(null, pending, module.slug, launch), false);
+    assert.equal(hasStudyAccess(visitor, pending, module.slug, new Date("2026-10-01T10:59:59Z")), false);
+    assert.equal(hasStudyAccess(visitor, pending, module.slug, launch), true);
+    assert.equal(hasStudyAccess(visitor, [], module.slug, launch), true);
+    assert.equal(hasStudyAccess(visitor, pending, curriculum.modules[1].slug, new Date("2026-12-01T11:00:00Z")), false);
+    for (const provider of ["minister-waiver", "scholarship", "manual", "stripe"]) assert.equal(hasStudyAccess(visitor, [{ ...enrollmentBase, status: "active", provider }], curriculum.modules[1].slug, launch), true);
+    assert.equal(JSON.stringify(pending), before);
+  });
+  check("every launch lesson has a quiz and requires all earlier lessons", () => {
+    assert.equal(curriculum.grading.must_pass_to_advance, true);
+    for (const course of curriculum.modules[0].courses) {
+      const rows = getLessonRows(curriculum.modules[0], course);
+      for (const row of rows) assert.ok(getLessonQuizQuestions(curriculum.modules[0], course, row.n).length > 0, row.id);
+      const done = new Set(rows.map((r) => r.id));
+      assert.equal(earlierLessonsComplete(rows, rows.length, done), true);
+      done.delete(rows[0].id);
+      assert.equal(earlierLessonsComplete(rows, rows.length, done), false);
+    }
+    assert.equal(meetsPassMark(4, 5, 80), true);
+    assert.equal(meetsPassMark(3, 5, 80), false);
+    assert.equal(meetsPassMark(199, 250, 80), false);
+    assert.equal(meetsPassMark(0, 0, 80), false);
+  });
+  check("timer and cooldown boundaries are exact", () => {
+    assert.equal(LESSON_QUIZ_MS, 300000);
+    assert.equal(COURSE_QUIZ_MS, 900000);
+    assert.equal(quizTimeExpired(1000, 999), false);
+    assert.equal(quizTimeExpired(1000, 1000), true);
+    const attempt = { id: "attempt", studentId: "s", courseSlug: "st-101", lessonId: "st-101-1", passed: false, startedAt: 0, timer: { state: "started" as const, deadline: LESSON_QUIZ_MS, questionIds: [] } };
+    assert.equal(quizRetryAt(attempt), LESSON_QUIZ_MS + 3600000);
+    assert.equal(quizRetryAt({ ...attempt, timer: { ...attempt.timer, state: "submitted", finishedAt: 1000 } }), 3601000);
+    assert.equal(quizRetryAt({ ...attempt, lessonId: null }), 86400000);
+  });
 
   console.log("\npayments");
   const advancedPayment = getStripeCatalogItem({
@@ -1592,6 +1636,24 @@ async function main() {
   check("passing topic attempt is recorded server-side", () =>
     assert.equal(hasPassingAttempt, true)
   );
+
+  const timedInput = { studentId: student.id, courseSlug: "st-102", lessonId: "st-102-1", total: 5, questionIds: [] };
+  const timedStart = await db.beginTimedQuiz(timedInput);
+  const timedResume = await db.beginTimedQuiz(timedInput);
+  check("refresh resumes the same stored deadline, not a new attempt", () => {
+    assert.ok(timedStart.attempt);
+    assert.equal(timedResume.attempt?.id, timedStart.attempt?.id);
+    assert.equal(timedResume.attempt?.timer.deadline, timedStart.attempt?.timer.deadline);
+  });
+  const failedTimer = await db.finishTimedQuiz({ id: timedStart.attempt!.id, studentId: student.id, correct: 1, total: 5, scorePct: 20, passed: false, answers: [0,0,0,0,0] });
+  const blockedTimer = await db.beginTimedQuiz(timedInput);
+  const replay = await db.finishTimedQuiz({ id: timedStart.attempt!.id, studentId: student.id, correct: 5, total: 5, scorePct: 100, passed: true, answers: [0,0,0,0,0] });
+  check("failed lesson enforces cooldown and cannot be replayed as a pass", () => {
+    assert.equal(failedTimer.status, "saved");
+    assert.equal(blockedTimer.attempt, null);
+    assert.ok(blockedTimer.retryAt && blockedTimer.retryAt > Date.now());
+    assert.equal(replay.status, "used");
+  });
 
   const assessment = await db.createAssessmentSubmission({
     studentId: student.id,

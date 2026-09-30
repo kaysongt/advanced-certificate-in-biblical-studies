@@ -1,4 +1,5 @@
-import type { Enrollment } from "./db/types";
+import type { Enrollment, Student } from "./db/types";
+import { getCurriculum, isModuleReleased } from "./curriculum";
 
 export type ModuleEnrollmentState = "active" | "pending" | "suspended" | "none";
 
@@ -35,6 +36,19 @@ export function getModuleEnrollmentState(
 /** Only paid/activated enrollments grant access to study material. */
 export function hasActiveAccess(enrollments: Enrollment[], moduleSlug: string): boolean {
   return getModuleEnrollmentState(enrollments, moduleSlug) === "active";
+}
+
+/** Launch admission is not a payment, waiver, or enrollment-status change. */
+export function hasStudyAccess(
+  student: Pick<Student, "id"> | null,
+  enrollments: Enrollment[],
+  moduleSlug: string,
+  now = new Date(),
+): boolean {
+  if (!student?.id) return false;
+  if (hasActiveAccess(enrollments, moduleSlug)) return true;
+  const first = getCurriculum().modules[0];
+  return Boolean(first && moduleSlug === first.slug && isModuleReleased(first, now));
 }
 
 /** A place reserved at registration, still waiting on tuition. */

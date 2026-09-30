@@ -42,10 +42,10 @@ function timingCopy(
   if (timing.milestone === "started") {
     return {
       eyebrow: "Class access reminder",
-      subject: `Payment required to access ${timing.offeringTitle}`,
-      heading: `${timing.offeringTitle} is now open`,
+      subject: `Tuition reminder: ${timing.offeringTitle}`,
+      heading: "Continue your studies",
       introduction:
-        "Your registration reserved a place, but it did not unlock the lessons. Complete tuition to access the class.",
+        "Module 1 is available to all registered students from its release time. To continue into later modules, complete payment or have an approved scholarship or verified minister waiver covering the module. If you have already been cleared, contact KTI before paying again.",
     };
   }
 
@@ -53,9 +53,9 @@ function timingCopy(
     timing.daysUntilStart === 1 ? "tomorrow" : `in ${timing.daysUntilStart} days`;
   return {
     eyebrow: "Enrollment reminder",
-    subject: `${timing.offeringTitle} starts ${interval}: complete tuition`,
-    heading: `Your class starts ${interval}`,
-    introduction: `Your place is reserved for ${timing.offeringTitle}. Complete tuition before ${timing.startDateLabel} so your lessons unlock when the class opens.`,
+    subject: `Tuition due ${interval}: ${timing.offeringTitle}`,
+    heading: `Prepare for your next module`,
+    introduction: `Module 1 is available to all registered students from its release time. Complete tuition before ${timing.startDateLabel} to continue into later modules. An approved scholarship or verified minister waiver covering the module also clears access. If you have already been cleared, contact KTI before paying again.`,
   };
 }
 
@@ -70,7 +70,7 @@ export function buildPaymentReminderEmail(input: PaymentReminderEmailInput): Pay
     copy.introduction,
     "",
     `Tuition due: ${amount}`,
-    `Class date: ${input.timing.startDateLabel}`,
+    `Payment deadline: ${input.timing.startDateLabel} at 12:00 noon WAT (Nigeria time)`,
     "",
     `Complete payment or apply an approved full-tuition code: ${input.dashboardUrl}`,
     `Need tuition assistance? Apply for a scholarship: ${input.scholarshipUrl}`,
@@ -97,7 +97,7 @@ export function buildPaymentReminderEmail(input: PaymentReminderEmailInput): Pay
     html: `<!doctype html>
 <html lang="en">
   <body style="margin:0;background:#f4efe3;color:#102642;font-family:Arial,sans-serif;">
-    <div style="display:none;max-height:0;overflow:hidden;opacity:0;">Payment is required before class access unlocks.</div>
+    <div style="display:none;max-height:0;overflow:hidden;opacity:0;">Module 1 is open to registered students. Clear tuition before continuing into later modules.</div>
     <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:#f4efe3;padding:28px 12px;">
       <tr><td align="center">
         <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width:620px;overflow:hidden;border:1px solid #dec780;border-radius:22px;background:#fffdf7;">
@@ -110,7 +110,7 @@ export function buildPaymentReminderEmail(input: PaymentReminderEmailInput): Pay
             <p style="margin:0 0 24px;color:#42536a;font-size:16px;line-height:1.7;">${safe.introduction}</p>
             <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="margin:0 0 26px;border:1px solid #e5dcc6;border-radius:14px;background:#f8f3e8;">
               <tr><td style="padding:18px 20px;border-bottom:1px solid #e5dcc6;color:#657184;font-size:12px;text-transform:uppercase;letter-spacing:1px;">Tuition due</td><td align="right" style="padding:18px 20px;border-bottom:1px solid #e5dcc6;font-size:17px;font-weight:700;">${safe.amount}</td></tr>
-              <tr><td style="padding:18px 20px;color:#657184;font-size:12px;text-transform:uppercase;letter-spacing:1px;">Class date</td><td align="right" style="padding:18px 20px;font-size:15px;font-weight:700;">${safe.date}</td></tr>
+              <tr><td style="padding:18px 20px;color:#657184;font-size:12px;text-transform:uppercase;letter-spacing:1px;">Payment deadline</td><td align="right" style="padding:18px 20px;font-size:15px;font-weight:700;">${safe.date}<br>12:00 noon WAT</td></tr>
             </table>
             <a href="${safe.dashboardUrl}" style="display:block;padding:15px 20px;border-radius:10px;background:#dfb64f;color:#102642;font-size:15px;font-weight:700;text-align:center;text-decoration:none;">Complete tuition</a>
             <p style="margin:20px 0 0;color:#657184;font-size:13px;line-height:1.65;text-align:center;">Have an approved full-tuition code? Enter it on the payment screen. Once confirmed, no payment is collected.</p>

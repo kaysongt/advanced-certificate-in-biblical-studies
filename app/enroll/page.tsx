@@ -54,7 +54,7 @@ export default async function EnrollPage({
             <strong>
               {stripeConfigured ? "Secure online payment follows registration." : "Direct payment instructions follow registration."}
             </strong>{" "}
-            {scholarshipIntent ? "You can apply for financial assistance before paying." : "Create your account first, then choose card payment or bank transfer. Registration alone does not unlock classes."}
+            {scholarshipIntent ? "You can apply for financial assistance before paying." : "Register to start Module 1 when it opens. Payment or an approved scholarship/minister waiver is required to continue into later modules."}
           </div>
 
           {availableCount < program.total_certificates ? (

@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 
-import { hasActiveAccess } from "@/lib/access";
+import { hasStudyAccess } from "@/lib/access";
 import { currentStudent, isStaff } from "@/lib/auth";
 import { getModule, isModuleReleased } from "@/lib/curriculum";
 import { findDiscussionLesson } from "@/lib/discussion-target";
@@ -24,7 +24,7 @@ export async function addCommunityPost(
   if (!module) return { error: "This module discussion is unavailable." };
 
   const enrollments = await db.getEnrollmentsForStudent(student.id);
-  if (!isStaff(student) && !hasActiveAccess(enrollments, module.slug)) {
+  if (!isStaff(student) && !hasStudyAccess(student, enrollments, module.slug)) {
     return { error: "Enroll in this certificate before posting to its community group." };
   }
 

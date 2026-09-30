@@ -4,9 +4,10 @@ import { notFound, redirect } from "next/navigation";
 import { randomInt } from "node:crypto";
 
 import AssessmentQuiz from "@/components/AssessmentQuiz";
-import { entitlementRedirectPath, hasActiveAccess } from "@/lib/access";
+import { entitlementRedirectPath, hasStudyAccess } from "@/lib/access";
 import { currentStudent } from "@/lib/auth";
 import { canPreviewCourses } from "@/lib/course-preview";
+import { quizTimeExpired } from "@/lib/timed-quiz";
 import {
   getAssessmentBank,
   getAssessmentDoc,
@@ -49,7 +50,7 @@ export default async function AssessmentPage({ params }: Props) {
   if (!student) redirect(`/login?next=/courses/${slug}/assessment`);
 
   const enrollments = await db.getEnrollmentsForStudent(student.id);
-  if (!staffPreview && !hasActiveAccess(enrollments, module.slug))
+  if (!staffPreview && !hasStudyAccess(student, enrollments, module.slug))
     redirect(entitlementRedirectPath(enrollments));
 
   const rows = getLessonRows(module, course);
@@ -83,7 +84,9 @@ export default async function AssessmentPage({ params }: Props) {
     student.id,
     course.slug,
   );
-  const questions = prioritizeFreshQuestions(
+  const latestTimer = staffPreview ? null : await db.getLatestTimedQuiz(student.id, course.slug, null);
+  const activeTimer = latestTimer?.timer.state === "started" && !quizTimeExpired(latestTimer.timer.deadline) ? latestTimer : null;
+  const questions = activeTimer ? activeTimer.timer.questionIds.map((id) => publicBank.find((question) => question.id === id)).filter((question): question is (typeof publicBank)[number] => Boolean(question)) : prioritizeFreshQuestions(
     publicBank,
     previousIds,
     ASSESSMENT_SIZE,

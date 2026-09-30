@@ -1,7 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useState, useTransition } from "react";
+import { useCallback, useMemo, useState, useTransition } from "react";
+import { startTimedQuiz } from "@/app/courses/timer-actions";
+import { formatQuizRetryTime, type RunningQuiz } from "@/lib/timed-quiz";
+import QuizCountdown from "./QuizCountdown";
 
 import {
   recordTopicQuizAttempt,
@@ -19,6 +22,7 @@ type Props = {
   passMark: number;
   mustPass: boolean;
   alreadyComplete: boolean;
+  alreadyPassed: boolean;
   hasQuiz: boolean;
   path: string;
   prev: NavTarget;
@@ -33,6 +37,7 @@ export default function TopicReader({
   passMark,
   mustPass,
   alreadyComplete,
+  alreadyPassed,
   hasQuiz,
   path,
   prev,
@@ -40,20 +45,38 @@ export default function TopicReader({
   preview = false,
 }: Props) {
   const [complete, setComplete] = useState(alreadyComplete);
-  const [passed, setPassed] = useState(alreadyComplete);
+  const [passed, setPassed] = useState(alreadyComplete || alreadyPassed);
+  const [unsavedAnswers, setUnsavedAnswers] = useState<number[] | null>(null);
   const [pending, startTransition] = useTransition();
   const [scorePending, startScoreTransition] = useTransition();
   const [verification, setVerification] = useState("");
+  const [timer, setTimer] = useState<RunningQuiz | null>(null);
+  const [retryAt, setRetryAt] = useState<number | null>(null);
+  const [starting, startQuizTransition] = useTransition();
+  const sections = useMemo(() => {
+    const pattern = /<section class="quiz"[\s\S]*?<\/section>/g;
+    return { teaching: html.replace(pattern, ""), quiz: (html.match(pattern) ?? []).join("") };
+  }, [html]);
+  function startQuiz() {
+    startQuizTransition(async () => {
+      try {
+        const result = await startTimedQuiz(courseSlug, lessonId);
+        if (result.id && result.deadline && result.serverNow) {
+          setTimer({ id: result.id, deadline: result.deadline, serverNow: result.serverNow });
+          setVerification(""); setRetryAt(null); setPassed(false);
+        } else { setVerification(result.error ?? "Unable to start quiz."); setRetryAt(result.retryAt ?? null); }
+      } catch { setVerification("Could not start the quiz. Check your connection and retry."); }
+    });
+  }
 
-  // A topic with a quiz must be passed before it can be completed. Topics that
-  // carry no quiz can simply be marked done.
-  const canComplete =
-    complete || !hasQuiz || !mustPass || (passed && !scorePending);
+  // Missing quizzes fail closed; completion requires a verified passing attempt.
+  const canComplete = complete || (hasQuiz && passed && !scorePending);
   const canAdvance = preview || !mustPass || complete;
 
   const handleScored = useCallback(
     (_pct: number, _correct: number, _total: number, answers: number[]) => {
-      if (preview) return;
+      if (preview || !timer) return;
+      setUnsavedAnswers(null);
       setPassed(false);
       setVerification("Saving and verifying your result…");
       startScoreTransition(async () => {
@@ -62,22 +85,26 @@ export default function TopicReader({
             courseSlug,
             lessonId,
             answers,
+            timer.id,
           );
           setPassed(result.passed);
+          setTimer(null);
+          setRetryAt(result.retryAt ?? null);
           setVerification(
             result.error ??
               (result.passed
                 ? `Verified: ${result.pct}%. You can mark this topic complete.`
-                : `Verified: ${result.pct}%. Review the topic and try again.`),
+                : `Verified: ${result.pct}%. You need ${passMark}% to pass. Wait one hour before trying again.`),
           );
         } catch {
+          setUnsavedAnswers(answers);
           setVerification(
-            "We couldn’t verify your result. Check your connection, then retry the quiz.",
+            "We couldn’t verify your result. Check your connection, then select Retry saving before the timer expires.",
           );
         }
       });
     },
-    [courseSlug, lessonId, preview],
+    [courseSlug, lessonId, preview, timer, passMark],
   );
 
   function toggle() {
@@ -114,7 +141,18 @@ export default function TopicReader({
           student progress.
         </div>
       ) : null}
-      <LessonBody html={html} passMark={passMark} onScored={handleScored} />
+      {!preview ? <p className="notice">Read this lesson and score at least {passMark}% on its quiz. Then select “Mark complete” below to unlock the next lesson. You can retry if you score below {passMark}%. Complete every lesson to unlock the course assessment.</p> : null}
+      <LessonBody html={sections.teaching} passMark={passMark} />
+      {preview ? <LessonBody html={sections.quiz} passMark={passMark} /> : <section className="timed-quiz" aria-label="Timed lesson assessment">
+        <h2>Lesson assessment</h2>
+        <p>You have <strong>5 minutes</strong> from selecting Start. Answer all questions before time expires and score at least <strong>{passMark}%</strong>. Time running out automatically fails the attempt. A failed or timed-out attempt requires a <strong>1-hour cooldown</strong>. Refreshing or leaving does not pause the timer.</p>
+        {timer ? <>
+          <QuizCountdown key={timer.id} {...timer} onExpire={() => { setTimer(null); setPassed(false); setRetryAt(timer.deadline + 60 * 60 * 1000); setVerification("Time is up. This attempt failed. Wait one hour before starting again."); }} />
+          <LessonBody key={timer.id} html={sections.quiz} passMark={passMark} onScored={handleScored} />
+          {unsavedAnswers ? <button type="button" className="btn" disabled={scorePending} onClick={() => handleScored(0, 0, 0, unsavedAnswers)}>Retry saving result</button> : null}
+        </> : !complete && !passed ? <button className="btn primary" type="button" disabled={starting || scorePending || !hasQuiz} onClick={startQuiz}>{starting ? "Starting…" : "Start / resume lesson quiz"}</button> : null}
+        {retryAt ? <p className="notice bad" role="status">Next attempt available: {formatQuizRetryTime(retryAt)}.</p> : null}
+      </section>}
       <div className="notice">
         Have a question or insight? <a href="#discussion">Join this lesson’s discussion</a> before you move on.
       </div>
@@ -140,7 +178,7 @@ export default function TopicReader({
               ? "Topic complete."
               : canComplete
                 ? "Mark this topic complete when you have finished it."
-                : `Pass the quiz at ${passMark}% to complete this topic.`}
+                : hasQuiz ? `Score ${passMark}% or higher on the quiz, then mark this lesson complete.` : "This lesson’s quiz is not available yet. Please contact KTI."}
           </span>
         </div>
       ) : null}

@@ -5,7 +5,8 @@ import { redirect } from "next/navigation";
 import { signOut } from "@/app/login/actions";
 import { changeOwnPassword } from "./actions";
 import StripeCheckoutButton from "@/components/StripeCheckoutButton";
-import { getModuleEnrollmentState, hasMinisterWaiver } from "@/lib/access";
+import { getModuleEnrollmentState, hasMinisterWaiver, hasStudyAccess } from "@/lib/access";
+import LaunchAccessNotice from "@/components/LaunchAccessNotice";
 import { currentStudent, isStaff } from "@/lib/auth";
 import { canPreviewCourses } from "@/lib/course-preview";
 import { getModuleStatuses } from "@/lib/content";
@@ -43,7 +44,7 @@ const passwordMessages: Record<string, { tone: "good" | "warn" | "bad"; text: st
 const paymentMessages: Record<string, { tone: "good" | "warn" | "bad"; text: string }> = {
   required: {
     tone: "warn",
-    text: "Your place is reserved, but tuition has not been paid yet. Complete payment below to unlock your study material.",
+    text: "Module 1 is available to all registered students from its opening time. Payment or an approved scholarship/waiver is required for later modules. See the access details above.",
   },
   success: {
     tone: "good",
@@ -146,7 +147,7 @@ export default async function DashboardPage({
   // wait for. Without this they were told only how many topics they had
   // completed, which reads as zero progress rather than "you are in".
   const activeStatuses = statuses.filter(
-    ({ module }) => getModuleEnrollmentState(enrollments, module.slug) === "active"
+    ({ module }) => hasStudyAccess(student, enrollments, module.slug)
   );
   const openNow = activeStatuses.filter((status) => status.available);
   const nextOpening =
@@ -169,6 +170,7 @@ export default async function DashboardPage({
         </p>
       </div>
 
+      <LaunchAccessNotice signedIn />
       {accessMessage ? (
         <div className={`notice ${accessMessage.tone}`} role="alert">
           {accessMessage.text}
@@ -256,7 +258,7 @@ export default async function DashboardPage({
           </div>
           <p>
             Your account is ready. Apply an approved full-tuition code, pay securely by card,
-            or use the bank-transfer option. Tuition must be confirmed before class access opens.
+            or use the bank-transfer option. Module 1 opens to everyone registered. Later modules require payment or an approved scholarship/waiver covering that module.
           </p>
 
           {paymentMessage ? (
@@ -299,15 +301,14 @@ export default async function DashboardPage({
                           paymentTiming.daysUntilStart <= 0 ? " has-started" : ""
                         }`}
                       >
-                        <span>Class access</span>
+                        <span>Payment deadline</span>
                         <strong>
                           {paymentTiming.daysUntilStart <= 0
-                            ? `Opened ${paymentTiming.startDateLabel}`
+                            ? `Due from ${paymentTiming.startDateLabel}`
                             : `Pay before ${paymentTiming.startDateLabel}`}
                         </strong>
                         <small>
-                          Registration reserves your place. Lessons unlock only after payment,
-                          an approved scholarship, or a valid full-tuition code is confirmed.
+                          Module 1 is open to registered students from its release time. Later modules unlock after payment, an approved scholarship, or a verified tuition waiver is confirmed.
                         </small>
                       </div>
                     ) : null}
@@ -431,7 +432,7 @@ export default async function DashboardPage({
       <div className="cards five">
         {statuses.map(({ module, available, coursesComplete }) => {
           const enrollmentState = getModuleEnrollmentState(enrollments, module.slug);
-          const unlocked = enrollmentState === "active";
+          const unlocked = hasStudyAccess(student, enrollments, module.slug);
           const statusClass =
             (staffPreview && coursesComplete > 0) || (unlocked && available)
               ? "now"
@@ -441,6 +442,8 @@ export default async function DashboardPage({
           const statusLabel =
             staffPreview
               ? coursesComplete > 0 ? "Course preview" : "Content in preparation"
+              : unlocked && available ? "Ready to study"
+              : module.number === 1 ? moduleReleaseLabel(module)
               : enrollmentState === "none"
               ? "Not included"
               : enrollmentState === "pending"
@@ -463,6 +466,7 @@ export default async function DashboardPage({
               </div>
               <span className="t">{module.short_title}</span>
               <p>{module.catalog_blurb}</p>
+              {!staffPreview && module.number > 1 && !unlocked ? <p className="hint">Payment or an approved scholarship/minister waiver is required before you can start this module.</p> : null}
               <span className="foot">
                 {staffPreview ? (
                   <Link href={`/curriculum/${module.slug}`}>
@@ -472,6 +476,8 @@ export default async function DashboardPage({
                   <Link href={`/curriculum/${module.slug}`}>Start studying →</Link>
                 ) : unlocked ? (
                   moduleReleaseLabel(module)
+                ) : module.number === 1 ? (
+                  <Link href={`/curriculum/${module.slug}`}>{moduleReleaseLabel(module)}</Link>
                 ) : enrollmentState === "pending" ? (
                   <Link href="#complete-payment">Complete payment to unlock →</Link>
                 ) : enrollmentState === "suspended" ? (

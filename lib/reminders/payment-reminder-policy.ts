@@ -85,7 +85,10 @@ export function selectPaymentReminderMilestone(
 
 function enrollmentModule(enrollment: EnrollmentForReminder): Module | null {
   const curriculum = getCurriculum();
-  if (enrollment.plan === "advanced") return curriculum.modules[0] ?? null;
+  if (enrollment.plan === "advanced") return curriculum.modules[1] ?? null;
+  // Module 1 admission is open to all registered students. Do not demand
+  // payment for access that is already available under the launch policy.
+  if (enrollment.product === curriculum.modules[0]?.slug) return null;
   return curriculum.modules.find((module) => module.slug === enrollment.product) ?? null;
 }
 

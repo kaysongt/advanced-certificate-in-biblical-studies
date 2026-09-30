@@ -4,12 +4,13 @@ import { notFound, redirect } from "next/navigation";
 
 import TopicReader from "@/components/TopicReader";
 import LessonDiscussion from "@/components/LessonDiscussion";
-import { entitlementRedirectPath, hasActiveAccess } from "@/lib/access";
+import { entitlementRedirectPath, hasStudyAccess } from "@/lib/access";
 import { currentStudent } from "@/lib/auth";
 import { canPreviewCourses } from "@/lib/course-preview";
 import { getCourseStatuses, getLesson, getLessonRows } from "@/lib/content";
 import { findCourse, getCurriculum, lessonId } from "@/lib/curriculum";
 import { db } from "@/lib/db";
+import { earlierLessonsComplete } from "@/lib/learning-progress";
 
 type Props = { params: Promise<{ slug: string; n: string }> };
 
@@ -45,7 +46,7 @@ export default async function TopicPage({ params }: Props) {
   if (!student) redirect(`/login?next=/courses/${slug}/${index}`);
 
   const enrollments = await db.getEnrollmentsForStudent(student.id);
-  const entitled = hasActiveAccess(enrollments, module.slug);
+  const entitled = hasStudyAccess(student, enrollments, module.slug);
   if (!entitled && !staffPreview) redirect(entitlementRedirectPath(enrollments));
 
   const { grading } = getCurriculum();
@@ -57,11 +58,13 @@ export default async function TopicPage({ params }: Props) {
   const nextRow = rows.find((r) => r.n === index + 1) ?? null;
 
   // Sequential gating: you may not skip ahead past an unfinished topic.
-  if (!staffPreview && grading.must_pass_to_advance && prevRow && !done.has(prevRow.id)) {
-    redirect(`/courses/${slug}/${prevRow.n}`);
+  if (!staffPreview && !earlierLessonsComplete(rows, index, done)) {
+    const firstIncomplete = rows.find((r) => r.n < index && !done.has(r.id))!;
+    redirect(`/courses/${slug}/${firstIncomplete.n}`);
   }
 
   const hasQuiz = lesson.html.includes('class="quiz"');
+  const alreadyPassed = !staffPreview && await db.hasPassingTopicAttempt(student.id, row.id);
   const chapter = row.reading;
 
   return (
@@ -79,7 +82,7 @@ export default async function TopicPage({ params }: Props) {
         {rows.map((r) => {
           const isDone = done.has(r.id);
           const locked =
-            !staffPreview && grading.must_pass_to_advance && r.n > 1 && !done.has(rows[r.n - 2].id);
+            !staffPreview && !earlierLessonsComplete(rows, r.n, done);
           if (r.n === index) {
             return (
               <span className="cur" key={r.id}>
@@ -118,6 +121,7 @@ export default async function TopicPage({ params }: Props) {
         passMark={grading.pass_mark}
         mustPass={grading.must_pass_to_advance}
         alreadyComplete={done.has(row.id)}
+        alreadyPassed={alreadyPassed}
         hasQuiz={hasQuiz}
         path={`/courses/${slug}/${index}`}
         prev={prevRow ? { href: `/courses/${slug}/${prevRow.n}`, title: prevRow.title } : null}

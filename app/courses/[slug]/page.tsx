@@ -4,10 +4,11 @@ import { notFound, redirect } from "next/navigation";
 
 import { currentStudent } from "@/lib/auth";
 import { canPreviewCourses } from "@/lib/course-preview";
-import { entitlementRedirectPath, hasActiveAccess } from "@/lib/access";
+import { entitlementRedirectPath, hasStudyAccess } from "@/lib/access";
 import { getCourseAudio, getCourseDoc, getCourseStatuses, getLessonRows } from "@/lib/content";
 import { findCourse, getCurriculum } from "@/lib/curriculum";
 import { db } from "@/lib/db";
+import { earlierLessonsComplete } from "@/lib/learning-progress";
 import { CourseBook } from "@/components/CourseBook";
 
 type Props = { params: Promise<{ slug: string }> };
@@ -34,7 +35,7 @@ export default async function CoursePage({ params }: Props) {
   if (!student) redirect(`/login?next=/courses/${slug}`);
 
   const enrollments = await db.getEnrollmentsForStudent(student.id);
-  const entitled = hasActiveAccess(enrollments, module.slug);
+  const entitled = hasStudyAccess(student, enrollments, module.slug);
   if (!entitled && !staffPreview) redirect(entitlementRedirectPath(enrollments));
 
   const { grading } = getCurriculum();
@@ -141,10 +142,11 @@ export default async function CoursePage({ params }: Props) {
       ) : <p className="notice">An audiobook has not yet been supplied for this course. The textbook is available above.</p>}
 
       <h2>Topics</h2>
+      {!staffPreview ? <p className="notice">Work through the lessons in order. Read each lesson, score at least {grading.pass_mark}% on its quiz, then select “Mark complete” to unlock the next lesson. The course assessment unlocks only after every lesson is complete.</p> : null}
       <div className="stack">
-        {rows.map((r, i) => {
+        {rows.map((r) => {
           const isDone = done.has(r.id);
-          const locked = !staffPreview && grading.must_pass_to_advance && i > 0 && !done.has(rows[i - 1].id);
+          const locked = !staffPreview && !earlierLessonsComplete(rows, r.n, done);
           const body = (
             <>
               <span className="code">{String(r.n).padStart(2, "0")}</span>

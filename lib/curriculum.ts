@@ -113,7 +113,8 @@ export function getModule(slug: string): Module | undefined {
   return getCurriculum().modules.find((m) => m.slug === slug);
 }
 
-export const PROGRAM_TIME_ZONE = "America/Chicago";
+export const PROGRAM_TIME_ZONE = "Africa/Lagos";
+export const MODULE_OPENING_TIME_LABEL = "12:00 noon WAT (Nigeria time)";
 
 const releaseDateDisplay = new Intl.DateTimeFormat("en-US", {
   month: "long",
@@ -121,32 +122,19 @@ const releaseDateDisplay = new Intl.DateTimeFormat("en-US", {
   year: "numeric",
   timeZone: "UTC",
 });
-const programDateDisplay = new Intl.DateTimeFormat("en-US", {
-  year: "numeric",
-  month: "2-digit",
-  day: "2-digit",
-  timeZone: PROGRAM_TIME_ZONE,
-});
 
 /** Human-readable release date from the date-only curriculum value. */
 export function formatModuleReleaseDate(module: Module): string {
   return releaseDateDisplay.format(new Date(`${module.release_date}T12:00:00.000Z`));
 }
 
-/** Release dates become effective at midnight in the Institute's Chicago time zone. */
+/** Nigeria uses UTC+1 year-round: noon WAT is 11:00 UTC. */
 export function isModuleReleased(module: Module, now = new Date()): boolean {
-  const parts = Object.fromEntries(
-    programDateDisplay
-      .formatToParts(now)
-      .filter((part) => part.type !== "literal")
-      .map((part) => [part.type, part.value])
-  );
-  const currentProgramDate = `${parts.year}-${parts.month}-${parts.day}`;
-  return currentProgramDate >= module.release_date;
+  return now.getTime() >= new Date(`${module.release_date}T11:00:00.000Z`).getTime();
 }
 
 export function moduleReleaseLabel(module: Module): string {
-  return `Opens ${formatModuleReleaseDate(module)}`;
+  return `Opens ${formatModuleReleaseDate(module)} at ${MODULE_OPENING_TIME_LABEL}`;
 }
 
 /** Find a course by its url slug (e.g. "st-101"), with its parent module. */

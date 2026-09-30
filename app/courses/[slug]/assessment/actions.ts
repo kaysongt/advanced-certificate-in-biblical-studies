@@ -3,12 +3,14 @@
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
-import { hasActiveAccess } from "@/lib/access";
+import { hasStudyAccess } from "@/lib/access";
 import { currentStudent } from "@/lib/auth";
 import { canPreviewCourses } from "@/lib/course-preview";
 import { getAssessmentBank, getLessonRows } from "@/lib/content";
 import { findCourse, getCurriculum, isModuleReleased } from "@/lib/curriculum";
 import { db } from "@/lib/db";
+import { meetsPassMark } from "@/lib/learning-progress";
+import { quizTimeExpired, quizRetryAt } from "@/lib/timed-quiz";
 import {
   ASSESSMENT_SIZE,
   verifyAssessmentAttempt,
@@ -30,12 +32,14 @@ export type AssessmentAttemptResult = {
   pct: number;
   sectionAPoints: number;
   error?: string;
+  retryAt?: number;
 };
 
 export async function submitAssessmentSectionA(
   courseSlug: string,
   answers: { questionId: string; answer: string }[],
   attemptToken: string,
+  timedAttemptId: string,
 ): Promise<AssessmentAttemptResult> {
   const parsed = attemptSchema.safeParse({ courseSlug, answers });
   if (!parsed.success)
@@ -90,7 +94,7 @@ export async function submitAssessmentSectionA(
   }
 
   const enrollments = await db.getEnrollmentsForStudent(student.id);
-  if (!hasActiveAccess(enrollments, found.module.slug)) {
+  if (!hasStudyAccess(student, enrollments, found.module.slug)) {
     return {
       correct: 0,
       total: 0,
@@ -141,6 +145,11 @@ export async function submitAssessmentSectionA(
         "This attempt is incomplete or has expired. Refresh the page for a fresh assessment.",
     };
   }
+  const timed = typeof timedAttemptId === "string" ? await db.getTimedQuiz(timedAttemptId, student.id) : null;
+  if (!timed || timed.courseSlug !== courseSlug || timed.lessonId !== null || timed.timer.state !== "started" || JSON.stringify(timed.timer.questionIds) !== JSON.stringify(parsed.data.answers.map((answer) => answer.questionId)))
+    return { correct: 0, total: 0, pct: 0, sectionAPoints: 0, error: "Start or resume the timed assessment before submitting." };
+  if (quizTimeExpired(timed.timer.deadline))
+    return { correct: 0, total: 0, pct: 0, sectionAPoints: 0, error: "Time is up. This attempt failed. A new course assessment is available 24 hours after this attempt began.", retryAt: quizRetryAt(timed) };
   const existing = await db.getLatestAssessmentSubmission(
     student.id,
     found.course.slug,
@@ -191,26 +200,19 @@ export async function submitAssessmentSectionA(
   const total = parsed.data.answers.length;
   const pct = Math.round((correct / total) * 100);
   const sectionAPoints = Math.round((correct / total) * 40);
-  const passed = pct >= getCurriculum().grading.pass_mark;
-  await db.createQuizAttempt({
+  const passed = meetsPassMark(correct, total, getCurriculum().grading.pass_mark);
+  const saved = await db.finishTimedQuiz({
+    id: timed.id,
     studentId: student.id,
-    courseSlug: parsed.data.courseSlug,
-    lessonId: null,
-    kind: "course-assessment",
     correct,
     total,
     scorePct: pct,
     passed,
     answers: parsed.data.answers,
-  });
-  const submission = await db.createAssessmentSubmission({
-    studentId: student.id,
-    courseSlug: parsed.data.courseSlug,
-    sectionACorrect: correct,
-    sectionATotal: total,
     sectionAPoints,
   });
-  return { submissionId: submission.id, correct, total, pct, sectionAPoints };
+  if (saved.status !== "saved") return { correct: 0, total: 0, pct: 0, sectionAPoints: 0, error: saved.status === "expired" ? "Time is up. This attempt failed." : "This attempt has already been submitted." };
+  return { submissionId: saved.submissionId, correct, total, pct, sectionAPoints };
 }
 
 const writtenSchema = z.object({
@@ -223,6 +225,7 @@ export type WrittenSubmissionResult = { success: boolean; error?: string };
 export async function submitWrittenAssessment(
   submissionId: string,
   response: string,
+  courseSlug: string,
 ): Promise<WrittenSubmissionResult> {
   const parsed = writtenSchema.safeParse({ submissionId, response });
   if (!parsed.success) {
@@ -236,6 +239,18 @@ export async function submitWrittenAssessment(
   if (!student) return { success: false, error: "Sign in again." };
   if (canPreviewCourses(student))
     return { success: false, error: "Preview does not record submissions." };
+  if (typeof courseSlug !== "string" || courseSlug.length > 40)
+    return { success: false, error: "Course not found." };
+  const submissionForAccess = await db.getLatestAssessmentSubmission(student.id, courseSlug);
+  if (!submissionForAccess || submissionForAccess.id !== parsed.data.submissionId)
+    return { success: false, error: "Assessment not found." };
+  const found = findCourse(submissionForAccess.courseSlug);
+  const enrollments = await db.getEnrollmentsForStudent(student.id);
+  if (!found || !isModuleReleased(found.module) || !hasStudyAccess(student, enrollments, found.module.slug))
+    return { success: false, error: "Course access is required to submit this assessment." };
+  const done = new Set((await db.getProgress(student.id)).map((item) => item.lessonId));
+  if (!getLessonRows(found.module, found.course).every((row) => done.has(row.id)))
+    return { success: false, error: "Complete every lesson before submitting the course assessment." };
   const submission = await db.submitAssessmentWrittenWork(
     parsed.data.submissionId,
     student.id,
