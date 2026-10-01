@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 import { hasStudyAccess } from "@/lib/access";
-import { currentStudent } from "@/lib/auth";
-import { getCurriculum } from "@/lib/curriculum";
+import { currentStudent, isStaff } from "@/lib/auth";
+import { getCurriculum, isModuleReleased } from "@/lib/curriculum";
 import { db } from "@/lib/db";
 
 export const metadata: Metadata = { title: "Community" };
@@ -13,7 +13,7 @@ export default async function CommunityPage() {
   const { program, modules } = getCurriculum();
   const enrollments = student ? await db.getEnrollmentsForStudent(student.id) : [];
   const groups = student
-    ? modules.filter((module) => hasStudyAccess(student, enrollments, module.slug))
+    ? modules.filter((module) => isModuleReleased(module) && (isStaff(student) || hasStudyAccess(student, enrollments, module.slug)))
     : [];
   const engagement = student
     ? await db.getCommunityEngagement(student.id)
@@ -43,6 +43,7 @@ export default async function CommunityPage() {
         </header>
 
         <div className="community-guidance">
+          Community groups open when their modules begin. Only released modules you can access appear below. {" "}
           {program.community.access} {program.community.engagement}
         </div>
 
@@ -62,7 +63,7 @@ export default async function CommunityPage() {
             <strong>{student ? "No active community groups yet." : "Your community starts here."}</strong>
             <p>
               {student
-                ? "Your certificate community appears here as soon as enrollment access is activated."
+                ? "Your certificate community appears here when the module opens and you have access."
                 : "Sign in to open your enrolled groups, or explore the curriculum before choosing a certificate."}
             </p>
             <div className="community-empty-actions">

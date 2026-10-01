@@ -980,6 +980,22 @@ async function main() {
     for (const provider of ["minister-waiver", "scholarship", "manual", "stripe"]) assert.equal(hasStudyAccess(visitor, [{ ...enrollmentBase, status: "active", provider }], curriculum.modules[1].slug, launch), true);
     assert.equal(JSON.stringify(pending), before);
   });
+  check("only Module 1 community is released at launch, even with full-program access", () => {
+    const launch = new Date("2026-10-01T11:00:00Z");
+    const active = [{ ...enrollmentBase, status: "active" as const }];
+    const open = curriculum.modules.filter((m) => isModuleReleased(m, launch) && hasStudyAccess({ id: "registered" }, active, m.slug, launch));
+    assert.deepEqual(open.map((m) => m.slug), [curriculum.modules[0].slug]);
+    assert.equal(isModuleReleased(curriculum.modules[1], new Date("2026-12-01T10:59:59Z")), false);
+    assert.equal(isModuleReleased(curriculum.modules[1], new Date("2026-12-01T11:00:00Z")), true);
+  });
+  for (const communityFile of ["page.tsx", "[slug]/page.tsx", "[slug]/actions.ts"]) {
+    const source = await fs.readFile(path.join(process.cwd(), "app/community", communityFile), "utf8");
+    check(`community ${communityFile} enforces release independently of staff entitlement`, () => {
+      assert.ok(source.includes("isModuleReleased(module)"));
+      if (communityFile === "page.tsx") assert.ok(source.includes("isModuleReleased(module) && (isStaff(student) ||"));
+      else assert.ok(source.indexOf("if (!isModuleReleased(module))") < source.indexOf("const enrollments ="));
+    });
+  }
   check("every launch lesson has a quiz and requires all earlier lessons", () => {
     assert.equal(curriculum.grading.must_pass_to_advance, true);
     for (const course of curriculum.modules[0].courses) {

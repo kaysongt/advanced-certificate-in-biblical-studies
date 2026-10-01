@@ -22,6 +22,7 @@ export async function addCommunityPost(
 
   const module = getModule(moduleSlug);
   if (!module) return { error: "This module discussion is unavailable." };
+  if (!isModuleReleased(module)) return { error: "This community opens when its module begins. Please use an open module's community." };
 
   const enrollments = await db.getEnrollmentsForStudent(student.id);
   if (!isStaff(student) && !hasStudyAccess(student, enrollments, module.slug)) {

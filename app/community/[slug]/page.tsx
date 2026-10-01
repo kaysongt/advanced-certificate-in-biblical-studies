@@ -5,7 +5,7 @@ import { notFound, redirect } from "next/navigation";
 import CommunityComposer from "@/components/CommunityComposer";
 import { entitlementRedirectPath, hasStudyAccess } from "@/lib/access";
 import { currentStudent, isStaff } from "@/lib/auth";
-import { getModule } from "@/lib/curriculum";
+import { getModule, isModuleReleased } from "@/lib/curriculum";
 import { db } from "@/lib/db";
 
 type Props = { params: Promise<{ slug: string }> };
@@ -23,6 +23,8 @@ export default async function CommunityModulePage({ params }: Props) {
 
   const student = await currentStudent();
   if (!student) redirect(`/login?next=/community/${module.slug}`);
+  // Public communities follow the release schedule, including for staff.
+  if (!isModuleReleased(module)) redirect("/community");
 
   const enrollments = await db.getEnrollmentsForStudent(student.id);
   if (!isStaff(student) && !hasStudyAccess(student, enrollments, module.slug)) redirect(entitlementRedirectPath(enrollments));
