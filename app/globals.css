@@ -1751,6 +1751,16 @@ a.card:hover::after { opacity: .9; }
 
 .dashboard-community { margin-top: 42px; background: linear-gradient(135deg, var(--card), var(--gold-wash)); }
 :root[data-theme="dark"] .dashboard-community { background: linear-gradient(135deg, var(--card), #251d0c); }
+.walkthrough-replay { display: inline-flex; margin: -22px 0 28px; border: 0; padding: 0; background: transparent; color: var(--gold); font: 700 12px/1.4 var(--sans); cursor: pointer; text-decoration: underline; }
+.walkthrough-layer, .walkthrough-dim, .walkthrough-focus { position: fixed; inset: 0; z-index: 100; }
+.walkthrough-dim { background: rgba(4, 12, 25, .66); }
+.walkthrough-focus { inset: auto; z-index: 101; border: 2px solid var(--gold); border-radius: 14px; box-shadow: 0 0 0 9999px rgba(4, 12, 25, .66), 0 0 0 5px rgba(228, 196, 111, .22); pointer-events: none; transition: all .2s ease; }
+.walkthrough-card { position: fixed; z-index: 102; left: 50%; bottom: 28px; width: min(440px, calc(100vw - 32px)); transform: translateX(-50%); padding: 24px; border: 1px solid var(--gold); border-radius: 18px; background: var(--panel); color: var(--ink); box-shadow: 0 18px 50px rgba(0,0,0,.3); }
+.walkthrough-progress { color: var(--gold); font: 700 10px/1.2 var(--sans); letter-spacing: .12em; text-transform: uppercase; }
+.walkthrough-card h2 { margin: 10px 0 8px; }
+.walkthrough-card p { margin: 0; color: var(--muted); line-height: 1.6; }
+.walkthrough-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 20px; }
+@media (max-width: 600px) { .walkthrough-card { bottom: 16px; padding: 20px; } .walkthrough-actions { flex-wrap: wrap; } .walkthrough-actions .quiet { margin-right: auto; } }
 
 .community-shell { max-width: 1030px; margin: 0 auto; }
 .community-head,

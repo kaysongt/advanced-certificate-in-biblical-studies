@@ -7,6 +7,7 @@ import { changeOwnPassword } from "./actions";
 import StripeCheckoutButton from "@/components/StripeCheckoutButton";
 import { getModuleEnrollmentState, hasMinisterWaiver, hasStudyAccess } from "@/lib/access";
 import LaunchAccessNotice from "@/components/LaunchAccessNotice";
+import StudentWalkthrough from "@/components/StudentWalkthrough";
 import { currentStudent, isStaff } from "@/lib/auth";
 import { canPreviewCourses } from "@/lib/course-preview";
 import { getModuleStatuses } from "@/lib/content";
@@ -170,7 +171,8 @@ export default async function DashboardPage({
         </p>
       </div>
 
-      <LaunchAccessNotice signedIn />
+      <div data-tour="access"><LaunchAccessNotice signedIn /></div>
+      <StudentWalkthrough />
       {accessMessage ? (
         <div className={`notice ${accessMessage.tone}`} role="alert">
           {accessMessage.text}
@@ -196,7 +198,7 @@ export default async function DashboardPage({
         * unlock" is the wrong thing to say to someone who has already paid.
         */}
       {enrollments.length ? (
-        <section
+        <section data-tour="welcome"
           className={`welcome-video${awaitingFirstModule ? " is-enrolled" : ""}`}
           aria-labelledby="welcome-video-title"
         >
@@ -457,7 +459,7 @@ export default async function DashboardPage({
             `Add ${module.short_title} certificate`
           )}`;
           return (
-            <div className="card" key={module.slug}>
+            <div data-tour={module.number === 1 ? "module" : undefined} className="card" key={module.slug}>
               <div className="cardtop">
                 <span className="eyebrow">
                   Module {module.numeral} &middot; {module.hours} hrs
@@ -530,7 +532,7 @@ export default async function DashboardPage({
         ))}
       </div>
 
-      <section className="dashboard-community">
+      <section data-tour="community" className="dashboard-community">
         <div>
           <div className="eyebrow">Learning in community</div>
           <h2>Keep the conversation going.</h2>
