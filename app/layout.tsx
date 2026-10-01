@@ -17,14 +17,17 @@ export const metadata: Metadata = {
     template: `%s — ${program.institute}`,
   },
   description: program.summary.slice(0, 155),
-  icons: { icon: "/assets/favicon.png", apple: "/assets/favicon.png" },
+  icons: {
+    icon: "/_next/image?url=%2Fassets%2Fkti-brand-2026.png&w=64&q=75",
+    apple: "/_next/image?url=%2Fassets%2Fkti-brand-2026.png&w=256&q=75",
+  },
   openGraph: {
     title: `${program.title} — ${program.institute}`,
     description: program.summary.slice(0, 155),
-    images: ["/assets/logo.jpg"],
+    images: [{ url: "/assets/kti-brand-2026.png", width: 1536, height: 1024, alt: "KingsWord Training Institute — Advanced Certificate in Biblical Studies" }],
     type: "website",
   },
-  twitter: { card: "summary_large_image" },
+  twitter: { card: "summary_large_image", images: ["/assets/kti-brand-2026.png"] },
 };
 
 /** Applies the stored theme before first paint, so there is no flash. */

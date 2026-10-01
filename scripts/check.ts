@@ -352,6 +352,21 @@ async function main() {
 
   console.log("\nhomepage faculty");
   const homePageSource = await fs.readFile(path.join(process.cwd(), "app/page.tsx"), "utf8");
+  for (const brandFile of ["app/page.tsx", "app/layout.tsx", "components/Masthead.tsx", "components/SiteFooter.tsx"]) {
+    const source = await fs.readFile(path.join(process.cwd(), brandFile), "utf8");
+    check(`${brandFile} uses the approved October branding`, () => {
+      assert.ok(source.includes("kti-brand-2026.png"));
+      assert.ok(!source.includes("/assets/logo-mark.jpg"));
+      assert.ok(!source.includes("/assets/logo.jpg"));
+      assert.ok(!source.includes("/assets/favicon.png"));
+    });
+  }
+  const brandAsset = await fs.readFile(path.join(process.cwd(), "public/assets/kti-brand-2026.png"));
+  check("approved branding is a valid full-resolution PNG", () => {
+    assert.equal(brandAsset.subarray(1, 4).toString(), "PNG");
+    assert.equal(brandAsset.readUInt32BE(16), 1536);
+    assert.equal(brandAsset.readUInt32BE(20), 1024);
+  });
   const homeStylesSource = await fs.readFile(
     path.join(process.cwd(), "app/globals.css"),
     "utf8"

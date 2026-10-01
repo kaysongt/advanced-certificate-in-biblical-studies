@@ -1,5 +1,6 @@
 import { getCurriculum } from "@/lib/curriculum";
 import Link from "next/link";
+import Image from "next/image";
 
 export default function SiteFooter() {
   const { program } = getCurriculum();
@@ -8,7 +9,7 @@ export default function SiteFooter() {
   return (
     <footer className="sitefoot">
       <div className="inner">
-        <span>{program.institute}</span>
+        <Link href="/" className="footer-brand"><Image src="/assets/kti-brand-2026.png" alt="" width={1536} height={1024} sizes="90px" /> <span>{program.institute}</span></Link>
         <span className="right">
           <a href={`tel:${phone.replace(/\s/g, "")}`}>{phone}</a>
           &nbsp; <a href={`mailto:${email}`}>{email}</a>

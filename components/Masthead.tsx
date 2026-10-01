@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 
 import AuthNav from "./AuthNav";
 import PrimaryNav from "./PrimaryNav";
@@ -16,8 +17,7 @@ export default function Masthead() {
     <header className="masthead">
       <div className="inner">
         <Link className="wordmark" href="/" aria-label="KingsWord Training Institute — home">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img className="mark" src="/assets/logo-mark.jpg" alt="" width={440} height={268} />
+          <Image className="mark" src="/assets/kti-brand-2026.png" alt="" width={1536} height={1024} sizes="96px" loading="eager" />
           <span className="wm-txt">
             <span className="kw">KingsWord</span> Training Institute
           </span>

@@ -138,8 +138,7 @@ export default function HomePage() {
               <span>Advanced Certificate</span>
               <span>Now enrolling</span>
             </div>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img className="hero-mark" src="/assets/logo-mark.jpg" alt="" width={440} height={268} />
+            <Image className="hero-mark" src="/assets/kti-brand-2026.png" alt="KingsWord Training Institute — Advanced Certificate in Biblical Studies" width={1536} height={1024} sizes="(max-width: 760px) 90vw, 450px" loading="eager" />
             <div className="hero-panel-intro">
               <span className="hero-panel-label">Your starting point</span>
               <div>
