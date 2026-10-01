@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
+import { isRegistrationOpen, REGISTRATION_DEADLINE_LABEL } from "@/lib/registration";
 
 import { getModuleStatuses } from "@/lib/content";
 import {
@@ -91,6 +92,7 @@ export default function HomePage() {
 
   return (
     <main className="marketing-home" id="main-content" tabIndex={-1}>
+      {isRegistrationOpen() ? <div className="shell"><p className="notice good"><strong>Registration extended through Sunday.</strong> Dr Kay has announced a grace period until {REGISTRATION_DEADLINE_LABEL}. <Link href="/enroll">Register now →</Link></p></div> : null}
       <section className="hero home-hero">
         <div className="hero-glow" aria-hidden="true" />
         <div className="wide hero-grid">

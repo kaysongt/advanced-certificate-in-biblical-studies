@@ -9,6 +9,7 @@ import os from "node:os";
 import path from "node:path";
 import { StripePaymentStatus } from "@prisma/client";
 import Stripe from "stripe";
+import { isRegistrationOpen } from "../lib/registration";
 
 import { hashPassword, verifyPassword, parseSession, serialiseSession } from "../lib/auth-core";
 import { issuePasswordResetToken, verifyPasswordResetToken, resetTokenStudentId, RESET_LIFETIME_MS, resetRateKey, buildPasswordResetEmail } from "../lib/password-reset-core";
@@ -979,6 +980,18 @@ async function main() {
     assert.equal(hasStudyAccess(visitor, pending, curriculum.modules[1].slug, new Date("2026-12-01T11:00:00Z")), false);
     for (const provider of ["minister-waiver", "scholarship", "manual", "stripe"]) assert.equal(hasStudyAccess(visitor, [{ ...enrollmentBase, status: "active", provider }], curriculum.modules[1].slug, launch), true);
     assert.equal(JSON.stringify(pending), before);
+  });
+  check("registration grace period includes Sunday and closes at Monday midnight WAT", () => {
+    assert.equal(isRegistrationOpen(new Date("2026-10-01T12:00:00Z")), true);
+    assert.equal(isRegistrationOpen(new Date("2026-10-04T22:59:59.999Z")), true);
+    assert.equal(isRegistrationOpen(new Date("2026-10-04T23:00:00Z")), false);
+    assert.equal(isRegistrationOpen(new Date("2026-10-05T10:00:00Z")), false);
+    assert.equal(isRegistrationOpen(new Date("invalid")), false);
+  });
+  const registrationActionSource = await fs.readFile(path.join(process.cwd(), "app/enroll/actions.ts"), "utf8");
+  check("registration cutoff is checked server-side before account creation", () => {
+    assert.ok(registrationActionSource.includes("if (!isRegistrationOpen())"));
+    assert.ok(registrationActionSource.indexOf("if (!isRegistrationOpen())") < registrationActionSource.indexOf("db.createStudentWithEnrollment("));
   });
   check("only Module 1 community is released at launch, even with full-program access", () => {
     const launch = new Date("2026-10-01T11:00:00Z");

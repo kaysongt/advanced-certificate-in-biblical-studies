@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
+import Link from "next/link";
+import { isRegistrationOpen, REGISTRATION_DEADLINE_LABEL } from "@/lib/registration";
 
 import { currentStudent } from "@/lib/auth";
 import { getModuleStatuses } from "@/lib/content";
@@ -16,6 +18,16 @@ export default async function EnrollPage({
   searchParams: Promise<{ plan?: string; scholarship?: string }>;
 }) {
   if (await currentStudent()) redirect("/dashboard");
+  if (!isRegistrationOpen()) return (
+    <main className="shell" id="main-content" tabIndex={-1}>
+      <div className="authwrap"><div className="authcard">
+        <h1>Registration has closed</h1>
+        <p>The extended registration period ended {REGISTRATION_DEADLINE_LABEL}. Existing students retain their access and can continue studying and making payments.</p>
+        <Link className="btn primary" href="/login">Sign in</Link>
+        <p>For registration enquiries, email <a href="mailto:kti@kingsword.org">kti@kingsword.org</a>.</p>
+      </div></div>
+    </main>
+  );
 
   const { plan, scholarship } = await searchParams;
 
@@ -37,6 +49,7 @@ export default async function EnrollPage({
       <div className="authwrap">
         <div className="authcard">
           <h1>Enroll</h1>
+          <div className="notice good"><strong>Registration grace period extended.</strong> Dr Kay has extended registration through {REGISTRATION_DEADLINE_LABEL}. Module 1 is already open; register now to begin.</div>
           <p className="sub">
             Create your account for the {program.title}. Choose a single certificate or reserve
             your place in the full program.

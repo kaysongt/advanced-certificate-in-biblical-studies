@@ -8,6 +8,7 @@ import { getPurchasableModules } from "@/lib/content";
 import { PRICING } from "@/lib/curriculum";
 import { db } from "@/lib/db";
 import { StorageUnavailableError } from "@/lib/db/types";
+import { isRegistrationOpen } from "@/lib/registration";
 
 export type FormState = {
   error?: string;
@@ -32,6 +33,7 @@ export async function registerStudent(
   _previous: FormState,
   formData: FormData
 ): Promise<FormState> {
+  if (!isRegistrationOpen()) return { error: "Registration has closed following the Sunday grace period. Existing students can still sign in. For help, email kti@kingsword.org." };
   const scholarshipIntentEntry = formData.get("scholarshipIntent");
   const raw = {
     fullName: String(formData.get("fullName") ?? ""),
