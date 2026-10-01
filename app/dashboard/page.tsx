@@ -212,7 +212,7 @@ export default async function DashboardPage({
             <p>
               {awaitingFirstModule
                 ? `Your enrollment is active and your place is reserved. Module ${nextOpening?.module.numeral} unlocks on release day and appears here automatically — watch the orientation below in the meantime.`
-                : `A short orientation from the Institute on what the ${program.title} covers and how to get the most from it.`}
+                : `Watch Dr. Kay’s welcome to the ${program.title} before you begin Module 1.`}
             </p>
             {program.welcome_video?.speaker ? (
               <p className="welcome-video-meta">
