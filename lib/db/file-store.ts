@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 import fs from "node:fs/promises";
 import path from "node:path";
+import { reportingQuiz } from "../learning-activity";
 import { readQuizTimer, quizTimeExpired, quizRetryAt, LESSON_QUIZ_MS, COURSE_QUIZ_MS } from "../timed-quiz";
 
 import { StorageUnavailableError } from "./types";
@@ -97,6 +98,15 @@ async function withScholarshipReviewLock<T>(operation: () => Promise<T>): Promis
 }
 
 export const fileStore: DataStore = {
+  async getLearningActivity() {
+    const data = await read();
+    return {
+      progress: data.progress,
+      quizzes: data.quizAttempts.map((attempt) => reportingQuiz(attempt, (attempt as QuizAttempt & { answers?: unknown }).answers)),
+      assessments: data.assessmentSubmissions.map(({ studentId, courseSlug, status, totalScore, createdAt }) => ({ studentId, courseSlug, status, totalScore, createdAt })),
+      posts: data.communityPosts.filter((post) => !post.hiddenAt).map(({ studentId, moduleSlug, lessonId, engagementCredits, createdAt }) => ({ studentId, moduleSlug, lessonId, engagementCredits, createdAt })),
+    };
+  },
   async createStudent(input: NewStudent): Promise<Student> {
     const data = await read();
     const student: Student = {

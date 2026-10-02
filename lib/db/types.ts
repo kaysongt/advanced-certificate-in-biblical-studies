@@ -124,6 +124,13 @@ export type CommunityEngagement = {
   credits: number;
 };
 
+export type LearningActivity = {
+  progress: ProgressRecord[];
+  quizzes: (QuizAttempt & { state: "in-progress" | "submitted" | "expired"; activityAt: string })[];
+  assessments: Pick<AssessmentSubmission, "studentId" | "courseSlug" | "status" | "totalScore" | "createdAt">[];
+  posts: Pick<CommunityPost, "studentId" | "moduleSlug" | "lessonId" | "engagementCredits" | "createdAt">[];
+};
+
 export type NewStudent = Omit<Student, "id" | "createdAt" | "role"> & { role?: StudentRole };
 export type NewEnrollment = Omit<
   Enrollment,
@@ -156,6 +163,8 @@ export class StorageUnavailableError extends Error {
 }
 
 export interface DataStore {
+  /** Private reporting data. Authorize staff before calling. */
+  getLearningActivity(): Promise<LearningActivity>;
   // students
   createStudent(input: NewStudent): Promise<Student>;
   createStudentWithEnrollment(

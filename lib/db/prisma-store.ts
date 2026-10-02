@@ -9,6 +9,7 @@ import {
 } from "@prisma/client";
 
 import { prisma } from "./prisma";
+import { reportingQuiz } from "../learning-activity";
 import { readQuizTimer, quizTimeExpired, quizRetryAt, LESSON_QUIZ_MS, COURSE_QUIZ_MS } from "../timed-quiz";
 import type {
   AssessmentStatus,
@@ -190,6 +191,20 @@ function jsonValue(value: unknown): Prisma.InputJsonValue {
 class ScholarshipReviewConflict extends Error {}
 
 export const prismaStore: DataStore = {
+  async getLearningActivity() {
+    const [progress, quizzes, assessments, posts] = await Promise.all([
+      prisma.progress.findMany(),
+      prisma.quizAttempt.findMany({ select: { id: true, studentId: true, courseSlug: true, lessonId: true, kind: true, correct: true, total: true, scorePct: true, passed: true, createdAt: true, answers: true } }),
+      prisma.assessmentSubmission.findMany({ select: { studentId: true, courseSlug: true, status: true, totalScore: true, createdAt: true } }),
+      prisma.communityPost.findMany({ where: { hiddenAt: null }, select: { studentId: true, moduleSlug: true, lessonId: true, engagementCredits: true, createdAt: true } }),
+    ]);
+    return {
+      progress: progress.map((row) => ({ ...row, completedAt: row.completedAt.toISOString() })),
+      quizzes: quizzes.map((row) => reportingQuiz(mapQuizAttempt(row), row.answers)),
+      assessments: assessments.map((row) => ({ ...row, status: assessmentStatusFromPrisma[row.status], createdAt: row.createdAt.toISOString() })),
+      posts: posts.map((row) => ({ ...row, createdAt: row.createdAt.toISOString() })),
+    };
+  },
   async createStudent(input) {
     return mapStudent(
       await prisma.student.create({

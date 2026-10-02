@@ -4,6 +4,7 @@
  */
 
 import assert from "node:assert/strict";
+import "./check-progress";
 import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
@@ -526,6 +527,7 @@ async function main() {
       [
         ["Operations", "/admin"],
         ["Registration groups", "/admin/registrations"],
+        ["Student progress", "/admin/progress"],
         ["Preview program", "/curriculum"],
         ["Scholarship applications", "/admin/scholarships"],
         ["Admin settings", "/admin/settings"],
