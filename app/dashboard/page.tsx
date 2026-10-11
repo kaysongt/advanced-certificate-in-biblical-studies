@@ -8,6 +8,8 @@ import StripeCheckoutButton from "@/components/StripeCheckoutButton";
 import { getModuleEnrollmentState, hasMinisterWaiver, hasStudyAccess } from "@/lib/access";
 import LaunchAccessNotice from "@/components/LaunchAccessNotice";
 import StudentWalkthrough from "@/components/StudentWalkthrough";
+import StudentModuleProgress from "@/components/StudentModuleProgress";
+import ModuleOneUpdate from "@/components/ModuleOneUpdate";
 import { currentStudent, isStaff } from "@/lib/auth";
 import { canPreviewCourses } from "@/lib/course-preview";
 import { getModuleStatuses } from "@/lib/content";
@@ -156,6 +158,8 @@ export default async function DashboardPage({
       .filter((status) => !status.available)
       .sort((a, b) => a.module.release_date.localeCompare(b.module.release_date))[0] ?? null;
   const awaitingFirstModule = Boolean(nextOpening) && openNow.length === 0;
+  const trackedModules = openNow.map(({ module }) => module);
+  const assessmentRecords = await Promise.all(trackedModules.flatMap((module) => module.courses.map((course) => db.getLatestAssessmentSubmission(student.id, course.slug))));
 
   return (
     <main className="shell" id="main-content" tabIndex={-1}>
@@ -173,6 +177,8 @@ export default async function DashboardPage({
 
       <div data-tour="access"><LaunchAccessNotice signedIn /></div>
       <StudentWalkthrough />
+      {trackedModules.map((module) => <StudentModuleProgress key={module.slug} module={module} progress={progress} assessments={assessmentRecords} preview={staffPreview} />)}
+      {trackedModules.some((module) => module.number === 1) ? <ModuleOneUpdate /> : null}
       {accessMessage ? (
         <div className={`notice ${accessMessage.tone}`} role="alert">
           {accessMessage.text}

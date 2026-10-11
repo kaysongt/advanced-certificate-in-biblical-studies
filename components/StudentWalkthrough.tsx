@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 
 const STORAGE_KEY = "kti.student-walkthrough.v1";
 const STEPS = [
+  { target: "[data-tour='progress']", title: "Track your progress", body: "See your saved lesson completion, assessment results, and suggested study pace. Select Continue next topic to pick up where you left off." },
   { target: "[data-tour='access']", title: "Your access", body: "Module 1 is open to registered students. This panel explains what is available now and what payment or approval is needed for later modules." },
   { target: "[data-tour='module']", title: "Start Module 1", body: "Open Systematic Theology here. Work through each lesson in order and use the textbook, PDF, and audio resources." },
   { target: "[data-tour='welcome']", title: "Watch the welcome", body: "Dr. Kay’s welcome video explains the certificate and how to get started. Press play whenever you are ready." },

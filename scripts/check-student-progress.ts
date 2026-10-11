@@ -1,0 +1,23 @@
+import assert from "node:assert/strict";
+import { getCurriculum } from "../lib/curriculum";
+import { studentModuleProgress } from "../lib/student-progress";
+
+const module = getCurriculum().modules[0];
+const start = Date.parse(`${module.release_date}T11:00:00Z`);
+const DAY = 86400000;
+assert.equal(studentModuleProgress(module, [], start - 1).week, 0);
+assert.equal(studentModuleProgress(module, [], start).target, 0);
+const record = { studentId: "test", lessonId: `${module.courses[0].slug}-1`, completedAt: new Date(start).toISOString() };
+const state = studentModuleProgress(module, [record, record, { ...record, lessonId: "other-module-1" }], start + 7 * DAY);
+assert.equal(state.completed.size, 1);
+assert.equal(state.target, 6);
+assert.equal(state.behind, 5);
+assert.equal(state.next?.n, 2);
+assert.equal(state.week, 2);
+assert.equal(studentModuleProgress(module, [], start + 42 * DAY).target, 36);
+assert.equal(studentModuleProgress(module, [], start + 100 * DAY).week, 8);
+assert.equal(studentModuleProgress(module, [], start + 56 * DAY).planEnded, true);
+const all = module.courses.flatMap((course) => Array.from({ length: module.lessons_per_course }, (_, n) => ({ ...record, lessonId: `${course.slug}-${n + 1}` })));
+assert.equal(studentModuleProgress(module, all, start + DAY).percent, 100);
+assert.equal(studentModuleProgress(module, all, start + DAY).next, null);
+console.log("Student pacing checks passed.");

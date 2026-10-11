@@ -2192,3 +2192,19 @@ main[tabindex="-1"]:focus { outline: none; }
 .learning-lessons li { padding: 10px 0; border-bottom: 1px solid var(--rule); }
 .learning-lessons span { display: block; font-size: 13px; color: var(--muted); margin-top: 5px; }
 #student-detail { scroll-margin-top: 100px; }
+.student-progress-panel, .module-update { padding: clamp(20px, 4vw, 36px); margin: 28px 0; border: 1px solid var(--rule); border-radius: 18px; background: var(--card); }
+.student-progress-panel h2, .module-update h2 { margin-top: 12px; }
+.student-progress-summary { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; margin: 24px 0; }
+.student-progress-summary strong { display: block; font: 600 clamp(28px, 5vw, 44px) var(--serif); color: var(--gold); }
+.student-progress-summary span, .student-progress-summary small { display: block; }
+.student-progress-summary small { margin-top: 5px; color: var(--muted); }
+.student-progress-bar { width: 100%; height: 16px; accent-color: var(--gold); }
+.student-progress-status { font-weight: 600; }
+.student-study-plan { background: var(--wash); padding: 16px; border-radius: 10px; margin: 20px 0; }
+.student-study-plan summary, .module-update summary { cursor: pointer; font-weight: 600; }
+.student-course-progress { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr)); gap: 12px; }
+.student-course-progress > div { padding: 14px; border: 1px solid var(--rule); border-radius: 10px; }
+.student-course-progress a, .student-course-progress span, .student-course-progress small { display: block; }
+.student-course-progress span, .student-course-progress small { color: var(--muted); margin-top: 6px; }
+.module-update video { display: block; width: 100%; max-width: 800px; height: auto; margin: 22px auto; background: #071222; border-radius: 12px; }
+.module-update details { margin-top: 20px; }

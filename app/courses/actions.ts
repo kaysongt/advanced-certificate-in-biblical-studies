@@ -72,6 +72,8 @@ export async function setTopicComplete(
 
   const expectedPath = `/courses/${courseSlug}/${topicNumber}`;
   revalidatePath(path === expectedPath ? path : expectedPath);
+  revalidatePath("/dashboard");
+  revalidatePath(`/curriculum/${found.module.slug}`);
   return true;
 }
 

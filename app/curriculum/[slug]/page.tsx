@@ -10,6 +10,8 @@ import { canPreviewCourses } from "@/lib/course-preview";
 import { hasStudyAccess } from "@/lib/access";
 import { db } from "@/lib/db";
 import { CourseBook } from "@/components/CourseBook";
+import StudentModuleProgress from "@/components/StudentModuleProgress";
+import ModuleOneUpdate from "@/components/ModuleOneUpdate";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -35,6 +37,10 @@ export default async function ModulePage({ params }: Props) {
   const statuses = getCourseStatuses().filter((s) => s.module.slug === module.slug);
   const moduleAvailable = statuses.length > 0 && statuses.every((status) => status.available);
   const lessons = module.courses.length * module.lessons_per_course;
+  const [progress, assessments] = actor && canReadMaterials ? await Promise.all([
+    db.getProgress(actor.id),
+    Promise.all(module.courses.map((course) => db.getLatestAssessmentSubmission(actor.id, course.slug))),
+  ]) : [[], []];
   const videoBriefings = [
     {
       label: "Opening video",
@@ -82,6 +88,8 @@ export default async function ModulePage({ params }: Props) {
       ) : null}
       <LaunchAccessNotice signedIn={Boolean(actor)} />
       {!staffPreview && !canReadMaterials ? <p className="notice">{moduleReleaseLabel(module)}. {module.number === 1 ? "Sign in with your registered account to start at the opening time." : "Access requires a cleared enrollment covering this module. Complete payment or contact KTI about your approved scholarship or minister waiver."}</p> : null}
+      {actor && canReadMaterials ? <StudentModuleProgress module={module} progress={progress} assessments={assessments} preview={staffPreview} /> : null}
+      {module.number === 1 && canReadMaterials ? <ModuleOneUpdate /> : null}
       <h2>Courses</h2>
       <div className="stack">
         {statuses.map(({ course, available, complete }) => {
