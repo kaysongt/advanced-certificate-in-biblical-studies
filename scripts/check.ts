@@ -16,7 +16,8 @@ import { isRegistrationOpen } from "../lib/registration";
 import { hashPassword, verifyPassword, parseSession, serialiseSession } from "../lib/auth-core";
 import { issuePasswordResetToken, verifyPasswordResetToken, resetTokenStudentId, RESET_LIFETIME_MS, resetRateKey, buildPasswordResetEmail } from "../lib/password-reset-core";
 import { isStaff } from "../lib/auth";
-import { canPreviewCourses } from "../lib/course-preview";
+import { canPreviewCourses, previewModeSelected } from "../lib/course-preview";
+import { criteriaSchema, draftThesisCriteria, validateSuggestion } from "../lib/thesis-rubric";
 import { earlierLessonsComplete, meetsPassMark } from "../lib/learning-progress";
 import { LESSON_QUIZ_MS, COURSE_QUIZ_MS, quizTimeExpired, quizRetryAt } from "../lib/timed-quiz";
 import {
@@ -494,13 +495,30 @@ async function main() {
   });
 
   console.log("\nadmin navigation");
+  check("staff study by default after launch and preview preferences cannot elevate students", () => {
+    const now = new Date("2026-10-12T12:00:00Z");
+    const staff = { id: "staff-1", role: "admin" as const };
+    assert.equal(previewModeSelected(staff, undefined, now), false);
+    assert.equal(previewModeSelected(staff, "staff-1:preview", now), true);
+    assert.equal(previewModeSelected(staff, "staff-1:study", now), false);
+    assert.equal(previewModeSelected(staff, "other:preview", now), false);
+    assert.equal(previewModeSelected({ id: "student-1", role: "student" }, "student-1:preview", now), false);
+  });
+  check("thesis rubric validates weights and rejects AI scores outside approved criteria", () => {
+    const criteria = criteriaSchema.parse(draftThesisCriteria);
+    assert.throws(() => criteriaSchema.parse(criteria.map(c => ({ ...c, points: 1 }))));
+    const suggestion = { criteria: criteria.map(c => ({ title: c.title, score: c.points, feedback: "Evidence explained." })), feedback: "Verify the cited passages.", reviewFlags: [] };
+    assert.equal(validateSuggestion(suggestion, criteria).total, 100);
+    assert.throws(() => validateSuggestion({ ...suggestion, criteria: suggestion.criteria.slice(1) }, criteria));
+    assert.throws(() => validateSuggestion({ ...suggestion, criteria: suggestion.criteria.map(c => ({ ...c, score: 100 })) }, criteria));
+  });
   const dashboardSource = await fs.readFile(path.join(process.cwd(), "app/dashboard/page.tsx"), "utf8");
   const curriculumSource = await fs.readFile(path.join(process.cwd(), "app/curriculum/page.tsx"), "utf8");
   check("staff have a program preview entry point independent of enrollment and release", () => {
-    assert.ok(dashboardSource.includes("const staffPreview = canPreviewCourses(student)"));
+    assert.ok(dashboardSource.includes("await isCoursePreview(student)"));
     assert.ok(dashboardSource.includes("{staffPreview ? ("));
     assert.ok(dashboardSource.includes("Preview courses →"));
-    assert.ok(curriculumSource.includes("const staffPreview = actor ? canPreviewCourses(actor) : false"));
+    assert.ok(curriculumSource.includes("await isCoursePreview(actor)"));
     assert.ok(curriculumSource.includes("Course preview access"));
   });
   check("course reviewers use exact account IDs without changing staff permissions", () => {
@@ -517,10 +535,10 @@ async function main() {
   const topicActionsSource = await fs.readFile(path.join(process.cwd(), "app/courses/actions.ts"), "utf8");
   const assessmentActionsSource = await fs.readFile(path.join(process.cwd(), "app/courses/[slug]/assessment/actions.ts"), "utf8");
   check("preview writes are rejected server-side for lessons and both assessment sections", () => {
-    assert.equal((topicActionsSource.match(/canPreviewCourses\(student\)/g) ?? []).length, 2);
-    assert.equal((assessmentActionsSource.match(/canPreviewCourses\(student\)/g) ?? []).length, 2);
-    assert.ok(topicActionsSource.indexOf("canPreviewCourses(student)") < topicActionsSource.indexOf("await db.markLessonComplete"));
-    assert.ok(assessmentActionsSource.indexOf("canPreviewCourses(student)") < assessmentActionsSource.indexOf("await db.finishTimedQuiz"));
+    assert.equal((topicActionsSource.match(/isCoursePreview\(student\)/g) ?? []).length, 2);
+    assert.equal((assessmentActionsSource.match(/isCoursePreview\(student\)/g) ?? []).length, 2);
+    assert.ok(topicActionsSource.indexOf("isCoursePreview(student)") < topicActionsSource.indexOf("await db.markLessonComplete"));
+    assert.ok(assessmentActionsSource.indexOf("isCoursePreview(student)") < assessmentActionsSource.indexOf("await db.finishTimedQuiz"));
   });
   check("admin tabs point to operations and scholarship applications", () =>
     assert.deepEqual(
@@ -529,6 +547,7 @@ async function main() {
         ["Operations", "/admin"],
         ["Registration groups", "/admin/registrations"],
         ["Student progress", "/admin/progress"],
+        ["Thesis reviews", "/admin/thesis"],
         ["Preview program", "/curriculum"],
         ["Scholarship applications", "/admin/scholarships"],
         ["Admin settings", "/admin/settings"],

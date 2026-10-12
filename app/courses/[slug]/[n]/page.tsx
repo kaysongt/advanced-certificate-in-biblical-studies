@@ -6,7 +6,8 @@ import TopicReader from "@/components/TopicReader";
 import LessonDiscussion from "@/components/LessonDiscussion";
 import { entitlementRedirectPath, hasStudyAccess } from "@/lib/access";
 import { currentStudent } from "@/lib/auth";
-import { canPreviewCourses } from "@/lib/course-preview";
+import { isCoursePreview } from "@/lib/learning-mode";
+import LearningModeBanner from "@/components/LearningModeBanner";
 import { getCourseStatuses, getLesson, getLessonRows } from "@/lib/content";
 import { findCourse, getCurriculum, lessonId } from "@/lib/curriculum";
 import { db } from "@/lib/db";
@@ -32,7 +33,7 @@ export default async function TopicPage({ params }: Props) {
   const { module, course } = found;
 
   const student = await currentStudent();
-  const staffPreview = student ? canPreviewCourses(student) : false;
+  const staffPreview = student ? await isCoursePreview(student) : false;
   const available = getCourseStatuses().some(
     (status) => status.course.slug === course.slug && status.complete && (status.available || staffPreview)
   );
@@ -69,6 +70,7 @@ export default async function TopicPage({ params }: Props) {
 
   return (
     <main className="shell" id="main-content" tabIndex={-1}>
+      <LearningModeBanner student={student} preview={staffPreview} />
       <div className="topicwrap">
       <div className="breadcrumb">
         <Link href={`/curriculum/${module.slug}`}>{module.short_title}</Link>

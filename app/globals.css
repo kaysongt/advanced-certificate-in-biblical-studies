@@ -745,6 +745,14 @@ tbody tr:last-child td { border-bottom: 1px solid var(--rule); }
 .authcard .sub { font-family: var(--sans); font-size: 14px; color: var(--muted); margin: 0 0 24px; line-height: 1.6; }
 
 .field { margin-bottom: 16px; }
+.thesis-form { margin: 20px 0; }
+.thesis-form label { display: block; margin: 16px 0; font: 600 14px/1.6 var(--sans); }
+.thesis-form input:not([type="checkbox"]):not([type="hidden"]), .thesis-form select, .thesis-form textarea {
+  display: block; width: 100%; margin-top: 6px; padding: 12px; border: 1px solid var(--rule);
+  border-radius: 9px; background: var(--page); color: var(--ink); font: 400 15px/1.6 var(--sans);
+}
+.thesis-form textarea { resize: vertical; }
+.thesis-form input[type="checkbox"] { width: auto; margin-right: 8px; }
 .field label {
   display: block; font-family: var(--sans); font-size: 12.5px; font-weight: 650;
   color: var(--ink-2); margin-bottom: 6px; letter-spacing: .01em;

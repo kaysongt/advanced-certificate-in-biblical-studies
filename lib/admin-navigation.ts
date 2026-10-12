@@ -2,6 +2,7 @@ export const ADMIN_NAV_ITEMS = [
   { href: "/admin", label: "Operations" },
   { href: "/admin/registrations", label: "Registration groups" },
   { href: "/admin/progress", label: "Student progress" },
+  { href: "/admin/thesis", label: "Thesis reviews" },
   { href: "/curriculum", label: "Preview program" },
   { href: "/admin/scholarships", label: "Scholarship applications" },
   { href: "/admin/settings", label: "Admin settings" },

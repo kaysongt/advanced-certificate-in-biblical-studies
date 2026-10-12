@@ -1,7 +1,7 @@
 "use server";
 
 import { currentStudent } from "@/lib/auth";
-import { canPreviewCourses } from "@/lib/course-preview";
+import { isCoursePreview } from "@/lib/learning-mode";
 import { hasStudyAccess } from "@/lib/access";
 import { findCourse, isModuleReleased } from "@/lib/curriculum";
 import { getLessonRows, getLessonQuizQuestions, getAssessmentBank } from "@/lib/content";
@@ -13,7 +13,7 @@ export type QuizStartResult = { id?: string; deadline?: number; serverNow?: numb
 
 export async function startTimedQuiz(courseSlug: string, lessonId: string | null, questionIds: string[] = [], token = ""): Promise<QuizStartResult> {
   const student = await currentStudent();
-  if (!student || canPreviewCourses(student)) return { error: "Sign in with a student account. Preview does not record attempts." };
+  if (!student || await isCoursePreview(student)) return { error: "Switch to study mode to save your attempts. Preview does not record results." };
   if (typeof courseSlug !== "string" || courseSlug.length > 40 || (lessonId !== null && (typeof lessonId !== "string" || lessonId.length > 60))) return { error: "Invalid assessment." };
   const found = findCourse(courseSlug);
   if (!found || !isModuleReleased(found.module)) return { error: "This module has not opened yet." };

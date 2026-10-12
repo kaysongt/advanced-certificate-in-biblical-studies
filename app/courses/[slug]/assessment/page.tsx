@@ -6,7 +6,8 @@ import { randomInt } from "node:crypto";
 import AssessmentQuiz from "@/components/AssessmentQuiz";
 import { entitlementRedirectPath, hasStudyAccess } from "@/lib/access";
 import { currentStudent } from "@/lib/auth";
-import { canPreviewCourses } from "@/lib/course-preview";
+import { isCoursePreview } from "@/lib/learning-mode";
+import LearningModeBanner from "@/components/LearningModeBanner";
 import { quizTimeExpired } from "@/lib/timed-quiz";
 import {
   getAssessmentBank,
@@ -38,7 +39,7 @@ export default async function AssessmentPage({ params }: Props) {
   const { module, course } = found;
 
   const student = await currentStudent();
-  const staffPreview = student ? canPreviewCourses(student) : false;
+  const staffPreview = student ? await isCoursePreview(student) : false;
   const available = getCourseStatuses().some(
     (status) =>
       status.course.slug === course.slug &&
@@ -99,6 +100,7 @@ export default async function AssessmentPage({ params }: Props) {
 
   return (
     <main className="shell" id="main-content" tabIndex={-1}>
+      <LearningModeBanner student={student} preview={staffPreview} />
       <div className="topicwrap">
         <div className="breadcrumb">
           <Link href={`/curriculum/${module.slug}`}>{module.short_title}</Link>

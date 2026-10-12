@@ -5,7 +5,7 @@ import { z } from "zod";
 
 import { hasStudyAccess } from "@/lib/access";
 import { currentStudent } from "@/lib/auth";
-import { canPreviewCourses } from "@/lib/course-preview";
+import { isCoursePreview } from "@/lib/learning-mode";
 import {
   findCourse,
   getCurriculum,
@@ -25,7 +25,7 @@ export async function setTopicComplete(
   path: string,
 ): Promise<boolean> {
   const student = await currentStudent();
-  if (!student || canPreviewCourses(student)) return false;
+  if (!student || await isCoursePreview(student)) return false;
 
   const found = findCourse(courseSlug);
   const topicNumber = Number(lessonId.slice(courseSlug.length + 1));
@@ -122,7 +122,7 @@ export async function recordTopicQuizAttempt(
       error: "Sign in again.",
     };
 
-  if (canPreviewCourses(student))
+  if (await isCoursePreview(student))
     return { passed: false, pct: 0, correct: 0, total: 0, error: "Preview does not record student progress." };
 
   const found = findCourse(parsed.data.courseSlug);

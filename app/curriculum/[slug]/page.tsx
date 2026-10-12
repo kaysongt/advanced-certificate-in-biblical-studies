@@ -6,7 +6,8 @@ import { notFound } from "next/navigation";
 import { getCourseAudio, getCourseStatuses, getModuleDoc } from "@/lib/content";
 import { getModule, isModuleReleased, moduleReleaseLabel } from "@/lib/curriculum";
 import { currentStudent } from "@/lib/auth";
-import { canPreviewCourses } from "@/lib/course-preview";
+import { isCoursePreview } from "@/lib/learning-mode";
+import LearningModeBanner from "@/components/LearningModeBanner";
 import { hasStudyAccess } from "@/lib/access";
 import { db } from "@/lib/db";
 import { CourseBook } from "@/components/CourseBook";
@@ -31,7 +32,7 @@ export default async function ModulePage({ params }: Props) {
 
   const doc = getModuleDoc(module);
   const actor = await currentStudent();
-  const staffPreview = actor ? canPreviewCourses(actor) : false;
+  const staffPreview = actor ? await isCoursePreview(actor) : false;
   const enrollments = actor && !staffPreview ? await db.getEnrollmentsForStudent(actor.id) : [];
   const canReadMaterials = staffPreview || (isModuleReleased(module) && hasStudyAccess(actor, enrollments, module.slug));
   const statuses = getCourseStatuses().filter((s) => s.module.slug === module.slug);
@@ -58,6 +59,7 @@ export default async function ModulePage({ params }: Props) {
 
   return (
     <main className="shell" id="main-content" tabIndex={-1}>
+      <LearningModeBanner student={actor} preview={staffPreview} />
       <div className="breadcrumb">
         <Link href="/curriculum">Curriculum</Link>
         <span className="sep">/</span>
@@ -91,6 +93,7 @@ export default async function ModulePage({ params }: Props) {
       {actor && canReadMaterials ? <StudentModuleProgress module={module} progress={progress} assessments={assessments} preview={staffPreview} /> : null}
       {module.number === 1 && canReadMaterials ? <ModuleOneUpdate /> : null}
       <h2>Courses</h2>
+      {actor && canReadMaterials ? <p><Link className="btn" href={`/curriculum/${module.slug}/thesis`}>Module thesis: instructions, submission and feedback</Link></p> : null}
       <div className="stack">
         {statuses.map(({ course, available, complete }) => {
           const contents = (

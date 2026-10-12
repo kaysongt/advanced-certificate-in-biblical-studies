@@ -69,6 +69,7 @@ model AuthRateLimit {
 }
 
 model Student {
+  theses                  ThesisSubmission[]
   id                      String                   @id @default(uuid())
   email                   String                   @unique
   fullName                String
@@ -88,6 +89,39 @@ model Student {
   certificatesIssued      Certificate[]            @relation("CertificateIssuer")
   scholarshipApplications ScholarshipApplication[] @relation("ScholarshipApplicant")
   scholarshipsReviewed    ScholarshipApplication[] @relation("ScholarshipReviewer")
+}
+
+model ThesisRubric {
+  id           String   @id @default(uuid())
+  moduleSlug   String
+  title        String
+  instructions String
+  criteria     Json
+  createdById  String
+  approvedById String?
+  approvedAt   DateTime?
+  createdAt    DateTime @default(now())
+  submissions  ThesisSubmission[]
+  @@index([moduleSlug, createdAt])
+}
+
+model ThesisSubmission {
+  id           String   @id @default(uuid())
+  studentId    String
+  rubricId     String
+  body         String
+  aiSuggestion Json?
+  aiModel      String?
+  aiReviewedAt DateTime?
+  finalScore   Int?
+  feedback     String?
+  gradedById   String?
+  gradedAt     DateTime?
+  createdAt    DateTime @default(now())
+  student      Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  rubric       ThesisRubric @relation(fields: [rubricId], references: [id], onDelete: Restrict)
+  @@unique([studentId, rubricId])
+  @@index([createdAt])
 }
 
 model Enrollment {

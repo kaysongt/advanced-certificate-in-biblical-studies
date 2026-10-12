@@ -4,7 +4,8 @@ import LaunchAccessNotice from "@/components/LaunchAccessNotice";
 
 import { getModuleStatuses } from "@/lib/content";
 import { currentStudent } from "@/lib/auth";
-import { canPreviewCourses } from "@/lib/course-preview";
+import { isCoursePreview } from "@/lib/learning-mode";
+import LearningModeBanner from "@/components/LearningModeBanner";
 import { getCurriculum, moduleReleaseLabel } from "@/lib/curriculum";
 
 export const metadata: Metadata = { title: "Curriculum" };
@@ -12,12 +13,13 @@ export const dynamic = "force-dynamic";
 
 export default async function CurriculumPage() {
   const actor = await currentStudent();
-  const staffPreview = actor ? canPreviewCourses(actor) : false;
+  const staffPreview = actor ? await isCoursePreview(actor) : false;
   const { program } = getCurriculum();
   const statuses = getModuleStatuses();
 
   return (
     <main className="shell" id="main-content" tabIndex={-1}>
+      <LearningModeBanner student={actor} preview={staffPreview} />
       <div className="pagehead">
         <div className="eyebrow">The program</div>
         <h1>Curriculum</h1>

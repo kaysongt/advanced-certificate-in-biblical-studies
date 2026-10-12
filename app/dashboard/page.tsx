@@ -11,7 +11,8 @@ import StudentWalkthrough from "@/components/StudentWalkthrough";
 import StudentModuleProgress from "@/components/StudentModuleProgress";
 import ModuleOneUpdate from "@/components/ModuleOneUpdate";
 import { currentStudent, isStaff } from "@/lib/auth";
-import { canPreviewCourses } from "@/lib/course-preview";
+import { isCoursePreview } from "@/lib/learning-mode";
+import LearningModeBanner from "@/components/LearningModeBanner";
 import { getModuleStatuses } from "@/lib/content";
 import { db } from "@/lib/db";
 import {
@@ -110,7 +111,7 @@ export default async function DashboardPage({
 }) {
   const student = await currentStudent();
   if (!student) redirect("/login");
-  const staffPreview = canPreviewCourses(student);
+  const staffPreview = student ? await isCoursePreview(student) : false;
 
   const { access, payment, password } = await searchParams;
   const { program, grading } = getCurriculum();
@@ -163,6 +164,7 @@ export default async function DashboardPage({
 
   return (
     <main className="shell" id="main-content" tabIndex={-1}>
+      <LearningModeBanner student={student} preview={staffPreview} />
       <div className="pagehead">
         <div className="eyebrow">{program.institute}</div>
         <h1>Welcome, {student.fullName.split(" ")[0]}</h1>

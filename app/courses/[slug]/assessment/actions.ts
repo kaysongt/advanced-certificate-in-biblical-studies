@@ -5,7 +5,7 @@ import { z } from "zod";
 
 import { hasStudyAccess } from "@/lib/access";
 import { currentStudent } from "@/lib/auth";
-import { canPreviewCourses } from "@/lib/course-preview";
+import { isCoursePreview } from "@/lib/learning-mode";
 import { getAssessmentBank, getLessonRows } from "@/lib/content";
 import { findCourse, getCurriculum, isModuleReleased } from "@/lib/curriculum";
 import { db } from "@/lib/db";
@@ -72,7 +72,7 @@ export async function submitAssessmentSectionA(
       sectionAPoints: 0,
       error: "Sign in again.",
     };
-  if (canPreviewCourses(student))
+  if (await isCoursePreview(student))
     return { correct: 0, total: 0, pct: 0, sectionAPoints: 0, error: "Preview does not record submissions." };
   const found = findCourse(parsed.data.courseSlug);
   if (!found)
@@ -237,7 +237,7 @@ export async function submitWrittenAssessment(
   }
   const student = await currentStudent();
   if (!student) return { success: false, error: "Sign in again." };
-  if (canPreviewCourses(student))
+  if (await isCoursePreview(student))
     return { success: false, error: "Preview does not record submissions." };
   if (typeof courseSlug !== "string" || courseSlug.length > 40)
     return { success: false, error: "Course not found." };
